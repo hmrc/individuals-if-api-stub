@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package repository
+package it.uk.gov.hmrc.individualsifapistub
 
 import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
