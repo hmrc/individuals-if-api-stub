@@ -37,11 +37,10 @@ class BenefitsAndCreditsRepository @Inject()(mongoConnectionProvider: MongoConne
     Index(key = Seq(("id", Ascending)), name = Some("idIndex"), unique = true, background = true)
   )
 
-  def create(benefitsAndCredits: BenefitsAndCredits) = {
-    insert(benefitsAndCredits) map (_ => benefitsAndCredits) recover {
-      case WriteResult.Code(11000) => throw new DuplicateSelfAssessmentException
-    }
+  def create(id: String) = {
+    val benefitAndCredit = BenefitsAndCredits(id)
+    insert(benefitAndCredit) map (_ => benefitAndCredit)
   }
 
-  def findByX(id: String) = collection.find(obj("id" -> id)).one[BenefitsAndCredits]
+  def findById(id: String) = collection.find(obj("id" -> id)).one[BenefitsAndCredits]
 }

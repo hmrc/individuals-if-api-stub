@@ -37,10 +37,10 @@ class DetailsRepositorySpec
   val repository = fakeApplication.injector.instanceOf[DetailsRepository]
 
   val id = "2432552635"
-  val details
-  = Details("foo")
+  val details = Details(id)
 
   override def beforeEach() {
+    await(repository.drop)
     await(repository.ensureIndexes)
   }
 
@@ -50,8 +50,8 @@ class DetailsRepositorySpec
   "collection" should {
     "have a unique index on saUtr" in {
       await(repository.collection.indexesManager.list()).find({ i =>
-        i.name.contains("saUtrIndex") &&
-        i.key == Seq("saUtr" -> Ascending) &&
+        i.name.contains("idIndex") &&
+        i.key == Seq("id" -> Ascending) &&
         i.background &&
         i.unique
       }) should not be None
@@ -60,31 +60,27 @@ class DetailsRepositorySpec
 
   "create" should {
     "create a self assessment" in {
-      val result = await(repository.create(details
-      ))
+      val result = await(repository.create(id))
 
       result shouldBe details
-
     }
 
-    "fail to create a duplicate self assessment" in {
-      await(repository.create(details))
+    "fail to create duplicate details" in {
+      await(repository.create(id))
 
-      intercept[DuplicateSelfAssessmentException](
-        await(repository.create(details)))
+      intercept[Exception](await(repository.create(id)))
     }
   }
 
   "find by id" should {
-    "return None when there are no self assessments for a given utr" in {
-      await(repository.findByX(id)) shouldBe None
+    "return None when there are no details for a given id" in {
+      await(repository.findById(id)) shouldBe None
     }
 
     "return details" in {
-      await(repository.create(details
-      ))
+      await(repository.create(id))
 
-      val result = await(repository.findByX(id))
+      val result = await(repository.findById(id))
 
       result shouldBe Some(details
       )

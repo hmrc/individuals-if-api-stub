@@ -37,10 +37,10 @@ class BenefitsAndCreditsRepositorySpec
   val repository = fakeApplication.injector.instanceOf[BenefitsAndCreditsRepository]
 
   val id = "2432552635"
-  val benefitsAndCredits
-  = BenefitsAndCredits("foo")
+  val benefitsAndCredits = BenefitsAndCredits(id)
 
   override def beforeEach() {
+    await(repository.drop)
     await(repository.ensureIndexes)
   }
 
@@ -48,10 +48,10 @@ class BenefitsAndCreditsRepositorySpec
   }
 
   "collection" should {
-    "have a unique index on saUtr" in {
+    "have a unique index on id" in {
       await(repository.collection.indexesManager.list()).find({ i =>
-        i.name.contains("saUtrIndex") &&
-        i.key == Seq("saUtr" -> Ascending) &&
+        i.name.contains("idIndex") &&
+        i.key == Seq("id" -> Ascending) &&
         i.background &&
         i.unique
       }) should not be None
@@ -60,31 +60,27 @@ class BenefitsAndCreditsRepositorySpec
 
   "create" should {
     "create a self assessment" in {
-      val result = await(repository.create(benefitsAndCredits
-      ))
-
+      val result = await(repository.create(id))
       result shouldBe benefitsAndCredits
-
     }
 
     "fail to create a duplicate self assessment" in {
-      await(repository.create(benefitsAndCredits))
+      await(repository.create(id))
 
-      intercept[DuplicateSelfAssessmentException](
-        await(repository.create(benefitsAndCredits)))
+      intercept[Exception](
+        await(repository.create(id)))
     }
   }
 
   "find by id" should {
     "return None when there are no self assessments for a given utr" in {
-      await(repository.findByX(id)) shouldBe None
+      await(repository.findById(id)) shouldBe None
     }
 
     "return benefits and credits" in {
-      await(repository.create(benefitsAndCredits
-      ))
+      await(repository.create(id))
 
-      val result = await(repository.findByX(id))
+      val result = await(repository.findById(id))
 
       result shouldBe Some(benefitsAndCredits)
     }

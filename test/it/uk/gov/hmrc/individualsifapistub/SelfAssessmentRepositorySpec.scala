@@ -38,8 +38,8 @@ class SelfAssessmentRepositorySpec
 
   val repository = fakeApplication.injector.instanceOf[SelfAssessmentRepository]
 
-  val utr = SaUtr("2432552635")
-  val selfAssessment = SelfAssessment("foo")
+  val id = "2432552635"
+  val selfAssessment = SelfAssessment(id)
 
   override def beforeEach() {
     await(repository.drop)
@@ -51,10 +51,10 @@ class SelfAssessmentRepositorySpec
   }
 
   "collection" should {
-    "have a unique index on saUtr" in {
+    "have a unique index on id" in {
       await(repository.collection.indexesManager.list()).find({ i =>
-        i.name.contains("saUtrIndex") &&
-        i.key == Seq("saUtr" -> Ascending) &&
+        i.name.contains("idIndex") &&
+        i.key == Seq("id" -> Ascending) &&
         i.background &&
         i.unique
       }) should not be None
@@ -76,15 +76,15 @@ class SelfAssessmentRepositorySpec
     }
   }
 
-  "find by utr" should {
+  "find by id" should {
     "return None when there are no self assessments for a given utr" in {
-      await(repository.findByUtr(utr)) shouldBe None
+      await(repository.findById(id)) shouldBe None
     }
 
     "return the self assessment" in {
       await(repository.create(selfAssessment))
 
-      val result = await(repository.findByUtr(utr))
+      val result = await(repository.findById(id))
 
       result shouldBe Some(selfAssessment)
     }

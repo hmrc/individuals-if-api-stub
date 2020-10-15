@@ -18,6 +18,7 @@ package uk.gov.hmrc.individualsifapistub.repository
 
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
+import play.api.libs.json.Json.obj
 import reactivemongo.api.Cursor
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
@@ -34,19 +35,14 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
   extends ReactiveRepository[Employment, BSONObjectID]("employment", mongoConnectionProvider.mongoDatabase, JsonFormatters.employmentFormat) {
 
   override lazy val indexes = Seq(
-    Index(key = Seq(("nino", Ascending), ("employerPayeReference", Ascending)), name = Some("ninoAndEmployerPayeReference"), unique = false, background = true)
+    Index(key = Seq(("id", Ascending)), name = Some("idIndex"), unique = true, background = true)
   )
 
-  def create(employerPayeReference: EmpRef, nino: Nino, request: CreateEmploymentRequest) = {
-    val employment = Employment("foo")
+  def create(id: String) = {
+    val employment = Employment(id)
 
     insert(employment) map (_ => employment)
   }
 
-  def findByReferenceAndNino(employerPayeReference: EmpRef, nino: Nino) = {
-    collection.find(Json.obj("employerPayeReference" -> employerPayeReference, "nino" -> nino)).cursor[Employment]().collect[List](
-      Int.MaxValue, Cursor.FailOnError[List[Employment]]())
-  }
-
-  def findBy(nino: Nino) = collection.find(Json.obj("nino" -> nino)).cursor[Employment]().collect[Seq](Int.MaxValue, Cursor.FailOnError[Seq[Employment]]())
+  def findById(id: String) = collection.find(obj("id" -> id)).one[Employment]
 }

@@ -31,13 +31,13 @@ class EmploymentRepositorySpec
     with MongoSpecSupport
     with BeforeAndAfterEach {
 
+  val id = "1234567890"
+
   override lazy val fakeApplication = buildFakeApplication(
     Configuration("mongodb.uri" -> mongoUri))
 
   val employmentRepository =
     fakeApplication.injector.instanceOf[EmploymentRepository]
-  val employerReference = EmpRef("123", "DI45678")
-  val nino = Nino("NA000799C")
 
   override def beforeEach() {
     await(employmentRepository.drop)
@@ -50,78 +50,25 @@ class EmploymentRepositorySpec
 
   "create" should {
     "create an employment" in {
-      val result = await(
-        employmentRepository
-          .create(employerReference, nino, aCreateEmploymentRequest))
-      result shouldBe anEmployment(employerReference, nino)
-    }
-
-    "allow multiple employments for the same employer reference and nino" in {
-      await(
-        employmentRepository
-          .create(employerReference, nino, aCreateEmploymentRequest))
-      await(
-        employmentRepository
-          .create(employerReference, nino, aCreateEmploymentRequest))
-      val result = await(employmentRepository.findAll())
-      result.size shouldBe 2
+      val result = await(employmentRepository.create(id))
+      result shouldBe Employment(id)
     }
   }
 
-  "findByReferenceAndNino" should {
+  "findById" should {
 
-    "return all records for a given paye reference and nino" in {
-      val employment = anEmployment(employerReference, nino)
+    "return a single record with id" in {
+      val employment = Employment(id)
+      await(employmentRepository.create(id))
+      val result = await(employmentRepository.findById(id))
 
-      await(
-        employmentRepository
-          .create(employerReference, nino, aCreateEmploymentRequest))
-      await(
-        employmentRepository
-          .create(EmpRef("321", "EI45678"), nino, aCreateEmploymentRequest))
-      await(
-        employmentRepository.create(employerReference,
-                                    Nino("AA123456C"),
-                                    aCreateEmploymentRequest))
-
-      val result = await(
-        employmentRepository.findByReferenceAndNino(employerReference, nino))
-
-      result shouldBe Seq(employment)
+      result.get shouldBe employment
     }
 
     "return an empty list if no records exist for a given pay reference and nino" in {
-      await(
-        employmentRepository
-          .create(employerReference, nino, aCreateEmploymentRequest))
-
-      val result = await(
-        employmentRepository.findByReferenceAndNino(EmpRef("321", "EI45678"),
-                                                    nino))
-
+      await(employmentRepository.create(id))
+      val result = await(employmentRepository.findById("not an id"))
       result.isEmpty shouldBe true
     }
   }
-
-  "find by nino" should {
-
-    "return an empty sequence when a corresponding employment does not exist" in {
-      await(employmentRepository.findBy(nino)).isEmpty shouldBe true
-    }
-
-    "return a non-empty sequence when corresponding employments exist" in {
-      await(
-        employmentRepository
-          .create(employerReference, nino, aCreateEmploymentRequest))
-      val employments = await(employmentRepository.findBy(nino))
-      employments.nonEmpty shouldBe true
-      employments.size shouldBe 1
-      employments.head shouldBe anEmployment(employerReference, nino)
-    }
-
-  }
-
-  private val aCreateEmploymentRequest = CreateEmploymentRequest("foo")
-
-  private def anEmployment(empRef: EmpRef, nino: Nino) = Employment("foo")
 }

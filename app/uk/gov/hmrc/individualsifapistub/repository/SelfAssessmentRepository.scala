@@ -34,7 +34,7 @@ class SelfAssessmentRepository @Inject()(mongoConnectionProvider: MongoConnectio
   extends ReactiveRepository[SelfAssessment, BSONObjectID]("selfAssessment", mongoConnectionProvider.mongoDatabase, JsonFormatters.selfAssessmentFormat) {
 
   override lazy val indexes = Seq(
-    Index(key = Seq(("saUtr", Ascending)), name = Some("saUtrIndex"), unique = true, background = true)
+    Index(key = Seq(("id", Ascending)), name = Some("idIndex"), unique = true, background = true)
   )
 
   def create(selfAssessment: SelfAssessment) = {
@@ -43,5 +43,5 @@ class SelfAssessmentRepository @Inject()(mongoConnectionProvider: MongoConnectio
     }
   }
 
-  def findByUtr(saUtr: SaUtr) = collection.find(obj("saUtr" -> saUtr.value)).one[SelfAssessment]
+  def findById(id: String) = collection.find(obj("id" -> id)).one[SelfAssessment]
 }

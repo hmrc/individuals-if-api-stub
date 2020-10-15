@@ -36,11 +36,11 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
     Index(key = Seq(("id", Ascending)), name = Some("idIndex"), unique = true, background = true)
   )
 
-  def create(details: Details) = {
-    insert(details) map (_ => details) recover {
-      case WriteResult.Code(11000) => throw new DuplicateSelfAssessmentException
-    }
+  def create(id: String) = {
+    val details = Details(id)
+
+    insert(details) map (_ => details)
   }
 
-  def findByX(id: String) = collection.find(obj("id" -> id)).one[Details]
+  def findById(id: String) = collection.find(obj("id" -> id)).one[Details]
 }
