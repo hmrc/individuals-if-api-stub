@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.individualsifapistub.config
+package uk.gov.hmrc.individualsifapistub.util
 
-import javax.inject.{Inject, Singleton}
-import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import uk.gov.hmrc.domain.Nino
 
-@Singleton
-class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) {
+class NinoPathStringBinder extends AbstractPathStringBindable[Nino] {
 
-  val authBaseUrl: String = servicesConfig.baseUrl("auth")
+  override def bind(key: String, value: String): Either[String, Nino] =
+    bind("Malformed nino submitted", Nino(value))
 
-  val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
-  val graphiteHost: String     = config.get[String]("microservice.metrics.graphite.host")
+  override def unbind(key: String, value: Nino): String = value.nino
 }

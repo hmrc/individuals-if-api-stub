@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.individualsifapistub.config
+package uk.gov.hmrc.individualsifapistub.util
 
-import javax.inject.{Inject, Singleton}
-import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import uk.gov.hmrc.domain.SaUtr
 
-@Singleton
-class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) {
+class SaUtrPathStringBinder extends AbstractPathStringBindable[SaUtr] {
 
-  val authBaseUrl: String = servicesConfig.baseUrl("auth")
+  override def bind(key: String, value: String): Either[String, SaUtr] =
+    bind("Malformed utr submitted", SaUtr(value))
 
-  val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
-  val graphiteHost: String     = config.get[String]("microservice.metrics.graphite.host")
+  override def unbind(key: String, value: SaUtr): String = value.utr
 }

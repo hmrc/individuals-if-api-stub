@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.individualsifapistub.config
+package uk.gov.hmrc.individualsifapistub.util
 
-import javax.inject.{Inject, Singleton}
-import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import uk.gov.hmrc.domain.EmpRef
 
-@Singleton
-class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) {
+class EmployerReferenceStringBinder extends AbstractPathStringBindable[EmpRef] {
 
-  val authBaseUrl: String = servicesConfig.baseUrl("auth")
+  override def bind(key: String, value: String): Either[String, EmpRef] =
+    bind("Invalid employer reference submitted", EmpRef.fromIdentifiers(value))
 
-  val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
-  val graphiteHost: String     = config.get[String]("microservice.metrics.graphite.host")
+  def unbind(key: String, empRef: EmpRef): String = empRef.encodedValue
+
 }
