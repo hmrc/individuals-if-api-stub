@@ -17,15 +17,12 @@
 package uk.gov.hmrc.individualsifapistub.repository
 
 import javax.inject.{Inject, Singleton}
-import play.api.libs.json.Json
 import play.api.libs.json.Json.obj
-import reactivemongo.api.Cursor
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.bson.BSONObjectID
 import reactivemongo.play.json._
-import uk.gov.hmrc.domain.{EmpRef, Nino}
-import uk.gov.hmrc.individualsifapistub.domain.{CreateEmploymentRequest, Employment, JsonFormatters}
+import uk.gov.hmrc.individualsifapistub.domain.{Employment, JsonFormatters}
 import uk.gov.hmrc.mongo.ReactiveRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global

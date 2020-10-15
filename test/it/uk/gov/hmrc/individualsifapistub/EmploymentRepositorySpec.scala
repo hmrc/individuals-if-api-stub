@@ -18,8 +18,7 @@ package it.uk.gov.hmrc.individualsifapistub
 
 import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
-import uk.gov.hmrc.domain.{EmpRef, Nino}
-import uk.gov.hmrc.individualsifapistub.domain.{CreateEmploymentRequest, Employment}
+import uk.gov.hmrc.individualsifapistub.domain.Employment
 import uk.gov.hmrc.individualsifapistub.repository.EmploymentRepository
 import uk.gov.hmrc.mongo.MongoSpecSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
