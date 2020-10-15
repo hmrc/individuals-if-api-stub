@@ -29,6 +29,8 @@ object JsonFormatters {
     override def writes(o: DateTime): JsValue = JodaDateTimeNumberWrites.writes(o)
   }
 
+  implicit val employmentFormat = Json.format[Employment]
+  implicit val selfAssessmentFormat = Json.format[SelfAssessment]
   implicit val testAddressFormat = Json.format[TestAddress]
   implicit val testOrganisationDetailsFormat = Json.format[TestOrganisationDetails]
   implicit val testOrganisationFormat = Json.format[TestOrganisation]
