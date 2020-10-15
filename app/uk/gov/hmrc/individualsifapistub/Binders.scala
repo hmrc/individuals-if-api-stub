@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.individualsifapistub.config
+package uk.gov.hmrc.individualsifapistub
 
-import javax.inject.{Inject, Singleton}
-import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import uk.gov.hmrc.individualsifapistub.util._
 
-@Singleton
-class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) {
+package object Binders {
 
-  val authBaseUrl: String = servicesConfig.baseUrl("auth")
-
-  val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
-  val graphiteHost: String     = config.get[String]("microservice.metrics.graphite.host")
+  implicit val ninoBinder = new NinoPathStringBinder
+  implicit val employerReferenceBinder = new EmployerReferenceStringBinder
+  implicit val intervalQueryStringBinder = new IntervalQueryStringBinder
+  implicit val saUtrPathStringBinder = new SaUtrPathStringBinder
 }

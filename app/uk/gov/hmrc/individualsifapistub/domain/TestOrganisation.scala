@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.individualsifapistub.config
+package uk.gov.hmrc.individualsifapistub.domain
 
-import javax.inject.{Inject, Singleton}
-import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import uk.gov.hmrc.domain.{EmpRef, SaUtr}
 
-@Singleton
-class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) {
+case class TestAddress(line1: String, line2: String, postcode: String)
 
-  val authBaseUrl: String = servicesConfig.baseUrl("auth")
+case class TestOrganisationDetails(name: String, address: TestAddress)
 
-  val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
-  val graphiteHost: String     = config.get[String]("microservice.metrics.graphite.host")
-}
+case class TestOrganisation(empRef: Option[EmpRef], organisationDetails: TestOrganisationDetails)
+
+case class TestIndividual(saUtr: Option[SaUtr])

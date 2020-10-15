@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.individualsifapistub.config
+package uk.gov.hmrc.individualsifapistub.util
 
-import javax.inject.{Inject, Singleton}
-import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import play.api.libs.json.Json
+import play.api.mvc.PathBindable
+import uk.gov.hmrc.individualsifapistub.domain.ErrorInvalidRequest
+import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters.errorInvalidRequestFormat
 
-@Singleton
-class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) {
+import scala.util.Try
 
-  val authBaseUrl: String = servicesConfig.baseUrl("auth")
+trait AbstractPathStringBindable[T] extends PathBindable[T] {
+  protected def errorResponse(message: String) = {
+    Json.toJson(ErrorInvalidRequest(message)).toString
+  }
 
-  val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
-  val graphiteHost: String     = config.get[String]("microservice.metrics.graphite.host")
+  def bind[A](message: String, function: => A): Either[String, A] =
+    Try(Right(function)) getOrElse Left(errorResponse(message))
+
 }

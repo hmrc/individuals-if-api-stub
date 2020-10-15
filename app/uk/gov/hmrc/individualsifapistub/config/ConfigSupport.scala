@@ -16,15 +16,17 @@
 
 package uk.gov.hmrc.individualsifapistub.config
 
-import javax.inject.{Inject, Singleton}
-import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import akka.actor.ActorSystem
+import play.api.{Application, Configuration, Mode, Play}
 
-@Singleton
-class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) {
+trait ConfigSupport {
 
-  val authBaseUrl: String = servicesConfig.baseUrl("auth")
+  private def current: Application = Play.current
 
-  val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
-  val graphiteHost: String     = config.get[String]("microservice.metrics.graphite.host")
+  def config: Configuration = current.configuration
+  def mode: Mode = current.mode
+
+  def runModeConfiguration: Configuration = config
+  def appNameConfiguration: Configuration = config
+  def actorSystem: ActorSystem = current.actorSystem
 }

@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.individualsifapistub.config
+package uk.gov.hmrc.individualsifapistub.util
 
-import javax.inject.{Inject, Singleton}
-import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import org.joda.time.{Interval, LocalDate}
 
-@Singleton
-class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) {
+object Dates {
 
-  val authBaseUrl: String = servicesConfig.baseUrl("auth")
+  private def asDate(string: String) = LocalDate.parse(string)
 
-  val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
-  val graphiteHost: String     = config.get[String]("microservice.metrics.graphite.host")
+  def toInterval(from: String, to: String): Interval =
+    toInterval(asDate(from), asDate(to))
+
+  def toInterval(from: LocalDate, to: LocalDate): Interval =
+    new Interval(from.toDate.getTime, to.toDateTimeAtStartOfDay.plusMillis(1).toDate.getTime)
 }
