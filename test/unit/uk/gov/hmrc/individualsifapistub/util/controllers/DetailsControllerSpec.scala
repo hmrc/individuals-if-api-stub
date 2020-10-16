@@ -31,7 +31,6 @@ import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
 import scala.concurrent.{ExecutionContext, Future}
 
 class DetailsControllerSpec extends TestSupport {
-  //TODO :- TESTS FOR Retrieve ENDPOINT
 
   implicit lazy val materializer = fakeApplication.materializer
   val controllerComponents: ControllerComponents = fakeApplication.injector.instanceOf[ControllerComponents]
@@ -78,7 +77,7 @@ class DetailsControllerSpec extends TestSupport {
 
     "Fails when it cannot get from service" in new Setup {
       when(mockDetailsService.create(idType, idValue, request)).thenReturn(Future.failed(new Exception))
-      assertThrows[Exception] { await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson("")))) }
+      assertThrows[Exception] { await(underTest.retrieve(idType, idValue)(fakeRequest)) }
     }
   }
 }

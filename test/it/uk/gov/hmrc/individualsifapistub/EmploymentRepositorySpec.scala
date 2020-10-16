@@ -18,7 +18,7 @@ package it.uk.gov.hmrc.individualsifapistub
 
 import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
-import uk.gov.hmrc.individualsifapistub.domain.Employment
+import uk.gov.hmrc.individualsifapistub.domain.{CreateEmploymentRequest, Employment}
 import uk.gov.hmrc.individualsifapistub.repository.EmploymentRepository
 import uk.gov.hmrc.mongo.MongoSpecSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
@@ -31,6 +31,9 @@ class EmploymentRepositorySpec
     with BeforeAndAfterEach {
 
   val id = "1234567890"
+  val requestBody = "request"
+  val request = CreateEmploymentRequest(requestBody)
+  val employment = Employment(id, request.body)
 
   override lazy val fakeApplication = buildFakeApplication(
     Configuration("mongodb.uri" -> mongoUri))
@@ -49,23 +52,21 @@ class EmploymentRepositorySpec
 
   "create" should {
     "create an employment" in {
-      val result = await(employmentRepository.create(id))
-      result shouldBe Employment(id)
+      val result = await(employmentRepository.create(id, request))
+      result shouldBe employment
     }
   }
 
   "findById" should {
 
     "return a single record with id" in {
-      val employment = Employment(id)
-      await(employmentRepository.create(id))
+      await(employmentRepository.create(id, request))
       val result = await(employmentRepository.findById(id))
-
       result.get shouldBe employment
     }
 
     "return an empty list if no records exist for a given pay reference and nino" in {
-      await(employmentRepository.create(id))
+      await(employmentRepository.create(id, request))
       val result = await(employmentRepository.findById("not an id"))
       result.isEmpty shouldBe true
     }

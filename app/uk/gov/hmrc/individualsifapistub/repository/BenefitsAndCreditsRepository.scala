@@ -18,13 +18,11 @@ package uk.gov.hmrc.individualsifapistub.repository
 
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json.obj
-import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.bson.BSONObjectID
 import reactivemongo.play.json._
-import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.individualsifapistub.domain.{BenefitsAndCredits, DuplicateSelfAssessmentException, JsonFormatters, SelfAssessment}
+import uk.gov.hmrc.individualsifapistub.domain.{BenefitsAndCredits, JsonFormatters}
 import uk.gov.hmrc.mongo.ReactiveRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global

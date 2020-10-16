@@ -26,28 +26,27 @@ import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 import scala.concurrent.Future
 
 class DetailsServiceSpec extends TestSupport {
-  //TODO :- TEST FOR get
   trait Setup {
 
     val idType = "NINO"
     val idValue = "QW1234QW"
     val request = CreateDetailsRequest("test")
 
-    val mockEmploymentRepository = mock[DetailsRepository]
-    val underTest = new DetailsService(mockEmploymentRepository)
+    val mockDetailsRepository = mock[DetailsRepository]
+    val underTest = new DetailsService(mockDetailsRepository)
   }
 
   "Details Service" when {
     "Create" should {
       "Return the created details when created" in new Setup {
         val details = Details(s"$idType-$idValue", request.body)
-        when(mockEmploymentRepository.create(s"$idType-$idValue", request)).thenReturn(Future.successful(details));
+        when(mockDetailsRepository.create(s"$idType-$idValue", request)).thenReturn(Future.successful(details));
         val response = await(underTest.create(idType, idValue, request))
         response shouldBe details
       }
 
       "Return failure when unable to create Details object" in new Setup {
-        when(mockEmploymentRepository.create(s"$idType-$idValue", request)).thenReturn(Future.failed(new Exception));
+        when(mockDetailsRepository.create(s"$idType-$idValue", request)).thenReturn(Future.failed(new Exception));
         assertThrows[Exception] {
           await(underTest.create(idType, idValue, request))
         }
@@ -57,13 +56,13 @@ class DetailsServiceSpec extends TestSupport {
     "Get" should {
       "Return details when successfully retrieved from mongo" in new Setup {
         val details = Details(s"$idType-$idValue", request.body)
-        when(mockEmploymentRepository.findById(s"$idType-$idValue")).thenReturn(Future.successful(Some(details)));
+        when(mockDetailsRepository.findById(s"$idType-$idValue")).thenReturn(Future.successful(Some(details)));
         val response = await(underTest.get(idType, idValue))
         response shouldBe Some(details)
       }
 
       "Return none if cannot be found in mongo" in new Setup {
-        when(mockEmploymentRepository.findById(s"$idType-$idValue")).thenReturn(Future.successful(None));
+        when(mockDetailsRepository.findById(s"$idType-$idValue")).thenReturn(Future.successful(None));
         val response = await(underTest.get(idType, idValue))
         response shouldBe None
       }

@@ -16,11 +16,9 @@
 
 package it.uk.gov.hmrc.individualsifapistub
 
-import org.joda.time.LocalDate
 import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
 import reactivemongo.api.indexes.IndexType.Ascending
-import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.individualsifapistub.domain.{DuplicateSelfAssessmentException, SelfAssessment}
 import uk.gov.hmrc.individualsifapistub.repository.SelfAssessmentRepository
 import uk.gov.hmrc.mongo.MongoSpecSupport

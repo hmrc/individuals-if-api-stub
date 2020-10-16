@@ -1,0 +1,86 @@
+/*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package unit.uk.gov.hmrc.individualsifapistub.util.controllers
+
+import org.joda.time.DateTime
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar.mock
+import play.api.libs.json.Json
+import play.api.mvc.ControllerComponents
+import play.api.test.FakeRequest
+import uk.gov.hmrc.individualsifapistub.controllers.EmploymentsController
+import uk.gov.hmrc.individualsifapistub.domain.{CreateEmploymentRequest, Employment}
+import uk.gov.hmrc.individualsifapistub.services.EmploymentsService
+import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
+import play.api.http.Status.{CREATED, OK}
+import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
+
+import scala.concurrent.{ExecutionContext, Future}
+
+class EmploymentsControllerSpec extends TestSupport {
+
+  implicit lazy val materializer = fakeApplication.materializer
+  val controllerComponents: ControllerComponents = fakeApplication.injector.instanceOf[ControllerComponents]
+  implicit val ec = fakeApplication.injector.instanceOf[ExecutionContext]
+
+  trait Setup {
+    val fakeRequest = FakeRequest()
+    val mockEmploymentsService = mock[EmploymentsService]
+    val underTest = new EmploymentsController(controllerComponents, mockEmploymentsService)
+  }
+
+  val matchId = "ABC123"
+  val startDate = new DateTime (2000,10,1, 0,0)
+  val endDate = new DateTime(2000,12,25,0,0)
+
+  val request = CreateEmploymentRequest("something")
+
+  "Create Employment" should {
+    "Successfully create a details record and return created record as response" in new Setup {
+      val employment = Employment(s"$matchId-$startDate-$endDate", request.body)
+      when(mockEmploymentsService.create(matchId, startDate, endDate, request)).thenReturn(Future.successful(employment))
+
+      val result = await(underTest.create(matchId, startDate, endDate)(fakeRequest.withBody(Json.toJson(request))))
+
+      status(result) shouldBe CREATED
+      jsonBodyOf(result) shouldBe Json.toJson(employment)
+    }
+
+    "Fail when a request is not provided" in new Setup {
+      val employment = Employment(s"$matchId-$startDate-$endDate", request.body)
+      when(mockEmploymentsService.create(matchId, startDate, endDate, request)).thenReturn(Future.successful(employment))
+      assertThrows[Exception] { await(underTest.create(matchId, startDate, endDate)(fakeRequest.withBody(Json.toJson("")))) }
+    }
+  }
+
+  "Retrieve Details" should {
+    "Return details when successfully retrieved from service" in new Setup {
+      val employment = Employment(s"$matchId-$startDate-$endDate", request.body)
+      when(mockEmploymentsService.get(matchId, startDate, endDate)).thenReturn(Future.successful(Some(employment)))
+
+      val result = await(underTest.retrieve(matchId, startDate, endDate)(fakeRequest))
+
+      status(result) shouldBe OK
+      jsonBodyOf(result) shouldBe Json.toJson(Some(employment))
+    }
+
+    "Fail when it cannot get from service" in new Setup {
+      when(mockEmploymentsService.get(matchId, startDate, endDate)).thenReturn(Future.failed(new Exception))
+      assertThrows[Exception] { await(underTest.retrieve(matchId, startDate, endDate)(fakeRequest)) }
+    }
+  }
+}

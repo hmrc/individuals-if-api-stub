@@ -22,7 +22,7 @@ import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.bson.BSONObjectID
 import reactivemongo.play.json._
-import uk.gov.hmrc.individualsifapistub.domain.{Employment, JsonFormatters}
+import uk.gov.hmrc.individualsifapistub.domain.{CreateEmploymentRequest, Employment, JsonFormatters}
 import uk.gov.hmrc.mongo.ReactiveRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -35,8 +35,8 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
     Index(key = Seq(("id", Ascending)), name = Some("idIndex"), unique = true, background = true)
   )
 
-  def create(id: String) = {
-    val employment = Employment(id)
+  def create(id: String, request: CreateEmploymentRequest) = {
+    val employment = Employment(id, request.body)
 
     insert(employment) map (_ => employment)
   }

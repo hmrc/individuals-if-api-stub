@@ -19,7 +19,7 @@ package it.uk.gov.hmrc.individualsifapistub
 import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
 import reactivemongo.api.indexes.IndexType.Ascending
-import uk.gov.hmrc.individualsifapistub.domain.{BenefitsAndCredits, DuplicateSelfAssessmentException}
+import uk.gov.hmrc.individualsifapistub.domain.BenefitsAndCredits
 import uk.gov.hmrc.individualsifapistub.repository.BenefitsAndCreditsRepository
 import uk.gov.hmrc.mongo.MongoSpecSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
