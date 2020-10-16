@@ -23,10 +23,11 @@ import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.bson.BSONObjectID
 import reactivemongo.play.json._
-import uk.gov.hmrc.individualsifapistub.domain.{Details, DuplicateSelfAssessmentException, JsonFormatters, SelfAssessment}
+import uk.gov.hmrc.individualsifapistub.domain.{CreateDetailsRequest, Details, DuplicateSelfAssessmentException, JsonFormatters, SelfAssessment}
 import uk.gov.hmrc.mongo.ReactiveRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 @Singleton
 class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvider)
@@ -36,9 +37,8 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
     Index(key = Seq(("id", Ascending)), name = Some("idIndex"), unique = true, background = true)
   )
 
-  def create(id: String) = {
-    val details = Details(id)
-
+  def create(id: String, createDetailsRequest: CreateDetailsRequest): Future[Details] = {
+    val details = Details(id, createDetailsRequest.body)
     insert(details) map (_ => details)
   }
 

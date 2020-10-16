@@ -23,7 +23,6 @@ import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.bson.BSONObjectID
 import reactivemongo.play.json._
-import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.individualsifapistub.domain.{DuplicateSelfAssessmentException, JsonFormatters, SelfAssessment}
 import uk.gov.hmrc.mongo.ReactiveRepository
 

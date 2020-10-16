@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.individualsifapistub.domain
+package unit.uk.gov.hmrc.individualsifapistub.util.services
 
-case class Details(id: String, body: String)
-
-case class CreateDetailsRequest(body:String)
+class DetailsServiceSpec {
+  //TODO :- TESTS FOR create
+  //TODO :- TEST FOR get
+}
