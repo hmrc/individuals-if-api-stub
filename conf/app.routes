@@ -1,2 +1,5 @@
 # microservice specific routes
-GET     /individuals/details/:idType/:idValue           uk.gov.hmrc.individualsifapistub.controllers.DetailsController.retrieve(idType, idValue)
+GET     /individuals/details/:idType/:idValue                           uk.gov.hmrc.individualsifapistub.controllers.DetailsController.retrieve(idType, idValue)
+POST    /individuals/details/:idType/:idValue                           uk.gov.hmrc.individualsifapistub.controllers.DetailsController.create(idType, idValue)
+GET     /individuals/employments/:idType/:idValue                       uk.gov.hmrc.individualsifapistub.controllers.EmploymentsController.retrieve(idType, idValue)
+POST    /individuals/employments/:idType/:idValue                       uk.gov.hmrc.individualsifapistub.controllers.EmploymentsController.create(idType, idValue)

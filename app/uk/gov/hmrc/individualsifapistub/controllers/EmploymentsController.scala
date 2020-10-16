@@ -17,7 +17,6 @@
 package uk.gov.hmrc.individualsifapistub.controllers
 
 import javax.inject.Inject
-import org.joda.time.DateTime
 import play.api.libs.json.Json
 import play.api.mvc.{BodyParsers, ControllerComponents}
 import uk.gov.hmrc.individualsifapistub.domain.CreateEmploymentRequest
@@ -27,14 +26,14 @@ import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
 import scala.concurrent.ExecutionContext
 
 class EmploymentsController @Inject()(cc: ControllerComponents, employmentsService: EmploymentsService)(implicit val ec: ExecutionContext) extends CommonController(cc) {
-  def create(matchId: String, startDate: DateTime, endDate: DateTime) = Action.async(BodyParsers.parse.json) { implicit request =>
+  def create(idType: String, idValue: String) = Action.async(BodyParsers.parse.json) { implicit request =>
     withJsonBody[CreateEmploymentRequest] { createRequest =>
-      employmentsService.create(matchId, startDate, endDate, createRequest) map (e => Created(Json.toJson(e)))
+      employmentsService.create(idType, idValue, createRequest) map (e => Created(Json.toJson(e)))
     } recover recovery
   }
 
-  def retrieve(matchId: String, startDate: DateTime, endDate: DateTime) = Action.async { implicit request =>
-    employmentsService.get(matchId, startDate, endDate) map { employmentOption =>
+  def retrieve(idType: String, idValue: String) = Action.async { implicit request =>
+    employmentsService.get(idType, idValue) map { employmentOption =>
       employmentOption match {
         case Some(value) => Ok(Json.toJson(value))
         case None => NotFound

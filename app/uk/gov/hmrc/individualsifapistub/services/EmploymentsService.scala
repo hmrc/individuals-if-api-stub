@@ -17,18 +17,17 @@
 package uk.gov.hmrc.individualsifapistub.services
 
 import javax.inject.Inject
-import org.joda.time.DateTime
 import uk.gov.hmrc.individualsifapistub.domain.{CreateEmploymentRequest, Employment}
 import uk.gov.hmrc.individualsifapistub.repository.EmploymentRepository
 
 import scala.concurrent.Future
 
 class EmploymentsService @Inject()(employmentsRepository: EmploymentRepository) {
-  def create(matchId: String, startDate: DateTime, endDate: DateTime, createEmploymentRequest: CreateEmploymentRequest): Future[Employment] = {
-    employmentsRepository.create(s"$matchId-$startDate-$endDate", createEmploymentRequest)
+  def create(idType: String, idValue: String, createEmploymentRequest: CreateEmploymentRequest): Future[Employment] = {
+    employmentsRepository.create(s"$idType-$idValue", createEmploymentRequest)
   }
 
-  def get(matchId: String, startDate: DateTime, endDate: DateTime): Future[Option[Employment]] = {
-    employmentsRepository.findById(s"$matchId-$startDate-$endDate")
+  def get(idType: String, idValue: String): Future[Option[Employment]] = {
+    employmentsRepository.findById(s"$idType-$idValue")
   }
 }

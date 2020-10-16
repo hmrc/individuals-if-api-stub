@@ -16,7 +16,6 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.services
 
-import org.joda.time.DateTime
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import uk.gov.hmrc.individualsifapistub.domain.{CreateEmploymentRequest, Employment}
@@ -29,9 +28,8 @@ import scala.concurrent.Future
 class EmploymentsServiceSpec extends TestSupport {
   trait Setup {
 
-    val matchId = "ABC123"
-    val startDate = new DateTime (2000,10,1, 0,0)
-    val endDate = new DateTime(2000,12,25,0,0)
+    val idType = "idType"
+    val idValue = "idValue"
 
     val request = CreateEmploymentRequest("something")
 
@@ -42,31 +40,31 @@ class EmploymentsServiceSpec extends TestSupport {
   "Details Service" when {
     "Create" should {
       "Return the created details when created" in new Setup {
-        val employment = Employment(s"$matchId-$startDate-$endDate", request.body)
-        when(mockEmploymentRepository.create(s"$matchId-$startDate-$endDate", request)).thenReturn(Future.successful(employment));
-        val response = await(underTest.create(matchId, startDate, endDate, request))
+        val employment = Employment(s"$idType-$idValue", request.body)
+        when(mockEmploymentRepository.create(s"$idType-$idValue", request)).thenReturn(Future.successful(employment));
+        val response = await(underTest.create(idType, idValue, request))
         response shouldBe employment
       }
 
       "Return failure when unable to create Details object" in new Setup {
-        when(mockEmploymentRepository.create(s"$matchId-$startDate-$endDate", request)).thenReturn(Future.failed(new Exception));
+        when(mockEmploymentRepository.create(s"$idType-$idValue", request)).thenReturn(Future.failed(new Exception));
         assertThrows[Exception] {
-          await(underTest.create(matchId, startDate, endDate, request))
+          await(underTest.create(idType, idValue, request))
         }
       }
     }
 
     "Get" should {
       "Return details when successfully retrieved from mongo" in new Setup {
-        val employment = Employment(s"$matchId-$startDate-$endDate", request.body)
-        when(mockEmploymentRepository.findById(s"$matchId-$startDate-$endDate")).thenReturn(Future.successful(Some(employment)));
-        val response = await(underTest.get(matchId, startDate, endDate))
+        val employment = Employment(s"$idType-$idValue", request.body)
+        when(mockEmploymentRepository.findById(s"$idType-$idValue")).thenReturn(Future.successful(Some(employment)));
+        val response = await(underTest.get(idType, idValue))
         response shouldBe Some(employment)
       }
 
       "Return none if cannot be found in mongo" in new Setup {
-        when(mockEmploymentRepository.findById(s"$matchId-$startDate-$endDate")).thenReturn(Future.successful(None));
-        val response = await(underTest.get(matchId, startDate, endDate))
+        when(mockEmploymentRepository.findById(s"$idType-$idValue")).thenReturn(Future.successful(None));
+        val response = await(underTest.get(idType,idValue))
         response shouldBe None
       }
     }
