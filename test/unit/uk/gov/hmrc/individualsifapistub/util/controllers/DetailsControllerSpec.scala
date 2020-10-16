@@ -25,13 +25,12 @@ import uk.gov.hmrc.individualsifapistub.controllers.DetailsController
 import uk.gov.hmrc.individualsifapistub.domain.{CreateDetailsRequest, Details}
 import uk.gov.hmrc.individualsifapistub.services.DetailsService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
-import play.api.http.Status.{BAD_REQUEST, CREATED}
+import play.api.http.Status._
 import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class DetailsControllerSpec extends TestSupport {
-  //TODO :- TEST FOR Create ENDPOINT
   //TODO :- TESTS FOR Retrieve ENDPOINT
 
   implicit lazy val materializer = fakeApplication.materializer
@@ -44,11 +43,11 @@ class DetailsControllerSpec extends TestSupport {
     val underTest = new DetailsController(controllerComponents, mockDetailsService)
   }
 
-  "Create details" should {
-    val idType = "NINO"
-    val idValue = "QW1234QW"
-    val request = CreateDetailsRequest("test")
+  val idType = "NINO"
+  val idValue = "QW1234QW"
+  val request = CreateDetailsRequest("test")
 
+  "Create details" should {
     "Successfully create a details record and return created record as response" in new Setup {
       val details = Details(s"$idType-$idValue", request.body)
       when(mockDetailsService.create(idType, idValue, request)).thenReturn(Future.successful(details))
@@ -62,7 +61,23 @@ class DetailsControllerSpec extends TestSupport {
     "Fail when a request is not provided" in new Setup {
       val details = Details(s"$idType-$idValue", request.body)
       when(mockDetailsService.create(idType, idValue, request)).thenReturn(Future.successful(details))
+      assertThrows[Exception] { await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson("")))) }
+    }
+  }
 
+  "Retrieve Details" should {
+    "Return details when successfully retrieved from service" in new Setup {
+      val details = Details(s"$idType-$idValue", request.body)
+      when(mockDetailsService.get(idType, idValue)).thenReturn(Future.successful(Some(details)))
+
+      val result = await(underTest.retrieve(idType, idValue)(fakeRequest))
+
+      status(result) shouldBe OK
+      jsonBodyOf(result) shouldBe Json.toJson(Some(details))
+    }
+
+    "Fails when it cannot get from service" in new Setup {
+      when(mockDetailsService.create(idType, idValue, request)).thenReturn(Future.failed(new Exception))
       assertThrows[Exception] { await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson("")))) }
     }
   }

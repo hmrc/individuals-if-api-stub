@@ -16,7 +16,58 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.services
 
-class DetailsServiceSpec {
-  //TODO :- TESTS FOR create
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar.mock
+import uk.gov.hmrc.individualsifapistub.domain.{CreateDetailsRequest, Details}
+import uk.gov.hmrc.individualsifapistub.repository.DetailsRepository
+import uk.gov.hmrc.individualsifapistub.services.DetailsService
+import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
+
+import scala.concurrent.Future
+
+class DetailsServiceSpec extends TestSupport {
   //TODO :- TEST FOR get
+  trait Setup {
+
+    val idType = "NINO"
+    val idValue = "QW1234QW"
+    val request = CreateDetailsRequest("test")
+
+    val mockEmploymentRepository = mock[DetailsRepository]
+    val underTest = new DetailsService(mockEmploymentRepository)
+  }
+
+  "Details Service" when {
+    "Create" should {
+      "Return the created details when created" in new Setup {
+        val details = Details(s"$idType-$idValue", request.body)
+        when(mockEmploymentRepository.create(s"$idType-$idValue", request)).thenReturn(Future.successful(details));
+        val response = await(underTest.create(idType, idValue, request))
+        response shouldBe details
+      }
+
+      "Return failure when unable to create Details object" in new Setup {
+        when(mockEmploymentRepository.create(s"$idType-$idValue", request)).thenReturn(Future.failed(new Exception));
+        assertThrows[Exception] {
+          await(underTest.create(idType, idValue, request))
+        }
+      }
+    }
+
+    "Get" should {
+      "Return details when successfully retrieved from mongo" in new Setup {
+        val details = Details(s"$idType-$idValue", request.body)
+        when(mockEmploymentRepository.findById(s"$idType-$idValue")).thenReturn(Future.successful(Some(details)));
+        val response = await(underTest.get(idType, idValue))
+        response shouldBe Some(details)
+      }
+
+      "Return none if cannot be found in mongo" in new Setup {
+        when(mockEmploymentRepository.findById(s"$idType-$idValue")).thenReturn(Future.successful(None));
+        val response = await(underTest.get(idType, idValue))
+        response shouldBe None
+      }
+    }
+  }
+
 }
