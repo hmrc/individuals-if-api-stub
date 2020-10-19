@@ -24,28 +24,28 @@ import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.bson.BSONObjectID
 import reactivemongo.play.json._
-import uk.gov.hmrc.individualsifapistub.domain.{CreateSelfAssessmentRequest, DuplicateException, JsonFormatters, SelfAssessment}
+import uk.gov.hmrc.individualsifapistub.domain.{CreateIncomeRequest, DuplicateException, JsonFormatters, Income}
 import uk.gov.hmrc.mongo.ReactiveRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class SelfAssessmentRepository @Inject()(mongoConnectionProvider: MongoConnectionProvider)
-  extends ReactiveRepository[SelfAssessment, BSONObjectID]( "selfAssessment",
+class IncomeRepository @Inject()(mongoConnectionProvider: MongoConnectionProvider)
+  extends ReactiveRepository[Income, BSONObjectID]( "Income",
                                                             mongoConnectionProvider.mongoDatabase,
-                                                            JsonFormatters.selfAssessmentFormat ) {
+                                                            JsonFormatters.incomeFormat ) {
 
   override lazy val indexes = Seq(
     Index(key = Seq(("id", Ascending)), name = Some("idIndex"), unique = true, background = true)
   )
 
-  def create(id: String, request: CreateSelfAssessmentRequest): Future[SelfAssessment] = {
-    val selfAssessment = SelfAssessment(id, request.body)
-    insert(selfAssessment) map (_ => selfAssessment) recover {
+  def create(id: String, request: CreateIncomeRequest): Future[Income] = {
+    val income = Income(id, request.body)
+    insert(income) map (_ => income) recover {
       case WriteResult.Code(11000) => throw new DuplicateException
     }
   }
 
-  def findById(id: String): Future[Option[SelfAssessment]] = collection.find[JsObject, JsObject](obj("id" -> id), None).one[SelfAssessment]
+  def findById(id: String): Future[Option[Income]] = collection.find[JsObject, JsObject](obj("id" -> id), None).one[Income]
 }

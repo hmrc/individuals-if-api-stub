@@ -19,12 +19,12 @@ package it.uk.gov.hmrc.individualsifapistub
 import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
 import reactivemongo.api.indexes.IndexType.Ascending
-import uk.gov.hmrc.individualsifapistub.domain.{CreateSelfAssessmentRequest, DuplicateException, SelfAssessment}
-import uk.gov.hmrc.individualsifapistub.repository.SelfAssessmentRepository
+import uk.gov.hmrc.individualsifapistub.domain.{CreateIncomeRequest, DuplicateException, Income}
+import uk.gov.hmrc.individualsifapistub.repository.IncomeRepository
 import uk.gov.hmrc.mongo.MongoSpecSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
-class SelfAssessmentRepositorySpec
+class IncomeRepositorySpec
     extends TestSupport
     with MongoSpecSupport
     with BeforeAndAfterEach {
@@ -32,11 +32,11 @@ class SelfAssessmentRepositorySpec
   override lazy val fakeApplication = buildFakeApplication(
     Configuration("mongodb.uri" -> mongoUri))
 
-  val repository = fakeApplication.injector.instanceOf[SelfAssessmentRepository]
+  val repository = fakeApplication.injector.instanceOf[IncomeRepository]
 
   val id = "2432552635"
-  val request = CreateSelfAssessmentRequest("request")
-  val selfAssessment = SelfAssessment(id, request.body)
+  val request = CreateIncomeRequest("request")
+  val selfAssessment = Income(id, request.body)
 
   override def beforeEach() {
     await(repository.drop)
