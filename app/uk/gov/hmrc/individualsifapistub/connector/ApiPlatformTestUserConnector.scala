@@ -17,7 +17,7 @@
 package uk.gov.hmrc.individualsifapistub.connector
 
 import javax.inject.{Inject, Singleton}
-import play.api.{Configuration, Logger}
+import play.api.{Application, Configuration, Logger}
 import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, NotFoundException}
 import uk.gov.hmrc.individualsifapistub.config.ConfigSupport
@@ -29,7 +29,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class ApiPlatformTestUserConnector @Inject()( override val config : Configuration,
+class ApiPlatformTestUserConnector @Inject()( override val current : Application,
+                                              override val config : Configuration,
                                               http : HttpClient,
                                               servicesConfig: ServicesConfig ) extends ConfigSupport {
 

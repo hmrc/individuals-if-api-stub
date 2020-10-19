@@ -17,8 +17,8 @@
 package uk.gov.hmrc.individualsifapistub.services
 
 import javax.inject.Inject
-import uk.gov.hmrc.individualsifapistub.domain.{CreateEmploymentRequest, CreateIncomeRequest, Employment, Income}
-import uk.gov.hmrc.individualsifapistub.repository.{EmploymentRepository, IncomeRepository}
+import uk.gov.hmrc.individualsifapistub.domain.{CreateIncomeRequest, Income}
+import uk.gov.hmrc.individualsifapistub.repository.IncomeRepository
 
 import scala.concurrent.Future
 
