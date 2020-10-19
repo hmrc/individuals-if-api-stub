@@ -32,7 +32,7 @@ import scala.concurrent.Future
 
 @Singleton
 class IncomeRepository @Inject()(mongoConnectionProvider: MongoConnectionProvider)
-  extends ReactiveRepository[Income, BSONObjectID]( "Income",
+  extends ReactiveRepository[Income, BSONObjectID]( "income",
                                                             mongoConnectionProvider.mongoDatabase,
                                                             JsonFormatters.incomeFormat ) {
 
