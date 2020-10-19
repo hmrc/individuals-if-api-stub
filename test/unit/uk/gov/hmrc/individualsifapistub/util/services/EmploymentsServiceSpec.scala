@@ -37,16 +37,16 @@ class EmploymentsServiceSpec extends TestSupport {
     val underTest = new EmploymentsService(mockEmploymentRepository)
   }
 
-  "Details Service" when {
+  "Employments Service" when {
     "Create" should {
-      "Return the created details when created" in new Setup {
+      "Return the created employment when created" in new Setup {
         val employment = Employment(s"$idType-$idValue", request.body)
         when(mockEmploymentRepository.create(s"$idType-$idValue", request)).thenReturn(Future.successful(employment));
         val response = await(underTest.create(idType, idValue, request))
         response shouldBe employment
       }
 
-      "Return failure when unable to create Details object" in new Setup {
+      "Return failure when unable to create Employment object" in new Setup {
         when(mockEmploymentRepository.create(s"$idType-$idValue", request)).thenReturn(Future.failed(new Exception));
         assertThrows[Exception] {
           await(underTest.create(idType, idValue, request))
@@ -55,7 +55,7 @@ class EmploymentsServiceSpec extends TestSupport {
     }
 
     "Get" should {
-      "Return details when successfully retrieved from mongo" in new Setup {
+      "Return employment when successfully retrieved from mongo" in new Setup {
         val employment = Employment(s"$idType-$idValue", request.body)
         when(mockEmploymentRepository.findById(s"$idType-$idValue")).thenReturn(Future.successful(Some(employment)));
         val response = await(underTest.get(idType, idValue))

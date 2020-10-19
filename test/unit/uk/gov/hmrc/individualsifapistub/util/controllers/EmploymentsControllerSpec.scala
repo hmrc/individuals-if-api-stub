@@ -61,8 +61,8 @@ class EmploymentsControllerSpec extends TestSupport {
     }
   }
 
-  "Retrieve Details" should {
-    "Return details when successfully retrieved from service" in new Setup {
+  "Retrieve Employment" should {
+    "Return employment when successfully retrieved from service" in new Setup {
       val employment = Employment(s"$idType-$idValue", request.body)
       when(mockEmploymentsService.get(idType, idValue)).thenReturn(Future.successful(Some(employment)))
 

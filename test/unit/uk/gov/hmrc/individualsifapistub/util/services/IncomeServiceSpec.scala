@@ -37,16 +37,16 @@ class IncomeServiceSpec extends TestSupport {
     val underTest = new IncomeService(mockSelfAssessmentRepository)
   }
 
-  "Details Service" when {
+  "Income Service" when {
     "Create" should {
-      "Return the created details when created" in new Setup {
+      "Return the created income when created" in new Setup {
         val selfAssessment = Income(s"$incomeType-$idType-$idValue", request.body)
         when(mockSelfAssessmentRepository.create(s"$incomeType-$idType-$idValue", request)).thenReturn(Future.successful(selfAssessment));
         val response = await(underTest.create(incomeType,idType, idValue, request))
         response shouldBe selfAssessment
       }
 
-      "Return failure when unable to create Details object" in new Setup {
+      "Return failure when unable to create Income object" in new Setup {
         when(mockSelfAssessmentRepository.create(s"$idType-$idValue", request)).thenReturn(Future.failed(new Exception));
         assertThrows[Exception] {
           await(underTest.create(incomeType, idType, idValue, request))
@@ -55,7 +55,7 @@ class IncomeServiceSpec extends TestSupport {
     }
 
     "Get" should {
-      "Return details when successfully retrieved from mongo" in new Setup {
+      "Return income when successfully retrieved from mongo" in new Setup {
         val selfAssessment = Income(s"$incomeType-$idType-$idValue", request.body)
         when(mockSelfAssessmentRepository.findById(s"$incomeType-$idType-$idValue")).thenReturn(Future.successful(Some(selfAssessment)));
         val response = await(underTest.get(incomeType, idType, idValue))
