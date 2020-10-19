@@ -23,7 +23,7 @@ import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.bson.BSONObjectID
 import reactivemongo.play.json._
-import uk.gov.hmrc.individualsifapistub.domain.{DuplicateSelfAssessmentException, JsonFormatters, SelfAssessment}
+import uk.gov.hmrc.individualsifapistub.domain.{CreateSelfAssessmentRequest, DuplicateSelfAssessmentException, JsonFormatters, SelfAssessment}
 import uk.gov.hmrc.mongo.ReactiveRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -36,7 +36,10 @@ class SelfAssessmentRepository @Inject()(mongoConnectionProvider: MongoConnectio
     Index(key = Seq(("id", Ascending)), name = Some("idIndex"), unique = true, background = true)
   )
 
-  def create(selfAssessment: SelfAssessment) = {
+  def create(id: String, request: CreateSelfAssessmentRequest) = {
+
+    val selfAssessment = SelfAssessment(id, request.body)
+
     insert(selfAssessment) map (_ => selfAssessment) recover {
       case WriteResult.Code(11000) => throw new DuplicateSelfAssessmentException
     }

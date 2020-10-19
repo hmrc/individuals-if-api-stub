@@ -19,7 +19,7 @@ package it.uk.gov.hmrc.individualsifapistub
 import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
 import reactivemongo.api.indexes.IndexType.Ascending
-import uk.gov.hmrc.individualsifapistub.domain.{DuplicateSelfAssessmentException, SelfAssessment}
+import uk.gov.hmrc.individualsifapistub.domain.{CreateSelfAssessmentRequest, DuplicateSelfAssessmentException, SelfAssessment}
 import uk.gov.hmrc.individualsifapistub.repository.SelfAssessmentRepository
 import uk.gov.hmrc.mongo.MongoSpecSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
@@ -37,7 +37,8 @@ class SelfAssessmentRepositorySpec
   val repository = fakeApplication.injector.instanceOf[SelfAssessmentRepository]
 
   val id = "2432552635"
-  val selfAssessment = SelfAssessment(id)
+  val request = CreateSelfAssessmentRequest("request")
+  val selfAssessment = SelfAssessment(id, request.body)
 
   override def beforeEach() {
     await(repository.drop)
@@ -61,16 +62,16 @@ class SelfAssessmentRepositorySpec
 
   "create" should {
     "create a self assessment" in {
-      val result = await(repository.create(selfAssessment))
+      val result = await(repository.create(selfAssessment.id, request))
 
       result shouldBe selfAssessment
     }
 
     "fail to create a duplicate self assessment" in {
-      await(repository.create(selfAssessment))
+      await(repository.create(selfAssessment.id, request))
 
       intercept[DuplicateSelfAssessmentException](
-        await(repository.create(selfAssessment)))
+        await(repository.create(selfAssessment.id, request)))
     }
   }
 
@@ -80,7 +81,7 @@ class SelfAssessmentRepositorySpec
     }
 
     "return the self assessment" in {
-      await(repository.create(selfAssessment))
+      await(repository.create(selfAssessment.id, request))
 
       val result = await(repository.findById(id))
 
