@@ -17,6 +17,7 @@
 package uk.gov.hmrc.individualsifapistub.repository
 
 import javax.inject.{Inject, Singleton}
+import play.api.libs.json.JsObject
 import play.api.libs.json.Json.obj
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
@@ -30,7 +31,9 @@ import scala.concurrent.Future
 
 @Singleton
 class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvider)
-  extends ReactiveRepository[Details, BSONObjectID]("details", mongoConnectionProvider.mongoDatabase, JsonFormatters.detailsFormat) {
+  extends ReactiveRepository[Details, BSONObjectID](  "details",
+                                                      mongoConnectionProvider.mongoDatabase,
+                                                      JsonFormatters.detailsFormat) {
 
   override lazy val indexes = Seq(
     Index(key = Seq(("id", Ascending)), name = Some("idIndex"), unique = true, background = true)
@@ -41,5 +44,5 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
     insert(details) map (_ => details)
   }
 
-  def findById(id: String) = collection.find(obj("id" -> id)).one[Details]
+  def findById(id: String): Future[Option[Details]] = collection.find[JsObject, JsObject](obj("id" -> id), None).one[Details]
 }

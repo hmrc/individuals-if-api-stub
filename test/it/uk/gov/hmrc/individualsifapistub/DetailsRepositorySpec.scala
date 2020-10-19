@@ -24,8 +24,6 @@ import uk.gov.hmrc.individualsifapistub.repository.DetailsRepository
 import uk.gov.hmrc.mongo.MongoSpecSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 class DetailsRepositorySpec
     extends TestSupport
     with MongoSpecSupport

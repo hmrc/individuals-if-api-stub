@@ -29,9 +29,12 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class ApiPlatformTestUserConnector @Inject()(override val config : Configuration, http : HttpClient, servicesConfig: ServicesConfig) extends  ConfigSupport {
+class ApiPlatformTestUserConnector @Inject()( override val config : Configuration,
+                                              http : HttpClient,
+                                              servicesConfig: ServicesConfig ) extends ConfigSupport {
 
   val serviceUrl = servicesConfig.baseUrl("api-platform-test-user")
+
   def getOrganisationByEmpRef(empRef: EmpRef)(implicit hc: HeaderCarrier): Future[Option[TestOrganisation]] = {
     http.GET[TestOrganisation](s"$serviceUrl/organisations/empref/${empRef.encodedValue}") map (Some(_))
   } recover {
@@ -47,5 +50,4 @@ class ApiPlatformTestUserConnector @Inject()(override val config : Configuration
       Logger.warn(s"unable to retrieve individual with nino: ${nino.value}. ${e.getMessage}")
       throw new RecordNotFoundException()
   }
-
 }

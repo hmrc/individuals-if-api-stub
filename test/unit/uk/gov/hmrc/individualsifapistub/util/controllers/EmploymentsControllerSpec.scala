@@ -32,14 +32,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class EmploymentsControllerSpec extends TestSupport {
 
-  implicit lazy val materializer = fakeApplication.materializer
-  val controllerComponents: ControllerComponents = fakeApplication.injector.instanceOf[ControllerComponents]
-  implicit val ec = fakeApplication.injector.instanceOf[ExecutionContext]
-
   trait Setup {
     val fakeRequest = FakeRequest()
     val mockEmploymentsService = mock[EmploymentsService]
-    val underTest = new EmploymentsController(controllerComponents, mockEmploymentsService)
+    val underTest = new EmploymentsController(bodyParsers, controllerComponents, mockEmploymentsService)
   }
 
   val idType = "idType"

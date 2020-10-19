@@ -16,10 +16,14 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util
 
+import akka.stream.Materializer
 import com.typesafe.config.ConfigFactory
 import org.scalatest.BeforeAndAfterAll
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.mvc.{ControllerComponents, PlayBodyParsers}
 import play.api.{Application, Configuration, Play}
+
+import scala.concurrent.ExecutionContext
 
 trait TestSupport extends UnitSpec with BeforeAndAfterAll {
 
@@ -39,6 +43,14 @@ trait TestSupport extends UnitSpec with BeforeAndAfterAll {
   }
 
   lazy val fakeApplication: Application = buildFakeApplication(additionalConfig)
+
+  implicit lazy val materializer: Materializer = fakeApplication.materializer
+
+  lazy val controllerComponents: ControllerComponents = fakeApplication.injector.instanceOf[ControllerComponents]
+
+  implicit lazy val ec: ExecutionContext = fakeApplication.injector.instanceOf[ExecutionContext]
+
+  lazy val bodyParsers: PlayBodyParsers = fakeApplication.injector.instanceOf[PlayBodyParsers]
 
   override def beforeAll() {
     Play.start(fakeApplication)

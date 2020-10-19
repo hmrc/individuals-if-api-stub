@@ -32,17 +32,16 @@ import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
-class CustomErrorHandler @Inject()(
-    configuration: Configuration,
-    auditConnector: AuditConnector,
-    httpAuditEvent: HttpAuditEvent)(implicit ec: ExecutionContext)
-    extends JsonErrorHandler(auditConnector,
-                             httpAuditEvent,
-                             configuration = configuration) {
+class CustomErrorHandler @Inject()( configuration: Configuration,
+                                    auditConnector: AuditConnector,
+                                    httpAuditEvent: HttpAuditEvent )
+                                  ( implicit ec: ExecutionContext ) extends JsonErrorHandler( auditConnector,
+                                                                                              httpAuditEvent,
+                                                                                              configuration ) {
 
-  override def onClientError(request: RequestHeader,
-                             statusCode: Int,
-                             message: String): Future[Result] = {
+  override def onClientError( request: RequestHeader,
+                              statusCode: Int,
+                              message: String ): Future[Result] = {
 
     val newMessage = Try {
       Json.parse(message).\\("message").mkString(",").replaceAll("\"", "")
@@ -53,6 +52,7 @@ class CustomErrorHandler @Inject()(
 
     implicit val headerCarrier = HeaderCarrierConverter
       .fromHeadersAndSessionAndRequest(request.headers, request = Some(request))
+
     statusCode match {
       case NOT_FOUND =>
         Future.successful(
@@ -70,7 +70,6 @@ class CustomErrorHandler @Inject()(
             Json.toJson(ErrorResponse(statusCode, newMessage))))
     }
   }
-
 }
 
 abstract class CommonController(controllerComponents: ControllerComponents)
@@ -100,7 +99,7 @@ abstract class CommonController(controllerComponents: ControllerComponents)
   private[controllers] def recovery: PartialFunction[Throwable, Result] = {
     case e: IllegalArgumentException =>
       ErrorInvalidRequest(e.getMessage).toHttpResponse
-    case _: DuplicateSelfAssessmentException =>
-      ErrorDuplicateAssessment.toHttpResponse
+    case _: DuplicateException =>
+      ErrorDuplicate.toHttpResponse
   }
 }

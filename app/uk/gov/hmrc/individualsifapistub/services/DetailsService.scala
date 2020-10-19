@@ -23,7 +23,10 @@ import uk.gov.hmrc.individualsifapistub.repository.DetailsRepository
 import scala.concurrent.Future
 
 class DetailsService @Inject()(detailsRepository: DetailsRepository) {
-  def create(idType: String, idValue:String, createDetailsRequest: CreateDetailsRequest): Future[Details] = {
+
+  def create( idType: String,
+              idValue:String,
+              createDetailsRequest: CreateDetailsRequest): Future[Details] = {
     detailsRepository.create(s"$idType-$idValue", createDetailsRequest)
   }
 

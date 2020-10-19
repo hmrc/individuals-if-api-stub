@@ -17,8 +17,8 @@
 package uk.gov.hmrc.individualsifapistub.controllers
 
 import javax.inject.{Inject, Singleton}
-import play.api.libs.json.Json
-import play.api.mvc.{BodyParsers, ControllerComponents}
+import play.api.libs.json.{JsValue, Json}
+import play.api.mvc.{Action, AnyContent, BodyParsers, ControllerComponents, PlayBodyParsers}
 import uk.gov.hmrc.individualsifapistub.domain.CreateDetailsRequest
 import uk.gov.hmrc.individualsifapistub.services.DetailsService
 import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
@@ -26,19 +26,21 @@ import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class DetailsController @Inject()(cc: ControllerComponents, detailsService: DetailsService)(implicit val ec: ExecutionContext) extends CommonController(cc) {
-  def create(idType: String, idValue: String) = Action.async(BodyParsers.parse.json) { implicit request =>
+class DetailsController @Inject()(  bodyParsers: PlayBodyParsers,
+                                    cc: ControllerComponents,
+                                    detailsService: DetailsService
+                                 )(implicit val ec: ExecutionContext) extends CommonController(cc) {
+
+  def create(idType: String, idValue: String): Action[JsValue] = Action.async(bodyParsers.json) { implicit request =>
     withJsonBody[CreateDetailsRequest] { createRequest =>
       detailsService.create(idType, idValue, createRequest) map (e => Created(Json.toJson(e)))
     } recover recovery
   }
 
-  def retrieve(idType: String, idValue: String) = Action.async { implicit request =>
-    detailsService.get(idType, idValue) map { detailsOption =>
-      detailsOption match {
-        case Some(value) => Ok(Json.toJson(value))
-        case None => NotFound
-      }
+  def retrieve(idType: String, idValue: String): Action[AnyContent] = Action.async { implicit request =>
+    detailsService.get(idType, idValue) map {
+      case Some(value) => Ok(Json.toJson(value))
+      case None => NotFound
     } recover recovery
   }
 }

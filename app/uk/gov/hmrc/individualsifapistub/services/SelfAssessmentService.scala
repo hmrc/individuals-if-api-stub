@@ -23,7 +23,11 @@ import uk.gov.hmrc.individualsifapistub.repository.{EmploymentRepository, SelfAs
 import scala.concurrent.Future
 
 class SelfAssessmentService @Inject()(selfAssessmentRepository: SelfAssessmentRepository) {
-  def create(incomeType: String, idType: String, idValue: String, createSelfAssessmentRequest: CreateSelfAssessmentRequest): Future[SelfAssessment] = {
+
+  def create( incomeType: String,
+              idType: String,
+              idValue: String,
+              createSelfAssessmentRequest: CreateSelfAssessmentRequest): Future[SelfAssessment] = {
     selfAssessmentRepository.create(s"$incomeType-$idType-$idValue", createSelfAssessmentRequest)
   }
 

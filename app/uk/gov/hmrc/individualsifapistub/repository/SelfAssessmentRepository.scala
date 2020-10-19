@@ -17,33 +17,35 @@
 package uk.gov.hmrc.individualsifapistub.repository
 
 import javax.inject.{Inject, Singleton}
+import play.api.libs.json.JsObject
 import play.api.libs.json.Json.obj
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.bson.BSONObjectID
 import reactivemongo.play.json._
-import uk.gov.hmrc.individualsifapistub.domain.{CreateSelfAssessmentRequest, DuplicateSelfAssessmentException, JsonFormatters, SelfAssessment}
+import uk.gov.hmrc.individualsifapistub.domain.{CreateSelfAssessmentRequest, DuplicateException, JsonFormatters, SelfAssessment}
 import uk.gov.hmrc.mongo.ReactiveRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 @Singleton
 class SelfAssessmentRepository @Inject()(mongoConnectionProvider: MongoConnectionProvider)
-  extends ReactiveRepository[SelfAssessment, BSONObjectID]("selfAssessment", mongoConnectionProvider.mongoDatabase, JsonFormatters.selfAssessmentFormat) {
+  extends ReactiveRepository[SelfAssessment, BSONObjectID]( "selfAssessment",
+                                                            mongoConnectionProvider.mongoDatabase,
+                                                            JsonFormatters.selfAssessmentFormat ) {
 
   override lazy val indexes = Seq(
     Index(key = Seq(("id", Ascending)), name = Some("idIndex"), unique = true, background = true)
   )
 
-  def create(id: String, request: CreateSelfAssessmentRequest) = {
-
+  def create(id: String, request: CreateSelfAssessmentRequest): Future[SelfAssessment] = {
     val selfAssessment = SelfAssessment(id, request.body)
-
     insert(selfAssessment) map (_ => selfAssessment) recover {
-      case WriteResult.Code(11000) => throw new DuplicateSelfAssessmentException
+      case WriteResult.Code(11000) => throw new DuplicateException
     }
   }
 
-  def findById(id: String) = collection.find(obj("id" -> id)).one[SelfAssessment]
+  def findById(id: String): Future[Option[SelfAssessment]] = collection.find[JsObject, JsObject](obj("id" -> id), None).one[SelfAssessment]
 }

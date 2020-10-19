@@ -16,28 +16,29 @@
 
 package uk.gov.hmrc.individualsifapistub.controllers
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
-import uk.gov.hmrc.individualsifapistub.domain.CreateEmploymentRequest
+import uk.gov.hmrc.individualsifapistub.domain.{CreateBenefitsAndCreditsRequest, CreateDetailsRequest}
 import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
-import uk.gov.hmrc.individualsifapistub.services.EmploymentsService
+import uk.gov.hmrc.individualsifapistub.services.{BenefitsAndCreditsService, DetailsService}
 
 import scala.concurrent.ExecutionContext
 
-class EmploymentsController @Inject()( bodyParser: PlayBodyParsers,
-                                       cc: ControllerComponents,
-                                       employmentsService: EmploymentsService
-                                     ) (implicit val ec: ExecutionContext) extends CommonController(cc) {
+@Singleton
+class BenefitsAndCreditsController @Inject()( bodyParsers: PlayBodyParsers,
+                                              cc: ControllerComponents,
+                                              benefitsAndCreditsService: BenefitsAndCreditsService
+                                            )(implicit val ec: ExecutionContext) extends CommonController(cc) {
 
-  def create(idType: String, idValue: String): Action[JsValue] = Action.async(bodyParser.json) { implicit request =>
-    withJsonBody[CreateEmploymentRequest] { createRequest =>
-      employmentsService.create(idType, idValue, createRequest) map (e => Created(Json.toJson(e)))
+  def create(idType: String, idValue: String): Action[JsValue] = Action.async(bodyParsers.json) { implicit request =>
+    withJsonBody[CreateBenefitsAndCreditsRequest] { createRequest =>
+      benefitsAndCreditsService.create(idType, idValue, createRequest) map (e => Created(Json.toJson(e)))
     } recover recovery
   }
 
   def retrieve(idType: String, idValue: String): Action[AnyContent] = Action.async { implicit request =>
-    employmentsService.get(idType, idValue) map {
+    benefitsAndCreditsService.get(idType, idValue) map {
       case Some(value) => Ok(Json.toJson(value))
       case None => NotFound
     } recover recovery
