@@ -41,7 +41,7 @@ class SelfAssessmentServiceSpec extends TestSupport {
     "Create" should {
       "Return the created details when created" in new Setup {
         val selfAssessment = SelfAssessment(s"$incomeType-$idType-$idValue", request.body)
-        when(mockSelfAssessmentRepository.create(s"$idType-$idValue", request)).thenReturn(Future.successful(selfAssessment));
+        when(mockSelfAssessmentRepository.create(s"$incomeType-$idType-$idValue", request)).thenReturn(Future.successful(selfAssessment));
         val response = await(underTest.create(incomeType,idType, idValue, request))
         response shouldBe selfAssessment
       }
@@ -57,7 +57,7 @@ class SelfAssessmentServiceSpec extends TestSupport {
     "Get" should {
       "Return details when successfully retrieved from mongo" in new Setup {
         val selfAssessment = SelfAssessment(s"$incomeType-$idType-$idValue", request.body)
-        when(mockSelfAssessmentRepository.findById(s"$idType-$idValue")).thenReturn(Future.successful(Some(selfAssessment)));
+        when(mockSelfAssessmentRepository.findById(s"$incomeType-$idType-$idValue")).thenReturn(Future.successful(Some(selfAssessment)));
         val response = await(underTest.get(incomeType, idType, idValue))
         response shouldBe Some(selfAssessment)
       }
