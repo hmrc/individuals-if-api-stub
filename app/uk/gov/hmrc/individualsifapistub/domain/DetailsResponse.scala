@@ -27,8 +27,10 @@ case class Address(
                     postcode: Option[String]
                   )
 
-case class Residence(residenceType: Option[String], address: Address)
+case class Residence(residenceType: Option[String], address: Option[Address])
 
-case class DetailsResponse(id: String, contactDetails: Option[Seq[ContactDetail]], residences: Seq[Residence])
+case class Details(nino: Option[String], trn: Option[String])
 
-case class CreateDetailsRequest(body: String)
+case class DetailsResponse(details: Details, contactDetails: Option[Seq[ContactDetail]], residences: Option[Seq[Residence]])
+
+case class CreateDetailsRequest(contactDetails: Option[Seq[ContactDetail]], residences: Option[Seq[Residence]])
