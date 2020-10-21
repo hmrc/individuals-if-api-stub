@@ -18,7 +18,7 @@ package unit.uk.gov.hmrc.individualsifapistub.util.services
 
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
-import uk.gov.hmrc.individualsifapistub.domain.{CreateDetailsRequest, Details}
+import uk.gov.hmrc.individualsifapistub.domain.{CreateDetailsRequest, DetailsResponse}
 import uk.gov.hmrc.individualsifapistub.repository.DetailsRepository
 import uk.gov.hmrc.individualsifapistub.services.DetailsService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
@@ -39,7 +39,7 @@ class DetailsServiceSpec extends TestSupport {
   "Details Service" when {
     "Create" should {
       "Return the created details when created" in new Setup {
-        val details = Details(s"$idType-$idValue", request.body)
+        val details = DetailsResponse(s"$idType-$idValue", request.body)
         when(mockDetailsRepository.create(s"$idType-$idValue", request)).thenReturn(Future.successful(details));
         val response = await(underTest.create(idType, idValue, request))
         response shouldBe details
@@ -55,7 +55,7 @@ class DetailsServiceSpec extends TestSupport {
 
     "Get" should {
       "Return details when successfully retrieved from mongo" in new Setup {
-        val details = Details(s"$idType-$idValue", request.body)
+        val details = DetailsResponse(s"$idType-$idValue", request.body)
         when(mockDetailsRepository.findById(s"$idType-$idValue")).thenReturn(Future.successful(Some(details)));
         val response = await(underTest.get(idType, idValue))
         response shouldBe Some(details)

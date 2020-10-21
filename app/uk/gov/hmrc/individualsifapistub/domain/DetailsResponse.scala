@@ -16,6 +16,19 @@
 
 package uk.gov.hmrc.individualsifapistub.domain
 
-case class Details(id: String, body: String)
+case class ContactDetail(code: Int, detailType: String, detail: String)
 
-case class CreateDetailsRequest(body:String)
+case class Address(
+                    line1: Option[String],
+                    line2: Option[String],
+                    line3: Option[String],
+                    line4: Option[String],
+                    line5: Option[String],
+                    postcode: Option[String]
+                  )
+
+case class Residence(residenceType: Option[String], address: Address)
+
+case class DetailsResponse(id: String, contactDetails: Option[Seq[ContactDetail]], residences: Seq[Residence])
+
+case class CreateDetailsRequest(body: String)

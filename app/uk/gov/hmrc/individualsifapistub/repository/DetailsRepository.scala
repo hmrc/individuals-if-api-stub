@@ -23,7 +23,7 @@ import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.bson.BSONObjectID
 import reactivemongo.play.json._
-import uk.gov.hmrc.individualsifapistub.domain.{CreateDetailsRequest, Details, JsonFormatters}
+import uk.gov.hmrc.individualsifapistub.domain.{CreateDetailsRequest, DetailsResponse, JsonFormatters}
 import uk.gov.hmrc.mongo.ReactiveRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -31,7 +31,7 @@ import scala.concurrent.Future
 
 @Singleton
 class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvider)
-  extends ReactiveRepository[Details, BSONObjectID](  "details",
+  extends ReactiveRepository[DetailsResponse, BSONObjectID](  "details",
                                                       mongoConnectionProvider.mongoDatabase,
                                                       JsonFormatters.detailsFormat) {
 
@@ -39,10 +39,10 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
     Index(key = Seq(("id", Ascending)), name = Some("idIndex"), unique = true, background = true)
   )
 
-  def create(id: String, createDetailsRequest: CreateDetailsRequest): Future[Details] = {
-    val details = Details(id, createDetailsRequest.body)
+  def create(id: String, createDetailsRequest: CreateDetailsRequest): Future[DetailsResponse] = {
+    val details = DetailsResponse(id, createDetailsRequest.body)
     insert(details) map (_ => details)
   }
 
-  def findById(id: String): Future[Option[Details]] = collection.find[JsObject, JsObject](obj("id" -> id), None).one[Details]
+  def findById(id: String): Future[Option[DetailsResponse]] = collection.find[JsObject, JsObject](obj("id" -> id), None).one[DetailsResponse]
 }

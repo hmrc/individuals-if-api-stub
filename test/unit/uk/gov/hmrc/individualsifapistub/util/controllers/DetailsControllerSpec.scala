@@ -22,7 +22,7 @@ import play.api.libs.json.Json
 import play.api.mvc.ControllerComponents
 import play.api.test.FakeRequest
 import uk.gov.hmrc.individualsifapistub.controllers.DetailsController
-import uk.gov.hmrc.individualsifapistub.domain.{CreateDetailsRequest, Details}
+import uk.gov.hmrc.individualsifapistub.domain.{CreateDetailsRequest, DetailsResponse}
 import uk.gov.hmrc.individualsifapistub.services.DetailsService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 import play.api.http.Status._
@@ -44,7 +44,7 @@ class DetailsControllerSpec extends TestSupport {
 
   "Create details" should {
     "Successfully create a details record and return created record as response" in new Setup {
-      val details = Details(s"$idType-$idValue", request.body)
+      val details = DetailsResponse(s"$idType-$idValue", request.body)
       when(mockDetailsService.create(idType, idValue, request)).thenReturn(Future.successful(details))
 
       val result = await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson(request))))
@@ -54,7 +54,7 @@ class DetailsControllerSpec extends TestSupport {
     }
 
     "Fail when a request is not provided" in new Setup {
-      val details = Details(s"$idType-$idValue", request.body)
+      val details = DetailsResponse(s"$idType-$idValue", request.body)
       when(mockDetailsService.create(idType, idValue, request)).thenReturn(Future.successful(details))
       assertThrows[Exception] { await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson("")))) }
     }
@@ -62,7 +62,7 @@ class DetailsControllerSpec extends TestSupport {
 
   "Retrieve Details" should {
     "Return details when successfully retrieved from service" in new Setup {
-      val details = Details(s"$idType-$idValue", request.body)
+      val details = DetailsResponse(s"$idType-$idValue", request.body)
       when(mockDetailsService.get(idType, idValue)).thenReturn(Future.successful(Some(details)))
 
       val result = await(underTest.retrieve(idType, idValue)(fakeRequest))

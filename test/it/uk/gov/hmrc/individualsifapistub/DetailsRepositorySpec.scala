@@ -19,7 +19,7 @@ package it.uk.gov.hmrc.individualsifapistub
 import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
 import reactivemongo.api.indexes.IndexType.Ascending
-import uk.gov.hmrc.individualsifapistub.domain.{CreateDetailsRequest, Details}
+import uk.gov.hmrc.individualsifapistub.domain.{CreateDetailsRequest, DetailsResponse}
 import uk.gov.hmrc.individualsifapistub.repository.DetailsRepository
 import uk.gov.hmrc.mongo.MongoSpecSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
@@ -37,7 +37,7 @@ class DetailsRepositorySpec
   val id = "2432552635"
   val requestBody = "requestBody"
   val request = CreateDetailsRequest(requestBody)
-  val details = Details(id, request.body)
+  val details = DetailsResponse(id, request.body)
 
   override def beforeEach() {
     await(repository.drop)

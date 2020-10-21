@@ -33,7 +33,7 @@ object JsonFormatters {
   implicit val createBenefitsAndCreditsRequestFormat = Json.format[CreateBenefitsAndCreditsRequest]
 
   implicit val employmentFormat = Json.format[Employment]
-  implicit val detailsFormat = Json.format[Details]
+  implicit val detailsFormat = Json.format[DetailsResponse]
   implicit val benefitsAndCreditsFormat = Json.format[BenefitsAndCredits]
 
   implicit val testAddressFormat = Json.format[TestAddress]
