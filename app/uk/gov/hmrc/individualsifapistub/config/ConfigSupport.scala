@@ -21,7 +21,7 @@ import play.api.{Application, Configuration, Mode, Play}
 
 trait ConfigSupport {
 
-  private def current: Application = Play.current
+  val current: Application
 
   def config: Configuration = current.configuration
   def mode: Mode = current.mode

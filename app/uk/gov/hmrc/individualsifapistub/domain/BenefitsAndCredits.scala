@@ -16,4 +16,7 @@
 
 package uk.gov.hmrc.individualsifapistub.domain
 
-case class BenefitsAndCredits (id: String)
+case class BenefitsAndCredits (id: String, body: String)
+
+case class CreateBenefitsAndCreditsRequest (body: String)
+

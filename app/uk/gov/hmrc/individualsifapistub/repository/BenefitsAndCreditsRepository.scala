@@ -17,30 +17,35 @@
 package uk.gov.hmrc.individualsifapistub.repository
 
 import javax.inject.{Inject, Singleton}
+import play.api.libs.json.JsObject
 import play.api.libs.json.Json.obj
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.bson.BSONObjectID
 import reactivemongo.play.json._
-import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.individualsifapistub.domain.{BenefitsAndCredits, DuplicateSelfAssessmentException, JsonFormatters, SelfAssessment}
+import uk.gov.hmrc.individualsifapistub.domain.{BenefitsAndCredits, CreateBenefitsAndCreditsRequest, DuplicateException, JsonFormatters}
 import uk.gov.hmrc.mongo.ReactiveRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 @Singleton
-class BenefitsAndCreditsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvider)
-  extends ReactiveRepository[BenefitsAndCredits, BSONObjectID]("benefitsAndCredits", mongoConnectionProvider.mongoDatabase, JsonFormatters.benefitsAndCreditsFormat) {
+class BenefitsAndCreditsRepository @Inject()( mongoConnectionProvider: MongoConnectionProvider)
+  extends ReactiveRepository[BenefitsAndCredits, BSONObjectID]( "benefitsAndCredits",
+                                                                mongoConnectionProvider.mongoDatabase,
+                                                                JsonFormatters.benefitsAndCreditsFormat) {
 
   override lazy val indexes = Seq(
     Index(key = Seq(("id", Ascending)), name = Some("idIndex"), unique = true, background = true)
   )
 
-  def create(id: String) = {
-    val benefitAndCredit = BenefitsAndCredits(id)
-    insert(benefitAndCredit) map (_ => benefitAndCredit)
+  def create(id: String, request: CreateBenefitsAndCreditsRequest): Future[BenefitsAndCredits] = {
+    val benefitAndCredit = BenefitsAndCredits(id, request.body)
+    insert(benefitAndCredit) map (_ => benefitAndCredit) recover {
+      case WriteResult.Code(11000) => throw new DuplicateException
+    }
   }
 
-  def findById(id: String) = collection.find(obj("id" -> id)).one[BenefitsAndCredits]
+  def findById(id: String): Future[Option[BenefitsAndCredits]] = collection.find[JsObject, JsObject](obj("id" -> id), None).one[BenefitsAndCredits]
 }

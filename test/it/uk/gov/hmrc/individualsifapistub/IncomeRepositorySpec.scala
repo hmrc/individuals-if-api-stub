@@ -16,19 +16,15 @@
 
 package it.uk.gov.hmrc.individualsifapistub
 
-import org.joda.time.LocalDate
 import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
 import reactivemongo.api.indexes.IndexType.Ascending
-import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.individualsifapistub.domain.{DuplicateSelfAssessmentException, SelfAssessment}
-import uk.gov.hmrc.individualsifapistub.repository.SelfAssessmentRepository
+import uk.gov.hmrc.individualsifapistub.domain.{CreateIncomeRequest, DuplicateException, Income}
+import uk.gov.hmrc.individualsifapistub.repository.IncomeRepository
 import uk.gov.hmrc.mongo.MongoSpecSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
-class SelfAssessmentRepositorySpec
+class IncomeRepositorySpec
     extends TestSupport
     with MongoSpecSupport
     with BeforeAndAfterEach {
@@ -36,10 +32,11 @@ class SelfAssessmentRepositorySpec
   override lazy val fakeApplication = buildFakeApplication(
     Configuration("mongodb.uri" -> mongoUri))
 
-  val repository = fakeApplication.injector.instanceOf[SelfAssessmentRepository]
+  val repository = fakeApplication.injector.instanceOf[IncomeRepository]
 
   val id = "2432552635"
-  val selfAssessment = SelfAssessment(id)
+  val request = CreateIncomeRequest("request")
+  val selfAssessment = Income(id, request.body)
 
   override def beforeEach() {
     await(repository.drop)
@@ -63,16 +60,16 @@ class SelfAssessmentRepositorySpec
 
   "create" should {
     "create a self assessment" in {
-      val result = await(repository.create(selfAssessment))
+      val result = await(repository.create(selfAssessment.id, request))
 
       result shouldBe selfAssessment
     }
 
     "fail to create a duplicate self assessment" in {
-      await(repository.create(selfAssessment))
+      await(repository.create(selfAssessment.id, request))
 
-      intercept[DuplicateSelfAssessmentException](
-        await(repository.create(selfAssessment)))
+      intercept[DuplicateException](
+        await(repository.create(selfAssessment.id, request)))
     }
   }
 
@@ -82,7 +79,7 @@ class SelfAssessmentRepositorySpec
     }
 
     "return the self assessment" in {
-      await(repository.create(selfAssessment))
+      await(repository.create(selfAssessment.id, request))
 
       val result = await(repository.findById(id))
 

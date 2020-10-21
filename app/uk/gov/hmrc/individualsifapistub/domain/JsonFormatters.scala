@@ -17,9 +17,8 @@
 package uk.gov.hmrc.individualsifapistub.domain
 
 import org.joda.time.DateTime
-import play.api.libs.json._
 import play.api.libs.json.JodaWrites._
-import play.api.libs.json.JodaReads._
+import play.api.libs.json._
 
 import scala.util.{Failure, Try}
 
@@ -29,14 +28,21 @@ object JsonFormatters {
     override def writes(o: DateTime): JsValue = JodaDateTimeNumberWrites.writes(o)
   }
 
+  implicit val createEmploymentRequestFormat = Json.format[CreateEmploymentRequest]
+  implicit val createDetailsRequestFormat = Json.format[CreateDetailsRequest]
+  implicit val createBenefitsAndCreditsRequestFormat = Json.format[CreateBenefitsAndCreditsRequest]
+
   implicit val employmentFormat = Json.format[Employment]
-  implicit val benefitsAndCreditsFormat = Json.format[BenefitsAndCredits]
   implicit val detailsFormat = Json.format[Details]
-  implicit val selfAssessmentFormat = Json.format[SelfAssessment]
+  implicit val benefitsAndCreditsFormat = Json.format[BenefitsAndCredits]
+
   implicit val testAddressFormat = Json.format[TestAddress]
+  implicit val testIndividualFormat = Json.format[TestIndividual]
   implicit val testOrganisationDetailsFormat = Json.format[TestOrganisationDetails]
   implicit val testOrganisationFormat = Json.format[TestOrganisation]
-  implicit val testIndividualFormat = Json.format[TestIndividual]
+
+  implicit val incomeFormat = Json.format[Income]
+  implicit val createIncomeRequestFormat = Json.format[CreateIncomeRequest]
 
   implicit val errorInvalidRequestFormat = new Format[ErrorInvalidRequest] {
     def reads(json: JsValue): JsResult[ErrorInvalidRequest] = JsSuccess(
@@ -71,7 +77,6 @@ object EnumJson {
   implicit def enumFormat[E <: Enumeration](enum: E): Format[E#Value] = {
     Format(enumReads(enum), enumWrites)
   }
-
 }
 
 class InvalidEnumException(className: String, input:String) extends RuntimeException(s"Enumeration expected of type: '$className', but it does not contain '$input'")

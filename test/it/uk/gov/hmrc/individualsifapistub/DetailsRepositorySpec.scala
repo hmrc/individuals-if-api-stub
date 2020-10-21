@@ -19,12 +19,10 @@ package it.uk.gov.hmrc.individualsifapistub
 import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
 import reactivemongo.api.indexes.IndexType.Ascending
-import uk.gov.hmrc.individualsifapistub.domain.{Details, DuplicateSelfAssessmentException}
+import uk.gov.hmrc.individualsifapistub.domain.{CreateDetailsRequest, Details}
 import uk.gov.hmrc.individualsifapistub.repository.DetailsRepository
 import uk.gov.hmrc.mongo.MongoSpecSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
-
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class DetailsRepositorySpec
     extends TestSupport
@@ -37,7 +35,9 @@ class DetailsRepositorySpec
   val repository = fakeApplication.injector.instanceOf[DetailsRepository]
 
   val id = "2432552635"
-  val details = Details(id)
+  val requestBody = "requestBody"
+  val request = CreateDetailsRequest(requestBody)
+  val details = Details(id, request.body)
 
   override def beforeEach() {
     await(repository.drop)
@@ -60,15 +60,15 @@ class DetailsRepositorySpec
 
   "create" should {
     "create a self assessment" in {
-      val result = await(repository.create(id))
+      val result = await(repository.create(id, request))
 
       result shouldBe details
     }
 
     "fail to create duplicate details" in {
-      await(repository.create(id))
+      await(repository.create(id, request))
 
-      intercept[Exception](await(repository.create(id)))
+      intercept[Exception](await(repository.create(id, request)))
     }
   }
 
@@ -78,7 +78,7 @@ class DetailsRepositorySpec
     }
 
     "return details" in {
-      await(repository.create(id))
+      await(repository.create(id, request))
 
       val result = await(repository.findById(id))
 

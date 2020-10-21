@@ -16,4 +16,6 @@
 
 package uk.gov.hmrc.individualsifapistub.domain
 
-case class Details(id: String)
+case class Details(id: String, body: String)
+
+case class CreateDetailsRequest(body:String)

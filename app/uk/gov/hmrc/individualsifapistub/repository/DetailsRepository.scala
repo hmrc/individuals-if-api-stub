@@ -17,30 +17,32 @@
 package uk.gov.hmrc.individualsifapistub.repository
 
 import javax.inject.{Inject, Singleton}
+import play.api.libs.json.JsObject
 import play.api.libs.json.Json.obj
-import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.bson.BSONObjectID
 import reactivemongo.play.json._
-import uk.gov.hmrc.individualsifapistub.domain.{Details, DuplicateSelfAssessmentException, JsonFormatters, SelfAssessment}
+import uk.gov.hmrc.individualsifapistub.domain.{CreateDetailsRequest, Details, JsonFormatters}
 import uk.gov.hmrc.mongo.ReactiveRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 @Singleton
 class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvider)
-  extends ReactiveRepository[Details, BSONObjectID]("details", mongoConnectionProvider.mongoDatabase, JsonFormatters.detailsFormat) {
+  extends ReactiveRepository[Details, BSONObjectID](  "details",
+                                                      mongoConnectionProvider.mongoDatabase,
+                                                      JsonFormatters.detailsFormat) {
 
   override lazy val indexes = Seq(
     Index(key = Seq(("id", Ascending)), name = Some("idIndex"), unique = true, background = true)
   )
 
-  def create(id: String) = {
-    val details = Details(id)
-
+  def create(id: String, createDetailsRequest: CreateDetailsRequest): Future[Details] = {
+    val details = Details(id, createDetailsRequest.body)
     insert(details) map (_ => details)
   }
 
-  def findById(id: String) = collection.find(obj("id" -> id)).one[Details]
+  def findById(id: String): Future[Option[Details]] = collection.find[JsObject, JsObject](obj("id" -> id), None).one[Details]
 }

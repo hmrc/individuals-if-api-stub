@@ -16,4 +16,6 @@
 
 package uk.gov.hmrc.individualsifapistub.domain
 
-case class SelfAssessment(id: String)
+case class Income(id: String, body: String)
+
+case class CreateIncomeRequest(body: String)

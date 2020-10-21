@@ -89,7 +89,7 @@ lazy val microservice = Project(appName, file("."))
     testGrouping in ComponentTest := oneForkedJvmPerTest((definedTests in ComponentTest).value),
     parallelExecution in ComponentTest := false
   )
-  .settings(PlayKeys.playDefaultPort := 9633)
+  .settings(PlayKeys.playDefaultPort := 8443)
   .settings(majorVersion := 0)
 
 def oneForkedJvmPerTest(tests: Seq[TestDefinition]) = {

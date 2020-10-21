@@ -19,12 +19,10 @@ package it.uk.gov.hmrc.individualsifapistub
 import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
 import reactivemongo.api.indexes.IndexType.Ascending
-import uk.gov.hmrc.individualsifapistub.domain.{BenefitsAndCredits, DuplicateSelfAssessmentException}
+import uk.gov.hmrc.individualsifapistub.domain.{BenefitsAndCredits, CreateBenefitsAndCreditsRequest, DuplicateException, Income}
 import uk.gov.hmrc.individualsifapistub.repository.BenefitsAndCreditsRepository
 import uk.gov.hmrc.mongo.MongoSpecSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
-
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class BenefitsAndCreditsRepositorySpec
     extends TestSupport
@@ -37,7 +35,8 @@ class BenefitsAndCreditsRepositorySpec
   val repository = fakeApplication.injector.instanceOf[BenefitsAndCreditsRepository]
 
   val id = "2432552635"
-  val benefitsAndCredits = BenefitsAndCredits(id)
+  val request = CreateBenefitsAndCreditsRequest("request")
+  val benefitsAndCredits = BenefitsAndCredits(id, request.body)
 
   override def beforeEach() {
     await(repository.drop)
@@ -45,6 +44,7 @@ class BenefitsAndCreditsRepositorySpec
   }
 
   override def afterEach() {
+    await(repository.drop)
   }
 
   "collection" should {
@@ -59,26 +59,27 @@ class BenefitsAndCreditsRepositorySpec
   }
 
   "create" should {
-    "create a self assessment" in {
-      val result = await(repository.create(id))
+    "create a benefits and credits record" in {
+      val result = await(repository.create(benefitsAndCredits.id, request))
+
       result shouldBe benefitsAndCredits
     }
 
-    "fail to create a duplicate self assessment" in {
-      await(repository.create(id))
+    "fail to create a duplicate benefits and credits record" in {
+      await(repository.create(benefitsAndCredits.id, request))
 
-      intercept[Exception](
-        await(repository.create(id)))
+      intercept[DuplicateException](
+        await(repository.create(benefitsAndCredits.id, request)))
     }
   }
 
   "find by id" should {
-    "return None when there are no self assessments for a given utr" in {
+    "return None when there are no benefits and credits record for a given id" in {
       await(repository.findById(id)) shouldBe None
     }
 
-    "return benefits and credits" in {
-      await(repository.create(id))
+    "return the benefits and credits record" in {
+      await(repository.create(benefitsAndCredits.id, request))
 
       val result = await(repository.findById(id))
 

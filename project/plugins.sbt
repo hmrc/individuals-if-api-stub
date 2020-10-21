@@ -23,3 +23,5 @@ addSbtPlugin("uk.gov.hmrc" % "sbt-artifactory" % "1.5.0")
 addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.6.23")
 
 addSbtPlugin("uk.gov.hmrc" % "sbt-service-manager" % "0.6.0")
+
+addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.6.1")

@@ -17,5 +17,7 @@
 package uk.gov.hmrc.individualsifapistub.domain
 
 //TODO build out to IF
-case class Employment(id: String)
+case class Employment(id: String, body:String)
+
+case class CreateEmploymentRequest(body: String)
 
