@@ -16,25 +16,50 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.domain
 
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar.mock
-import play.api.http.Status.{CREATED, OK}
+
 import play.api.libs.json.Json
-import play.api.test.FakeRequest
 import testUtils.AddressHelpers
-import uk.gov.hmrc.individualsifapistub.domain.{ContactDetail, CreateDetailsRequest, Details, DetailsResponse, Residence}
+import uk.gov.hmrc.individualsifapistub.domain.{ContactDetail, Details, DetailsResponse, Residence}
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
+import uk.gov.hmrc.individualsifapistub.domain.DetailsResponse._
 
 class DetailsResponseSpec extends UnitSpec with AddressHelpers {
 
   val idValue = "2432552635"
-  val request = DetailsResponse(Details(Some("NI123412N"), None),
-    Some(Seq(ContactDetail(9, "MOBILE TELEPHONE", "07123 987654"), ContactDetail(9,"MOBILE TELEPHONE", "07123 987655"))),
-    Some(Seq(Residence(Some("BASE"),createAddress(2)), Residence(Some("NOMINATED"),createAddress(1)))))
 
-    "Domain model" should {
-      "Write to JSON" in {
-        Json.prettyPrint(Json.toJson(request))
-      }
+  val details = Details(Some("XH123456A"), None)
+  val contactDetail1 = ContactDetail(9, "MOBILE TELEPHONE", "07123 987654")
+  val contactDetail2 = ContactDetail(9,"MOBILE TELEPHONE", "07123 987655")
+  val residence1 = Residence(Some("BASE"),createAddress(2))
+  val residence2 = Residence(Some("NOMINATED"),createAddress(1))
+  val response = DetailsResponse(
+    details,
+    Some(Seq(contactDetail1, contactDetail1)),
+    Some(Seq(residence1, residence2))
+  )
+
+  "Details" should {
+    "Write to JSON" in {
+      println(Json.toJson(details).validate[Details])
+      println(Json.prettyPrint(Json.toJson(details)))
     }
+  }
+
+  "Contact details" should {
+    "Write to JSON" in {
+      println(Json.prettyPrint(Json.toJson(contactDetail1)))
+    }
+  }
+
+  "Residence details" should {
+    "Write to JSON" in {
+      println(Json.prettyPrint(Json.toJson(residence1)))
+    }
+  }
+
+  "Details Response" should {
+    "Write to JSON" in {
+      println(Json.prettyPrint(Json.toJson(response)))
+    }
+  }
 }
