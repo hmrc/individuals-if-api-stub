@@ -19,7 +19,8 @@ package it.uk.gov.hmrc.individualsifapistub
 import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
 import reactivemongo.api.indexes.IndexType.Ascending
-import uk.gov.hmrc.individualsifapistub.domain.{CreateDetailsRequest, DetailsResponse}
+import testUtils.AddressHelpers
+import uk.gov.hmrc.individualsifapistub.domain.{ContactDetail, CreateDetailsRequest, Details, DetailsResponse, Residence}
 import uk.gov.hmrc.individualsifapistub.repository.DetailsRepository
 import uk.gov.hmrc.mongo.MongoSpecSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
@@ -27,17 +28,18 @@ import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 class DetailsRepositorySpec
     extends TestSupport
     with MongoSpecSupport
-    with BeforeAndAfterEach {
+    with BeforeAndAfterEach with AddressHelpers{
 
   override lazy val fakeApplication = buildFakeApplication(
     Configuration("mongodb.uri" -> mongoUri))
 
   val repository = fakeApplication.injector.instanceOf[DetailsRepository]
 
-  val id = "2432552635"
-  val requestBody = "requestBody"
-  val request = CreateDetailsRequest(requestBody)
-  val details = DetailsResponse(id, request.body)
+  val idValue = "2432552635"
+  val request = CreateDetailsRequest(
+    Some(Seq(ContactDetail(9, "MOBILE TELEPHONE", "07123 987654"), ContactDetail(9,"MOBILE TELEPHONE", "07123 987655"))),
+    Some(Seq(Residence(Some("BASE"),createAddress(2)), Residence(Some("NOMINATED"),createAddress(1))))
+  )
 
   override def beforeEach() {
     await(repository.drop)
@@ -48,42 +50,72 @@ class DetailsRepositorySpec
   }
 
   "collection" should {
-    "have a unique index on saUtr" in {
+    "have a unique index on nino" in {
       await(repository.collection.indexesManager.list()).find({ i =>
-        i.name.contains("idIndex") &&
-        i.key == Seq("id" -> Ascending) &&
+        i.name.contains("nino") &&
+        i.key == Seq("details.nino" -> Ascending) &&
         i.background &&
         i.unique
+      }) should not be None
+    }
+    "have a unique index on trn" in {
+      await(repository.collection.indexesManager.list()).find({ i =>
+        i.name.contains("trn") &&
+          i.key == Seq("details.trn" -> Ascending) &&
+          i.background &&
+          i.unique
       }) should not be None
     }
   }
 
   "create" should {
-    "create a self assessment" in {
-      val result = await(repository.create(id, request))
+    "create a details response with a nino" in {
+      val details = Details(Some(idValue), None)
+      val detailsResponse = DetailsResponse(details, request.contactDetails, request.residences)
 
-      result shouldBe details
+      val result = await(repository.create("nino", idValue, request))
+
+      result shouldBe detailsResponse
+    }
+
+    "create a details response with a trn" in {
+      val details = Details(None, Some(idValue))
+      val detailsResponse = DetailsResponse(details, request.contactDetails, request.residences)
+
+      val result = await(repository.create("trn", idValue, request))
+
+      result shouldBe detailsResponse
     }
 
     "fail to create duplicate details" in {
-      await(repository.create(id, request))
+      val details = Details(None, Some(idValue))
 
-      intercept[Exception](await(repository.create(id, request)))
+      await(repository.create("trn", idValue, request))
+
+      intercept[Exception](await(repository.create("trn", idValue, request)))
     }
   }
 
-  "find by id" should {
-    "return None when there are no details for a given id" in {
-      await(repository.findById(id)) shouldBe None
+  "find by id and type" should {
+    "return None when there are no details for a given nino" in {
+      await(repository.findByIdAndType("nino", idValue)) shouldBe None
     }
 
-    "return details" in {
-      await(repository.create(id, request))
+    "return None when there are no details for a given trn" in {
+      await(repository.findByIdAndType("trn", idValue)) shouldBe None
+    }
 
-      val result = await(repository.findById(id))
 
-      result shouldBe Some(details
-      )
+    "return details when nino found" in {
+
+      val details = Details(Some(idValue), None)
+      val detailsResponse = DetailsResponse(details, request.contactDetails, request.residences)
+
+      await(repository.create("nino", idValue, request))
+
+      val result = await(repository.findByIdAndType("nino", idValue))
+
+      result shouldBe Some(detailsResponse)
     }
   }
 }
