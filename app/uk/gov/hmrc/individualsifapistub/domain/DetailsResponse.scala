@@ -89,11 +89,11 @@ object DetailsResponse {
 
   implicit val residencesFormat: Format[Residence] = Format(
     (
-      (JsPath \ "residenceType").readNullable[String](minLength[String](1).keepAnd(maxLength[String](35))) and
+      (JsPath \ "type").readNullable[String](minLength[String](1).keepAnd(maxLength[String](35))) and
       (JsPath \ "address").readNullable[Address]
     )(Residence.apply _),
     (
-      (JsPath \ "residenceType").writeNullable[String] and
+      (JsPath \ "type").writeNullable[String] and
       (JsPath \ "address").writeNullable[Address]
     )(unlift(Residence.unapply))
   )
