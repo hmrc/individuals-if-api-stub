@@ -21,6 +21,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
 import uk.gov.hmrc.individualsifapistub.domain.CreateEmploymentRequest
 import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
+import uk.gov.hmrc.individualsifapistub.domain.EmploymentsResponse._
 import uk.gov.hmrc.individualsifapistub.services.EmploymentsService
 
 import scala.concurrent.ExecutionContext

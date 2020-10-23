@@ -44,6 +44,8 @@ object DetailsResponse {
   val trnPattern: Regex = "^[0-9]{8}$".r
 
 
+
+
   implicit val detailsFormat: Format[Details] = Format(
     (
       (JsPath \ "nino").readNullable[String](pattern(ninoPattern, "InvalidNino")) and

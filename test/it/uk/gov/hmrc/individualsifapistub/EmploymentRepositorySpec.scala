@@ -18,7 +18,7 @@ package it.uk.gov.hmrc.individualsifapistub
 
 import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
-import uk.gov.hmrc.individualsifapistub.domain.{CreateEmploymentRequest, Employment}
+import uk.gov.hmrc.individualsifapistub.domain.{Address, CreateEmploymentRequest, Employer, Employment, EmploymentDetail, EmploymentsResponse, Id, Payment}
 import uk.gov.hmrc.individualsifapistub.repository.EmploymentRepository
 import uk.gov.hmrc.mongo.MongoSpecSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
@@ -30,8 +30,49 @@ class EmploymentRepositorySpec
 
   val id = "1234567890"
   val requestBody = "request"
-  val request = CreateEmploymentRequest(requestBody)
-  val employment = Employment(id, request.body)
+
+  val employment = EmploymentsResponse(
+    Seq(
+      Employment(
+        employer = Some(Employer(
+          name = Some("Name"),
+          address = Some(Address(
+            Some("line1"),
+            Some("line2"),
+            Some("line3"),
+            Some("line4"),
+            Some("line5"),
+            Some("postcode")
+          )),
+          districtNumber = Some("ABC"),
+          schemeRef = Some("ABC")
+        )),
+        employment = Some(EmploymentDetail(
+          startDate = Some("2001-12-31"),
+          endDate = Some("2002-05-12"),
+          payFrequency = Some("W2"),
+          payrollId = Some("12341234"),
+          address = Some(Address(
+            Some("line1"),
+            Some("line2"),
+            Some("line3"),
+            Some("line4"),
+            Some("line5"),
+            Some("postcode")
+          )))),
+        payments = Some(Seq(Payment(
+          date = Some("2001-12-31"),
+          ytdTaxablePay = Some(120.02),
+          paidTaxablePay = Some(112.75),
+          paidNonTaxOrNICPayment = Some(123123.32),
+          week = Some(52),
+          month = Some(12)
+        )
+        )
+        )
+      )))
+
+  val request = CreateEmploymentRequest(Id(Some("XH123456A"), None), employment)
 
   override lazy val fakeApplication = buildFakeApplication(
     Configuration("mongodb.uri" -> mongoUri))

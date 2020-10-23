@@ -24,7 +24,8 @@ import play.api.mvc.ControllerComponents
 import play.api.test.FakeRequest
 import uk.gov.hmrc.individualsifapistub.controllers.EmploymentsController
 import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
-import uk.gov.hmrc.individualsifapistub.domain.{CreateEmploymentRequest, Employment}
+import uk.gov.hmrc.individualsifapistub.domain.EmploymentsResponse._
+import uk.gov.hmrc.individualsifapistub.domain.{Address, CreateEmploymentRequest, Employer, Employment, EmploymentDetail, EmploymentsResponse, Id, Payment}
 import uk.gov.hmrc.individualsifapistub.services.EmploymentsService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
@@ -41,11 +42,51 @@ class EmploymentsControllerSpec extends TestSupport {
   val idType = "idType"
   val idValue = "idValue"
 
-  val request = CreateEmploymentRequest("something")
+  val employment = EmploymentsResponse(
+    Seq(
+      Employment(
+        employer = Some(Employer(
+          name = Some("Name"),
+          address = Some(Address(
+            Some("line1"),
+            Some("line2"),
+            Some("line3"),
+            Some("line4"),
+            Some("line5"),
+            Some("postcode")
+          )),
+          districtNumber = Some("ABC"),
+          schemeRef = Some("ABC")
+        )),
+        employment = Some(EmploymentDetail(
+          startDate = Some("2001-12-31"),
+          endDate = Some("2002-05-12"),
+          payFrequency = Some("W2"),
+          payrollId = Some("12341234"),
+          address = Some(Address(
+            Some("line1"),
+            Some("line2"),
+            Some("line3"),
+            Some("line4"),
+            Some("line5"),
+            Some("postcode")
+          )))),
+        payments = Some(Seq(Payment(
+          date = Some("2001-12-31"),
+          ytdTaxablePay = Some(120.02),
+          paidTaxablePay = Some(112.75),
+          paidNonTaxOrNICPayment = Some(123123.32),
+          week = Some(52),
+          month = Some(12)
+        )
+        )
+        )
+      )))
+
+  val request = CreateEmploymentRequest(Id(Some("XH123456A"), None), employment)
 
   "Create Employment" should {
     "Successfully create a details record and return created record as response" in new Setup {
-      val employment = Employment(s"$idType-$idValue", request.body)
       when(mockEmploymentsService.create(idType, idValue, request)).thenReturn(Future.successful(employment))
 
       val result = await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson(request))))
@@ -55,7 +96,6 @@ class EmploymentsControllerSpec extends TestSupport {
     }
 
     "Fail when a request is not provided" in new Setup {
-      val employment = Employment(s"$idType-$idValue", request.body)
       when(mockEmploymentsService.create(idType, idValue, request)).thenReturn(Future.successful(employment))
       assertThrows[Exception] { await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson("")))) }
     }
@@ -63,7 +103,6 @@ class EmploymentsControllerSpec extends TestSupport {
 
   "Retrieve Employment" should {
     "Return employment when successfully retrieved from service" in new Setup {
-      val employment = Employment(s"$idType-$idValue", request.body)
       when(mockEmploymentsService.get(idType, idValue)).thenReturn(Future.successful(Some(employment)))
 
       val result = await(underTest.retrieve(idType, idValue)(fakeRequest))

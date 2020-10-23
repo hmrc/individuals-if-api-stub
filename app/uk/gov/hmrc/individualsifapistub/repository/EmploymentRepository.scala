@@ -22,7 +22,7 @@ import play.api.libs.json.Json.obj
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.bson.BSONObjectID
-import uk.gov.hmrc.individualsifapistub.domain.{CreateEmploymentRequest, Employment, JsonFormatters}
+import uk.gov.hmrc.individualsifapistub.domain.{CreateEmploymentRequest, EmploymentsResponse, JsonFormatters}
 import uk.gov.hmrc.mongo.ReactiveRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -30,18 +30,18 @@ import scala.concurrent.Future
 
 @Singleton
 class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionProvider)
-  extends ReactiveRepository[Employment, BSONObjectID]( "employment",
+  extends ReactiveRepository[EmploymentsResponse, BSONObjectID]( "employment",
                                                         mongoConnectionProvider.mongoDatabase,
-                                                        JsonFormatters.employmentFormat) {
+                                                        EmploymentsResponse.employmentResponseFormat) {
 
   override lazy val indexes = Seq(
     Index(key = Seq(("id", Ascending)), name = Some("idIndex"), unique = true, background = true)
   )
 
-  def create(id: String, request: CreateEmploymentRequest): Future[Employment] = {
-    val employment = Employment(id, request.body)
+  def create(id: String, request: CreateEmploymentRequest): Future[EmploymentsResponse] = {
+    val employment = request.employment
     insert(employment) map (_ => employment)
   }
 
-  def findById(id: String): Future[Option[Employment]] = collection.find[JsObject, JsObject](obj("id" -> id), None).one[Employment]
+  def findById(id: String): Future[Option[EmploymentsResponse]] = collection.find[JsObject, JsObject](obj("id" -> id), None).one[EmploymentsResponse]
 }

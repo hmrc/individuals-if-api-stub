@@ -19,6 +19,7 @@ package uk.gov.hmrc.individualsifapistub.domain
 import org.joda.time.DateTime
 import play.api.libs.json.JodaWrites._
 import play.api.libs.json._
+import uk.gov.hmrc.individualsifapistub.domain.EmploymentsResponse._
 
 import scala.util.{Failure, Try}
 
@@ -35,10 +36,8 @@ object JsonFormatters {
   implicit val detailsResponseFormat = Json.format[DetailsResponse]
   implicit val createDetailsRequestFormat = Json.format[CreateDetailsRequest]
 
-  implicit val createEmploymentRequestFormat = Json.format[CreateEmploymentRequest]
   implicit val createBenefitsAndCreditsRequestFormat = Json.format[CreateBenefitsAndCreditsRequest]
 
-  implicit val employmentFormat = Json.format[Employment]
   implicit val benefitsAndCreditsFormat = Json.format[BenefitsAndCredits]
 
   implicit val testAddressFormat = Json.format[TestAddress]
