@@ -41,6 +41,14 @@ object JsonFormatters {
   implicit val testOrganisationDetailsFormat = Json.format[TestOrganisationDetails]
   implicit val testOrganisationFormat = Json.format[TestOrganisation]
 
+
+  implicit val addressFormat = Json.format[Address]
+  implicit val saIncomeFormat = Json.format[SaIncome]
+  implicit val saReturnType = Json.format[SaReturnType]
+  implicit val saTaxYearEntry = Json.format[SaTaxYearEntry]
+
+  implicit val saResponseFormat = Json.format[SaResponse]
+  implicit val payeResponseFormat = Json.format[PayeResponse]
   implicit val incomeFormat = Json.format[Income]
   implicit val createIncomeRequestFormat = Json.format[CreateIncomeRequest]
 

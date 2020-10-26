@@ -18,20 +18,23 @@ package unit.uk.gov.hmrc.individualsifapistub.util.services
 
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
-import uk.gov.hmrc.individualsifapistub.domain.{CreateDetailsRequest, CreateIncomeRequest, Details, Income}
-import uk.gov.hmrc.individualsifapistub.repository.{DetailsRepository, IncomeRepository}
-import uk.gov.hmrc.individualsifapistub.services.{DetailsService, IncomeService}
+import uk.gov.hmrc.individualsifapistub.domain.{CreateIncomeRequest, Income}
+import uk.gov.hmrc.individualsifapistub.repository.IncomeRepository
+import uk.gov.hmrc.individualsifapistub.services.IncomeService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 import scala.concurrent.Future
 
 class IncomeServiceSpec extends TestSupport {
+
+  //TODO :- Fix me up
+
   trait Setup {
 
     val idType = "NINO"
     val idValue = "QW1234QW"
     val incomeType = "incomeType"
-    val request = CreateIncomeRequest("test")
+    val request = CreateIncomeRequest(None, None)
 
     val mockSelfAssessmentRepository = mock[IncomeRepository]
     val underTest = new IncomeService(mockSelfAssessmentRepository)
@@ -40,7 +43,7 @@ class IncomeServiceSpec extends TestSupport {
   "Income Service" when {
     "Create" should {
       "Return the created income when created" in new Setup {
-        val selfAssessment = Income(s"$incomeType-$idType-$idValue", request.body)
+        val selfAssessment = Income(s"$incomeType-$idType-$idValue", "FIX ME")
         when(mockSelfAssessmentRepository.create(s"$incomeType-$idType-$idValue", request)).thenReturn(Future.successful(selfAssessment));
         val response = await(underTest.create(incomeType,idType, idValue, request))
         response shouldBe selfAssessment
@@ -56,7 +59,7 @@ class IncomeServiceSpec extends TestSupport {
 
     "Get" should {
       "Return income when successfully retrieved from mongo" in new Setup {
-        val selfAssessment = Income(s"$incomeType-$idType-$idValue", request.body)
+        val selfAssessment = Income(s"$incomeType-$idType-$idValue", "Fix ME")
         when(mockSelfAssessmentRepository.findById(s"$incomeType-$idType-$idValue")).thenReturn(Future.successful(Some(selfAssessment)));
         val response = await(underTest.get(incomeType, idType, idValue))
         response shouldBe Some(selfAssessment)

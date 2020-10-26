@@ -41,7 +41,8 @@ class IncomeRepository @Inject()(mongoConnectionProvider: MongoConnectionProvide
   )
 
   def create(id: String, request: CreateIncomeRequest): Future[Income] = {
-    val income = Income(id, request.body)
+    //TODO :- Fix This
+    val income = Income(id, "TODO CHANGE ME!!!")
     insert(income) map (_ => income) recover {
       case WriteResult.Code(11000) => throw new DuplicateException
     }

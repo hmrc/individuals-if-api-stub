@@ -41,11 +41,12 @@ class IncomeControllerSpec extends TestSupport {
   val idType = "idType"
   val idValue = "idValue"
 
-  val request = CreateIncomeRequest("something")
+  //TODO :- Fix up these tests
+  val request = CreateIncomeRequest(None, None)
 
   "Create Income" should {
     "Successfully create a income record and return created record as response" in new Setup {
-      val income = Income(s"$incomeType-$idType-$idValue", request.body)
+      val income = Income(s"$incomeType-$idType-$idValue", "FIX ME")
       when(incomeService.create(incomeType,idType, idValue, request)).thenReturn(Future.successful(income))
 
       val result = await(underTest.create(incomeType, idType, idValue)(fakeRequest.withBody(Json.toJson(request))))
@@ -55,7 +56,7 @@ class IncomeControllerSpec extends TestSupport {
     }
 
     "Fail when a request is not provided" in new Setup {
-      val income = Income(s"$incomeType-$idType-$idValue", request.body)
+      val income = Income(s"$incomeType-$idType-$idValue", "FIX ME")
       when(incomeService.create(incomeType, idType, idValue, request)).thenReturn(Future.successful(income))
       assertThrows[Exception] { await(underTest.create(incomeType, idType, idValue)(fakeRequest.withBody(Json.toJson("")))) }
     }
@@ -63,7 +64,7 @@ class IncomeControllerSpec extends TestSupport {
 
   "Retrieve Income" should {
     "Return income when successfully retrieved from service" in new Setup {
-      val income = Income(s"$incomeType-$idType-$idValue", request.body)
+      val income = Income(s"$incomeType-$idType-$idValue", "FIX ME")
       when(incomeService.get(incomeType, idType, idValue)).thenReturn(Future.successful(Some(income)))
 
       val result = await(underTest.retrieve(incomeType, idType, idValue)(fakeRequest))

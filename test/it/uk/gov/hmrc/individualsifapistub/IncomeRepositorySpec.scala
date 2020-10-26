@@ -35,8 +35,9 @@ class IncomeRepositorySpec
   val repository = fakeApplication.injector.instanceOf[IncomeRepository]
 
   val id = "2432552635"
-  val request = CreateIncomeRequest("request")
-  val selfAssessment = Income(id, request.body)
+  // TODO :- FIX ME
+  val request = CreateIncomeRequest(None, None)
+  val selfAssessment = Income(id, "Fix ME")
 
   override def beforeEach() {
     await(repository.drop)
