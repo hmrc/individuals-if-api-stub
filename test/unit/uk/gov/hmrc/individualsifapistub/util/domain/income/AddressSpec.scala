@@ -50,9 +50,7 @@ class AddressSpec extends UnitSpec {
     }
 
     "Validate unsuccessfully when address is invalid" in {
-      val invalidAddress = Address(Some("line1"), Some("line2"), Some("line3"), Some("line4"), Some("GHGJHGHJGHJFGFDHGJKHJHGHJHKJHJ"))
       val result = Json.toJson(invalidAddress).validate[Address]
-      println(Json.prettyPrint(Json.toJson(invalidAddress)))
       result.isError shouldBe true
     }
   }
