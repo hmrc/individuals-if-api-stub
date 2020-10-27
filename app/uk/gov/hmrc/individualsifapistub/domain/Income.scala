@@ -87,7 +87,7 @@ object SaResponseObject {
         (JsPath \ "line2").readNullable[String](minLength[String](0).andKeep(maxLength[String](100))) and
         (JsPath \ "line3").readNullable[String](minLength[String](0).andKeep(maxLength[String](100))) and
         (JsPath \ "line4").readNullable[String](minLength[String](0).andKeep(maxLength[String](100))) and
-        (JsPath \ "postcode").readNullable[String](maxLength[String](10))
+        (JsPath \ "postcode").readNullable[String](minLength[String](1).andKeep(maxLength[String](10)))
       ) (Address.apply _),
     (
       (JsPath \ "line1").writeNullable[String] and
