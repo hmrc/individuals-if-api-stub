@@ -17,15 +17,87 @@
 package uk.gov.hmrc.individualsifapistub.domain
 
 import play.api.libs.json._
-import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 
 case class Income(id: String, body: String)
 
 case class Address(line1: Option[String], line2: Option[String], line3: Option[String], line4: Option[String], postcode: Option[String])
 
-//TODO :- PAYE Response and all sub-classes
-case class PayeResponse(test: String)
+case class PostGradLoan(repaymentsInPayPeriod: Option[Double], repaymentsYtd: Option[Double])
+
+case class StudentLoan(
+                        planType: Option[String],
+                        repaymentsInPayPeriod: Option[Double],
+                        repaymentsYTD: Option[Double]
+                      )
+
+case class Benefits(taxedViaPayroll: Option[Double], taxedViaPayrollYtd: Option[Double])
+
+case class EmployeePensionContribs(
+                                    paidYtd: Option[Double],
+                                    notPaidYtd: Option[Double],
+                                    paid: Option[Double],
+                                    notPaid: Option[Double]
+                                  )
+
+case class GrossEarningsForNics(
+                                 inPayPeriod1: Option[Double],
+                                 inPayPeriod2: Option[Double],
+                                 inPayPeriod3: Option[Double],
+                                 inPayPeriod4: Option[Double]
+                               )
+
+case class EmployeeNics(
+                         inPayPeriod1: Option[Double],
+                         inPayPeriod2: Option[Double],
+                         inPayPeriod3: Option[Double],
+                         inPayPeriod4: Option[Double],
+                         ytd1: Option[Double],
+                         ytd2: Option[Double],
+                         ytd3: Option[Double],
+                         ytd4: Option[Double]
+                       )
+
+case class PayeEntry(
+                      taxCode: Option[String],
+                      paidHoursWork: Option[String],
+                      taxablePayToDate: Option[Double],
+                      totalTaxToDate: Option[Double],
+                      taxDeductedOrRefunded: Option[Double],
+                      employerPayeRef: Option[String],
+                      paymentDate: Option[String],
+                      taxablePay: Option[Double],
+                      taxYear: Option[String],
+                      monthlyPeriodNumber: Option[String],
+                      weeklyPeriodNumber: Option[String],
+                      payFrequency: Option[String],
+                      dednsFromNetPay: Option[Double],
+                      employeeNics: Option[EmployeeNics],
+                      employeePensionContribs: Option[EmployeePensionContribs],
+                      benefits: Option[Benefits],
+                      parentalBereavement: Option[Double], // REMINDER TO SEL, THIS IS NESTED statutoryPayYTD / parentalBereavement
+                      studentLoan: Option[StudentLoan],
+                      postGradLoan: Option[PostGradLoan]
+                    )
+
+case class PayeResponse(paye: Option[Seq[PayeEntry]])
+
+object PayeResponseObject {
+  val studentLoanPlanTypePattern = "^(01|02)$".r
+  val taxCodePattern = "^([1-9][0-9]{0,5}[LMNPTY])|(BR)|(0T)|(NT)|(D[0-8])|([K][1-9][0-9]{0,5})$".r
+  val paidHoursWorkPattern = "^[^ ].{0,34}$".r
+  val employerPayeRefPattern = "^[^ ].{1,9}$".r
+  val paymentDatePattern = "^(((19|20)([2468][048]|[13579][26]|0[48])|2000)[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)[-](0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-](0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}[-]02[-](0[1-9]|1[0-9]|2[0-8])))$".r
+  val taxYearPattern = "^[0-9]{2}\\-[0-9]{2}$".r
+  val monthlyPeriodNumberPattern = "^([1-9]|1[0-2])$".r
+  val weeklyPeriodNumberPattern = "^([1-9]|[1-4][0-9]|5[0-46])$".r
+
+  val payFrequencyValues = Seq("W1", "W2", "W4", "M1", "M3", "M6", "MA", "IO", "IR")
+
+  def isInPayFrequency(implicit rds: Reads[String]) : Reads[String] = {
+    verifying(value => payFrequencyValues.contains(value))
+  }
+}
 
 case class SaIncome(
                      selfAssessment: Option[Double],
@@ -84,4 +156,4 @@ object SaResponseObject {
 
 case class CreateIncomeRequest(sa: Option[SaResponse], paye: Option[PayeResponse])
 
-case class IncomeResponse(sa: Option[SaResponse], paye: Option[PayeResponse])
+case class IncomeResponse(sa: Option[Seq[SaTaxYearEntry]], paye: Option[PayeResponse])

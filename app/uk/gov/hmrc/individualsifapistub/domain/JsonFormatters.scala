@@ -23,12 +23,14 @@ import play.api.libs.json.Reads.{maxLength, minLength, pattern}
 import play.api.libs.json._
 import uk.gov.hmrc.individualsifapistub.domain.SaResponseObject.{dateStringPattern, paymentAmountValidator, taxYearPattern, utrPattern}
 import play.api.libs.functional.syntax._
+import uk.gov.hmrc.individualsifapistub.domain.PayeResponseObject.{employerPayeRefPattern, isInPayFrequency, monthlyPeriodNumberPattern, paidHoursWorkPattern, payFrequencyValues, paymentDatePattern, studentLoanPlanTypePattern, taxCodePattern, weeklyPeriodNumberPattern}
 
 import scala.util.{Failure, Try}
 
 object JsonFormatters {
   implicit val dateFormatDefault = new Format[DateTime] {
     override def reads(json: JsValue): JsResult[DateTime] = JodaReads.DefaultJodaDateTimeReads.reads(json)
+
     override def writes(o: DateTime): JsValue = JodaDateTimeNumberWrites.writes(o)
   }
 
@@ -132,6 +134,139 @@ object JsonFormatters {
       ) (unlift(SaTaxYearEntry.unapply))
   )
 
+  implicit val postGradLoanFormat: Format[PostGradLoan] = Format(
+    (
+      (JsPath \ "repaymentsInPayPeriod").readNullable[Double](paymentAmountValidator) and
+        (JsPath \ "repaymentsYTD").readNullable[Double](paymentAmountValidator)
+      ) (PostGradLoan.apply _),
+    (
+      (JsPath \ "repaymentsInPayPeriod").writeNullable[Double] and
+        (JsPath \ "repaymentsYTD").writeNullable[Double]
+      ) (unlift(PostGradLoan.unapply))
+  )
+
+  implicit val studentLoanFormat: Format[StudentLoan] = Format(
+    (
+      (JsPath \ "planType").readNullable[String](pattern(studentLoanPlanTypePattern, "Invalid student loan plan type")) and
+        (JsPath \ "repaymentsInPayPeriod").readNullable[Double](paymentAmountValidator) and
+        (JsPath \ "repaymentsYTD").readNullable[Double](paymentAmountValidator)
+      ) (StudentLoan.apply _),
+    (
+      (JsPath \ "planType").writeNullable[String] and
+        (JsPath \ "repaymentsInPayPeriod").writeNullable[Double] and
+        (JsPath \ "repaymentsYTD").writeNullable[Double]
+      ) (unlift(StudentLoan.unapply))
+  )
+
+  implicit val benefitsFormat: Format[Benefits] = Format(
+    (
+      (JsPath \ "taxedViaPayroll").readNullable[Double](paymentAmountValidator) and
+        (JsPath \ "taxedViaPayrollYTD").readNullable[Double](paymentAmountValidator)
+      ) (Benefits.apply _),
+    (
+      (JsPath \ "taxedViaPayroll").writeNullable[Double] and
+        (JsPath \ "taxedViaPayrollYTD").writeNullable[Double]
+      ) (unlift(Benefits.unapply))
+  )
+
+  implicit val employeePensionContribsFormat: Format[EmployeePensionContribs] = Format(
+    (
+      (JsPath \ "paidYTD").readNullable[Double](paymentAmountValidator) and
+        (JsPath \ "notPaidYTD").readNullable[Double](paymentAmountValidator) and
+        (JsPath \ "paid").readNullable[Double](paymentAmountValidator) and
+        (JsPath \ "notPaid").readNullable[Double](paymentAmountValidator)
+      ) (EmployeePensionContribs.apply _),
+    (
+      (JsPath \ "paidYTD").writeNullable[Double] and
+        (JsPath \ "notPaidYTD").writeNullable[Double] and
+        (JsPath \ "paid").writeNullable[Double] and
+        (JsPath \ "notPaid").writeNullable[Double]
+      ) (unlift(EmployeePensionContribs.unapply))
+  )
+
+  implicit val grossEarningsForNicsFormat: Format[GrossEarningsForNics] = Format(
+    (
+      (JsPath \ "inPayPeriod1").readNullable[Double](paymentAmountValidator) and
+        (JsPath \ "inPayPeriod2").readNullable[Double](paymentAmountValidator) and
+        (JsPath \ "inPayPeriod3").readNullable[Double](paymentAmountValidator) and
+        (JsPath \ "inPayPeriod4").readNullable[Double](paymentAmountValidator)
+      ) (GrossEarningsForNics.apply _),
+    (
+      (JsPath \ "inPayPeriod1").writeNullable[Double] and
+        (JsPath \ "inPayPeriod2").writeNullable[Double] and
+        (JsPath \ "inPayPeriod3").writeNullable[Double] and
+        (JsPath \ "inPayPeriod4").writeNullable[Double]
+      ) (unlift(GrossEarningsForNics.unapply))
+  )
+
+  implicit val employeeNicsFormat: Format[EmployeeNics] = Format(
+    (
+      (JsPath \ "inPayPeriod1").readNullable[Double](paymentAmountValidator) and
+        (JsPath \ "inPayPeriod2").readNullable[Double](paymentAmountValidator) and
+        (JsPath \ "inPayPeriod3").readNullable[Double](paymentAmountValidator) and
+        (JsPath \ "inPayPeriod4").readNullable[Double](paymentAmountValidator) and
+        (JsPath \ "ytd1").readNullable[Double](paymentAmountValidator) and
+        (JsPath \ "ytd2").readNullable[Double](paymentAmountValidator) and
+        (JsPath \ "ytd3").readNullable[Double](paymentAmountValidator) and
+        (JsPath \ "ytd4").readNullable[Double](paymentAmountValidator)
+      ) (EmployeeNics.apply _),
+    (
+      (JsPath \ "inPayPeriod1").writeNullable[Double] and
+        (JsPath \ "inPayPeriod2").writeNullable[Double] and
+        (JsPath \ "inPayPeriod3").writeNullable[Double] and
+        (JsPath \ "inPayPeriod4").writeNullable[Double] and
+        (JsPath \ "ytd1").writeNullable[Double] and
+        (JsPath \ "ytd2").writeNullable[Double] and
+        (JsPath \ "ytd3").writeNullable[Double] and
+        (JsPath \ "ytd4").writeNullable[Double]
+      ) (unlift(EmployeeNics.unapply))
+  )
+
+  implicit val payeEntryFormat: Format[PayeEntry] = Format(
+    (
+      (JsPath \ "taxCode").readNullable[String](minLength[String](2).keepAnd(maxLength[String](7).keepAnd(pattern(taxCodePattern,"Invalid Tax Code")))) and
+        (JsPath \ "paidHoursWork").readNullable[String](maxLength[String](35).keepAnd(pattern(paidHoursWorkPattern,"Invalid Paid Hours Work"))) and
+        (JsPath \ "taxablePayToDate").readNullable[Double](paymentAmountValidator) and
+        (JsPath \ "totalTaxToDate").readNullable[Double](paymentAmountValidator) and
+        (JsPath \ "taxDeductedOrRefunded").readNullable[Double](paymentAmountValidator) and
+        (JsPath \ "employerPayeRef").readNullable[String](maxLength[String](10).keepAnd(pattern(employerPayeRefPattern,"Invalid employer PAYE reference")))  and
+        (JsPath \ "paymentDate").readNullable[String](pattern(paymentDatePattern, "Invalid Payment Date")) and
+        (JsPath \ "taxablePay").readNullable[Double](paymentAmountValidator) and
+        (JsPath \ "taxYear").readNullable[String](pattern(taxYearPattern, "Invalid Tax Year")) and
+        (JsPath \ "monthlyPeriodNumber").readNullable[String](pattern(monthlyPeriodNumberPattern,"Invalid Monthly Period Number").keepAnd(minLength[String](1)).keepAnd(maxLength[String](2))) and
+        (JsPath \ "weeklyPeriodNumber").readNullable[String](pattern(weeklyPeriodNumberPattern,"Invalid Weekly Period Number").keepAnd(minLength[String](1)).keepAnd(maxLength[String](2))) and
+        (JsPath \ "payFrequency").readNullable[String](isInPayFrequency) and
+        (JsPath \ "dednsFromNetPay").readNullable[Double](paymentAmountValidator) and
+        (JsPath \ "employeeNics").readNullable[EmployeeNics] and
+        (JsPath \ "employeePensionContribs").readNullable[EmployeePensionContribs] and
+        (JsPath \ "benefits").readNullable[Benefits] and
+        (JsPath \ "statutoryPayYTD" \ "parentalBereavement").readNullable[Double](paymentAmountValidator) and
+        (JsPath \ "studentLoan").readNullable[StudentLoan] and
+        (JsPath \ "postGradLoan").readNullable[PostGradLoan]
+      )(PayeEntry.apply _),
+    (
+      (JsPath \ "taxCode").writeNullable[String] and
+        (JsPath \ "paidHoursWork").writeNullable[String] and
+        (JsPath \ "taxablePayToDate").writeNullable[Double] and
+        (JsPath \ "totalTaxToDate").writeNullable[Double] and
+        (JsPath \ "taxDeductedOrRefunded").writeNullable[Double] and
+        (JsPath \ "employerPayeRef").writeNullable[String] and
+        (JsPath \ "paymentDate").writeNullable[String] and
+        (JsPath \ "taxablePay").writeNullable[Double] and
+        (JsPath \ "taxYear").writeNullable[String] and
+        (JsPath \ "monthlyPeriodNumber").writeNullable[String] and
+        (JsPath \ "weeklyPeriodNumber").writeNullable[String] and
+        (JsPath \ "payFrequency").writeNullable[String] and
+        (JsPath \ "dednsFromNetPay").writeNullable[Double] and
+        (JsPath \ "employeeNics").writeNullable[EmployeeNics] and
+        (JsPath \ "employeePensionContribs").writeNullable[EmployeePensionContribs] and
+        (JsPath \ "benefits").writeNullable[Benefits] and
+        (JsPath \ "statutoryPayYTD" \ "parentalBereavement").writeNullable[Double] and
+        (JsPath \ "studentLoan").writeNullable[StudentLoan] and
+        (JsPath \ "postGradLoan").writeNullable[PostGradLoan]
+      )(unlift(PayeEntry.unapply))
+  )
+
   implicit val saResponseFormat = Json.format[SaResponse]
 
   implicit val payeResponseFormat = Json.format[PayeResponse]
@@ -187,4 +322,4 @@ object EnumJson {
   }
 }
 
-class InvalidEnumException(className: String, input:String) extends RuntimeException(s"Enumeration expected of type: '$className', but it does not contain '$input'")
+class InvalidEnumException(className: String, input: String) extends RuntimeException(s"Enumeration expected of type: '$className', but it does not contain '$input'")
