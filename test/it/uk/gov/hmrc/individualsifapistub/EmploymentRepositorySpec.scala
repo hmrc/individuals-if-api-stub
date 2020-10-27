@@ -31,7 +31,7 @@ class EmploymentRepositorySpec
   val id = "1234567890"
   val requestBody = "request"
 
-  val employment = EmploymentsResponse(
+  val employment =
     Seq(
       Employment(
         employer = Some(Employer(
@@ -70,7 +70,7 @@ class EmploymentRepositorySpec
         )
         )
         )
-      )))
+      ))
 
   val request = CreateEmploymentRequest(Id(Some("XH123456A"), None), employment)
 

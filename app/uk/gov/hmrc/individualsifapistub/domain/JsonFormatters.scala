@@ -19,7 +19,6 @@ package uk.gov.hmrc.individualsifapistub.domain
 import org.joda.time.DateTime
 import play.api.libs.json.JodaWrites._
 import play.api.libs.json._
-import uk.gov.hmrc.individualsifapistub.domain.EmploymentsResponse._
 
 import scala.util.{Failure, Try}
 

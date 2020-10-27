@@ -31,7 +31,7 @@ class EmploymentsServiceSpec extends TestSupport {
     val idType = "idType"
     val idValue = "idValue"
 
-    val employment = EmploymentsResponse(
+    val employment =
       Seq(
         Employment(
           employer = Some(Employer(
@@ -70,7 +70,7 @@ class EmploymentsServiceSpec extends TestSupport {
           )
           )
           )
-        )))
+        ))
 
     val request = CreateEmploymentRequest(Id(Some("XH123456A"), None), employment)
 

@@ -17,31 +17,33 @@
 package uk.gov.hmrc.individualsifapistub.repository
 
 import javax.inject.{Inject, Singleton}
-import play.api.libs.json.JsObject
+import play.api.libs.json.{Format, JsObject, Reads, Writes}
 import play.api.libs.json.Json.obj
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.bson.BSONObjectID
-import uk.gov.hmrc.individualsifapistub.domain.{CreateEmploymentRequest, EmploymentsResponse, JsonFormatters}
+import uk.gov.hmrc.individualsifapistub.domain.{CreateEmploymentRequest, Employment}
+import uk.gov.hmrc.individualsifapistub.domain.EmploymentsResponse._
 import uk.gov.hmrc.mongo.ReactiveRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
+
 @Singleton
 class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionProvider)
-  extends ReactiveRepository[EmploymentsResponse, BSONObjectID]( "employment",
+  extends ReactiveRepository[Seq[Employment], BSONObjectID]( "employment",
                                                         mongoConnectionProvider.mongoDatabase,
-                                                        EmploymentsResponse.employmentResponseFormat) {
+                                                        Format(Reads.seq[Employment], Writes.seq[Employment])) {
 
   override lazy val indexes = Seq(
     Index(key = Seq(("id", Ascending)), name = Some("idIndex"), unique = true, background = true)
   )
 
-  def create(id: String, request: CreateEmploymentRequest): Future[EmploymentsResponse] = {
-    val employment = request.employment
+  def create(id: String, request: CreateEmploymentRequest): Future[Seq[Employment]] = {
+    val employment = request.employments
     insert(employment) map (_ => employment)
   }
 
-  def findById(id: String): Future[Option[EmploymentsResponse]] = collection.find[JsObject, JsObject](obj("id" -> id), None).one[EmploymentsResponse]
+  def findById(id: String): Future[Option[Seq[Employment]]] = collection.find[JsObject, JsObject](obj("id" -> id), None).one[Seq[Employment]]
 }

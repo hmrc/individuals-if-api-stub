@@ -18,18 +18,16 @@ package unit.uk.gov.hmrc.individualsifapistub.util.controllers
 
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
-import play.api.http.Status.{CREATED, OK}
+import play.api.http.Status.{BAD_REQUEST, CREATED, OK}
 import play.api.libs.json.Json
-import play.api.mvc.ControllerComponents
 import play.api.test.FakeRequest
 import uk.gov.hmrc.individualsifapistub.controllers.EmploymentsController
-import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
 import uk.gov.hmrc.individualsifapistub.domain.EmploymentsResponse._
-import uk.gov.hmrc.individualsifapistub.domain.{Address, CreateEmploymentRequest, Employer, Employment, EmploymentDetail, EmploymentsResponse, Id, Payment}
+import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.individualsifapistub.services.EmploymentsService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class EmploymentsControllerSpec extends TestSupport {
 
@@ -42,8 +40,7 @@ class EmploymentsControllerSpec extends TestSupport {
   val idType = "idType"
   val idValue = "idValue"
 
-  val employment = EmploymentsResponse(
-    Seq(
+  val employment =
       Employment(
         employer = Some(Employer(
           name = Some("Name"),
@@ -81,34 +78,35 @@ class EmploymentsControllerSpec extends TestSupport {
         )
         )
         )
-      )))
+      )
 
-  val request = CreateEmploymentRequest(Id(Some("XH123456A"), None), employment)
+  val request = CreateEmploymentRequest(Id(Some("XH123456A"), None), Seq(employment))
 
   "Create Employment" should {
     "Successfully create a details record and return created record as response" in new Setup {
-      when(mockEmploymentsService.create(idType, idValue, request)).thenReturn(Future.successful(employment))
+      when(mockEmploymentsService.create(idType, idValue, request)).thenReturn(Future.successful(Seq(employment)))
 
       val result = await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson(request))))
 
       status(result) shouldBe CREATED
-      jsonBodyOf(result) shouldBe Json.toJson(employment)
+      jsonBodyOf(result) shouldBe Json.toJson(Seq(employment))
     }
 
     "Fail when a request is not provided" in new Setup {
-      when(mockEmploymentsService.create(idType, idValue, request)).thenReturn(Future.successful(employment))
-      assertThrows[Exception] { await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson("")))) }
-    }
+      when(mockEmploymentsService.create(idType, idValue, request)).thenReturn(Future.successful(Seq(employment)))
+        val result = await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson(""))))
+        status(result) shouldBe BAD_REQUEST
+      }
   }
 
   "Retrieve Employment" should {
-    "Return employment when successfully retrieved from service" in new Setup {
-      when(mockEmploymentsService.get(idType, idValue)).thenReturn(Future.successful(Some(employment)))
+    "Return Seq(employment) when successfully retrieved from service" in new Setup {
+      when(mockEmploymentsService.get(idType, idValue)).thenReturn(Future.successful(Some(Seq(employment))))
 
       val result = await(underTest.retrieve(idType, idValue)(fakeRequest))
 
       status(result) shouldBe OK
-      jsonBodyOf(result) shouldBe Json.toJson(Some(employment))
+      jsonBodyOf(result) shouldBe Json.toJson(Some(Seq(employment)))
     }
 
     "Fail when it cannot get from service" in new Setup {

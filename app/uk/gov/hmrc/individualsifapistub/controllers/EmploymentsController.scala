@@ -31,10 +31,12 @@ class EmploymentsController @Inject()( bodyParser: PlayBodyParsers,
                                        employmentsService: EmploymentsService
                                      ) (implicit val ec: ExecutionContext) extends CommonController(cc) {
 
-  def create(idType: String, idValue: String): Action[JsValue] = Action.async(bodyParser.json) { implicit request =>
-    withJsonBody[CreateEmploymentRequest] { createRequest =>
-      employmentsService.create(idType, idValue, createRequest) map (e => Created(Json.toJson(e)))
-    } recover recovery
+  def create(idType: String, idValue: String): Action[JsValue] = {
+    Action.async(bodyParser.json) { implicit request =>
+      withJsonBody[CreateEmploymentRequest] { createRequest =>
+        employmentsService.create(idType, idValue, createRequest) map (e => Created(Json.toJson(e)))
+      } recover recovery
+    }
   }
 
   def retrieve(idType: String, idValue: String): Action[AnyContent] = Action.async { implicit request =>

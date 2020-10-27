@@ -16,11 +16,10 @@
 
 package uk.gov.hmrc.individualsifapistub.domain
 
-import play.api.libs.functional.syntax.unlift
-import uk.gov.hmrc.individualsifapistub.domain.DetailsResponse.{ninoPattern, trnPattern, addressFormat}
-import play.api.libs.json._
+import play.api.libs.functional.syntax.{unlift, _}
 import play.api.libs.json.Reads._
-import play.api.libs.functional.syntax._
+import play.api.libs.json._
+import uk.gov.hmrc.individualsifapistub.domain.DetailsResponse.addressFormat
 
 import scala.util.matching.Regex
 
@@ -39,9 +38,7 @@ case class Payment(date: Option[String],
 
 case class Employment(employer: Option[Employer], employment: Option[EmploymentDetail], payments: Option[Seq[Payment]])
 
-case class EmploymentsResponse(employments: Seq[Employment])
-
-case class CreateEmploymentRequest(id: Id, employment: EmploymentsResponse)
+case class CreateEmploymentRequest(id: Id, employments: Seq[Employment])
 
 object EmploymentsResponse {
 
@@ -135,19 +132,15 @@ object EmploymentsResponse {
     )(unlift(Id.unapply))
   )
 
-  implicit val employmentResponseFormat: Format[EmploymentsResponse] = Format(
-    fjs = (JsPath \ "employments").read[Seq[Employment]](EmploymentsResponse.apply _),
-    tjs = (JsPath \ "employments").write[Seq[Employment]](unlift(EmploymentsResponse.unapply))
-  )
 
   implicit val createEmploymentRequestFormat: Format[CreateEmploymentRequest] = Format(
     (
       (JsPath \ "id").read[Id] and
-      (JsPath \ "employment").read[EmploymentsResponse]
+      (JsPath \ "employments").read[Seq[Employment]](verifying[Seq[Employment]](_.nonEmpty))
     )(CreateEmploymentRequest.apply _),
     (
       (JsPath \ "id").write[Id] and
-      (JsPath \ "employment").write[EmploymentsResponse]
+      (JsPath \ "employments").write[Seq[Employment]]
     )(unlift(CreateEmploymentRequest.unapply))
   )
 }
