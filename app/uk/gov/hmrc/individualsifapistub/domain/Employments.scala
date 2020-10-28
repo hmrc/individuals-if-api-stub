@@ -38,6 +38,8 @@ case class Employment(employer: Option[Employer], employment: Option[EmploymentD
 
 case class EmploymentEntry(id: Id, employments: Seq[Employment])
 
+case class Employments(employments: Seq[Employment])
+
 object Employments {
 
   val datePattern:Regex =
@@ -122,9 +124,7 @@ object Employments {
     )(unlift(Employment.unapply))
   )
 
-
-
-  val createEmploymentRequestFormat: Format[EmploymentEntry] = Format(
+  val createEmploymentEntryFormat: Format[EmploymentEntry] = Format(
     (
       (JsPath \ "id").read[Id] and
       (JsPath \ "employments").read[Seq[Employment]](verifying[Seq[Employment]](_.nonEmpty))
@@ -133,6 +133,11 @@ object Employments {
       (JsPath \ "id").write[Id] and
       (JsPath \ "employments").write[Seq[Employment]]
     )(unlift(EmploymentEntry.unapply))
+  )
+
+  implicit val createEmploymentsFormat: Format[Employments] = Format(
+        (JsPath \ "employments").read[Seq[Employment]](verifying[Seq[Employment]](_.nonEmpty)).map(x => Employments(x)),
+        (JsPath \ "employments").write[Seq[Employment]].contramap(x => x.employments)
   )
 }
 

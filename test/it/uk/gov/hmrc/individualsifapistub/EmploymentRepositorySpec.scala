@@ -19,7 +19,6 @@ package it.uk.gov.hmrc.individualsifapistub
 import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
 import reactivemongo.api.indexes.IndexType.Ascending
-import uk.gov.hmrc.individualsifapistub.domain.IdType.{Nino, Trn}
 import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.individualsifapistub.repository.EmploymentRepository
 import uk.gov.hmrc.mongo.MongoSpecSupport
@@ -33,8 +32,7 @@ class EmploymentRepositorySpec
   val nino = "XH123456A"
   val trn = "123456789"
 
-  val employments: Seq[Employment] =
-    Seq(
+  val employment: Employment =
       Employment(
         employer = Some(Employer(
           name = Some("Name"),
@@ -72,8 +70,9 @@ class EmploymentRepositorySpec
         )
         )
         )
-      ))
+      )
 
+  val employments = Employments(Seq(employment))
 
   override lazy val fakeApplication = buildFakeApplication(
     Configuration("mongodb.uri" -> mongoUri))
@@ -111,34 +110,34 @@ class EmploymentRepositorySpec
 
   "create" should {
     "create an employment with a nino" in {
-      val result = await(employmentRepository.create(Nino.toString, nino, employments))
+      val result = await(employmentRepository.create("nino", nino, employments))
       result shouldBe employments
     }
 
     "create an employment with a trn" in {
-      val result = await(employmentRepository.create(Trn.toString, trn, employments))
+      val result = await(employmentRepository.create("trn", trn, employments))
       result shouldBe employments
     }
 
     "fail to create duplicate details" in {
-      await(employmentRepository.create(Nino.toString, nino, employments))
-      intercept[Exception](await(employmentRepository.create(Nino.toString, nino, employments)))
+      await(employmentRepository.create("nino", nino, employments))
+      intercept[Exception](await(employmentRepository.create("nino", nino, employments)))
     }
   }
 
   "findByIdAndType" should {
 
     "return None when there are no details for a given nino" in {
-      await(employmentRepository.findByIdAndType(Nino.toString, nino)) shouldBe None
+      await(employmentRepository.findByIdAndType("nino", nino)) shouldBe None
     }
 
     "return None when there are no details for a given trn" in {
-      await(employmentRepository.findByIdAndType(Trn.toString, trn)) shouldBe None
+      await(employmentRepository.findByIdAndType("trn", trn)) shouldBe None
     }
 
     "return a single record with id" in {
-      await(employmentRepository.create(Nino.toString, nino, employments))
-      val result = await(employmentRepository.findByIdAndType(Nino.toString, nino))
+      await(employmentRepository.create("nino", nino, employments))
+      val result = await(employmentRepository.findByIdAndType("nino", nino))
       result.get shouldBe employments
     }
 

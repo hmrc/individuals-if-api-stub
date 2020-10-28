@@ -22,7 +22,7 @@ import play.api.libs.json.Json.obj
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.bson.BSONObjectID
-import uk.gov.hmrc.individualsifapistub.domain.{Employment, EmploymentEntry, Id, IdType}
+import uk.gov.hmrc.individualsifapistub.domain.{Employment, EmploymentEntry, Employments, Id, IdType}
 import uk.gov.hmrc.individualsifapistub.domain.Employments._
 import uk.gov.hmrc.individualsifapistub.domain.IdType.{Nino, Trn}
 import uk.gov.hmrc.mongo.ReactiveRepository
@@ -34,24 +34,24 @@ import scala.concurrent.{ExecutionContext, Future}
 class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionProvider)(implicit val ec: ExecutionContext)
   extends ReactiveRepository[EmploymentEntry, BSONObjectID]( "employment",
                                                         mongoConnectionProvider.mongoDatabase,
-                                                        createEmploymentRequestFormat) {
+                                                        createEmploymentEntryFormat) {
 
   override lazy val indexes = Seq(
     Index(key = Seq(("id.nino", Ascending)), name = Some("nino"), unique = true, background = true),
     Index(key = Seq(("id.trn", Ascending)), name = Some("trn"), unique = true, background = true)
   )
 
-  def create(idType: String, idValue: String, employments: Seq[Employment]): Future[Seq[Employment]] = {
+  def create(idType: String, idValue: String, employments: Employments): Future[Employments] = {
     val id = IdType.parse(idType) match {
       case Nino => Id(Some(idValue), None)
       case Trn => Id(None, Some(idValue))
     }
-    insert(EmploymentEntry(id, employments)) map (_ => employments)
+    insert(EmploymentEntry(id, employments.employments)) map (_ => employments)
   }
 
-  def findByIdAndType(idType: String, idValue: String): Future[Option[Seq[Employment]]] = {
+  def findByIdAndType(idType: String, idValue: String): Future[Option[Employments]] = {
     collection
       .find[JsObject, JsObject](obj("id" -> obj(idType -> idValue)), None)
-      .one[EmploymentEntry].map( _.map(_.employments))
+      .one[Employments]
   }
 }

@@ -17,7 +17,7 @@
 package uk.gov.hmrc.individualsifapistub.services
 
 import javax.inject.Inject
-import uk.gov.hmrc.individualsifapistub.domain.{EmploymentEntry, Employment}
+import uk.gov.hmrc.individualsifapistub.domain.Employments
 import uk.gov.hmrc.individualsifapistub.repository.EmploymentRepository
 
 import scala.concurrent.Future
@@ -26,11 +26,11 @@ class EmploymentsService @Inject()(employmentsRepository: EmploymentRepository) 
 
   def create(idType: String,
              idValue: String,
-             employments: Seq[Employment]): Future[Seq[Employment]] = {
+             employments: Employments): Future[Employments] = {
     employmentsRepository.create(idType, idValue, employments)
   }
 
-  def get(idType: String, idValue: String): Future[Option[Seq[Employment]]] = {
+  def get(idType: String, idValue: String): Future[Option[Employments]] = {
     employmentsRepository.findByIdAndType(idType, idValue)
   }
 }
