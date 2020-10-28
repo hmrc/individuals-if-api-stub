@@ -108,6 +108,26 @@ class EmploymentsSpec extends UnitSpec with AddressHelpers {
       result.isSuccess shouldBe true
     }
 
+    "fail to validate when week is below 1" in {
+      val result = Json.toJson(payment.copy(week = Some(0))).validate[Payment]
+      result.isError shouldBe true
+    }
+
+    "fail to validate when week is above 56" in {
+      val result = Json.toJson(payment.copy(week = Some(57))).validate[Payment]
+      result.isError shouldBe true
+    }
+
+    "fail to validate when month is below 1" in {
+      val result = Json.toJson(payment.copy(month = Some(0))).validate[Payment]
+      result.isError shouldBe true
+    }
+
+    "fail to validate when month is above 12" in {
+      val result = Json.toJson(payment.copy(month = Some(13))).validate[Payment]
+      result.isError shouldBe true
+    }
+
     "fail to validate when not a multiple of 0.01" in {
       val result = Json.toJson(payment.copy(ytdTaxablePay = Some(123.4312123123123))).validate[Payment]
       result.isError shouldBe true
@@ -124,9 +144,14 @@ class EmploymentsSpec extends UnitSpec with AddressHelpers {
     }
   }
 
-  "Employment Response" should {
+  "Employments" should {
     "Write to JSON successfully" in {
-      val result = Json.toJson( Seq(employment)).validate[Seq[Employment]]
+      val result = Json.toJson( Employments(Seq(employment))).validate[Employments]
+      result.isSuccess shouldBe true
+    }
+
+    "Write to JSON successfully when employments is empty" in {
+      val result = Json.toJson( Employments(Seq())).validate[Employments]
       result.isSuccess shouldBe true
     }
   }

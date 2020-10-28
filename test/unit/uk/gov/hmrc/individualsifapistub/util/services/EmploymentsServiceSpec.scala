@@ -73,10 +73,7 @@ class EmploymentsServiceSpec extends TestSupport {
         )
 
     val employments = Employments(Seq(employment))
-
     val request = EmploymentEntry(Id(Some("XH123456A"), None), Seq(employment))
-
-
     val mockEmploymentRepository = mock[EmploymentRepository]
     val underTest = new EmploymentsService(mockEmploymentRepository)
   }
@@ -84,7 +81,6 @@ class EmploymentsServiceSpec extends TestSupport {
   "Employments Service" when {
     "Create" should {
       "Return the created employment when created" in new Setup {
-
         when(mockEmploymentRepository.create(idType, idValue, employments)).thenReturn(Future.successful(employments));
         val response = await(underTest.create(idType, idValue, employments))
         response shouldBe employments

@@ -23,6 +23,7 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.individualsifapistub.controllers.EmploymentsController
 import uk.gov.hmrc.individualsifapistub.domain.Employments._
+import uk.gov.hmrc.individualsifapistub.domain.IdType.{Nino, Trn}
 import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.individualsifapistub.services.EmploymentsService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
@@ -37,7 +38,7 @@ class EmploymentsControllerSpec extends TestSupport {
     val underTest = new EmploymentsController(bodyParsers, controllerComponents, mockEmploymentsService)
   }
 
-  val idType = "nino"
+  val idType = Nino.toString
   val idValue = "XH123456A"
 
   implicit val cerFormat = Employments.createEmploymentEntryFormat
@@ -89,11 +90,27 @@ class EmploymentsControllerSpec extends TestSupport {
   "Create Employment" should {
     "Successfully create a details record and return created record as response" in new Setup {
       when(mockEmploymentsService.create(idType, idValue, employments)).thenReturn(Future.successful(employments))
-
       val result = await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson(employments))))
-
       status(result) shouldBe CREATED
       jsonBodyOf(result) shouldBe Json.toJson(employments)
+    }
+
+    "Fail when the NINO is invalid" in new Setup {
+      when(mockEmploymentsService.create(idType, idValue, employments)).thenReturn(Future.successful(employments))
+      val result = await(underTest.create(idType, "abc")(fakeRequest.withBody(Json.toJson(employments))))
+      status(result) shouldBe BAD_REQUEST
+    }
+
+    "Fail when the TRN is invalid" in new Setup {
+      when(mockEmploymentsService.create(idType, idValue, employments)).thenReturn(Future.successful(employments))
+      val result = await(underTest.create(Trn.toString, "abc")(fakeRequest.withBody(Json.toJson(employments))))
+      status(result) shouldBe BAD_REQUEST
+    }
+
+    "Fail when the idType is invalid" in new Setup {
+      when(mockEmploymentsService.create(idType, idValue, employments)).thenReturn(Future.successful(employments))
+      val result = await(underTest.create("idType", idValue)(fakeRequest.withBody(Json.toJson(employments))))
+      status(result) shouldBe BAD_REQUEST
     }
 
     "Fail when a request is not provided" in new Setup {

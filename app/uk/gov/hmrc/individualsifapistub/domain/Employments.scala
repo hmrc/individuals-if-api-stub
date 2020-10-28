@@ -127,7 +127,7 @@ object Employments {
   val createEmploymentEntryFormat: Format[EmploymentEntry] = Format(
     (
       (JsPath \ "id").read[Id] and
-      (JsPath \ "employments").read[Seq[Employment]](verifying[Seq[Employment]](_.nonEmpty))
+      (JsPath \ "employments").read[Seq[Employment]]
     )(EmploymentEntry.apply _),
     (
       (JsPath \ "id").write[Id] and
@@ -136,10 +136,7 @@ object Employments {
   )
 
   implicit val createEmploymentsFormat: Format[Employments] = Format(
-        (JsPath \ "employments").read[Seq[Employment]](verifying[Seq[Employment]](_.nonEmpty)).map(x => Employments(x)),
+        (JsPath \ "employments").read[Seq[Employment]].map(x => Employments(x)),
         (JsPath \ "employments").write[Seq[Employment]].contramap(x => x.employments)
   )
 }
-
-
-
