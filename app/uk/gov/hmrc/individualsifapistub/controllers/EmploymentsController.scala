@@ -19,7 +19,7 @@ package uk.gov.hmrc.individualsifapistub.controllers
 import javax.inject.Inject
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
-import uk.gov.hmrc.individualsifapistub.domain.CreateEmploymentRequest
+import uk.gov.hmrc.individualsifapistub.domain.{CreateEmploymentRequest, Employment}
 import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
 import uk.gov.hmrc.individualsifapistub.domain.EmploymentsResponse._
 import uk.gov.hmrc.individualsifapistub.services.EmploymentsService
@@ -33,8 +33,8 @@ class EmploymentsController @Inject()( bodyParser: PlayBodyParsers,
 
   def create(idType: String, idValue: String): Action[JsValue] = {
     Action.async(bodyParser.json) { implicit request =>
-      withJsonBody[CreateEmploymentRequest] { createRequest =>
-        employmentsService.create(idType, idValue, createRequest) map (e => Created(Json.toJson(e)))
+      withJsonBody[Seq[Employment]] { jsonBody =>
+        employmentsService.create(idType, idValue, jsonBody) map (e => Created(Json.toJson(e)))
       } recover recovery
     }
   }

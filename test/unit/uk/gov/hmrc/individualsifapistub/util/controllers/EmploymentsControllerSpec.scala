@@ -40,6 +40,8 @@ class EmploymentsControllerSpec extends TestSupport {
   val idType = "idType"
   val idValue = "idValue"
 
+  implicit val cerFormat = EmploymentsResponse.createEmploymentRequestFormat
+
   val employment =
       Employment(
         employer = Some(Employer(
@@ -84,7 +86,7 @@ class EmploymentsControllerSpec extends TestSupport {
 
   "Create Employment" should {
     "Successfully create a details record and return created record as response" in new Setup {
-      when(mockEmploymentsService.create(idType, idValue, request)).thenReturn(Future.successful(Seq(employment)))
+      when(mockEmploymentsService.create(idType, idValue, Seq(employment))).thenReturn(Future.successful(Seq(employment)))
 
       val result = await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson(request))))
 
@@ -93,7 +95,7 @@ class EmploymentsControllerSpec extends TestSupport {
     }
 
     "Fail when a request is not provided" in new Setup {
-      when(mockEmploymentsService.create(idType, idValue, request)).thenReturn(Future.successful(Seq(employment)))
+      when(mockEmploymentsService.create(idType, idValue, Seq(employment))).thenReturn(Future.successful(Seq(employment)))
         val result = await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson(""))))
         status(result) shouldBe BAD_REQUEST
       }

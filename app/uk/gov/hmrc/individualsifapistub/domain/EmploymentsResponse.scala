@@ -54,7 +54,7 @@ object EmploymentsResponse {
 
   def isInRange(value: Double): Boolean = value > minValue && value < maxValue
 
-  def paymentAmountValidator(implicit rds: Reads[Double]):Reads[Double] =
+  def paymentAmountValidator:Reads[Double] =
     verifying[Double](value => isInRange(value) && isMultipleOfPointZeroOne(value))
 
   implicit val employerFormat: Format[Employer] = Format(
@@ -133,7 +133,7 @@ object EmploymentsResponse {
   )
 
 
-  implicit val createEmploymentRequestFormat: Format[CreateEmploymentRequest] = Format(
+  val createEmploymentRequestFormat: Format[CreateEmploymentRequest] = Format(
     (
       (JsPath \ "id").read[Id] and
       (JsPath \ "employments").read[Seq[Employment]](verifying[Seq[Employment]](_.nonEmpty))

@@ -22,28 +22,36 @@ import play.api.libs.json.Json.obj
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.bson.BSONObjectID
-import uk.gov.hmrc.individualsifapistub.domain.{CreateEmploymentRequest, Employment}
+import uk.gov.hmrc.individualsifapistub.domain.{CreateEmploymentRequest, Employment, Id}
 import uk.gov.hmrc.individualsifapistub.domain.EmploymentsResponse._
 import uk.gov.hmrc.mongo.ReactiveRepository
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 
 @Singleton
-class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionProvider)
-  extends ReactiveRepository[Seq[Employment], BSONObjectID]( "employment",
+class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionProvider)(implicit val ec: ExecutionContext)
+  extends ReactiveRepository[CreateEmploymentRequest, BSONObjectID]( "employment",
                                                         mongoConnectionProvider.mongoDatabase,
-                                                        Format(Reads.seq[Employment], Writes.seq[Employment])) {
+                                                        createEmploymentRequestFormat) {
 
   override lazy val indexes = Seq(
-    Index(key = Seq(("id", Ascending)), name = Some("idIndex"), unique = true, background = true)
+    Index(key = Seq(("id.nino", Ascending)), name = Some("nino"), unique = true, background = true),
+    Index(key = Seq(("id.trn", Ascending)), name = Some("trn"), unique = true, background = true)
   )
 
-  def create(id: String, request: CreateEmploymentRequest): Future[Seq[Employment]] = {
-    val employment = request.employments
-    insert(employment) map (_ => employment)
+  def create(idType: String, idValue: String, employments: Seq[Employment]): Future[Seq[Employment]] = {
+    val id = idType match {
+      case "nino" => Id(Some(idValue), None)
+      case "trn" => Id(None, Some(idValue))
+      case _ => throw new Exception()
+    }
+    insert(CreateEmploymentRequest(id, employments)) map (_ => employments)
   }
 
-  def findById(id: String): Future[Option[Seq[Employment]]] = collection.find[JsObject, JsObject](obj("id" -> id), None).one[Seq[Employment]]
+  def findByIdAndType(idType: String, idValue: String): Future[Option[Seq[Employment]]] = {
+    collection
+      .find[JsObject, JsObject](obj("id" -> obj(idType -> idValue)), None)
+      .one[CreateEmploymentRequest].map( _.map(_.employments))
+  }
 }

@@ -24,13 +24,13 @@ import scala.concurrent.Future
 
 class EmploymentsService @Inject()(employmentsRepository: EmploymentRepository) {
 
-  def create( idType: String,
-              idValue: String,
-              createEmploymentRequest: CreateEmploymentRequest): Future[Seq[Employment]] = {
-    employmentsRepository.create(s"$idType-$idValue", createEmploymentRequest)
+  def create(idType: String,
+             idValue: String,
+             employments: Seq[Employment]): Future[Seq[Employment]] = {
+    employmentsRepository.create(idType, idValue, employments)
   }
 
   def get(idType: String, idValue: String): Future[Option[Seq[Employment]]] = {
-    employmentsRepository.findById(s"$idType-$idValue")
+    employmentsRepository.findByIdAndType(idType, idValue)
   }
 }

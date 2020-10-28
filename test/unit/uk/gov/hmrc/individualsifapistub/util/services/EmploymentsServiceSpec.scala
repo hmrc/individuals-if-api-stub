@@ -18,7 +18,7 @@ package unit.uk.gov.hmrc.individualsifapistub.util.services
 
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
-import uk.gov.hmrc.individualsifapistub.domain.{Address, CreateEmploymentRequest, Employer, Employment, EmploymentDetail, EmploymentsResponse, Id, Payment}
+import uk.gov.hmrc.individualsifapistub.domain.{Address, CreateEmploymentRequest, Employer, Employment, EmploymentDetail, Id, Payment}
 import uk.gov.hmrc.individualsifapistub.repository.EmploymentRepository
 import uk.gov.hmrc.individualsifapistub.services.EmploymentsService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
@@ -83,28 +83,28 @@ class EmploymentsServiceSpec extends TestSupport {
     "Create" should {
       "Return the created employment when created" in new Setup {
 
-        when(mockEmploymentRepository.create(s"$idType-$idValue", request)).thenReturn(Future.successful(employment));
-        val response = await(underTest.create(idType, idValue, request))
+        when(mockEmploymentRepository.create(idType, idValue, employment)).thenReturn(Future.successful(employment));
+        val response = await(underTest.create(idType, idValue, employment))
         response shouldBe employment
       }
 
       "Return failure when unable to create Employment object" in new Setup {
-        when(mockEmploymentRepository.create(s"$idType-$idValue", request)).thenReturn(Future.failed(new Exception));
+        when(mockEmploymentRepository.create(idType, idValue, employment)).thenReturn(Future.failed(new Exception));
         assertThrows[Exception] {
-          await(underTest.create(idType, idValue, request))
+          await(underTest.create(idType, idValue, employment))
         }
       }
     }
 
     "Get" should {
       "Return employment when successfully retrieved from mongo" in new Setup {
-        when(mockEmploymentRepository.findById(s"$idType-$idValue")).thenReturn(Future.successful(Some(employment)));
+        when(mockEmploymentRepository.findByIdAndType(idType, idValue)).thenReturn(Future.successful(Some(employment)));
         val response = await(underTest.get(idType, idValue))
         response shouldBe Some(employment)
       }
 
       "Return none if cannot be found in mongo" in new Setup {
-        when(mockEmploymentRepository.findById(s"$idType-$idValue")).thenReturn(Future.successful(None));
+        when(mockEmploymentRepository.findByIdAndType(idType, idValue)).thenReturn(Future.successful(None));
         val response = await(underTest.get(idType,idValue))
         response shouldBe None
       }
