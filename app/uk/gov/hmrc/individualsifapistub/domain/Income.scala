@@ -60,7 +60,7 @@ case class EmployeeNics(
 
 case class PayeEntry(
                       taxCode: Option[String],
-                      paidHoursWork: Option[String],
+                      paidHoursWorked: Option[String],
                       taxablePayToDate: Option[Double],
                       totalTaxToDate: Option[Double],
                       taxDeductedOrRefunded: Option[Double],
@@ -88,7 +88,7 @@ object PayeResponseObject {
   val paidHoursWorkPattern = "^[^ ].{0,34}$".r
   val employerPayeRefPattern = "^[^ ].{1,9}$".r
   val paymentDatePattern = "^(((19|20)([2468][048]|[13579][26]|0[48])|2000)[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)[-](0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-](0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}[-]02[-](0[1-9]|1[0-9]|2[0-8])))$".r
-  val taxYearPattern = "^[0-9]{2}\\-[0-9]{2}$".r
+  val payeTaxYearPattern = "^[0-9]{2}\\-[0-9]{2}$".r
   val monthlyPeriodNumberPattern = "^([1-9]|1[0-2])$".r
   val weeklyPeriodNumberPattern = "^([1-9]|[1-4][0-9]|5[0-46])$".r
 
@@ -146,7 +146,7 @@ object SaResponseObject {
   val dateStringPattern = "^(((19|20)([2468][048]|[13579][26]|0[48])|2000)[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)[-](0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-](0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}[-]02[-](0[1-9]|1[0-9]|2[0-8])))$".r
   val taxYearPattern = "^20[0-9]{2}$".r
 
-  def isMultipleOfPointZeroOne(value: Double): Boolean = (value * 100.0) % 1 == 0
+  def isMultipleOfPointZeroOne(value: Double): Boolean = (BigDecimal(value) * 100.0) % 1 == 0
 
   def isInRange(value: Double): Boolean = value > minValue && value < maxValue
 

@@ -17,13 +17,12 @@
 package uk.gov.hmrc.individualsifapistub.domain
 
 import org.joda.time.DateTime
-import play.api.libs.functional.syntax.unlift
+import play.api.libs.functional.syntax.{unlift, _}
 import play.api.libs.json.JodaWrites._
 import play.api.libs.json.Reads.{maxLength, minLength, pattern}
 import play.api.libs.json._
+import uk.gov.hmrc.individualsifapistub.domain.PayeResponseObject._
 import uk.gov.hmrc.individualsifapistub.domain.SaResponseObject.{dateStringPattern, paymentAmountValidator, taxYearPattern, utrPattern}
-import play.api.libs.functional.syntax._
-import uk.gov.hmrc.individualsifapistub.domain.PayeResponseObject.{employerPayeRefPattern, isInPayFrequency, monthlyPeriodNumberPattern, paidHoursWorkPattern, payFrequencyValues, paymentDatePattern, studentLoanPlanTypePattern, taxCodePattern, weeklyPeriodNumberPattern}
 
 import scala.util.{Failure, Try}
 
@@ -225,19 +224,19 @@ object JsonFormatters {
   implicit val payeEntryFormat: Format[PayeEntry] = Format(
     (
       (JsPath \ "taxCode").readNullable[String](minLength[String](2).keepAnd(maxLength[String](7).keepAnd(pattern(taxCodePattern,"Invalid Tax Code")))) and
-        (JsPath \ "paidHoursWork").readNullable[String](maxLength[String](35).keepAnd(pattern(paidHoursWorkPattern,"Invalid Paid Hours Work"))) and
+        (JsPath \ "paidHoursWorked").readNullable[String](maxLength[String](35).keepAnd(pattern(paidHoursWorkPattern,"Invalid Paid Hours Work"))) and
         (JsPath \ "taxablePayToDate").readNullable[Double](paymentAmountValidator) and
         (JsPath \ "totalTaxToDate").readNullable[Double](paymentAmountValidator) and
         (JsPath \ "taxDeductedOrRefunded").readNullable[Double](paymentAmountValidator) and
         (JsPath \ "employerPayeRef").readNullable[String](maxLength[String](10).keepAnd(pattern(employerPayeRefPattern,"Invalid employer PAYE reference")))  and
         (JsPath \ "paymentDate").readNullable[String](pattern(paymentDatePattern, "Invalid Payment Date")) and
         (JsPath \ "taxablePay").readNullable[Double](paymentAmountValidator) and
-        (JsPath \ "taxYear").readNullable[String](pattern(taxYearPattern, "Invalid Tax Year")) and
+        (JsPath \ "taxYear").readNullable[String](pattern(payeTaxYearPattern, "Invalid Tax Year")) and
         (JsPath \ "monthlyPeriodNumber").readNullable[String](pattern(monthlyPeriodNumberPattern,"Invalid Monthly Period Number").keepAnd(minLength[String](1)).keepAnd(maxLength[String](2))) and
         (JsPath \ "weeklyPeriodNumber").readNullable[String](pattern(weeklyPeriodNumberPattern,"Invalid Weekly Period Number").keepAnd(minLength[String](1)).keepAnd(maxLength[String](2))) and
         (JsPath \ "payFrequency").readNullable[String](isInPayFrequency) and
         (JsPath \ "dednsFromNetPay").readNullable[Double](paymentAmountValidator) and
-        (JsPath \ "employeeNics").readNullable[EmployeeNics] and
+        (JsPath \ "employeeNICs").readNullable[EmployeeNics] and
         (JsPath \ "employeePensionContribs").readNullable[EmployeePensionContribs] and
         (JsPath \ "benefits").readNullable[Benefits] and
         (JsPath \ "statutoryPayYTD" \ "parentalBereavement").readNullable[Double](paymentAmountValidator) and
@@ -246,7 +245,7 @@ object JsonFormatters {
       )(PayeEntry.apply _),
     (
       (JsPath \ "taxCode").writeNullable[String] and
-        (JsPath \ "paidHoursWork").writeNullable[String] and
+        (JsPath \ "paidHoursWorked").writeNullable[String] and
         (JsPath \ "taxablePayToDate").writeNullable[Double] and
         (JsPath \ "totalTaxToDate").writeNullable[Double] and
         (JsPath \ "taxDeductedOrRefunded").writeNullable[Double] and
@@ -258,7 +257,7 @@ object JsonFormatters {
         (JsPath \ "weeklyPeriodNumber").writeNullable[String] and
         (JsPath \ "payFrequency").writeNullable[String] and
         (JsPath \ "dednsFromNetPay").writeNullable[Double] and
-        (JsPath \ "employeeNics").writeNullable[EmployeeNics] and
+        (JsPath \ "employeeNICs").writeNullable[EmployeeNics] and
         (JsPath \ "employeePensionContribs").writeNullable[EmployeePensionContribs] and
         (JsPath \ "benefits").writeNullable[Benefits] and
         (JsPath \ "statutoryPayYTD" \ "parentalBereavement").writeNullable[Double] and
