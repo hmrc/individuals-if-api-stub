@@ -18,7 +18,7 @@ package unit.uk.gov.hmrc.individualsifapistub.util.services
 
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
-import uk.gov.hmrc.individualsifapistub.domain.{Address, CreateEmploymentRequest, Employer, Employment, EmploymentDetail, Id, Payment}
+import uk.gov.hmrc.individualsifapistub.domain.{Address, EmploymentEntry, Employer, Employment, EmploymentDetail, Id, Payment}
 import uk.gov.hmrc.individualsifapistub.repository.EmploymentRepository
 import uk.gov.hmrc.individualsifapistub.services.EmploymentsService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
@@ -72,7 +72,7 @@ class EmploymentsServiceSpec extends TestSupport {
           )
         ))
 
-    val request = CreateEmploymentRequest(Id(Some("XH123456A"), None), employment)
+    val request = EmploymentEntry(Id(Some("XH123456A"), None), employment)
 
 
     val mockEmploymentRepository = mock[EmploymentRepository]

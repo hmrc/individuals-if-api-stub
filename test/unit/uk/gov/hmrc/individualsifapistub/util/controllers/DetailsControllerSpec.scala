@@ -61,7 +61,8 @@ class DetailsControllerSpec extends TestSupport with AddressHelpers {
       val details = Details(Some(idValue), None)
       val detailsResponse = DetailsResponse(details, None, None)
       when(mockDetailsService.create(idType, idValue, request)).thenReturn(Future.successful(detailsResponse))
-      assertThrows[Exception] { await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson("")))) }
+      val response = await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson(""))))
+      status(response) shouldBe BAD_REQUEST
     }
   }
 

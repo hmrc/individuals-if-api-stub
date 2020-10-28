@@ -22,7 +22,7 @@ import play.api.http.Status.{BAD_REQUEST, CREATED, OK}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.individualsifapistub.controllers.EmploymentsController
-import uk.gov.hmrc.individualsifapistub.domain.EmploymentsResponse._
+import uk.gov.hmrc.individualsifapistub.domain.Employments._
 import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.individualsifapistub.services.EmploymentsService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
@@ -37,10 +37,10 @@ class EmploymentsControllerSpec extends TestSupport {
     val underTest = new EmploymentsController(bodyParsers, controllerComponents, mockEmploymentsService)
   }
 
-  val idType = "idType"
-  val idValue = "idValue"
+  val idType = "nino"
+  val idValue = "XH123456A"
 
-  implicit val cerFormat = EmploymentsResponse.createEmploymentRequestFormat
+  implicit val cerFormat = Employments.createEmploymentRequestFormat
 
   val employment =
       Employment(
@@ -82,13 +82,13 @@ class EmploymentsControllerSpec extends TestSupport {
         )
       )
 
-  val request = CreateEmploymentRequest(Id(Some("XH123456A"), None), Seq(employment))
+  val request = EmploymentEntry(Id(Some("XH123456A"), None), Seq(employment))
 
   "Create Employment" should {
     "Successfully create a details record and return created record as response" in new Setup {
       when(mockEmploymentsService.create(idType, idValue, Seq(employment))).thenReturn(Future.successful(Seq(employment)))
 
-      val result = await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson(request))))
+      val result = await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson(Seq(employment)))))
 
       status(result) shouldBe CREATED
       jsonBodyOf(result) shouldBe Json.toJson(Seq(employment))

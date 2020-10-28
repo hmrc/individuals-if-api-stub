@@ -19,9 +19,9 @@ package uk.gov.hmrc.individualsifapistub.controllers
 import javax.inject.Inject
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
-import uk.gov.hmrc.individualsifapistub.domain.{CreateEmploymentRequest, Employment}
+import uk.gov.hmrc.individualsifapistub.domain.{EmploymentEntry, Employment}
 import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
-import uk.gov.hmrc.individualsifapistub.domain.EmploymentsResponse._
+import uk.gov.hmrc.individualsifapistub.domain.Employments._
 import uk.gov.hmrc.individualsifapistub.services.EmploymentsService
 
 import scala.concurrent.ExecutionContext
@@ -33,8 +33,8 @@ class EmploymentsController @Inject()( bodyParser: PlayBodyParsers,
 
   def create(idType: String, idValue: String): Action[JsValue] = {
     Action.async(bodyParser.json) { implicit request =>
-      withJsonBody[Seq[Employment]] { jsonBody =>
-        employmentsService.create(idType, idValue, jsonBody) map (e => Created(Json.toJson(e)))
+      withJsonBodyAndValidId[Seq[Employment]](idType, idValue) {
+          jsonBody => employmentsService.create(idType, idValue, jsonBody) map (e => Created(Json.toJson(e)))
       } recover recovery
     }
   }

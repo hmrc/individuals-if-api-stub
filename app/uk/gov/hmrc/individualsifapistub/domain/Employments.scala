@@ -23,8 +23,6 @@ import uk.gov.hmrc.individualsifapistub.domain.DetailsResponse.addressFormat
 
 import scala.util.matching.Regex
 
-case class Id(nino: Option[String], trn: Option[String])
-
 case class Employer(name: Option[String], address: Option[Address], districtNumber: Option[String], schemeRef: Option[String])
 
 case class EmploymentDetail(startDate: Option[String], endDate: Option[String], payFrequency: Option[String], payrollId:Option[String], address: Option[Address])
@@ -38,14 +36,17 @@ case class Payment(date: Option[String],
 
 case class Employment(employer: Option[Employer], employment: Option[EmploymentDetail], payments: Option[Seq[Payment]])
 
-case class CreateEmploymentRequest(id: Id, employments: Seq[Employment])
+case class EmploymentEntry(id: Id, employments: Seq[Employment])
 
-object EmploymentsResponse {
+object Employments {
 
-  val dateFormat:Regex = "^(((19|20)([2468][048]|[13579][26]|0[48])|2000)[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)[-](0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-](0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}[-]02[-](0[1-9]|1[0-9]|2[0-8])))$".r
-  val payFrequency:Regex = "^(W1|W2|W4|M1|M3|M6|MA|IO|IR)$".r
-  val ninoPattern: Regex = "^((?!(BG|GB|KN|NK|NT|TN|ZZ)|(D|F|I|Q|U|V)[A-Z]|[A-Z](D|F|I|O|Q|U|V))[A-Z]{2})[0-9]{6}[A-D\\s]?$".r
-  val trnPattern: Regex = "^[0-9]{8}$".r
+  val datePattern:Regex =
+    """^(((19|20)([2468][048]|[13579][26]|0[48])|2000)[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)[-]
+      |(0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-](0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|(19|20)
+      |[0-9]{2}[-]02[-](0[1-9]|1[0-9]|2[0-8])))$""".r
+
+  val payFrequencyPattern:Regex =
+    "^(W1|W2|W4|M1|M3|M6|MA|IO|IR)$".r
 
   val minValue = -9999999999.99
   val maxValue = 9999999999.99
@@ -74,14 +75,14 @@ object EmploymentsResponse {
 
   implicit val employmentDetailFormat: Format[EmploymentDetail] = Format(
     (
-      (JsPath \ "startDate").readNullable[String](pattern(dateFormat, "Date format is incorrect")) and
-      (JsPath \ "endDate").readNullable[String](pattern(dateFormat, "Date format is incorrect")) and
-      (JsPath \ "payFrequency").readNullable[String](pattern(payFrequency, "Pay frequency must be one of: W1, W2, W4, M1, M3, M6, MA, IO, IR")) and
+      (JsPath \ "startDate").readNullable[String](pattern(datePattern, "Date format is incorrect")) and
+      (JsPath \ "endDate").readNullable[String](pattern(datePattern, "Date format is incorrect")) and
+      (JsPath \ "payFrequency").readNullable[String](pattern(payFrequencyPattern, "Pay frequency must be one of: W1, W2, W4, M1, M3, M6, MA, IO, IR")) and
       (JsPath \ "payrollId").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
       (JsPath \ "address").readNullable[Address]
     )(EmploymentDetail.apply _),
     (
-      (JsPath \ "startDate").writeNullable[String] and
+        (JsPath \ "startDate").writeNullable[String] and
         (JsPath \ "endDate").writeNullable[String] and
         (JsPath \ "payFrequency").writeNullable[String] and
         (JsPath \ "payrollId").writeNullable[String] and
@@ -91,7 +92,7 @@ object EmploymentsResponse {
 
   implicit val paymentFormat: Format[Payment] = Format(
     (
-      (JsPath \ "date").readNullable[String](pattern(dateFormat, "Date format is incorrect")) and
+      (JsPath \ "date").readNullable[String](pattern(datePattern, "Date format is incorrect")) and
       (JsPath \ "ytdTaxablePay").readNullable[Double](paymentAmountValidator) and
       (JsPath \ "paidTaxablePay").readNullable[Double](paymentAmountValidator) and
       (JsPath \ "paidNonTaxOrNICPayment").readNullable[Double](paymentAmountValidator) and
@@ -121,27 +122,17 @@ object EmploymentsResponse {
     )(unlift(Employment.unapply))
   )
 
-  implicit val idFormat: Format[Id] = Format(
-    (
-      (JsPath \ "nino").readNullable[String](pattern(ninoPattern, "InvalidNino")) and
-      (JsPath \ "trn").readNullable[String](pattern(trnPattern, "InvalidTrn"))
-    )(Id.apply _),
-    (
-      (JsPath \ "nino").writeNullable[String] and
-      (JsPath \ "trn").writeNullable[String]
-    )(unlift(Id.unapply))
-  )
 
 
-  val createEmploymentRequestFormat: Format[CreateEmploymentRequest] = Format(
+  val createEmploymentRequestFormat: Format[EmploymentEntry] = Format(
     (
       (JsPath \ "id").read[Id] and
       (JsPath \ "employments").read[Seq[Employment]](verifying[Seq[Employment]](_.nonEmpty))
-    )(CreateEmploymentRequest.apply _),
+    )(EmploymentEntry.apply _),
     (
       (JsPath \ "id").write[Id] and
       (JsPath \ "employments").write[Seq[Employment]]
-    )(unlift(CreateEmploymentRequest.unapply))
+    )(unlift(EmploymentEntry.unapply))
   )
 }
 

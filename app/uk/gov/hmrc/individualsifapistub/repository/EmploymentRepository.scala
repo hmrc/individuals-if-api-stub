@@ -22,8 +22,9 @@ import play.api.libs.json.Json.obj
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.bson.BSONObjectID
-import uk.gov.hmrc.individualsifapistub.domain.{CreateEmploymentRequest, Employment, Id}
-import uk.gov.hmrc.individualsifapistub.domain.EmploymentsResponse._
+import uk.gov.hmrc.individualsifapistub.domain.{Employment, EmploymentEntry, Id, IdType}
+import uk.gov.hmrc.individualsifapistub.domain.Employments._
+import uk.gov.hmrc.individualsifapistub.domain.IdType.{Nino, Trn}
 import uk.gov.hmrc.mongo.ReactiveRepository
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -31,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionProvider)(implicit val ec: ExecutionContext)
-  extends ReactiveRepository[CreateEmploymentRequest, BSONObjectID]( "employment",
+  extends ReactiveRepository[EmploymentEntry, BSONObjectID]( "employment",
                                                         mongoConnectionProvider.mongoDatabase,
                                                         createEmploymentRequestFormat) {
 
@@ -41,17 +42,16 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
   )
 
   def create(idType: String, idValue: String, employments: Seq[Employment]): Future[Seq[Employment]] = {
-    val id = idType match {
-      case "nino" => Id(Some(idValue), None)
-      case "trn" => Id(None, Some(idValue))
-      case _ => throw new Exception()
+    val id = IdType.parse(idType) match {
+      case Nino => Id(Some(idValue), None)
+      case Trn => Id(None, Some(idValue))
     }
-    insert(CreateEmploymentRequest(id, employments)) map (_ => employments)
+    insert(EmploymentEntry(id, employments)) map (_ => employments)
   }
 
   def findByIdAndType(idType: String, idValue: String): Future[Option[Seq[Employment]]] = {
     collection
       .find[JsObject, JsObject](obj("id" -> obj(idType -> idValue)), None)
-      .one[CreateEmploymentRequest].map( _.map(_.employments))
+      .one[EmploymentEntry].map( _.map(_.employments))
   }
 }

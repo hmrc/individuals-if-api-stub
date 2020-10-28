@@ -18,7 +18,7 @@ package unit.uk.gov.hmrc.individualsifapistub.util.controllers
 
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
-import play.api.http.Status.{CREATED, OK}
+import play.api.http.Status.{CREATED, OK, BAD_REQUEST}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.individualsifapistub.controllers.BenefitsAndCreditsController
@@ -56,7 +56,8 @@ class BenefitsAndCreditsControllerSpec extends TestSupport {
     "Fail when a request is not provided" in new Setup {
       val employment = BenefitsAndCredits(s"$idType-$idValue", request.body)
       when(mockBenefitsAndCreditsService.create(idType, idValue, request)).thenReturn(Future.successful(employment))
-      assertThrows[Exception] { await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson("")))) }
+      val response = await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson(""))))
+      status(response) shouldBe BAD_REQUEST
     }
   }
 

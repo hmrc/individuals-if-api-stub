@@ -19,11 +19,11 @@ package unit.uk.gov.hmrc.individualsifapistub.util.domain
 import play.api.libs.json.Json
 import testUtils.AddressHelpers
 import uk.gov.hmrc.individualsifapistub.domain.DetailsResponse.addressFormat
-import uk.gov.hmrc.individualsifapistub.domain.EmploymentsResponse._
+import uk.gov.hmrc.individualsifapistub.domain.Employments._
 import uk.gov.hmrc.individualsifapistub.domain._
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
-class EmploymentsResponseSpec extends UnitSpec with AddressHelpers {
+class EmploymentsSpec extends UnitSpec with AddressHelpers {
 
   val ninoDetails = Id(Some("XH123456A"), None)
   val trnDetails = Id(None, Some("12345678"))
@@ -114,12 +114,12 @@ class EmploymentsResponseSpec extends UnitSpec with AddressHelpers {
     }
 
     "fail to validate when value is smaller than min value" in {
-      val result = Json.toJson(payment.copy(ytdTaxablePay = Some(EmploymentsResponse.minValue - 1.0))).validate[Payment]
+      val result = Json.toJson(payment.copy(ytdTaxablePay = Some(Employments.minValue - 1.0))).validate[Payment]
       result.isError shouldBe true
     }
 
     "fail to validate when value is larger than max value" in {
-      val result = Json.toJson(payment.copy(ytdTaxablePay = Some(EmploymentsResponse.maxValue + 1.0))).validate[Payment]
+      val result = Json.toJson(payment.copy(ytdTaxablePay = Some(Employments.maxValue + 1.0))).validate[Payment]
       result.isError shouldBe true
     }
   }
