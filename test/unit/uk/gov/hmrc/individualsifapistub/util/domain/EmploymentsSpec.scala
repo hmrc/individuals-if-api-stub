@@ -53,7 +53,7 @@ class EmploymentsSpec extends UnitSpec with AddressHelpers {
 
   val payment = Payment(
     date = Some("2001-12-31"),
-    ytdTaxablePay = Some(120.02),
+    ytdTaxablePay = Some(162081.23),
     paidTaxablePay = Some(112.75),
     paidNonTaxOrNICPayment = Some(123123.32),
     week = Some(52),

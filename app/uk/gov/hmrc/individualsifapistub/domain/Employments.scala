@@ -51,7 +51,7 @@ object Employments {
   val minValue = -9999999999.99
   val maxValue = 9999999999.99
 
-  def isMultipleOfPointZeroOne(value: Double): Boolean = (value * 100.0) % 1 == 0
+  def isMultipleOfPointZeroOne(value: Double): Boolean = (BigDecimal(value) * 100.0) % 1 == 0
 
   def isInRange(value: Double): Boolean = value > minValue && value < maxValue
 
