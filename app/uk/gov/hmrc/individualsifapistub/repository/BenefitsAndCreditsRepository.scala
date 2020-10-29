@@ -24,7 +24,7 @@ import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.bson.BSONObjectID
 import reactivemongo.play.json._
-import uk.gov.hmrc.individualsifapistub.domain.{BenefitsAndCredits, CreateBenefitsAndCreditsRequest, DuplicateException, JsonFormatters}
+import uk.gov.hmrc.individualsifapistub.domain.{Application, BenefitsAndCredits, DuplicateException, JsonFormatters}
 import uk.gov.hmrc.mongo.ReactiveRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -40,8 +40,8 @@ class BenefitsAndCreditsRepository @Inject()( mongoConnectionProvider: MongoConn
     Index(key = Seq(("id", Ascending)), name = Some("idIndex"), unique = true, background = true)
   )
 
-  def create(id: String, request: CreateBenefitsAndCreditsRequest): Future[BenefitsAndCredits] = {
-    val benefitAndCredit = BenefitsAndCredits(id, request.body)
+  def create(id: String, request: Seq[Application]): Future[BenefitsAndCredits] = {
+    val benefitAndCredit = BenefitsAndCredits(id, request)
     insert(benefitAndCredit) map (_ => benefitAndCredit) recover {
       case WriteResult.Code(11000) => throw new DuplicateException
     }

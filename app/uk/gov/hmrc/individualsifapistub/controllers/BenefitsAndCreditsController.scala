@@ -19,7 +19,7 @@ package uk.gov.hmrc.individualsifapistub.controllers
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
-import uk.gov.hmrc.individualsifapistub.domain.CreateBenefitsAndCreditsRequest
+import uk.gov.hmrc.individualsifapistub.domain.Application
 import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
 import uk.gov.hmrc.individualsifapistub.services.BenefitsAndCreditsService
 
@@ -32,7 +32,7 @@ class BenefitsAndCreditsController @Inject()( bodyParsers: PlayBodyParsers,
                                             )(implicit val ec: ExecutionContext) extends CommonController(cc) {
 
   def create(idType: String, idValue: String): Action[JsValue] = Action.async(bodyParsers.json) { implicit request =>
-    withJsonBody[CreateBenefitsAndCreditsRequest] { createRequest =>
+    withJsonBody[Seq[Application]] { createRequest =>
       benefitsAndCreditsService.create(idType, idValue, createRequest) map (e => Created(Json.toJson(e)))
     } recover recovery
   }
