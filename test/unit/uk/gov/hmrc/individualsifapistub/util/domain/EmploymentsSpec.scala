@@ -18,7 +18,6 @@ package unit.uk.gov.hmrc.individualsifapistub.util.domain
 
 import play.api.libs.json.Json
 import testUtils.AddressHelpers
-import uk.gov.hmrc.individualsifapistub.domain.DetailsResponse.addressFormat
 import uk.gov.hmrc.individualsifapistub.domain.Employments._
 import uk.gov.hmrc.individualsifapistub.domain._
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec

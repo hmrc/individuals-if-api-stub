@@ -19,7 +19,6 @@ package uk.gov.hmrc.individualsifapistub.domain
 import play.api.libs.functional.syntax.{unlift, _}
 import play.api.libs.json.Reads._
 import play.api.libs.json._
-import uk.gov.hmrc.individualsifapistub.domain.DetailsResponse.addressFormat
 
 import scala.util.matching.Regex
 
@@ -59,6 +58,25 @@ object Employments {
 
   def paymentAmountValidator:Reads[Double] =
     verifying[Double](value => isInRange(value) && isMultipleOfPointZeroOne(value))
+
+  implicit val addressFormat: Format[Address] = Format(
+    (
+      (JsPath \ "line1").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
+        (JsPath \ "line2").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
+        (JsPath \ "line3").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
+        (JsPath \ "line4").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
+        (JsPath \ "line5").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
+        (JsPath \ "postcode").readNullable[String](minLength[String](0) keepAnd maxLength[String](10))
+      )(Address.apply _),
+    (
+      (JsPath \ "line1").writeNullable[String] and
+        (JsPath \ "line2").writeNullable[String] and
+        (JsPath \ "line3").writeNullable[String] and
+        (JsPath \ "line4").writeNullable[String] and
+        (JsPath \ "line5").writeNullable[String] and
+        (JsPath \ "postcode").writeNullable[String]
+      )(unlift(Address.unapply))
+  )
 
   implicit val employerFormat: Format[Employer] = Format(
     (
