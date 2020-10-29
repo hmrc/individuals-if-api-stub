@@ -38,7 +38,9 @@ class DetailsRepositorySpec
   val idValue = "2432552635"
   val request = CreateDetailsRequest(
     Some(Seq(ContactDetail(9, "MOBILE TELEPHONE", "07123 987654"), ContactDetail(9,"MOBILE TELEPHONE", "07123 987655"))),
-    Some(Seq(Residence(Some("BASE"),createAddress(2)), Residence(Some("NOMINATED"),createAddress(1))))
+    Some(Seq(
+      Residence(residenceType = Some("BASE"), address = createAddress(2)),
+      Residence(residenceType = Some("NOMINATED"), address = createAddress(1))))
   )
 
   override def beforeEach() {
