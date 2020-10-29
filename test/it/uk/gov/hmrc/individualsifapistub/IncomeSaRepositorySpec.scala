@@ -19,25 +19,30 @@ package it.uk.gov.hmrc.individualsifapistub
 import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
 import reactivemongo.api.indexes.IndexType.Ascending
-import uk.gov.hmrc.individualsifapistub.domain.{CreateIncomeRequest, DuplicateException, Income}
-import uk.gov.hmrc.individualsifapistub.repository.IncomeRepository
+import uk.gov.hmrc.individualsifapistub.domain.{DuplicateException, IncomeSaResponse}
+import uk.gov.hmrc.individualsifapistub.repository.IncomeSaRepository
 import uk.gov.hmrc.mongo.MongoSpecSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
+import unit.uk.gov.hmrc.individualsifapistub.util.testUtils.IncomeSaHelpers
 
-class IncomeRepositorySpec
+class IncomeSaRepositorySpec
     extends TestSupport
     with MongoSpecSupport
-    with BeforeAndAfterEach {
+    with BeforeAndAfterEach
+    with IncomeSaHelpers {
 
   override lazy val fakeApplication = buildFakeApplication(
     Configuration("mongodb.uri" -> mongoUri))
 
-  val repository = fakeApplication.injector.instanceOf[IncomeRepository]
+  val repository = fakeApplication.injector.instanceOf[IncomeSaRepository]
 
-  val id = "2432552635"
   // TODO :- FIX ME
-  val request = CreateIncomeRequest(None, None)
-  val selfAssessment = Income(id, "Fix ME")
+
+  val idType = "nino"
+  val idValue = "ANINO123"
+
+  val innerValue = Seq(createValidSaTaxYearEntry(), createValidSaTaxYearEntry())
+  val request = IncomeSaResponse(Some(innerValue))
 
   override def beforeEach() {
     await(repository.drop)
@@ -49,42 +54,47 @@ class IncomeRepositorySpec
   }
 
   "collection" should {
-    "have a unique index on id" in {
+    "have a unique index on nino" in {
       await(repository.collection.indexesManager.list()).find({ i =>
-        i.name.contains("idIndex") &&
-        i.key == Seq("id" -> Ascending) &&
-        i.background &&
-        i.unique
+        i.name.contains("nino") &&
+          i.key == Seq("id.nino" -> Ascending) &&
+          i.background &&
+          i.unique
+      }) should not be None
+    }
+    "have a unique index on trn" in {
+      await(repository.collection.indexesManager.list()).find({ i =>
+        i.name.contains("trn") &&
+          i.key == Seq("id.trn" -> Ascending) &&
+          i.background &&
+          i.unique
       }) should not be None
     }
   }
 
   "create" should {
     "create a self assessment" in {
-      val result = await(repository.create(selfAssessment.id, request))
-
-      result shouldBe selfAssessment
+      val result = await(repository.create(idType, idValue, request))
+      result shouldBe request
     }
 
     "fail to create a duplicate self assessment" in {
-      await(repository.create(selfAssessment.id, request))
-
+      await(repository.create(idType, idValue, request))
       intercept[DuplicateException](
-        await(repository.create(selfAssessment.id, request)))
+        await(repository.create(idType, idValue, request))
+      )
     }
   }
 
   "find by id" should {
     "return None when there are no self assessments for a given utr" in {
-      await(repository.findById(id)) shouldBe None
+      await(repository.findById(idType, idValue)) shouldBe None
     }
 
     "return the self assessment" in {
-      await(repository.create(selfAssessment.id, request))
-
-      val result = await(repository.findById(id))
-
-      result shouldBe Some(selfAssessment)
+      await(repository.create(idType, idValue, request))
+      val result = await(repository.findById(idType, idValue))
+      result shouldBe Some(request)
     }
   }
 }

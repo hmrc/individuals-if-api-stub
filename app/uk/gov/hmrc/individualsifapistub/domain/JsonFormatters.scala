@@ -266,10 +266,6 @@ object JsonFormatters {
       )(unlift(PayeEntry.unapply))
   )
 
-  implicit val saResponseFormat = Json.format[SaResponse]
-
-  implicit val payeResponseFormat = Json.format[PayeResponse]
-
   implicit val createEmploymentRequestFormat = Json.format[CreateEmploymentRequest]
   implicit val createDetailsRequestFormat = Json.format[CreateDetailsRequest]
   implicit val createBenefitsAndCreditsRequestFormat = Json.format[CreateBenefitsAndCreditsRequest]
@@ -283,8 +279,11 @@ object JsonFormatters {
   implicit val testOrganisationDetailsFormat = Json.format[TestOrganisationDetails]
   implicit val testOrganisationFormat = Json.format[TestOrganisation]
 
-  implicit val incomeFormat = Json.format[Income]
-  implicit val createIncomeRequestFormat = Json.format[CreateIncomeRequest]
+  implicit val incomeSaResponseFormat = Json.format[IncomeSaResponse]
+  implicit val incomeSaRecordFormat = Json.format[IncomeSaRecord]
+
+  implicit val incomePayeResponseFormat = Json.format[IncomePayeResponse]
+  implicit val incomePayeRecordFormat = Json.format[IncomePayeRecord]
 
   implicit val errorInvalidRequestFormat = new Format[ErrorInvalidRequest] {
     def reads(json: JsValue): JsResult[ErrorInvalidRequest] = JsSuccess(

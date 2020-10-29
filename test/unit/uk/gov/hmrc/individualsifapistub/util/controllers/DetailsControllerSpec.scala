@@ -18,17 +18,16 @@ package unit.uk.gov.hmrc.individualsifapistub.util.controllers
 
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
+import play.api.http.Status._
 import play.api.libs.json.Json
-import play.api.mvc.ControllerComponents
 import play.api.test.FakeRequest
 import uk.gov.hmrc.individualsifapistub.controllers.DetailsController
+import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
 import uk.gov.hmrc.individualsifapistub.domain.{CreateDetailsRequest, Details}
 import uk.gov.hmrc.individualsifapistub.services.DetailsService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
-import play.api.http.Status._
-import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class DetailsControllerSpec extends TestSupport {
 

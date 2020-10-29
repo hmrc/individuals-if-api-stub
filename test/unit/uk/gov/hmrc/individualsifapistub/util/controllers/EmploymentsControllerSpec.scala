@@ -20,15 +20,14 @@ import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.http.Status.{CREATED, OK}
 import play.api.libs.json.Json
-import play.api.mvc.ControllerComponents
-import play.api.test.FakeRequest
+import play.api.test  .FakeRequest
 import uk.gov.hmrc.individualsifapistub.controllers.EmploymentsController
 import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
 import uk.gov.hmrc.individualsifapistub.domain.{CreateEmploymentRequest, Employment}
 import uk.gov.hmrc.individualsifapistub.services.EmploymentsService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class EmploymentsControllerSpec extends TestSupport {
 

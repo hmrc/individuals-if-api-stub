@@ -16,10 +16,10 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.domain.income
 
-import play.api.libs.json.{JsError, JsSuccess, Json}
+import play.api.libs.json.Json
 import uk.gov.hmrc.individualsifapistub.domain.EmployeeNics
-import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
+import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class EmployeeNicsSpec extends UnitSpec {
 

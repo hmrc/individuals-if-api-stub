@@ -19,8 +19,6 @@ package uk.gov.hmrc.individualsifapistub.domain
 import play.api.libs.json._
 import play.api.libs.json.Reads._
 
-case class Income(id: String, body: String)
-
 case class Address(line1: Option[String], line2: Option[String], line3: Option[String], line4: Option[String], postcode: Option[String])
 
 case class PostGradLoan(repaymentsInPayPeriod: Option[Double], repaymentsYtd: Option[Double])
@@ -80,8 +78,6 @@ case class PayeEntry(
                       postGradLoan: Option[PostGradLoan]
                     )
 
-case class PayeResponse(paye: Option[Seq[PayeEntry]])
-
 object PayeResponseObject {
   val studentLoanPlanTypePattern = "^(01|02)$".r
   val taxCodePattern = "^([1-9][0-9]{0,5}[LMNPTY])|(BR)|(0T)|(NT)|(D[0-8])|([K][1-9][0-9]{0,5})$".r
@@ -135,8 +131,6 @@ case class SaReturnType(
 
 case class SaTaxYearEntry(taxYear: Option[String], income: Option[Double], returnList: Option[Seq[SaReturnType]])
 
-case class SaResponse(sa: Option[Seq[SaTaxYearEntry]])
-
 object SaResponseObject {
 
   val minValue = -9999999999.99
@@ -154,6 +148,10 @@ object SaResponseObject {
     verifying[Double](value => isInRange(value) && isMultipleOfPointZeroOne(value))
 }
 
-case class CreateIncomeRequest(sa: Option[SaResponse], paye: Option[PayeResponse])
+case class IncomeSaRecord(id:Id, incomeSaResponse: IncomeSaResponse)
 
-case class IncomeResponse(sa: Option[Seq[SaTaxYearEntry]], paye: Option[PayeResponse])
+case class IncomePayeRecord(id:Id, incomePayeResponse: IncomePayeResponse)
+
+case class IncomeSaResponse(sa: Option[Seq[SaTaxYearEntry]])
+
+case class IncomePayeResponse(paye: Option[Seq[PayeEntry]])
