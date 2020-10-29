@@ -22,7 +22,7 @@ import play.api.libs.functional.syntax._
 
 case class BenefitsAndCredits(id: String, applications: Seq[Application])
 
-case class CreateBenefitsAndCredits(applications:Seq[Application])
+case class CreateBenefitsAndCreditsRequest(applications:Seq[Application])
 
 case class Payments(
                      periodStartDate: Option[String],
@@ -71,8 +71,8 @@ object Application {
   def paymentAmountValidator(implicit rds: Reads[Double]):Reads[Double] =
     verifying[Double](value => isInRange(value) && isMultipleOfPointZeroOne(value))
 
-  implicit val createBenefitsAndCredits: Format[CreateBenefitsAndCredits] = Format(
-    (JsPath \ "applications").read[Seq[Application]](verifying[Seq[Application]](_.nonEmpty)).map(x => CreateBenefitsAndCredits(x)),
+  implicit val createBenefitsAndCredits: Format[CreateBenefitsAndCreditsRequest] = Format(
+    (JsPath \ "applications").read[Seq[Application]](verifying[Seq[Application]](_.nonEmpty)).map(x => CreateBenefitsAndCreditsRequest(x)),
     (JsPath \ "applications").write[Seq[Application]].contramap(x => x.applications)
   )
 

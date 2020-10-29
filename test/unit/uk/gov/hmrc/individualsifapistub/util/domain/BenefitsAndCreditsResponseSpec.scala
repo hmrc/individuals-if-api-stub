@@ -23,7 +23,7 @@ import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class BenefitsAndCreditsResponseSpec extends UnitSpec with AddressHelpers {
 
-  val idValue = "2432552635"
+  val idValue: Double = 12345
 
   val validPayments = Payments(
     Some("2012-12-12"),
@@ -65,7 +65,7 @@ class BenefitsAndCreditsResponseSpec extends UnitSpec with AddressHelpers {
     payments = Some(validPayments)
   )
 
-  val validResponse: Application = Applications(
+  val validResponse: Application = Application(
     id = idValue,
     ceasedDate = Some("2012-12-12"),
     entStartDate = Some("2012-12-12"),
@@ -95,157 +95,158 @@ class BenefitsAndCreditsResponseSpec extends UnitSpec with AddressHelpers {
         """.stripMargin)
       result shouldBe expectedJson
     }
-//
-//    "Write to JSON when only trn provided" in {
-//      val result = Json.toJson(trnDetails)
-//      val expectedJson = Json.parse(
-//        """
-//          |{
-//          |  "trn" : "12345678"
-//          |}
-//        """.stripMargin)
-//
-//      result shouldBe expectedJson
-//    }
-//
-//    "Validate successful when reading valid nino" in {
-//      val result = Json.toJson(ninoDetails).validate[Details]
-//      result.isSuccess shouldBe true
-//    }
-//
-//    "Validate successful when reading valid trn" in {
-//      val result = Json.toJson(trnDetails).validate[Details]
-//      result.isSuccess shouldBe true
-//    }
-//
-//    "Validate unsuccessfully when reading invalid nino" in {
-//      val result = Json.toJson(invalidNinoDetails).validate[Details]
-//      result.isError shouldBe true
-//    }
-//
-//    "Validate unsuccessfully when reading invalid trn" in {
-//      val result = Json.toJson(invalidTrnDetails).validate[Details]
-//      result.isError shouldBe true
-//    }
-//
-//  }
-//
-//  "Contact details" should {
-//    "Write to JSON" in {
-//      val result = Json.toJson(contactDetail1)
-//      val expectedJson = Json.parse(
-//        """
-//          |{
-//          |  "code" : 9,
-//          |  "type" : "MOBILE TELEPHONE",
-//          |  "detail" : "07123 987654"
-//          |}"""".stripMargin)
-//
-//      result shouldBe expectedJson
-//    }
-//
-//    "Validate successfully when reading valid contact details" in {
-//      val result = Json.toJson(contactDetail1).validate[ContactDetail]
-//      result.isSuccess shouldBe true
-//    }
-//
-//    "Validate unsuccessfully when reading invalid contact details" in {
-//      val result = Json.toJson(invalidContactDetail).validate[ContactDetail]
-//      result.isError shouldBe true
-//    }
-//  }
-//
-//  "Residence details" should {
-//    "Write to JSON" in {
-//      val result = Json.toJson(residence1)
-//      val expectedJson = Json.parse(
-//        """
-//          |{
-//          |  "type" : "BASE",
-//          |  "address" : {
-//          |      "line1" : "line1-2",
-//          |      "line2" : "line2-2",
-//          |      "line3" : "line3-2",
-//          |      "line4" : "line4-2",
-//          |      "line5" : "line5-2",
-//          |      "postcode" : "QW122QW"
-//          |  }
-//          |}
-//        """.stripMargin)
-//
-//      result shouldBe expectedJson
-//    }
-//
-//    "Validate successfully when reading valid Residence information" in {
-//      val result = Json.toJson(residence1).validate[Residence]
-//      result.isSuccess shouldBe true
-//    }
-//
-//    "Validate unsuccessfully when reading invalid Residence information" in {
-//      val result = Json.toJson(invalidResidence).validate[Residence]
-//      result.isError shouldBe true
-//    }
-//
-//  }
-//
-//  "Details Response" should {
-//    "Write to JSON" in {
-//      val result = Json.toJson(response)
-//      val expectedJson = Json.parse(
-//        """
-//          |  {
-//          |    "details" : {
-//          |       "nino" : "XH123456A"
-//          |     },
-//          |     "contactDetails" : [
-//          |       {
-//          |         "code" : 9,
-//          |         "type" : "MOBILE TELEPHONE",
-//          |         "detail" : "07123 987654"
-//          |       },
-//          |       {
-//          |         "code" : 9,
-//          |         "type" : "MOBILE TELEPHONE",
-//          |         "detail" : "07123 987654"
-//          |       }
-//          |     ],
-//          |     "residence" : [
-//          |       {
-//          |         "type" : "BASE",
-//          |         "address" : {
-//          |           "line1" : "line1-2",
-//          |           "line2" : "line2-2",
-//          |           "line3" : "line3-2",
-//          |           "line4" : "line4-2",
-//          |           "line5" : "line5-2",
-//          |           "postcode" : "QW122QW"
-//          |          }
-//          |        },
-//          |        {
-//          |          "type" : "NOMINATED",
-//          |          "address" : {
-//          |            "line1" : "line1-1",
-//          |            "line2" : "line2-1",
-//          |            "line3" : "line3-1",
-//          |            "line4" : "line4-1",
-//          |            "line5" : "line5-1",
-//          |            "postcode" : "QW121QW"
-//          |          }
-//          |        } ]
-//          |      }""".stripMargin)
-//
-//      result shouldBe expectedJson
-//    }
-//
-//    "Validates successfully when reading valid Details Response" in {
-//      val result = Json.toJson(response).validate[DetailsResponse]
-//      result.isSuccess shouldBe true
-//    }
-//
-//    "Validates unsuccessfully when reading invalid Details Response" in {
-//      val result = Json.toJson(invalidDetailsResponse).validate[DetailsResponse]
-//      result.isError shouldBe true
-//    }
-//
-//  }
+    //
+    //    "Write to JSON when only trn provided" in {
+    //      val result = Json.toJson(trnDetails)
+    //      val expectedJson = Json.parse(
+    //        """
+    //          |{
+    //          |  "trn" : "12345678"
+    //          |}
+    //        """.stripMargin)
+    //
+    //      result shouldBe expectedJson
+    //    }
+    //
+    //    "Validate successful when reading valid nino" in {
+    //      val result = Json.toJson(ninoDetails).validate[Details]
+    //      result.isSuccess shouldBe true
+    //    }
+    //
+    //    "Validate successful when reading valid trn" in {
+    //      val result = Json.toJson(trnDetails).validate[Details]
+    //      result.isSuccess shouldBe true
+    //    }
+    //
+    //    "Validate unsuccessfully when reading invalid nino" in {
+    //      val result = Json.toJson(invalidNinoDetails).validate[Details]
+    //      result.isError shouldBe true
+    //    }
+    //
+    //    "Validate unsuccessfully when reading invalid trn" in {
+    //      val result = Json.toJson(invalidTrnDetails).validate[Details]
+    //      result.isError shouldBe true
+    //    }
+    //
+    //  }
+    //
+    //  "Contact details" should {
+    //    "Write to JSON" in {
+    //      val result = Json.toJson(contactDetail1)
+    //      val expectedJson = Json.parse(
+    //        """
+    //          |{
+    //          |  "code" : 9,
+    //          |  "type" : "MOBILE TELEPHONE",
+    //          |  "detail" : "07123 987654"
+    //          |}"""".stripMargin)
+    //
+    //      result shouldBe expectedJson
+    //    }
+    //
+    //    "Validate successfully when reading valid contact details" in {
+    //      val result = Json.toJson(contactDetail1).validate[ContactDetail]
+    //      result.isSuccess shouldBe true
+    //    }
+    //
+    //    "Validate unsuccessfully when reading invalid contact details" in {
+    //      val result = Json.toJson(invalidContactDetail).validate[ContactDetail]
+    //      result.isError shouldBe true
+    //    }
+    //  }
+    //
+    //  "Residence details" should {
+    //    "Write to JSON" in {
+    //      val result = Json.toJson(residence1)
+    //      val expectedJson = Json.parse(
+    //        """
+    //          |{
+    //          |  "type" : "BASE",
+    //          |  "address" : {
+    //          |      "line1" : "line1-2",
+    //          |      "line2" : "line2-2",
+    //          |      "line3" : "line3-2",
+    //          |      "line4" : "line4-2",
+    //          |      "line5" : "line5-2",
+    //          |      "postcode" : "QW122QW"
+    //          |  }
+    //          |}
+    //        """.stripMargin)
+    //
+    //      result shouldBe expectedJson
+    //    }
+    //
+    //    "Validate successfully when reading valid Residence information" in {
+    //      val result = Json.toJson(residence1).validate[Residence]
+    //      result.isSuccess shouldBe true
+    //    }
+    //
+    //    "Validate unsuccessfully when reading invalid Residence information" in {
+    //      val result = Json.toJson(invalidResidence).validate[Residence]
+    //      result.isError shouldBe true
+    //    }
+    //
+    //  }
+    //
+    //  "Details Response" should {
+    //    "Write to JSON" in {
+    //      val result = Json.toJson(response)
+    //      val expectedJson = Json.parse(
+    //        """
+    //          |  {
+    //          |    "details" : {
+    //          |       "nino" : "XH123456A"
+    //          |     },
+    //          |     "contactDetails" : [
+    //          |       {
+    //          |         "code" : 9,
+    //          |         "type" : "MOBILE TELEPHONE",
+    //          |         "detail" : "07123 987654"
+    //          |       },
+    //          |       {
+    //          |         "code" : 9,
+    //          |         "type" : "MOBILE TELEPHONE",
+    //          |         "detail" : "07123 987654"
+    //          |       }
+    //          |     ],
+    //          |     "residence" : [
+    //          |       {
+    //          |         "type" : "BASE",
+    //          |         "address" : {
+    //          |           "line1" : "line1-2",
+    //          |           "line2" : "line2-2",
+    //          |           "line3" : "line3-2",
+    //          |           "line4" : "line4-2",
+    //          |           "line5" : "line5-2",
+    //          |           "postcode" : "QW122QW"
+    //          |          }
+    //          |        },
+    //          |        {
+    //          |          "type" : "NOMINATED",
+    //          |          "address" : {
+    //          |            "line1" : "line1-1",
+    //          |            "line2" : "line2-1",
+    //          |            "line3" : "line3-1",
+    //          |            "line4" : "line4-1",
+    //          |            "line5" : "line5-1",
+    //          |            "postcode" : "QW121QW"
+    //          |          }
+    //          |        } ]
+    //          |      }""".stripMargin)
+    //
+    //      result shouldBe expectedJson
+    //    }
+    //
+    //    "Validates successfully when reading valid Details Response" in {
+    //      val result = Json.toJson(response).validate[DetailsResponse]
+    //      result.isSuccess shouldBe true
+    //    }
+    //
+    //    "Validates unsuccessfully when reading invalid Details Response" in {
+    //      val result = Json.toJson(invalidDetailsResponse).validate[DetailsResponse]
+    //      result.isError shouldBe true
+    //    }
+    //
+    //  }
+  }
 }
