@@ -56,9 +56,8 @@ class IncomeSaRepository @Inject()(mongoConnectionProvider: MongoConnectionProvi
     }
   }
 
-  def findById(idType: String, idValue: String): Future[Option[IncomeSaResponse]] = {
+  def findByTypeAndId(idType: String, idValue: String): Future[Option[IncomeSaResponse]] = {
     collection.find[JsObject, JsObject](obj("id" -> obj(idType -> idValue)), None)
-      .one[IncomeSaResponse]
-
+      .one[IncomeSaRecord].map(value => value.map(_.incomeSaResponse))
   }
 }

@@ -20,29 +20,29 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
 import play.api.libs.json.Json
 import reactivemongo.api.indexes.IndexType.Ascending
-import uk.gov.hmrc.individualsifapistub.domain.{DuplicateException, IncomeSaResponse}
-import uk.gov.hmrc.individualsifapistub.repository.IncomeSaRepository
+import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
+import uk.gov.hmrc.individualsifapistub.domain.{DuplicateException, IncomePayeResponse, IncomeSaResponse}
+import uk.gov.hmrc.individualsifapistub.repository.{IncomePayeRepository, IncomeSaRepository}
 import uk.gov.hmrc.mongo.MongoSpecSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
-import unit.uk.gov.hmrc.individualsifapistub.util.testUtils.IncomeSaHelpers
-import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
+import unit.uk.gov.hmrc.individualsifapistub.util.testUtils.{IncomePayeHelpers, IncomeSaHelpers}
 
-class IncomeSaRepositorySpec
+class IncomePayeRepositorySpec
     extends TestSupport
     with MongoSpecSupport
     with BeforeAndAfterEach
-    with IncomeSaHelpers {
+    with IncomePayeHelpers {
 
   override lazy val fakeApplication = buildFakeApplication(
     Configuration("mongodb.uri" -> mongoUri))
 
-  val repository = fakeApplication.injector.instanceOf[IncomeSaRepository]
+  val repository = fakeApplication.injector.instanceOf[IncomePayeRepository]
 
   val nino = "XH123456A"
   val trn = "12345678"
 
-  val innerValue = Seq(createValidSaTaxYearEntry(), createValidSaTaxYearEntry())
-  val request = IncomeSaResponse(Some(innerValue))
+  val innerValue = Seq(createValidPayeEntry(), createValidPayeEntry())
+  val request = IncomePayeResponse(Some(innerValue))
 
   override def beforeEach() {
     await(repository.drop)
@@ -73,12 +73,12 @@ class IncomeSaRepositorySpec
   }
 
   "create when type is nino" should {
-    "create a self assessment" in {
+    "create a paye record" in {
       val result = await(repository.create("nino", nino, request))
       result shouldBe request
     }
 
-    "fail to create a duplicate self assessment" in {
+    "fail to create a duplicate paye" in {
       await(repository.create("nino", nino, request))
       intercept[DuplicateException](
         await(repository.create("nino", nino, request))
@@ -87,12 +87,12 @@ class IncomeSaRepositorySpec
   }
 
   "create when type is trn" should {
-    "create a self assessment" in {
+    "create a paye" in {
       val result = await(repository.create("trn", trn, request))
       result shouldBe request
     }
 
-    "fail to create a duplicate self assessment" in {
+    "fail to create a duplicate paye record" in {
       await(repository.create("trn", trn, request))
       intercept[DuplicateException](
         await(repository.create("trn", trn, request))
@@ -100,25 +100,24 @@ class IncomeSaRepositorySpec
     }
   }
 
-  "find by id when type is nino" should {
-    "return None when there are no self assessments" in {
+  "find by id when type is Nino" should {
+    "return None when there are no paye records for a given utr" in {
       await(repository.findByTypeAndId("nino", nino)) shouldBe None
     }
 
-    "return the self assessment" in {
+    "return the paye response" in {
       await(repository.create("nino", nino, request))
       val result = await(repository.findByTypeAndId("nino", nino))
       result shouldBe Some(request)
     }
   }
 
-
   "find by id when type is trn" should {
-    "return None when there are no self assessments" in {
+    "return None when there are no paye records for a given utr" in {
       await(repository.findByTypeAndId("trn", trn)) shouldBe None
     }
 
-    "return the self assessment" in {
+    "return the paye response" in {
       await(repository.create("trn", trn, request))
       val result = await(repository.findByTypeAndId("trn", trn))
       result shouldBe Some(request)

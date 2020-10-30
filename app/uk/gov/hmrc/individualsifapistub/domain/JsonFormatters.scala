@@ -223,17 +223,17 @@ object JsonFormatters {
 
   implicit val payeEntryFormat: Format[PayeEntry] = Format(
     (
-      (JsPath \ "taxCode").readNullable[String](minLength[String](2).keepAnd(maxLength[String](7).keepAnd(pattern(taxCodePattern,"Invalid Tax Code")))) and
-        (JsPath \ "paidHoursWorked").readNullable[String](maxLength[String](35).keepAnd(pattern(paidHoursWorkPattern,"Invalid Paid Hours Work"))) and
+      (JsPath \ "taxCode").readNullable[String](minLength[String](2).keepAnd(maxLength[String](7).keepAnd(pattern(taxCodePattern, "Invalid Tax Code")))) and
+        (JsPath \ "paidHoursWorked").readNullable[String](maxLength[String](35).keepAnd(pattern(paidHoursWorkPattern, "Invalid Paid Hours Work"))) and
         (JsPath \ "taxablePayToDate").readNullable[Double](paymentAmountValidator) and
         (JsPath \ "totalTaxToDate").readNullable[Double](paymentAmountValidator) and
         (JsPath \ "taxDeductedOrRefunded").readNullable[Double](paymentAmountValidator) and
-        (JsPath \ "employerPayeRef").readNullable[String](maxLength[String](10).keepAnd(pattern(employerPayeRefPattern,"Invalid employer PAYE reference")))  and
+        (JsPath \ "employerPayeRef").readNullable[String](maxLength[String](10).keepAnd(pattern(employerPayeRefPattern, "Invalid employer PAYE reference"))) and
         (JsPath \ "paymentDate").readNullable[String](pattern(paymentDatePattern, "Invalid Payment Date")) and
         (JsPath \ "taxablePay").readNullable[Double](paymentAmountValidator) and
         (JsPath \ "taxYear").readNullable[String](pattern(payeTaxYearPattern, "Invalid Tax Year")) and
-        (JsPath \ "monthlyPeriodNumber").readNullable[String](pattern(monthlyPeriodNumberPattern,"Invalid Monthly Period Number").keepAnd(minLength[String](1)).keepAnd(maxLength[String](2))) and
-        (JsPath \ "weeklyPeriodNumber").readNullable[String](pattern(weeklyPeriodNumberPattern,"Invalid Weekly Period Number").keepAnd(minLength[String](1)).keepAnd(maxLength[String](2))) and
+        (JsPath \ "monthlyPeriodNumber").readNullable[String](pattern(monthlyPeriodNumberPattern, "Invalid Monthly Period Number").keepAnd(minLength[String](1)).keepAnd(maxLength[String](2))) and
+        (JsPath \ "weeklyPeriodNumber").readNullable[String](pattern(weeklyPeriodNumberPattern, "Invalid Weekly Period Number").keepAnd(minLength[String](1)).keepAnd(maxLength[String](2))) and
         (JsPath \ "payFrequency").readNullable[String](isInPayFrequency) and
         (JsPath \ "dednsFromNetPay").readNullable[Double](paymentAmountValidator) and
         (JsPath \ "employeeNICs").readNullable[EmployeeNics] and
@@ -242,7 +242,7 @@ object JsonFormatters {
         (JsPath \ "statutoryPayYTD" \ "parentalBereavement").readNullable[Double](paymentAmountValidator) and
         (JsPath \ "studentLoan").readNullable[StudentLoan] and
         (JsPath \ "postGradLoan").readNullable[PostGradLoan]
-      )(PayeEntry.apply _),
+      ) (PayeEntry.apply _),
     (
       (JsPath \ "taxCode").writeNullable[String] and
         (JsPath \ "paidHoursWorked").writeNullable[String] and
@@ -263,7 +263,40 @@ object JsonFormatters {
         (JsPath \ "statutoryPayYTD" \ "parentalBereavement").writeNullable[Double] and
         (JsPath \ "studentLoan").writeNullable[StudentLoan] and
         (JsPath \ "postGradLoan").writeNullable[PostGradLoan]
-      )(unlift(PayeEntry.unapply))
+      ) (unlift(PayeEntry.unapply))
+  )
+
+  implicit val incomeSaResponseFormat: Format[IncomeSaResponse] = Format(
+    (JsPath \ "sa").readNullable[Seq[SaTaxYearEntry]].map(value => IncomeSaResponse(value)),
+    (JsPath \ "sa").writeNullable[Seq[SaTaxYearEntry]].contramap(value => value.sa)
+  )
+
+  implicit val incomePayeResponseFormat: Format[IncomePayeResponse] = Format(
+    (JsPath \ "paye").readNullable[Seq[PayeEntry]].map(value => IncomePayeResponse(value)),
+    (JsPath \ "paye").writeNullable[Seq[PayeEntry]].contramap(value => value.paye)
+  )
+
+  val incomeSaRecordFormat: Format[IncomeSaRecord] = Format(
+    (
+      (JsPath \ "id").read[Id] and
+        (JsPath \ "incomeSaResponse").read[IncomeSaResponse]
+      )(IncomeSaRecord.apply _),
+    (
+      (JsPath \ "id").write[Id] and
+        (JsPath \ "incomeSaResponse").write[IncomeSaResponse]
+      )(unlift(IncomeSaRecord.unapply))
+  )
+
+
+  val incomePayeRecordFormat: Format[IncomePayeRecord] = Format(
+    (
+      (JsPath \ "id").read[Id] and
+        (JsPath \ "incomePayeResponse").read[IncomePayeResponse]
+      )(IncomePayeRecord.apply _),
+    (
+      (JsPath \ "id").write[Id] and
+        (JsPath \ "incomePayeResponse").write[IncomePayeResponse]
+      )(unlift(IncomePayeRecord.unapply))
   )
 
   implicit val createEmploymentRequestFormat = Json.format[CreateEmploymentRequest]
@@ -278,12 +311,6 @@ object JsonFormatters {
   implicit val testIndividualFormat = Json.format[TestIndividual]
   implicit val testOrganisationDetailsFormat = Json.format[TestOrganisationDetails]
   implicit val testOrganisationFormat = Json.format[TestOrganisation]
-
-  implicit val incomeSaResponseFormat = Json.format[IncomeSaResponse]
-  implicit val incomeSaRecordFormat = Json.format[IncomeSaRecord]
-
-  implicit val incomePayeResponseFormat = Json.format[IncomePayeResponse]
-  implicit val incomePayeRecordFormat = Json.format[IncomePayeRecord]
 
   implicit val errorInvalidRequestFormat = new Format[ErrorInvalidRequest] {
     def reads(json: JsValue): JsResult[ErrorInvalidRequest] = JsSuccess(

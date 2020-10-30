@@ -36,6 +36,7 @@ class IncomePayeRepository  @Inject()(mongoConnectionProvider: MongoConnectionPr
     mongoConnectionProvider.mongoDatabase,
     incomePayeRecordFormat ) {
 
+
   override lazy val indexes = Seq(
     Index(key = Seq(("id.nino", Ascending)), name = Some("nino"), unique = true, background = true),
     Index(key = Seq(("id.trn", Ascending)), name = Some("trn"), unique = true, background = true)
@@ -48,13 +49,15 @@ class IncomePayeRepository  @Inject()(mongoConnectionProvider: MongoConnectionPr
       case Trn => Id(None, Some(idValue))
     }
 
-    val incomePayeRecord = IncomePayeRecord(id, request)
-    insert(incomePayeRecord) map (_ => incomePayeRecord.incomePayeResponse) recover {
+    val incomeSaRecord = IncomePayeRecord(id, request)
+
+    insert(incomeSaRecord) map (_ => incomeSaRecord.incomePayeResponse) recover {
       case WriteResult.Code(11000) => throw new DuplicateException
     }
   }
 
-  def findById(idType: String, idValue: String): Future[Option[IncomePayeResponse]] =
+  def findByTypeAndId(idType: String, idValue: String): Future[Option[IncomePayeResponse]] = {
     collection.find[JsObject, JsObject](obj("id" -> obj(idType -> idValue)), None)
-      .one[IncomePayeResponse]
+      .one[IncomePayeRecord].map(value => value.map(_.incomePayeResponse))
+  }
 }

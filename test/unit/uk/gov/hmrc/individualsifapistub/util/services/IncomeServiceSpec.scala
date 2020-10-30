@@ -62,20 +62,18 @@ class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePaye
 
       "Get" should {
         "Return SA when successfully retrieved from mongo" in new Setup {
-          when(mockSelfAssessmentRepository.findById(idType, idValue)).thenReturn(Future.successful(Some(incomeSaResponse)))
+          when(mockSelfAssessmentRepository.findByTypeAndId(idType, idValue)).thenReturn(Future.successful(Some(incomeSaResponse)))
           val response = await(underTest.getSa(idType, idValue))
           response shouldBe Some(incomeSaResponse)
         }
 
         "Return none if cannot be found in mongo" in new Setup {
-          when(mockSelfAssessmentRepository.findById(idType, idValue)).thenReturn(Future.successful(None));
+          when(mockSelfAssessmentRepository.findByTypeAndId(idType, idValue)).thenReturn(Future.successful(None));
           val response = await(underTest.getSa(idType, idValue))
           response shouldBe None
         }
       }
     }
-
-    //TODO COMMANT STUFF
 
     "PAYE" should {
       "Create" should {
@@ -95,13 +93,13 @@ class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePaye
 
       "Get" should {
         "Return PAYE when successfully retrieved from mongo" in new Setup {
-          when(mockPayeRepository.findById(idType, idValue)).thenReturn(Future.successful(Some(incomePayeResponse)))
+          when(mockPayeRepository.findByTypeAndId(idType, idValue)).thenReturn(Future.successful(Some(incomePayeResponse)))
           val response = await(underTest.getPaye(idType, idValue))
           response shouldBe Some(incomePayeResponse)
         }
 
         "Return none if cannot be found in mongo" in new Setup {
-          when(mockPayeRepository.findById(idType, idValue)).thenReturn(Future.successful(None));
+          when(mockPayeRepository.findByTypeAndId(idType, idValue)).thenReturn(Future.successful(None));
           val response = await(underTest.getPaye(idType, idValue))
           response shouldBe None
         }

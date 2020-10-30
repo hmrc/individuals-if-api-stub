@@ -29,7 +29,7 @@ class IncomeService @Inject()(incomeSaRepository: IncomeSaRepository, incomePaye
   }
 
   def getSa(idType: String, idValue: String): Future[Option[IncomeSaResponse]] = {
-    incomeSaRepository.findById(idType, idValue)
+    incomeSaRepository.findByTypeAndId(idType, idValue)
   }
 
   def createPaye(idType: String, idValue: String, createIncomePayeRequest: IncomePayeResponse): Future[IncomePayeResponse] = {
@@ -37,6 +37,6 @@ class IncomeService @Inject()(incomeSaRepository: IncomeSaRepository, incomePaye
   }
 
   def getPaye(idType: String, idValue: String): Future[Option[IncomePayeResponse]] = {
-    incomePayeRepository.findById(idType, idValue)
+    incomePayeRepository.findByTypeAndId(idType, idValue)
   }
 }
