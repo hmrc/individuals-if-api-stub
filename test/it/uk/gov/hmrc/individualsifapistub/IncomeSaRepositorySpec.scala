@@ -18,14 +18,12 @@ package it.uk.gov.hmrc.individualsifapistub
 
 import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
-import play.api.libs.json.Json
 import reactivemongo.api.indexes.IndexType.Ascending
 import uk.gov.hmrc.individualsifapistub.domain.{DuplicateException, IncomeSaResponse}
 import uk.gov.hmrc.individualsifapistub.repository.IncomeSaRepository
 import uk.gov.hmrc.mongo.MongoSpecSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.testUtils.IncomeSaHelpers
-import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
 
 class IncomeSaRepositorySpec
     extends TestSupport
