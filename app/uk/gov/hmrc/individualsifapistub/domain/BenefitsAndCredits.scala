@@ -63,6 +63,7 @@ case class Awards(
 case class Application(id: Double, ceasedDate: Option[String], entStartDate: Option[String], entEndDate: Option[String], awards: Option[Awards])
 
 object Application {
+  val statusPattern = "^([ADSCX])$".r
   val datePattern = "^(((19|20)([2468][048]|[13579][26]|0[48])|2000)[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)[-](0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-](0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}[-]02[-](0[1-9]|1[0-9]|2[0-8])))$".r
   val minValue = -9999999999.99
   val maxValue = 9999999999.99
@@ -99,7 +100,7 @@ object Application {
         (JsPath \ "periodEndDate").readNullable[String](pattern(datePattern, "invalid date")) and
         (JsPath \ "startDate").readNullable[String](pattern(datePattern, "invalid date")) and
         (JsPath \ "endDate").readNullable[String](pattern(datePattern, "invalid date")) and
-        (JsPath \ "status").readNullable[String](pattern(datePattern, "invalid date")) and
+        (JsPath \ "status").readNullable[String](pattern(statusPattern, "invalid status")) and
         (JsPath \ "postedDate").readNullable[String](pattern(datePattern, "invalid date")) and
         (JsPath \ "nextDueDate").readNullable[String](pattern(datePattern, "invalid date")) and
         (JsPath \ "frequency").readNullable[Int](min[Int](1).keepAnd(max[Int](999))) and
