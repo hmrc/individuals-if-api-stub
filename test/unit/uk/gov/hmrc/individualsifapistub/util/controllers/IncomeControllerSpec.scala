@@ -44,6 +44,7 @@ class IncomeControllerSpec extends TestSupport {
   val request = CreateIncomeRequest("something")
 
   "Create Income" should {
+
     "Successfully create a income record and return created record as response" in new Setup {
       val income = Income(s"$incomeType-$idType-$idValue", request.body)
       when(incomeService.create(incomeType,idType, idValue, request)).thenReturn(Future.successful(income))

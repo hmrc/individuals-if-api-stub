@@ -18,8 +18,22 @@ package testUtils
 
 import uk.gov.hmrc.individualsifapistub.domain.Address
 
-trait AddressHelpers {
-  def createAddress(number: Int) = {
+import scala.util.Random
+
+trait TestHelpers {
+
+  def generateString(length: Int): String = {
+    val chars = "abcdefghijklmnopqrstuvwxyz123456789"
+    def generate(string: String): String = {
+      if(string.length < length)
+        generate(string.concat(chars.charAt(Random.nextInt(chars.length - 1)).toString))
+      else
+        string
+    }
+    generate("")
+  }
+
+  def generateAddress(number: Int) = {
     Some(Address(
       Some(s"line1-$number"),
       Some(s"line2-$number"),

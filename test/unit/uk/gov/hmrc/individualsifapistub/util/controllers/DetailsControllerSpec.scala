@@ -21,7 +21,7 @@ import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import testUtils.AddressHelpers
+import testUtils.TestHelpers
 import uk.gov.hmrc.individualsifapistub.controllers.DetailsController
 import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
 import uk.gov.hmrc.individualsifapistub.domain._
@@ -30,7 +30,7 @@ import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 import scala.concurrent.Future
 
-class DetailsControllerSpec extends TestSupport with AddressHelpers {
+class DetailsControllerSpec extends TestSupport with TestHelpers {
 
   trait Setup {
     val fakeRequest = FakeRequest()
@@ -43,8 +43,8 @@ class DetailsControllerSpec extends TestSupport with AddressHelpers {
   val request = CreateDetailsRequest(
     Some(Seq(ContactDetail(9, "MOBILE TELEPHONE", "07123 987654"), ContactDetail(9,"MOBILE TELEPHONE", "07123 987655"))),
     Some(Seq(
-      Residence(residenceType = Some("BASE"), address = createAddress(2)),
-      Residence(residenceType = Some("NOMINATED"), address = createAddress(1))))
+      Residence(residenceType = Some("BASE"), address = generateAddress(2)),
+      Residence(residenceType = Some("NOMINATED"), address = generateAddress(1))))
   )
 
   "Create details" should {

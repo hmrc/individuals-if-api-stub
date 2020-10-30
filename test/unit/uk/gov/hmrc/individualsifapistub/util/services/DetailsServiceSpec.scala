@@ -18,7 +18,7 @@ package unit.uk.gov.hmrc.individualsifapistub.util.services
 
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
-import testUtils.AddressHelpers
+import testUtils.TestHelpers
 import uk.gov.hmrc.individualsifapistub.domain.{ContactDetail, CreateDetailsRequest, Details, DetailsResponse, Residence}
 import uk.gov.hmrc.individualsifapistub.repository.DetailsRepository
 import uk.gov.hmrc.individualsifapistub.services.DetailsService
@@ -26,7 +26,7 @@ import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 import scala.concurrent.Future
 
-class DetailsServiceSpec extends TestSupport with AddressHelpers {
+class DetailsServiceSpec extends TestSupport with TestHelpers {
 
   trait Setup {
 
@@ -35,8 +35,8 @@ class DetailsServiceSpec extends TestSupport with AddressHelpers {
     val request = CreateDetailsRequest(
       Some(Seq(ContactDetail(9, "MOBILE TELEPHONE", "07123 987654"), ContactDetail(9,"MOBILE TELEPHONE", "07123 987655"))),
       Some(Seq(
-        Residence(residenceType = Some("BASE"), address = createAddress(2)),
-        Residence(residenceType = Some("NOMINATED"), address = createAddress(1))))
+        Residence(residenceType = Some("BASE"), address = generateAddress(2)),
+        Residence(residenceType = Some("NOMINATED"), address = generateAddress(1))))
     )
 
     val mockDetailsRepository = mock[DetailsRepository]

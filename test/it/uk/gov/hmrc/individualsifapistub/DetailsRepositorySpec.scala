@@ -19,7 +19,7 @@ package it.uk.gov.hmrc.individualsifapistub
 import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
 import reactivemongo.api.indexes.IndexType.Ascending
-import testUtils.AddressHelpers
+import testUtils.TestHelpers
 import uk.gov.hmrc.individualsifapistub.domain.{ContactDetail, CreateDetailsRequest, Details, DetailsResponse, Residence}
 import uk.gov.hmrc.individualsifapistub.repository.DetailsRepository
 import uk.gov.hmrc.mongo.MongoSpecSupport
@@ -28,7 +28,7 @@ import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 class DetailsRepositorySpec
     extends TestSupport
     with MongoSpecSupport
-    with BeforeAndAfterEach with AddressHelpers{
+    with BeforeAndAfterEach with TestHelpers{
 
   override lazy val fakeApplication = buildFakeApplication(
     Configuration("mongodb.uri" -> mongoUri))
@@ -39,8 +39,8 @@ class DetailsRepositorySpec
   val request = CreateDetailsRequest(
     Some(Seq(ContactDetail(9, "MOBILE TELEPHONE", "07123 987654"), ContactDetail(9,"MOBILE TELEPHONE", "07123 987655"))),
     Some(Seq(
-      Residence(residenceType = Some("BASE"), address = createAddress(2)),
-      Residence(residenceType = Some("NOMINATED"), address = createAddress(1))))
+      Residence(residenceType = Some("BASE"), address = generateAddress(2)),
+      Residence(residenceType = Some("NOMINATED"), address = generateAddress(1))))
   )
 
   override def beforeEach() {

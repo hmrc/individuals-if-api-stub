@@ -18,8 +18,7 @@ package unit.uk.gov.hmrc.individualsifapistub.util.services
 
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
-import play.api.libs.json.Json
-import uk.gov.hmrc.individualsifapistub.domain.{Address, Employer, Employment, EmploymentDetail, EmploymentEntry, Employments, Id, Payment}
+import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.individualsifapistub.repository.EmploymentRepository
 import uk.gov.hmrc.individualsifapistub.services.EmploymentsService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
@@ -84,7 +83,6 @@ class EmploymentsServiceSpec extends TestSupport {
         when(mockEmploymentRepository.create(idType, idValue, employments)).thenReturn(Future.successful(employments));
         val response = await(underTest.create(idType, idValue, employments))
         response shouldBe employments
-        println(Json.prettyPrint(Json.toJson(response)))
       }
 
       "Return failure when unable to create Employment object" in new Setup {

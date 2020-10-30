@@ -18,12 +18,12 @@ package unit.uk.gov.hmrc.individualsifapistub.util.domain
 
 
 import play.api.libs.json.Json
-import testUtils.AddressHelpers
+import testUtils.TestHelpers
 import uk.gov.hmrc.individualsifapistub.domain.DetailsResponse._
 import uk.gov.hmrc.individualsifapistub.domain.{ContactDetail, Details, DetailsResponse, Residence}
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
-class DetailsResponseSpec extends UnitSpec with AddressHelpers {
+class DetailsResponseSpec extends UnitSpec with TestHelpers {
 
   val idValue = "2432552635"
 
@@ -31,8 +31,8 @@ class DetailsResponseSpec extends UnitSpec with AddressHelpers {
   val trnDetails = Details(None, Some("12345678"))
   val contactDetail1 = ContactDetail(9, "MOBILE TELEPHONE", "07123 987654")
   val contactDetail2 = ContactDetail(9, "MOBILE TELEPHONE", "07123 987655")
-  val residence1 = Residence(residenceType = Some("BASE"), address = createAddress(2))
-  val residence2 = Residence(residenceType = Some("NOMINATED"), address = createAddress(1))
+  val residence1 = Residence(residenceType = Some("BASE"), address = generateAddress(2))
+  val residence2 = Residence(residenceType = Some("NOMINATED"), address = generateAddress(1))
   val response = DetailsResponse(
     ninoDetails,
     Some(Seq(contactDetail1, contactDetail1)),
@@ -42,13 +42,12 @@ class DetailsResponseSpec extends UnitSpec with AddressHelpers {
   val invalidNinoDetails = Details(Some("QWERTYUIOP"), None)
   val invalidTrnDetails = Details(None, Some("QWERTYUIOP"))
   val invalidContactDetail = ContactDetail(-42, "abcdefghijklmnopqrstuvwxyz0123456789", "a")
-  val invalidResidence = Residence(residenceType =  Some(""), address = createAddress(2))
+  val invalidResidence = Residence(residenceType =  Some(""), address = generateAddress(2))
   val invalidDetailsResponse = DetailsResponse(
     invalidNinoDetails,
     Some(Seq(invalidContactDetail)),
     Some(Seq(invalidResidence))
   )
-
 
   "Details" should {
     "Write to JSON when only nino provided" in {

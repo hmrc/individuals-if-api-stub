@@ -16,13 +16,15 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.domain
 
-import play.api.libs.json.Json
-import testUtils.AddressHelpers
+import play.api.libs.json.{JsNumber, Json}
+import testUtils.TestHelpers
+import uk.gov.hmrc.individualsifapistub.domain.{Address, Employer, Employment, EmploymentDetail, Employments, Id, Payment}
 import uk.gov.hmrc.individualsifapistub.domain.Employments._
-import uk.gov.hmrc.individualsifapistub.domain._
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
-class EmploymentsSpec extends UnitSpec with AddressHelpers {
+import scala.util.Random
+
+class EmploymentsSpec extends UnitSpec with TestHelpers {
 
   val ninoDetails = Id(Some("XH123456A"), None)
   val trnDetails = Id(None, Some("12345678"))
@@ -66,92 +68,253 @@ class EmploymentsSpec extends UnitSpec with AddressHelpers {
   )
 
   "Address" should {
-    "Write to JSON successfully" in {
+
+    "write to JSON successfully" in {
       val result = Json.toJson(address).validate[Address]
       result.isSuccess shouldBe true
+    }
+
+    "validate successfully" when {
+      "lines are equal to min length" in {
+        val line = ""
+        val result = Json.toJson(address.copy(line1 = Some(line))).validate[Address]
+        result.isSuccess shouldBe true
+      }
+
+      "lines are equal to max length" in {
+        val line = generateString(100)
+        val result = Json.toJson(address.copy(line1 = Some(line))).validate[Address]
+        result.isSuccess shouldBe true
+      }
+    }
+
+    "fail to validate" when {
+
+      "lines are longer than max length" in {
+        val line = generateString(101)
+        val result = Json.toJson(address.copy(line1 = Some(line))).validate[Address]
+        result.isError shouldBe true
+      }
     }
   }
 
   "Employer" should {
-    "Write to JSON successfully" in {
+
+    "write to JSON successfully" in {
       val result = Json.toJson(employer).validate[Employer]
       result.isSuccess shouldBe true
+    }
+
+    "read successfully" when {
+
+      "JSON is complete" in {
+
+        val employerJson: String =
+          """{
+            |  "name" : "Name",
+            |  "address" : {
+            |    "line1" : "line1",
+            |    "line2" : "line2",
+            |    "line3" : "line3",
+            |    "line4" : "line4",
+            |    "line5" : "line5",
+            |    "postcode" : "postcode"
+            |  },
+            |  "districtNumber" : "ABC",
+            |  "schemeRef" : "ABC"
+            |}""".stripMargin
+
+        val result = Json.parse(employerJson).validate[Employer]
+        result.isSuccess shouldBe true
+        result.get shouldBe employer
+      }
+
+      "JSON is incomplete" in {
+
+        val employerJson: String =
+          """{
+            |  "name" : "Name",
+            |  "address" : {
+            |    "line1" : "line1",
+            |    "line2" : "line2",
+            |    "line3" : "line3",
+            |    "postcode" : "postcode"
+            |  }
+            |}""".stripMargin
+
+        val result = Json.parse(employerJson).validate[Employer]
+        result.isSuccess shouldBe true
+      }
     }
   }
 
   "EmploymentDetail" should {
-    "Write to JSON successfully" in {
+
+    "write to JSON successfully" in {
       val result = Json.toJson(employmentDetail).validate[EmploymentDetail]
       result.isSuccess shouldBe true
     }
 
-    "fail when payFrequency is not one of: W1, W2, W4, M1, M3, M6, MA, IO, IR" in {
-      val result = Json.toJson(employmentDetail.copy(payFrequency = Some("XX"))).validate[EmploymentDetail]
-      result.isError shouldBe true
+    "read successfully" when {
+
+      "JSON is complete" in {
+
+        val employmentDetailJson = """{
+                                     |  "startDate" : "2001-12-31",
+                                     |  "endDate" : "2002-05-12",
+                                     |  "payFrequency" : "W2",
+                                     |  "payrollId" : "12341234",
+                                     |  "address" : {
+                                     |    "line1" : "line1",
+                                     |    "line2" : "line2",
+                                     |    "line3" : "line3",
+                                     |    "line4" : "line4",
+                                     |    "line5" : "line5",
+                                     |    "postcode" : "postcode"
+                                     |  }
+                                     |}""".stripMargin
+
+        val result = Json.parse(employmentDetailJson).validate[EmploymentDetail]
+        result.isSuccess shouldBe true
+        result.get shouldBe employmentDetail
+      }
+
+      "JSON is incomplete" in {
+
+        val employmentDetailJson = """{
+                                     |  "startDate" : "2001-12-31",
+                                     |  "endDate" : "2002-05-12",
+                                     |  "payFrequency" : "W2"
+                                     |}""".stripMargin
+
+        val result = Json.parse(employmentDetailJson).validate[EmploymentDetail]
+        result.isSuccess shouldBe true
+      }
     }
 
-    "fail to validate incorrect start date" in {
-      val result = Json.toJson(employmentDetail.copy(startDate = Some("2020-12-50"))).validate[EmploymentDetail]
-      result.isError shouldBe true
+    "fail validation" when {
+
+      "payFrequency is not one of: W1, W2, W4, M1, M3, M6, MA, IO, IR" in {
+        val result = Json.toJson(employmentDetail.copy(payFrequency = Some("XX"))).validate[EmploymentDetail]
+        result.isError shouldBe true
+      }
+
+      "start date is invalid" in {
+        val result = Json.toJson(employmentDetail.copy(startDate = Some("2020-12-50"))).validate[EmploymentDetail]
+        result.isError shouldBe true
+      }
+
+      "end date is invalid" in {
+        val result = Json.toJson(employmentDetail.copy(endDate = Some("2020-12-50"))).validate[EmploymentDetail]
+        result.isError shouldBe true
+      }
+    }
+  }
+
+  "paymentAmountValidator" should {
+
+    "validate successfully" when {
+
+      "value is larger than min value" in {
+        val result = JsNumber(Employments.minValue + 1.0).validate[Double](paymentAmountValidator)
+        result.isSuccess shouldBe true
+      }
+
+      "value is smaller than max value" in {
+        val result = JsNumber(Employments.maxValue - 1.0).validate[Double](paymentAmountValidator)
+        result.isSuccess shouldBe true
+      }
     }
 
-    "fail to validate incorrect end date" in {
-      val result = Json.toJson(employmentDetail.copy(endDate = Some("2020-12-50"))).validate[EmploymentDetail]
-      result.isError shouldBe true
+    "fail validation" when {
+
+      "not a multiple of 0.01" in {
+        val result = JsNumber(123.4312123123123).validate[Double](paymentAmountValidator)
+        result.isError shouldBe true
+      }
+
+      "value is smaller than min value" in {
+        val result = JsNumber(Employments.minValue - 1.0).validate[Double](paymentAmountValidator)
+        result.isError shouldBe true
+      }
+
+      "value is larger than max value" in {
+        val result = JsNumber(Employments.maxValue + 1.0).validate[Double](paymentAmountValidator)
+        result.isError shouldBe true
+      }
     }
   }
 
   "Payment" should {
-    "Write to JSON successfully" in {
+    "write to JSON successfully" in {
       val result = Json.toJson(payment).validate[Payment]
       result.isSuccess shouldBe true
     }
 
-    "fail to validate when week is below 1" in {
-      val result = Json.toJson(payment.copy(week = Some(0))).validate[Payment]
-      result.isError shouldBe true
+    "read successfully" when {
+
+      "JSON is complete" in {
+        val paymentJson = """{
+                            |  "date" : "2001-12-31",
+                            |  "ytdTaxablePay" : 162081.23,
+                            |  "paidTaxablePay" : 112.75,
+                            |  "paidNonTaxOrNICPayment" : 123123.32,
+                            |  "week" : 52,
+                            |  "month" : 12
+                            |}""".stripMargin
+
+        val result = Json.parse(paymentJson).validate[Payment]
+        result.isSuccess shouldBe true
+        result.get shouldBe payment
+      }
+
+      "JSON is incomplete" in {
+        val paymentJson = """{
+                            |  "date" : "2001-12-31",
+                            |  "ytdTaxablePay" : 162081.23,
+                            |  "month" : 12
+                            |}""".stripMargin
+
+        val result = Json.parse(paymentJson).validate[Payment]
+        result.isSuccess shouldBe true
+      }
     }
 
-    "fail to validate when week is above 56" in {
-      val result = Json.toJson(payment.copy(week = Some(57))).validate[Payment]
-      result.isError shouldBe true
-    }
+    "fail validation" when {
 
-    "fail to validate when month is below 1" in {
-      val result = Json.toJson(payment.copy(month = Some(0))).validate[Payment]
-      result.isError shouldBe true
-    }
+      "week is below 1" in {
+        val result = Json.toJson(payment.copy(week = Some(0))).validate[Payment]
+        result.isError shouldBe true
+      }
 
-    "fail to validate when month is above 12" in {
-      val result = Json.toJson(payment.copy(month = Some(13))).validate[Payment]
-      result.isError shouldBe true
-    }
+      "week is above 56" in {
+        val result = Json.toJson(payment.copy(week = Some(57))).validate[Payment]
+        result.isError shouldBe true
+      }
 
-    "fail to validate when not a multiple of 0.01" in {
-      val result = Json.toJson(payment.copy(ytdTaxablePay = Some(123.4312123123123))).validate[Payment]
-      result.isError shouldBe true
-    }
+      "month is below 1" in {
+        val result = Json.toJson(payment.copy(month = Some(0))).validate[Payment]
+        result.isError shouldBe true
+      }
 
-    "fail to validate when value is smaller than min value" in {
-      val result = Json.toJson(payment.copy(ytdTaxablePay = Some(Employments.minValue - 1.0))).validate[Payment]
-      result.isError shouldBe true
-    }
-
-    "fail to validate when value is larger than max value" in {
-      val result = Json.toJson(payment.copy(ytdTaxablePay = Some(Employments.maxValue + 1.0))).validate[Payment]
-      result.isError shouldBe true
+      "month is above 12" in {
+        val result = Json.toJson(payment.copy(month = Some(13))).validate[Payment]
+        result.isError shouldBe true
+      }
     }
   }
 
   "Employments" should {
-    "Write to JSON successfully" in {
-      val result = Json.toJson( Employments(Seq(employment))).validate[Employments]
-      result.isSuccess shouldBe true
-    }
+    "write to JSON successfully"  when {
+      "employments is not empty" in {
+        val result = Json.toJson( Employments(Seq(employment))).validate[Employments]
+        result.isSuccess shouldBe true
+      }
 
-    "Write to JSON successfully when employments is empty" in {
-      val result = Json.toJson( Employments(Seq())).validate[Employments]
-      result.isSuccess shouldBe true
+      "employments is empty" in {
+        val result = Json.toJson( Employments(Seq())).validate[Employments]
+        result.isSuccess shouldBe true
+      }
     }
   }
 }

@@ -19,8 +19,7 @@ package uk.gov.hmrc.individualsifapistub.controllers
 import javax.inject.Inject
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
-import uk.gov.hmrc.individualsifapistub.domain.{Employment, EmploymentEntry,  Employments}
-import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
+import uk.gov.hmrc.individualsifapistub.domain.Employments
 import uk.gov.hmrc.individualsifapistub.domain.Employments._
 import uk.gov.hmrc.individualsifapistub.services.EmploymentsService
 
