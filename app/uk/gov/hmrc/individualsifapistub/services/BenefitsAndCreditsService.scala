@@ -17,7 +17,7 @@
 package uk.gov.hmrc.individualsifapistub.services
 
 import javax.inject.Inject
-import uk.gov.hmrc.individualsifapistub.domain.{BenefitsAndCredits, CreateBenefitsAndCreditsRequest}
+import uk.gov.hmrc.individualsifapistub.domain.{Application, BenefitsAndCredits}
 import uk.gov.hmrc.individualsifapistub.repository.BenefitsAndCreditsRepository
 
 import scala.concurrent.Future
@@ -26,7 +26,7 @@ class BenefitsAndCreditsService @Inject()(repository: BenefitsAndCreditsReposito
 
   def create(idType: String,
              idValue: String,
-             createBenefitsAndCreditsRequest: CreateBenefitsAndCreditsRequest): Future[BenefitsAndCredits] = {
+             createBenefitsAndCreditsRequest: Seq[Application]): Future[BenefitsAndCredits] = {
     repository.create(s"$idType-$idValue", createBenefitsAndCreditsRequest)
   }
 

@@ -21,6 +21,7 @@ import play.api.libs.json.Json
 import testUtils.TestHelpers
 import uk.gov.hmrc.individualsifapistub.domain.DetailsResponse._
 import uk.gov.hmrc.individualsifapistub.domain.{ContactDetail, Details, DetailsResponse, Residence}
+import uk.gov.hmrc.individualsifapistub.domain.DetailsResponse._
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class DetailsResponseSpec extends UnitSpec with TestHelpers {
