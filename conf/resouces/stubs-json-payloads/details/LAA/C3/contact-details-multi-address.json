@@ -1,0 +1,28 @@
+{
+  "summary": "Individual Details with maximum data for two address types LAA C3",
+  "value": {
+    "residences": [
+      {
+        "type": "NOMINATED",
+        "address": {
+          "line1": "24 Trinity Street",
+          "line2": "Dawley Bank",
+          "line3": "Telford",
+          "line4": "Shropshire",
+          "line5": "UK",
+          "postcode": "TF3 4ER"
+        }
+      },
+      {
+        "type": "BASE",
+        "address": {
+          "line1": "La Petite Maison",
+          "line2": "Rue de Bastille",
+          "line3": "Vieux Ville",
+          "line4": "Dordogne",
+          "line5": "France"
+        }
+      }
+    ]
+  }
+}

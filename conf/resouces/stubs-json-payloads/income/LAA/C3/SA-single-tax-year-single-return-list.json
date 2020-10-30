@@ -1,0 +1,47 @@
+{
+  "summary": "Self Assessment income details single tax year single return list LAA C1",
+  "value": {
+    "sa": [
+      {
+        "taxYear": "2019",
+        "returnList": [
+          {
+            "busStartDate": "2018-02-28",
+            "busEndDate": "2018-02-28",
+            "businessDescription": "c",
+            "address": {
+              "line1": "c",
+              "line2": "c",
+              "line3": "c",
+              "line4": "c",
+              "postcode": "c"
+            },
+            "income": {
+              "selfAssessment": 99999999999.99,
+              "trusts": 99999999999.99,
+              "allEmployments": 99999999999.99,
+              "selfEmployment": 99999999999.99,
+              "partnerships": 99999999999.99,
+              "ukProperty": 99999999999.99,
+              "foreign": 99999999999.99,
+              "foreignDivs": 99999999999.99,
+              "ukInterest": 99999999999.99,
+              "ukDivsAndInterest": 99999999999.99,
+              "pensions": 99999999999.99,
+              "other": 99999999999.99,
+              "lifePolicies": 99999999999.99,
+              "shares": 99999999999.99
+            },
+            "deducts": {
+              "totalBusExpenses": 99999999999.98,
+              "totalDisallowBusExp": 99999999999.98
+            },
+            "turnover": 345435.03,
+            "otherBusIncome": 34545.88,
+            "tradingIncomeAllowance": 100
+          }
+        ]
+      }
+    ]
+  }
+}

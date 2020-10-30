@@ -1,0 +1,853 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "API#1684 Get Individual Details",
+    "description": "This API retrieves details of the individual identified by either NINO or Temporary Reference Number",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Wayne Morris",
+      "email": "wayne.morris@hmrc.gov.uk"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://{hostname}:{port}",
+      "description": "Different hostnames and ports are used in different IF environments",
+      "variables": {
+        "hostname": {
+          "default": "localhost",
+          "description": "The hostname for one of IST, Clone, and Production"
+        },
+        "port": {
+          "default": "8443",
+          "description": "The port for one of IST, Clone, and Production"
+        }
+      }
+    }
+  ],
+  "tags": [
+    {
+      "name": "API#1684",
+      "description": "API for Get Individual Details."
+    }
+  ],
+  "paths": {
+    "/individuals/details/{idType}/{idValue}": {
+      "get": {
+        "summary": "API#1684 Get Individual Details",
+        "description": "Retrieve an individual's details using a NINO or TRN and optionally specify a subset of data items to return using the 'fields' query string parameter.<br> /individuals/details/{idType}/{idValue}[?fields={data items spec}] <br>Example URIs:<br> /individuals/details/nino/AB123456C <br> /individuals/details/trn/98765432 <br> /individuals/details/nino/AB123456C?fields=contactDetails(type,detail),residences(status,type,addressType,address(line1,line2,line3,line4,line5,postcode),houseId,homeCountry,startDateTime,noLongerUsed)\n\n```\nChange Log\n\nVersion Date       Author         Description\n0.1.0   20-08-2020 Wayne Morris   Initial draft for review\n0.2.0   01-09-2020 Wayne Morris   Baseline candidate. Changes since 0.1.0:\n                                  1) Removed the 403 and 422 error responses\n                                  2) Request header CorrelationId made mandatory\n                                  3) Response header CorrelationId made mandatory\n                                  4) Response header Content-Type (mandatory) explicitly added\n0.3.0   17-09-2020 Wayne Morris   Baseline candidate. Changes since 0.2.0:\n                                  1) Added the 403 UNAUTHORIZED error response\n                                  2) Response header CorrelationId made mandatory\n                                  3) Added mandatory request header x-end-client-id\n                                  4) Added INVALID_FIELDS to the 400 response\n                                  5) Added the 422 response UNKNOWN_DATA_ITEM with \"reason\" string using generic terminology\n                                  6) Restricted the 'interests', 'contactDetails', 'preferences', and 'residences' arrays to 25 entries\n                                  7) Constraints on postcode relaxed to minimum and maximum length\n                                  8) Removed the 'Content-Type' header definition\n                                  9) Changed the schema for 'idTypeParam' to be a 'oneOf' - separate schemas for 'nino' and 'trn' types\n                                  10) enums removed and replaced with minLength of 1 and various maxLength values on properties 'ninoStatus', 'gender', 'retLetterServ'\n                                  11) Properties 'deceased' and 'noLongerUsed' changed from type boolean to string with a length of a single character\n                                  12) minLength reduced to 1 on the following properties to allow for shorter strings in the future:\n                                      'type' within the 'interests', 'contactDetails', 'preferences', and 'residences' arrays\n                                      'status' within the 'residences' array\n                                      'addressType'\n                                  13) Replaced the phrase \"Person Details\" with \"Individual Details\" throughout; replaced \"person\" with \"individual\" throughout\n0.4.0   24-09-2020 Wayne Morris   Baseline candidate. Changes since 0.3.0:\n                                  1) Corrected the 'fields' query string example in the description above this Change Log (added the 'address' object)\n                                  2) Tightened the regex on the 'fields' query parameter string; see the definition 'fieldsQueryParam'\n1.0.0   30-09-2020 Wayne Morris   Baseline version. Changes since 0.4.0:\n                                  1) Changed 'instanceIdType' to support 1 decimal place with minimum 0.1; updated the example response too\n                                  2) Added the 'preferences' array to the example success response\n                                  3) Added 'description' keyword to each of 'details', 'interests', 'contactDetails', 'preferences', and 'residences' to make clear these are all optional\n                                  4) Corrected the string values of 'ninoStatus' based on example backend responses\n                                  5) Corrected the string values of 'ninoStatus' in the example success response\n                                  6) Updated expected strings for 'interests[].type' based on example backend success responses\n                                  7) Added the 400 INVALID_X-END-CLIENT-ID error response\n",
+        "operationId": "getIndividualDetails",
+        "tags": [
+          "API#1684"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/environment"
+          },
+          {
+            "$ref": "#/components/parameters/correlationId"
+          },
+          {
+            "$ref": "#/components/parameters/x-end-client-id"
+          },
+          {
+            "$ref": "#/components/parameters/idTypeParam"
+          },
+          {
+            "$ref": "#/components/parameters/idValueParam"
+          },
+          {
+            "$ref": "#/components/parameters/fieldsQueryParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "headers": {
+              "CorrelationId": {
+                "$ref": "#/components/headers/CorrelationId"
+              }
+            },
+            "content": {
+              "application/json;charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/successResponse"
+                },
+                "examples": {
+                  "Full Response": {
+                    "summary": "Individual Details with maximum data",
+                    "value": {
+                      "details": {
+                        "instanceId": 2347796,
+                        "updatedTimestamp": "2020-08-18T09:23:54.23Z",
+                        "nino": "AB654321",
+                        "ninoStatus": "UNVERIFIED",
+                        "trn": "67846678",
+                        "name": {
+                          "title": "MR",
+                          "initials": "F C",
+                          "firstName": "Fred",
+                          "middleName": "Cecil",
+                          "lastName": "Bloggs",
+                          "honours": "BSc (Hons)"
+                        },
+                        "gender": "M",
+                        "dateOfBirth": "1928-09-24",
+                        "deceased": "Y",
+                        "dateOfDeath": "2020-08-01",
+                        "orgUnitInstance": 546557688,
+                        "capacitorInstanceId": 1743843.1
+                      },
+                      "interests": [
+                        {
+                          "code": 17,
+                          "type": "DEPARTMENT OF WORK AND PENSIONS",
+                          "reference": "BA8349-78H",
+                          "reason": "Applied for AA",
+                          "startDateTime": "2019-11-30T16:23:59.59Z"
+                        },
+                        {
+                          "code": 22,
+                          "type": "CHILD BENEFIT SYSTEM",
+                          "reference": "Daughter Annabel",
+                          "reason": "Under 18",
+                          "startDateTime": "2018-01-01T00:00:00.00Z"
+                        }
+                      ],
+                      "contactDetails": [
+                        {
+                          "code": 9,
+                          "type": "MOBILE TELEPHONE",
+                          "detail": "07123 987654"
+                        },
+                        {
+                          "code": 11,
+                          "type": "PRIMARY E-MAIL",
+                          "detail": "fred.blogs@hotmail.com"
+                        }
+                      ],
+                      "preferences": [
+                        {
+                          "code": 3,
+                          "type": "OUTPUT WELSH"
+                        },
+                        {
+                          "code": 5,
+                          "type": "OUTPUT LARGE PRINT"
+                        }
+                      ],
+                      "residences": [
+                        {
+                          "statusCode": "1",
+                          "status": "VERIFIED",
+                          "typeCode": 14,
+                          "type": "NOMINATED",
+                          "deliveryInfo": "Low level letter box",
+                          "retLetterServ": "N",
+                          "addressCode": "1",
+                          "addressType": "UK",
+                          "address": {
+                            "line1": "24 Trinity Street",
+                            "line2": "Dawley Bank",
+                            "line3": "Telford",
+                            "line4": "Shropshire",
+                            "line5": "UK",
+                            "postcode": "TF3 4ER"
+                          },
+                          "houseId": "24",
+                          "homeCountry": "ENGLAND",
+                          "otherCountry": "FRANCE",
+                          "deadLetterOfficeDate": "2020-07-31",
+                          "startDateTime": "2018-02-28T12:00:00.00Z",
+                          "noLongerUsed": "N"
+                        },
+                        {
+                          "statusCode": "3",
+                          "status": "AS INPUT",
+                          "typeCode": 13,
+                          "type": "BASE",
+                          "deliveryInfo": "Low level letter box",
+                          "retLetterServ": "Y",
+                          "addressCode": "2",
+                          "addressType": "NON-UK",
+                          "address": {
+                            "line1": "La Petite Maison",
+                            "line2": "Rue de Bastille",
+                            "line3": "Vieux Ville",
+                            "line4": "Dordogne",
+                            "line5": "France"
+                          },
+                          "houseId": "1",
+                          "homeCountry": "FRANCE",
+                          "otherCountry": "ENGLAND",
+                          "deadLetterOfficeDate": "2018-01-31",
+                          "startDateTime": "1978-02-28T12:00:00.00Z",
+                          "noLongerUsed": "Y"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request\n```\nA bad request has been made; this could be due to one or more issues with the request\n\"code\"                 \"reason\"\nINVALID_IDTYPE          Submission has not passed validation. Invalid parameter idType.\nINVALID_IDVALUE         Submission has not passed validation. Invalid parameter idValue.\nINVALID_FIELDS          Submission has not passed validation. Invalid parameter fields.\nINVALID_CORRELATIONID   Submission has not passed validation. Invalid header CorrelationId.\nINVALID_X-END-CLIENT-ID Submission has not passed validation. Invalid header x-end-client-id.",
+            "headers": {
+              "CorrelationId": {
+                "$ref": "#/components/headers/CorrelationId"
+              }
+            },
+            "content": {
+              "application/json;charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                },
+                "examples": {
+                  "Single Error Code": {
+                    "value": {
+                      "failures": [
+                        {
+                          "code": "INVALID_IDTYPE",
+                          "reason": "Submission has not passed validation. Invalid parameter idType."
+                        }
+                      ]
+                    }
+                  },
+                  "Multiple Error Codes": {
+                    "value": {
+                      "failures": [
+                        {
+                          "code": "INVALID_FIELDS",
+                          "reason": "Submission has not passed validation. Invalid parameter fields."
+                        },
+                        {
+                          "code": "INVALID_CORRELATIONID",
+                          "reason": "Submission has not passed validation. Invalid header CorrelationId."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden\n```\n\"code\"            \"reason\"\nUNAUTHORIZED      The remote endpoint has indicated that the requested record cannot be retrieved.",
+            "headers": {
+              "CorrelationId": {
+                "$ref": "#/components/headers/CorrelationId"
+              }
+            },
+            "content": {
+              "application/json;charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                },
+                "examples": {
+                  "UNAUTHORIZED": {
+                    "value": {
+                      "failures": [
+                        {
+                          "code": "UNAUTHORIZED",
+                          "reason": "The remote endpoint has indicated that the requested record cannot be retrieved."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found\n```\n\"code\"                \"reason\"\nPERSON_NOT_FOUND      The remote endpoint has indicated that no record could be found.",
+            "headers": {
+              "CorrelationId": {
+                "$ref": "#/components/headers/CorrelationId"
+              }
+            },
+            "content": {
+              "application/json;charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                },
+                "examples": {
+                  "PERSON_NOT_FOUND": {
+                    "value": {
+                      "failures": [
+                        {
+                          "code": "PERSON_NOT_FOUND",
+                          "reason": "The remote endpoint has indicated that no record could be found."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity\n```\n\"code\"                   \"reason\"\nUNKNOWN_DATA_ITEM        There are 1 or more unknown data items in the 'fields' query string.\n\nNOTE: That the above is the single \"code\" and \"reason\" pair in the error response body ",
+            "headers": {
+              "CorrelationId": {
+                "$ref": "#/components/headers/CorrelationId"
+              }
+            },
+            "content": {
+              "application/json;charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                },
+                "examples": {
+                  "Actual response": {
+                    "value": {
+                      "failures": [
+                        {
+                          "code": "UNKNOWN_DATA_ITEM",
+                          "reason": "There are 1 or more unknown data items in the 'fields' query string."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "428": {
+            "description": "Precondition Required\n```\n\"code\"                  \"reason\"\nINVALID_IDENTIFIERS     Submission has not passed validation. The idType and idValue path parameters are not a valid combination.",
+            "headers": {
+              "CorrelationId": {
+                "$ref": "#/components/headers/CorrelationId"
+              }
+            },
+            "content": {
+              "application/json;charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                },
+                "examples": {
+                  "Single Error Code": {
+                    "value": {
+                      "failures": [
+                        {
+                          "code": "INVALID_IDENTIFIERS",
+                          "reason": "Submission has not passed validation. The idType and idValue path parameters are not a valid combination."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error\n```\n\"code\"         \"reason\"\nSERVER_ERROR   IF is currently experiencing problems that require live service intervention.",
+            "headers": {
+              "CorrelationId": {
+                "$ref": "#/components/headers/CorrelationId"
+              }
+            },
+            "content": {
+              "application/json;charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                },
+                "examples": {
+                  "SERVER_ERROR": {
+                    "value": {
+                      "failures": [
+                        {
+                          "code": "SERVER_ERROR",
+                          "reason": "IF is currently experiencing problems that require live service intervention."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable\n```\n\"code\"                \"reason\"\nSERVICE_UNAVAILABLE   Dependent systems are currently not responding.",
+            "headers": {
+              "CorrelationId": {
+                "$ref": "#/components/headers/CorrelationId"
+              }
+            },
+            "content": {
+              "application/json;charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                },
+                "examples": {
+                  "SERVICE_UNAVAILABLE": {
+                    "value": {
+                      "failures": [
+                        {
+                          "code": "SERVICE_UNAVAILABLE",
+                          "reason": "Dependent systems are currently not responding."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "headers": {
+      "CorrelationId": {
+        "description": "CorrelationID - Used for traceability purposes. UUID format",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F]{8}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{12}$"
+        }
+      }
+    },
+    "parameters": {
+      "environment": {
+        "in": "header",
+        "name": "Environment",
+        "description": "Mandatory. The environment in use.",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "ist0",
+            "clone",
+            "live"
+          ]
+        }
+      },
+      "correlationId": {
+        "in": "header",
+        "name": "CorrelationId",
+        "description": "Mandatory. A UUID format string for the transaction.",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F]{8}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{12}$"
+        }
+      },
+      "x-end-client-id": {
+        "in": "header",
+        "name": "x-end-client-id",
+        "description": "Mandatory. A string identifying the end consumer. Currently supported values:\n\nXMOJ0000         Ministry of Justice\n",
+        "required": true,
+        "schema": {
+          "description": "The regex pattern is deliberately loose to allow for a wide range of strings",
+          "type": "string",
+          "pattern": "^[A-Za-z0-9\\/ -]{1,64}$"
+        }
+      },
+      "idTypeParam": {
+        "in": "path",
+        "name": "idType",
+        "description": "Identification type. Possible values are 'nino' or 'trn'",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "pattern": "^(nino|trn)$"
+        }
+      },
+      "idValueParam": {
+        "in": "path",
+        "name": "idValue",
+        "description": "idValue for the idType. NINO example AA123456, TRN example 12345678",
+        "required": true,
+        "schema": {
+          "oneOf": [
+            {
+              "description": "This section applies for idType 'nino'",
+              "type": "string",
+              "pattern": "^(((?!(BG|GB|KN|NK|NT|TN|ZZ)|(D|F|I|Q|U|V)[A-Z]|[A-Z](D|F|I|O|Q|U|V))[A-Z]{2})[0-9]{6}[A-D\\s]?)$"
+            },
+            {
+              "description": "This section applies for idType 'trn'",
+              "type": "string",
+              "pattern": "^([0-9]{8})$"
+            }
+          ]
+        }
+      },
+      "fieldsQueryParam": {
+        "in": "query",
+        "name": "fields",
+        "description": "Optional query string parameter to specify a subset of data to be returned.\n\nA comma-separated list of response property names. Where the response property is an object or array then each required property within that object/array must be specified by inclusion as a comma-separated list within round brackets immediately after the object/array property name e.g.\n\nfields=contactDetails(type,detail),residences(addressType,address(line1,line2,line3,line4,line5,postcode))\n\nfields=details(ninoStatus,name(title,firstName,middleName,lastName),dateOfBirth)",
+        "required": false,
+        "schema": {
+          "description": "Don't allow: 1) the following characters at the start of the string: ,()_-\n             2) leading hyphen or underscore on property names i.e. after '(', ')', and ','\n             3) the following character combinations: ,,  ,(  ,)  (,  ((  ()  )(\n             4) the following characters at the end of the string: ,(\n",
+          "type": "string",
+          "pattern": "^((?!^[,()_-])(?![(,)][_-])(?![,(][,()])(?!\\)[(])[a-zA-Z0-9(),_-])*[^,(]$"
+        }
+      }
+    },
+    "schemas": {
+      "errorResponse": {
+        "title": "API#1684 Get Individual Details Error Response Schema 1.0.0",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "failures"
+        ],
+        "properties": {
+          "failures": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code",
+                "reason"
+              ],
+              "properties": {
+                "code": {
+                  "description": "Keys for all the errors returned",
+                  "type": "string",
+                  "pattern": "^[A-Z0-9_-]{1,160}$"
+                },
+                "reason": {
+                  "description": "A simple description for the failure",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 160
+                }
+              }
+            }
+          }
+        }
+      },
+      "successResponse": {
+        "title": "API#1684 Get Individual Details Success Response Schema 1.0.0",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "details": {
+            "description": "Optional. Contains details about the individual.",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "instanceId": {
+                "$ref": "#/components/schemas/instanceIdType"
+              },
+              "updatedTimestamp": {
+                "description": "Format YYYY-MM-DDTHH:MM:SS.ssZ",
+                "type": "string",
+                "format": "date-time"
+              },
+              "nino": {
+                "type": "string",
+                "pattern": "^((?!(BG|GB|KN|NK|NT|TN|ZZ)|(D|F|I|Q|U|V)[A-Z]|[A-Z](D|F|I|O|Q|U|V))[A-Z]{2})[0-9]{6}[A-D\\s]?$"
+              },
+              "ninoStatus": {
+                "description": "The status of the Nino. Currently supported values:\n```\nVERIFIED\nUNVERIFIED\nUNKNOWN\nJUVENILE\nJUVENILE TEMP\n```\nIf the backend returns an unexpected string it will be returned 'as is', i.e. untransformed, to a maximum of 13 characters.\n",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 13
+              },
+              "trn": {
+                "type": "string",
+                "pattern": "^[0-9]{8}$"
+              },
+              "name": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 35
+                  },
+                  "initials": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 35
+                  },
+                  "firstName": {
+                    "$ref": "#/components/schemas/nameType"
+                  },
+                  "middleName": {
+                    "$ref": "#/components/schemas/nameType"
+                  },
+                  "lastName": {
+                    "$ref": "#/components/schemas/nameType"
+                  },
+                  "honours": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 35
+                  }
+                }
+              },
+              "gender": {
+                "description": "The individual's gender. Currently supported values: ``` M (Male) F (Female) space (Other/Unknown) ``` If the backend returns an unexpected string it will be returned 'as is', i.e. untransformed, to a maximum of a single character.\n",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1
+              },
+              "dateOfBirth": {
+                "$ref": "#/components/schemas/dateType"
+              },
+              "deceased": {
+                "description": "Indicates if the individual is deceased (Y) or not (N). If the backend returns an unexpected string it will be returned 'as is', i.e. untransformed, to a maximum of a single character.\n",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1
+              },
+              "dateOfDeath": {
+                "$ref": "#/components/schemas/dateType"
+              },
+              "orgUnitInstance": {
+                "$ref": "#/components/schemas/instanceIdType"
+              },
+              "capacitorInstanceId": {
+                "$ref": "#/components/schemas/instanceIdType"
+              }
+            }
+          },
+          "interests": {
+            "description": "Optional.",
+            "type": "array",
+            "maxItems": 25,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "code": {
+                  "description": "The numeric code for the associated 'type' property below",
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9999,
+                  "multipleOf": 1
+                },
+                "type": {
+                  "description": "The particular interest type. Currently supported values:\n```\ncode type\n 1   SELF ASSESSMENT\n 2   PAY AS YOU EARN\n15   STUDENT LOANS\n16   WORKING FAMILY TAX CREDIT\n17   DEPARTMENT OF WORK AND PENSIONS\n18   TAX CREDITS SERVICE\n19   KNOWN FACTS\n20   NTC CITIZEN E-PORTAL\n21   IDMS\n22   CHILD BENEFIT SYSTEM\n23   CHILD TRUST FUND\n24   LIVE SA\n25   DORMANT SA\n26   CONSTRUCTION INDUSTRY SCHEME\n27   TPSS\n30   UNIVERSAL CREDIT\n34   SELF ASSESSMENT RETURNS\n35   REGIONAL RESIDENT\n36   REGIONAL TAXPAYER\n40   INCOME FROM PROPERTY\n43   TAX FREE CHILDCARE\n```\nIf the backend returns an unexpected string it will be returned 'as is', i.e. untransformed, to a maximum of 35 characters.\n",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 35
+                },
+                "reference": {
+                  "type": "string",
+                  "maxLength": 30
+                },
+                "reason": {
+                  "type": "string",
+                  "maxLength": 35
+                },
+                "startDateTime": {
+                  "description": "Format YYYY-MM-DDTHH:MM:SS.ssZ",
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          },
+          "contactDetails": {
+            "description": "Optional.",
+            "type": "array",
+            "maxItems": 25,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "code": {
+                  "description": "The numeric code for the associated 'type' property below",
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9999,
+                  "multipleOf": 1
+                },
+                "type": {
+                  "description": "The particular contact type. Currently supported values:\n\n```\ncode type\n 7   DAYTIME TELEPHONE\n 8   EVENING TELEPHONE\n 9   MOBILE TELEPHONE\n10   FAX\n11   PRIMARY E-MAIL\n12   SECONDARY E-MAIL\n```\nIf the backend returns an unexpected string it will be returned 'as is', i.e. untransformed, to a maximum of 35 characters.\n",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 35
+                },
+                "detail": {
+                  "type": "string",
+                  "minLength": 3,
+                  "maxLength": 72
+                }
+              }
+            }
+          },
+          "preferences": {
+            "description": "Optional.",
+            "type": "array",
+            "maxItems": 25,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "code": {
+                  "description": "The numeric code for the associated 'type' property below",
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9999,
+                  "multipleOf": 1
+                },
+                "type": {
+                  "description": "The particular preference. Currently supported values:\n\n```\ncode type\n3    OUTPUT WELSH\n4    OUTPUT AUDIO\n5    OUTPUT LARGE PRINT\n6    OUTPUT BRAILLE\n```\nIf the backend returns an unexpected string it will be returned 'as is', i.e. untransformed, to a maximum of 35 characters.",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 35
+                }
+              }
+            }
+          },
+          "residences": {
+            "description": "Optional.",
+            "type": "array",
+            "maxItems": 25,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "statusCode": {
+                  "description": "The numeric string code for the associated 'status' property below",
+                  "type": "string",
+                  "pattern": "^[1-9]$"
+                },
+                "status": {
+                  "description": "The particular status. Currently supported values:\n```\nstatusCode status\n1          VERIFIED\n3          AS INPUT\n```\nIf the backend returns an unexpected string it will be returned 'as is', i.e. untransformed, to a maximum of 8 characters.",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 8
+                },
+                "typeCode": {
+                  "description": "The numeric code for the associated 'type' property below",
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9999,
+                  "multipleOf": 1
+                },
+                "type": {
+                  "description": "The particular residence type. Currently supported values:\n```\ntypeCode type\n13        BASE\n14        NOMINATED\n```\nIf the backend returns an unexpected string it will be returned 'as is', i.e. untransformed, to a maximum of 35 characters.\n",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 35
+                },
+                "deliveryInfo": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 35
+                },
+                "retLetterServ": {
+                  "description": "The Return Letter Service (RLS) status. Currently supported values:\n```\nValue Meaning\nY     RLS\nN     Not RLS\nSpace NOT RLS\n```\nIf the backend returns an unexpected string it will be returned 'as is', i.e. untransformed, to a maximum of a single character.",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1
+                },
+                "addressCode": {
+                  "description": "The numeric string code for the associated 'addressType' property below",
+                  "type": "string",
+                  "pattern": "^[1-9]$"
+                },
+                "addressType": {
+                  "description": "The particular type of address. Currently supported values:\n```\naddressCode addressType\n1           UK\n2           NON-UK\n```\nIf the backend returns an unexpected string it will be returned 'as is', i.e. untransformed, to a maximum of 6 characters.",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 6
+                },
+                "address": {
+                  "$ref": "#/components/schemas/addressType"
+                },
+                "houseId": {
+                  "type": "string",
+                  "maxLength": 35
+                },
+                "homeCountry": {
+                  "type": "string",
+                  "maxLength": 16
+                },
+                "otherCountry": {
+                  "type": "string",
+                  "maxLength": 35
+                },
+                "deadLetterOfficeDate": {
+                  "$ref": "#/components/schemas/dateType"
+                },
+                "startDateTime": {
+                  "description": "Format YYYY-MM-DDTHH:MM:SS.ssZ",
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "noLongerUsed": {
+                  "description": "Indicates if the NOMINATED residence is no longer used (NLU) or not. Currently supported values:\n```\nValue Meaning\nY     NLU\nN     Not NLU i.e. is still in use\n```\nIf the backend returns an unexpected string it will be returned 'as is', i.e. untransformed, to a maximum of a single character.",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1
+                }
+              }
+            }
+          }
+        }
+      },
+      "instanceIdType": {
+        "type": "number",
+        "minimum": 0.1,
+        "maximum": 999999999999999.9,
+        "multipleOf": 0.1
+      },
+      "dateType": {
+        "description": "Format YYYY-MM-DD e.g. 2020-08-18",
+        "type": "string",
+        "pattern": "^(((19|20)([2468][048]|[13579][26]|0[48])|2000)[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)[-](0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-](0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}[-]02[-](0[1-9]|1[0-9]|2[0-8])))$"
+      },
+      "nameType": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 35
+      },
+      "addressLineType": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 35
+      },
+      "addressType": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "line1": {
+            "$ref": "#/components/schemas/addressLineType"
+          },
+          "line2": {
+            "$ref": "#/components/schemas/addressLineType"
+          },
+          "line3": {
+            "$ref": "#/components/schemas/addressLineType"
+          },
+          "line4": {
+            "$ref": "#/components/schemas/addressLineType"
+          },
+          "line5": {
+            "$ref": "#/components/schemas/addressLineType"
+          },
+          "postcode": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 10
+          }
+        }
+      }
+    }
+  }
+}

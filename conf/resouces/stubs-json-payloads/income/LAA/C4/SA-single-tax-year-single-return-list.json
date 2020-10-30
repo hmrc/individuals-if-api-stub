@@ -1,0 +1,25 @@
+{
+  "summary": "Self Assessment income details single tax year single return list LAA C1",
+  "value": {
+    "sa": [
+      {
+        "taxYear": "2019",
+        "returnList": [
+          {
+            "busStartDate": "2018-02-28",
+            "busEndDate": "2018-02-28",
+            "businessDescription": "c",
+            "address": {
+              "line1": "c",
+              "line2": "c",
+              "line3": "c",
+              "line4": "c",
+              "postcode": "c"
+            },
+            "telephoneNumber": "a"
+          }
+        ]
+      }
+    ]
+  }
+}

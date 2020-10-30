@@ -1,0 +1,25 @@
+{
+  "summary": "Employment details with maximum data multi employment for LAA C3",
+  "value": {
+    "employments": [
+      {
+        "employer": {
+          "name": "ACME Industries Limited"
+        },
+        "employment": {
+          "startDate": "2019-01-01",
+          "endDate": "2019-03-31"
+        }
+      },
+      {
+        "employer": {
+          "name": "ACME PLC"
+        },
+        "employment": {
+          "startDate": "2018-01-01",
+          "endDate": "2018-03-31"
+        }
+      }
+    ]
+  }
+}

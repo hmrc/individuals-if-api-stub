@@ -1,0 +1,83 @@
+{
+  "summary": "Tax Credits details with maximum data multi award and multi payment for LAA C2",
+  "value": {
+    "applications": [
+      {
+        "awards": [
+          {
+            "totalEntitlement": 18765.23,
+            "workingTaxCredit": {
+              "amount": 930.98,
+              "paidYTD": 8976.34
+            },
+            "childTaxCredit": {
+              "childCareAmount": 930.98,
+              "ctcChildAmount": 730.49,
+              "familyAmount": 100.49,
+              "babyAmount": 100,
+              "paidYTD": 8976.34
+            },
+            "payments": [
+              {
+                "frequency": 7,
+                "tcType": "ETC",
+                "amount": 76.34
+              },
+              {
+                "frequency": 7,
+                "tcType": "ICC",
+                "amount": 78.34
+              },
+              {
+                "frequency": 7,
+                "tcType": "ETC",
+                "amount": 96.34
+              },
+              {
+                "frequency": 7,
+                "tcType": "ICC",
+                "amount": 38.34
+              }
+            ]
+          },
+          {
+            "totalEntitlement": 19765.23,
+            "workingTaxCredit": {
+              "amount": 940.98,
+              "paidYTD": 9976.34
+            },
+            "childTaxCredit": {
+              "childCareAmount": 830.98,
+              "ctcChildAmount": 830.49,
+              "familyAmount": 200.49,
+              "babyAmount": 200,
+              "paidYTD": 7976.34
+            },
+            "payments": [
+              {
+                "frequency": 7,
+                "tcType": "ETC",
+                "amount": 80.34
+              },
+              {
+                "frequency": 7,
+                "tcType": "ICC",
+                "amount": 81.34
+              },
+              {
+                "frequency": 7,
+                "tcType": "ETC",
+                "amount": 49.34
+              },
+              {
+                "frequency": 7,
+                "tcType": "ICC",
+                "amount": 58.34
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
