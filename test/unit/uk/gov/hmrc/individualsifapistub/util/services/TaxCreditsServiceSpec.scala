@@ -18,18 +18,20 @@ package unit.uk.gov.hmrc.individualsifapistub.util.services
 
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
-import uk.gov.hmrc.individualsifapistub.domain.{Application, BenefitsAndCredits}
-import uk.gov.hmrc.individualsifapistub.repository.BenefitsAndCreditsRepository
-import uk.gov.hmrc.individualsifapistub.services.BenefitsAndCreditsService
+import uk.gov.hmrc.individualsifapistub.domain.TaxCredits._
+import uk.gov.hmrc.individualsifapistub.domain.{Application, Applications, Id}
+import uk.gov.hmrc.individualsifapistub.repository.TaxCreditsRepository
+import uk.gov.hmrc.individualsifapistub.services.TaxCreditsService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 import scala.concurrent.Future
 
-class BenefitsAndCreditsServiceSpec extends TestSupport {
+class TaxCreditsServiceSpec extends TestSupport {
   trait Setup {
 
-    val idType = "idType"
-    val idValue = "idValue"
+    val idType = "nino"
+    val idValue = "XH123456A"
+    val id = Id(Some(idValue), None)
 
     val application: Application = Application(
       id = 12345,
@@ -39,23 +41,22 @@ class BenefitsAndCreditsServiceSpec extends TestSupport {
       None
     )
 
-    val request = Seq(application)
+    val request = Applications(Seq(application))
 
-    val mockBenefitsAndCreditsRepository = mock[BenefitsAndCreditsRepository]
-    val underTest = new BenefitsAndCreditsService(mockBenefitsAndCreditsRepository)
+    val taxCreditsRepository = mock[TaxCreditsRepository]
+    val underTest = new TaxCreditsService(taxCreditsRepository)
   }
 
   "Benefits and Credits Service" when {
     "Create" should {
       "Return the created record when created" in new Setup {
-        val employment = BenefitsAndCredits(s"$idType-$idValue", request)
-        when(mockBenefitsAndCreditsRepository.create(s"$idType-$idValue", request)).thenReturn(Future.successful(employment));
+        when(taxCreditsRepository.create(idType, idValue, request)).thenReturn(Future.successful(request));
         val response = await(underTest.create(idType, idValue, request))
-        response shouldBe employment
+        response shouldBe request
       }
 
       "Return failure when unable to create Benefits and Credits object" in new Setup {
-        when(mockBenefitsAndCreditsRepository.create(s"$idType-$idValue", request)).thenReturn(Future.failed(new Exception));
+        when(taxCreditsRepository.create(idType, idValue, request)).thenReturn(Future.failed(new Exception));
         assertThrows[Exception] {
           await(underTest.create(idType, idValue, request))
         }
@@ -64,14 +65,13 @@ class BenefitsAndCreditsServiceSpec extends TestSupport {
 
     "Get" should {
       "Return record when successfully retrieved from mongo" in new Setup {
-        val employment = BenefitsAndCredits(s"$idType-$idValue", request)
-        when(mockBenefitsAndCreditsRepository.findById(s"$idType-$idValue")).thenReturn(Future.successful(Some(employment)));
+        when(taxCreditsRepository.findByIdAndType(idType, idValue)).thenReturn(Future.successful(Some(request)))
         val response = await(underTest.get(idType, idValue))
-        response shouldBe Some(employment)
+        response shouldBe Some(request)
       }
 
       "Return none if cannot be found in mongo" in new Setup {
-        when(mockBenefitsAndCreditsRepository.findById(s"$idType-$idValue")).thenReturn(Future.successful(None));
+        when(taxCreditsRepository.findByIdAndType(idType, idValue)).thenReturn(Future.successful(None));
         val response = await(underTest.get(idType,idValue))
         response shouldBe None
       }

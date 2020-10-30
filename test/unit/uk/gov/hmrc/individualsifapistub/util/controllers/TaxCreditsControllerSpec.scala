@@ -18,23 +18,24 @@ package unit.uk.gov.hmrc.individualsifapistub.util.controllers
 
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
-import play.api.http.Status.{CREATED, OK, BAD_REQUEST}
+import play.api.http.Status.{BAD_REQUEST, CREATED, OK}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import uk.gov.hmrc.individualsifapistub.controllers.BenefitsAndCreditsController
-import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
-import uk.gov.hmrc.individualsifapistub.domain.{Application, BenefitsAndCredits, CreateBenefitsAndCreditsRequest}
-import uk.gov.hmrc.individualsifapistub.services.BenefitsAndCreditsService
+import uk.gov.hmrc.individualsifapistub.controllers.TaxCreditsController
+
+import uk.gov.hmrc.individualsifapistub.domain.TaxCredits._
+import uk.gov.hmrc.individualsifapistub.domain.{Application, Applications, Id}
+import uk.gov.hmrc.individualsifapistub.services.TaxCreditsService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 import scala.concurrent.Future
 
-class BenefitsAndCreditsControllerSpec extends TestSupport {
+class TaxCreditsControllerSpec extends TestSupport {
 
   trait Setup {
     val fakeRequest = FakeRequest()
-    val mockBenefitsAndCreditsService = mock[BenefitsAndCreditsService]
-    val underTest = new BenefitsAndCreditsController(bodyParsers, controllerComponents, mockBenefitsAndCreditsService)
+    val mockBenefitsAndCreditsService = mock[TaxCreditsService]
+    val underTest = new TaxCreditsController(bodyParsers, controllerComponents, mockBenefitsAndCreditsService)
   }
 
   val application: Application = Application(
@@ -45,25 +46,25 @@ class BenefitsAndCreditsControllerSpec extends TestSupport {
     None
   )
 
-  val idType = "idType"
-  val idValue = "idValue"
+  val idType = "nino"
+  val idValue = "XH123456A"
+  val id = Id(Some(idValue), None)
 
-  val request = Seq(application)
+  val request = Applications(Seq(application))
 
   "Create BenefitsAndCredits" should {
     "Successfully create a details record and return created record as response" in new Setup {
-      val employment = BenefitsAndCredits(s"$idType-$idValue", request)
-      when(mockBenefitsAndCreditsService.create(idType, idValue, request)).thenReturn(Future.successful(employment))
+
+      when(mockBenefitsAndCreditsService.create(idType, idValue, request)).thenReturn(Future.successful(request))
 
       val result = await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson(request))))
 
       status(result) shouldBe CREATED
-      jsonBodyOf(result) shouldBe Json.toJson(employment)
+      jsonBodyOf(result) shouldBe Json.toJson(request)
     }
 
     "Fail when a request is not provided" in new Setup {
-      val employment = BenefitsAndCredits(s"$idType-$idValue", request)
-      when(mockBenefitsAndCreditsService.create(idType, idValue, request)).thenReturn(Future.successful(employment))
+      when(mockBenefitsAndCreditsService.create(idType, idValue, request)).thenReturn(Future.successful(request))
       val response = await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson(""))))
       status(response) shouldBe BAD_REQUEST
     }
@@ -71,13 +72,10 @@ class BenefitsAndCreditsControllerSpec extends TestSupport {
 
   "Retrieve Details" should {
     "Return details when successfully retrieved from service" in new Setup {
-      val employment = BenefitsAndCredits(s"$idType-$idValue", request)
-      when(mockBenefitsAndCreditsService.get(idType, idValue)).thenReturn(Future.successful(Some(employment)))
-
+      when(mockBenefitsAndCreditsService.get(idType, idValue)).thenReturn(Future.successful(Some(request)))
       val result = await(underTest.retrieve(idType, idValue)(fakeRequest))
-
       status(result) shouldBe OK
-      jsonBodyOf(result) shouldBe Json.toJson(Some(employment))
+      jsonBodyOf(result) shouldBe Json.toJson[Applications](request)
     }
 
     "Fail when it cannot get from service" in new Setup {
