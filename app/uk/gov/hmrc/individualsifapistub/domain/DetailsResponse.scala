@@ -33,7 +33,21 @@ case class Address(
                     postcode: Option[String]
                   )
 
-case class Residence(residenceType: Option[String], address: Option[Address])
+case class Residence(statusCode: Option[String] = None,
+                     status: Option[String] = None,
+                     typeCode: Option[Int] = None,
+                     residenceType: Option[String] = None,
+                     deliveryInfo: Option[String] = None,
+                     retLetterServ: Option[String] = None,
+                     addressCode: Option[String] = None,
+                     addressType: Option[String] = None,
+                     address: Option[Address] = None,
+                     houseId: Option[String] = None,
+                     homeCountry: Option[String] = None,
+                     otherCountry: Option[String] = None,
+                     deadLetterOfficeDate: Option[String] = None,
+                     startDateTime: Option[String] = None,
+                     noLongerUsed: Option[String] = None)
 
 case class Details(nino: Option[String], trn: Option[String])
 
@@ -42,7 +56,11 @@ case class DetailsResponse(details: Details, contactDetails: Option[Seq[ContactD
 object DetailsResponse {
   val ninoPattern: Regex = "^((?!(BG|GB|KN|NK|NT|TN|ZZ)|(D|F|I|Q|U|V)[A-Z]|[A-Z](D|F|I|O|Q|U|V))[A-Z]{2})[0-9]{6}[A-D\\s]?$".r
   val trnPattern: Regex = "^[0-9]{8}$".r
-
+  val statusCodePattern: Regex = "^[1-9]$".r
+  val datePattern: Regex =
+    """^(((19|20)([2468][048]|[13579][26]|0[48])|2000)[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)
+      |[-](0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-](0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|
+      |(19|20)[0-9]{2}[-]02[-](0[1-9]|1[0-9]|2[0-8])))$""".r
 
   implicit val detailsFormat: Format[Details] = Format(
     (
@@ -89,12 +107,41 @@ object DetailsResponse {
 
   implicit val residencesFormat: Format[Residence] = Format(
     (
-      (JsPath \ "type").readNullable[String](minLength[String](1).keepAnd(maxLength[String](35))) and
-      (JsPath \ "address").readNullable[Address]
+      (JsPath \ "statusCode").readNullable[String](pattern(statusCodePattern, "Status code is invalid")) and
+      (JsPath \ "status").readNullable[String](minLength[String](1) andKeep maxLength[String](8)) and
+      (JsPath \ "typeCode").readNullable[Int](min[Int](1) andKeep max[Int](9999)) and
+      (JsPath \ "type").readNullable[String](minLength[String](1) andKeep maxLength[String](35)) and
+      (JsPath \ "deliveryInfo").readNullable[String](minLength[String](1) andKeep maxLength[String](35)) and
+      (JsPath \ "retLetterServ").readNullable[String](minLength[String](1) andKeep maxLength[String](1)) and
+      (JsPath \ "addressCode").readNullable[String](pattern(statusCodePattern, "Address code is invalid")) and
+      (JsPath \ "addressType").readNullable[String](minLength[String](1) andKeep maxLength[String](6)) and
+      (JsPath \ "address").readNullable[Address] and
+      (JsPath \ "houseId").readNullable[String](maxLength[String](35)) and
+      (JsPath \ "homeCountry").readNullable[String](maxLength[String](16)) and
+      (JsPath \ "otherCountry").readNullable[String](maxLength[String](35)) and
+      (JsPath \ "deadLetterOfficeDate").readNullable[String](pattern(datePattern, "Date is invalid")) and
+
+      // TODO: Datetime format
+
+      (JsPath \ "startDateTime").readNullable[String] and
+      (JsPath \ "noLongerUsed").readNullable[String](minLength[String](1) andKeep maxLength[String](1))
     )(Residence.apply _),
     (
+      (JsPath \ "statusCode").writeNullable[String] and
+      (JsPath \ "status").writeNullable[String] and
+      (JsPath \ "typeCode").writeNullable[Int] and
       (JsPath \ "type").writeNullable[String] and
-      (JsPath \ "address").writeNullable[Address]
+      (JsPath \ "deliveryInfo").writeNullable[String] and
+      (JsPath \ "retLetterServ").writeNullable[String] and
+      (JsPath \ "addressCode").writeNullable[String] and
+      (JsPath \ "addressType").writeNullable[String] and
+      (JsPath \ "address").writeNullable[Address] and
+      (JsPath \ "houseId").writeNullable[String] and
+      (JsPath \ "homeCountry").writeNullable[String] and
+      (JsPath \ "otherCountry").writeNullable[String] and
+      (JsPath \ "deadLetterOfficeDate").writeNullable[String] and
+      (JsPath \ "startDateTime").writeNullable[String] and
+      (JsPath \ "noLongerUsed").writeNullable[String]
     )(unlift(Residence.unapply))
   )
 

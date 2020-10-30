@@ -21,7 +21,7 @@ import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import testUtils.AddressHelpers
+import testUtils.TestHelpers
 import uk.gov.hmrc.individualsifapistub.controllers.DetailsController
 import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
 import uk.gov.hmrc.individualsifapistub.domain._
@@ -30,7 +30,7 @@ import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 import scala.concurrent.Future
 
-class DetailsControllerSpec extends TestSupport with AddressHelpers {
+class DetailsControllerSpec extends TestSupport with TestHelpers {
 
   trait Setup {
     val fakeRequest = FakeRequest()
@@ -42,7 +42,9 @@ class DetailsControllerSpec extends TestSupport with AddressHelpers {
   val idValue = "QW1234QW"
   val request = CreateDetailsRequest(
     Some(Seq(ContactDetail(9, "MOBILE TELEPHONE", "07123 987654"), ContactDetail(9,"MOBILE TELEPHONE", "07123 987655"))),
-    Some(Seq(Residence(Some("BASE"),createAddress(2)), Residence(Some("NOMINATED"),createAddress(1))))
+    Some(Seq(
+      Residence(residenceType = Some("BASE"), address = generateAddress(2)),
+      Residence(residenceType = Some("NOMINATED"), address = generateAddress(1))))
   )
 
   "Create details" should {
@@ -61,7 +63,8 @@ class DetailsControllerSpec extends TestSupport with AddressHelpers {
       val details = Details(Some(idValue), None)
       val detailsResponse = DetailsResponse(details, None, None)
       when(mockDetailsService.create(idType, idValue, request)).thenReturn(Future.successful(detailsResponse))
-      assertThrows[Exception] { await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson("")))) }
+      val response = await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson(""))))
+      status(response) shouldBe BAD_REQUEST
     }
   }
 

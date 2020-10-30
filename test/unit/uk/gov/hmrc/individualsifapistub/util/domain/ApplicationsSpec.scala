@@ -17,12 +17,12 @@
 package unit.uk.gov.hmrc.individualsifapistub.util.domain
 
 import play.api.libs.json.Json
-import testUtils.AddressHelpers
-import uk.gov.hmrc.individualsifapistub.domain.Application._
-import uk.gov.hmrc.individualsifapistub.domain._
+import testUtils.TestHelpers
+import uk.gov.hmrc.individualsifapistub.domain.TaxCredits._
+import uk.gov.hmrc.individualsifapistub.domain.{Application, Awards, ChildTaxCredit, Payments, TaxCredits, WorkTaxCredit}
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
-class BenefitsAndCreditsResponseSpec extends UnitSpec with AddressHelpers {
+class ApplicationsSpec extends UnitSpec with TestHelpers {
 
   val idValue: Double = 12345
 
@@ -71,10 +71,11 @@ class BenefitsAndCreditsResponseSpec extends UnitSpec with AddressHelpers {
     ceasedDate = Some("2012-12-12"),
     entStartDate = Some("2012-12-12"),
     entEndDate = Some("2012-12-12"),
-    Some(validAwards)
+    awards = Some(validAwards)
   )
 
   "Payments" should {
+
     "Write to JSON successfully" in {
       val result = Json.toJson(validPayments).validate[Payments]
       result.isSuccess shouldBe true
@@ -133,12 +134,12 @@ class BenefitsAndCreditsResponseSpec extends UnitSpec with AddressHelpers {
     }
 
     "fail to validate when value is smaller than min value" in {
-      val result = Json.toJson(validChildTaxCredit.copy(childCareAmount = Some(Application.minValue - 1.0))).validate[ChildTaxCredit]
+      val result = Json.toJson(validChildTaxCredit.copy(childCareAmount = Some(TaxCredits.minPaymentValue - 1.0))).validate[ChildTaxCredit]
       result.isError shouldBe true
     }
 
     "fail to validate when value is larger than max value" in {
-      val result = Json.toJson(validChildTaxCredit.copy(childCareAmount = Some(Application.maxValue + 1.0))).validate[ChildTaxCredit]
+      val result = Json.toJson(validChildTaxCredit.copy(childCareAmount = Some(TaxCredits.maxPaymentValue + 1.0))).validate[ChildTaxCredit]
       result.isError shouldBe true
     }
   }

@@ -19,12 +19,12 @@ package it.uk.gov.hmrc.individualsifapistub
 import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
 import reactivemongo.api.indexes.IndexType.Ascending
-import uk.gov.hmrc.individualsifapistub.domain.{Application, BenefitsAndCredits, CreateBenefitsAndCreditsRequest, DuplicateException, Income}
-import uk.gov.hmrc.individualsifapistub.repository.BenefitsAndCreditsRepository
+import uk.gov.hmrc.individualsifapistub.domain.{Application, Applications, DuplicateException, Id,  TaxCreditsEntry}
+import uk.gov.hmrc.individualsifapistub.repository.TaxCreditsRepository
 import uk.gov.hmrc.mongo.MongoSpecSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
-class BenefitsAndCreditsRepositorySpec
+class TaxCreditsRepositorySpec
     extends TestSupport
     with MongoSpecSupport
     with BeforeAndAfterEach {
@@ -32,7 +32,7 @@ class BenefitsAndCreditsRepositorySpec
   override lazy val fakeApplication = buildFakeApplication(
     Configuration("mongodb.uri" -> mongoUri))
 
-  val repository = fakeApplication.injector.instanceOf[BenefitsAndCreditsRepository]
+  val repository = fakeApplication.injector.instanceOf[TaxCreditsRepository]
 
   val application: Application = Application(
     id = 12345,
@@ -42,9 +42,12 @@ class BenefitsAndCreditsRepositorySpec
     None
   )
 
-  val id = "2432552635"
-  val request = Seq(application)
-  val benefitsAndCredits = BenefitsAndCredits(id, request)
+  val idType = "nino"
+  val idValue = "XH123456A"
+
+  val id = Id(Some(idValue), None)
+
+  val request = Applications(Seq(application))
 
   override def beforeEach() {
     await(repository.drop)
@@ -56,42 +59,49 @@ class BenefitsAndCreditsRepositorySpec
   }
 
   "collection" should {
-    "have a unique index on id" in {
+    "have a unique index on nino" in {
       await(repository.collection.indexesManager.list()).find({ i =>
-        i.name.contains("idIndex") &&
-        i.key == Seq("id" -> Ascending) &&
-        i.background &&
-        i.unique
+        i.name.contains("nino") &&
+          i.key == Seq("id.nino" -> Ascending) &&
+          i.background &&
+          i.unique
+      }) should not be None
+    }
+    "have a unique index on trn" in {
+      await(repository.collection.indexesManager.list()).find({ i =>
+        i.name.contains("trn") &&
+          i.key == Seq("id.trn" -> Ascending) &&
+          i.background &&
+          i.unique
       }) should not be None
     }
   }
 
   "create" should {
     "create a benefits and credits record" in {
-      val result = await(repository.create(benefitsAndCredits.id, request))
-
-      result shouldBe benefitsAndCredits
+      val result = await(repository.create(idType, idValue, request))
+      result shouldBe request
     }
 
     "fail to create a duplicate benefits and credits record" in {
-      await(repository.create(benefitsAndCredits.id, request))
+      await(repository.create(idType, idValue, request))
 
       intercept[DuplicateException](
-        await(repository.create(benefitsAndCredits.id, request)))
+        await(repository.create(idType, idValue, request)))
     }
   }
 
-  "find by id" should {
+  "find by id and type" should {
     "return None when there are no benefits and credits record for a given id" in {
-      await(repository.findById(id)) shouldBe None
+      await(repository.findByIdAndType(idType, idValue)) shouldBe None
     }
 
     "return the benefits and credits record" in {
-      await(repository.create(benefitsAndCredits.id, request))
+      await(repository.create(idType, idValue, request))
 
-      val result = await(repository.findById(id))
+      val result = await(repository.findByIdAndType(idType, idValue))
 
-      result shouldBe Some(benefitsAndCredits)
+      result shouldBe Some(request)
     }
   }
 }

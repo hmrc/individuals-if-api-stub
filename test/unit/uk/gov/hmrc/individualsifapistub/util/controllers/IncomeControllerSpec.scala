@@ -18,7 +18,7 @@ package unit.uk.gov.hmrc.individualsifapistub.util.controllers
 
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
-import play.api.http.Status.{CREATED, OK}
+import play.api.http.Status.{CREATED, OK, BAD_REQUEST}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.individualsifapistub.controllers.IncomeController
@@ -44,6 +44,7 @@ class IncomeControllerSpec extends TestSupport {
   val request = CreateIncomeRequest("something")
 
   "Create Income" should {
+
     "Successfully create a income record and return created record as response" in new Setup {
       val income = Income(s"$incomeType-$idType-$idValue", request.body)
       when(incomeService.create(incomeType,idType, idValue, request)).thenReturn(Future.successful(income))
@@ -57,7 +58,8 @@ class IncomeControllerSpec extends TestSupport {
     "Fail when a request is not provided" in new Setup {
       val income = Income(s"$incomeType-$idType-$idValue", request.body)
       when(incomeService.create(incomeType, idType, idValue, request)).thenReturn(Future.successful(income))
-      assertThrows[Exception] { await(underTest.create(incomeType, idType, idValue)(fakeRequest.withBody(Json.toJson("")))) }
+      val response = await(underTest.create(incomeType, idType, idValue)(fakeRequest.withBody(Json.toJson(""))))
+      status(response) shouldBe BAD_REQUEST
     }
   }
 
