@@ -47,15 +47,15 @@ class TaxCreditsServiceSpec extends TestSupport {
     val underTest = new TaxCreditsService(taxCreditsRepository)
   }
 
-  "Benefits and Credits Service" when {
-    "Create" should {
-      "Return the created record when created" in new Setup {
+  "TaxCreditsService" when {
+    "create" should {
+      "return the created record" in new Setup {
         when(taxCreditsRepository.create(idType, idValue, request)).thenReturn(Future.successful(request));
         val response = await(underTest.create(idType, idValue, request))
         response shouldBe request
       }
 
-      "Return failure when unable to create Benefits and Credits object" in new Setup {
+      "return failure when unable to create" in new Setup {
         when(taxCreditsRepository.create(idType, idValue, request)).thenReturn(Future.failed(new Exception));
         assertThrows[Exception] {
           await(underTest.create(idType, idValue, request))
@@ -64,7 +64,7 @@ class TaxCreditsServiceSpec extends TestSupport {
     }
 
     "Get" should {
-      "Return record when successfully retrieved from mongo" in new Setup {
+      "return record when successfully retrieved from mongo" in new Setup {
         when(taxCreditsRepository.findByIdAndType(idType, idValue)).thenReturn(Future.successful(Some(request)))
         val response = await(underTest.get(idType, idValue))
         response shouldBe Some(request)

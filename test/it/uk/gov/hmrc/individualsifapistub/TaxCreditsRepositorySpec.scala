@@ -19,7 +19,7 @@ package it.uk.gov.hmrc.individualsifapistub
 import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
 import reactivemongo.api.indexes.IndexType.Ascending
-import uk.gov.hmrc.individualsifapistub.domain.{Application, Applications, DuplicateException, Id,  TaxCreditsEntry}
+import uk.gov.hmrc.individualsifapistub.domain.{Application, Applications}
 import uk.gov.hmrc.individualsifapistub.repository.TaxCreditsRepository
 import uk.gov.hmrc.mongo.MongoSpecSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
@@ -42,12 +42,10 @@ class TaxCreditsRepositorySpec
     None
   )
 
-  val idType = "nino"
-  val idValue = "XH123456A"
+  val nino = "XH123456A"
+  val trn = "123456789"
 
-  val id = Id(Some(idValue), None)
-
-  val request = Applications(Seq(application))
+  val applications = Applications(Seq(application))
 
   override def beforeEach() {
     await(repository.drop)
@@ -78,30 +76,36 @@ class TaxCreditsRepositorySpec
   }
 
   "create" should {
-    "create a benefits and credits record" in {
-      val result = await(repository.create(idType, idValue, request))
-      result shouldBe request
+    "create an application with a nino" in {
+      val result = await(repository.create("nino", nino, applications))
+      result shouldBe applications
     }
 
-    "fail to create a duplicate benefits and credits record" in {
-      await(repository.create(idType, idValue, request))
+    "create an application with a trn" in {
+      val result = await(repository.create("trn", trn, applications))
+      result shouldBe applications
+    }
 
-      intercept[DuplicateException](
-        await(repository.create(idType, idValue, request)))
+    "fail to create duplicate details" in {
+      await(repository.create("nino", nino, applications))
+      intercept[Exception](await(repository.create("nino", nino, applications)))
     }
   }
 
-  "find by id and type" should {
-    "return None when there are no benefits and credits record for a given id" in {
-      await(repository.findByIdAndType(idType, idValue)) shouldBe None
+  "findByIdAndType" should {
+
+    "return None when there are no details for a given nino" in {
+      await(repository.findByIdAndType("nino", nino)) shouldBe None
     }
 
-    "return the benefits and credits record" in {
-      await(repository.create(idType, idValue, request))
+    "return None when there are no details for a given trn" in {
+      await(repository.findByIdAndType("trn", trn)) shouldBe None
+    }
 
-      val result = await(repository.findByIdAndType(idType, idValue))
-
-      result shouldBe Some(request)
+    "return a single record with id" in {
+      await(repository.create("nino", nino, applications))
+      val result = await(repository.findByIdAndType("nino", nino))
+      result.get shouldBe applications
     }
   }
 }

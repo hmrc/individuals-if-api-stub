@@ -88,49 +88,52 @@ class EmploymentsControllerSpec extends TestSupport {
   val request = EmploymentEntry(Id(Some("XH123456A"), None), Seq(employment))
 
   "Create Employment" should {
-    "Successfully create a details record and return created record as response" in new Setup {
+    "Successfully create a record and return created record as response" in new Setup {
       when(mockEmploymentsService.create(idType, idValue, employments)).thenReturn(Future.successful(employments))
       val result = await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson(employments))))
       status(result) shouldBe CREATED
       jsonBodyOf(result) shouldBe Json.toJson(employments)
     }
 
-    "Fail when the NINO is invalid" in new Setup {
-      when(mockEmploymentsService.create(idType, idValue, employments)).thenReturn(Future.successful(employments))
-      val result = await(underTest.create(idType, "abc")(fakeRequest.withBody(Json.toJson(employments))))
-      status(result) shouldBe BAD_REQUEST
-    }
+    "Fail" when {
 
-    "Fail when the TRN is invalid" in new Setup {
-      when(mockEmploymentsService.create(idType, idValue, employments)).thenReturn(Future.successful(employments))
-      val result = await(underTest.create(Trn.toString, "abc")(fakeRequest.withBody(Json.toJson(employments))))
-      status(result) shouldBe BAD_REQUEST
-    }
+      "the NINO is invalid" in new Setup {
+        when(mockEmploymentsService.create(idType, idValue, employments)).thenReturn(Future.successful(employments))
+        val result = await(underTest.create(idType, "abc")(fakeRequest.withBody(Json.toJson(employments))))
+        status(result) shouldBe BAD_REQUEST
+      }
 
-    "Fail when the idType is invalid" in new Setup {
-      when(mockEmploymentsService.create(idType, idValue, employments)).thenReturn(Future.successful(employments))
-      val result = await(underTest.create("idType", idValue)(fakeRequest.withBody(Json.toJson(employments))))
-      status(result) shouldBe BAD_REQUEST
-    }
+      "the TRN is invalid" in new Setup {
+        when(mockEmploymentsService.create(idType, idValue, employments)).thenReturn(Future.successful(employments))
+        val result = await(underTest.create(Trn.toString, "abc")(fakeRequest.withBody(Json.toJson(employments))))
+        status(result) shouldBe BAD_REQUEST
+      }
 
-    "Fail when a request is not provided" in new Setup {
-      when(mockEmploymentsService.create(idType, idValue, employments)).thenReturn(Future.successful(employments))
+      "the idType is invalid" in new Setup {
+        when(mockEmploymentsService.create(idType, idValue, employments)).thenReturn(Future.successful(employments))
+        val result = await(underTest.create("idType", idValue)(fakeRequest.withBody(Json.toJson(employments))))
+        status(result) shouldBe BAD_REQUEST
+      }
+
+      "a request is not provided" in new Setup {
+        when(mockEmploymentsService.create(idType, idValue, employments)).thenReturn(Future.successful(employments))
         val result = await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson(""))))
         status(result) shouldBe BAD_REQUEST
       }
+    }
+
+
   }
 
   "Retrieve Employment" should {
     "Return employments when successfully retrieved from service" in new Setup {
       when(mockEmploymentsService.get(idType, idValue)).thenReturn(Future.successful(Some(employments)))
-
       val result = await(underTest.retrieve(idType, idValue)(fakeRequest))
-
       status(result) shouldBe OK
       jsonBodyOf(result) shouldBe Json.toJson(Some(employments))
     }
 
-    "Fail when it cannot get from service" in new Setup {
+    "fail when it cannot get from service" in new Setup {
       when(mockEmploymentsService.get(idType, idValue)).thenReturn(Future.failed(new Exception))
       assertThrows[Exception] { await(underTest.retrieve(idType, idValue)(fakeRequest)) }
     }

@@ -21,7 +21,6 @@ import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 import uk.gov.hmrc.individualsifapistub.domain.Id._
 
-
 case class TaxCreditsEntry(id: Id, applications: Seq[Application])
 
 case class Applications(applications: Seq[Application])
@@ -69,60 +68,63 @@ object TaxCredits {
   val statusPattern = "^([ADSCX])$".r
   val methodPattern = "^([ROM])$".r
   val tcTypePattern = "^(ETC|ITC])$".r
-  val datePattern = "^(((19|20)([2468][048]|[13579][26]|0[48])|2000)[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)[-](0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-](0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}[-]02[-](0[1-9]|1[0-9]|2[0-8])))$".r
+  val datePattern =
+    """^(((19|20)([2468][048]|[13579][26]|0[48])|2000)[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)[-]
+      |(0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-](0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|(19|20)
+      |[0-9]{2}[-]02[-](0[1-9]|1[0-9]|2[0-8])))$""".r
 
-  val minPaymentValue = -9999999999.99
-  val maxPaymentValue = 9999999999.99
+  val minPaymentValue = 0.0
+  val maxPaymentValue = 1000000000000000.0
 
   def isMultipleOfOne(value: Double): Boolean = value % 1 == 0
   def isMultipleOfPointZeroOne(value: Double): Boolean = (value * 100.0) % 1 == 0
 
-  def applicationIdValidator(implicit rds: Reads[Double]):Reads[Double] =
+  def applicationIdValidator:Reads[Double] =
     min[Double](0) andKeep max[Double](999999999999.0) andKeep verifying[Double](isMultipleOfOne)
 
-  def paymentAmountValidator(implicit rds: Reads[Double]):Reads[Double] =
+  def paymentAmountValidator:Reads[Double] =
     min[Double](minPaymentValue) andKeep max[Double](maxPaymentValue) andKeep verifying[Double](isMultipleOfPointZeroOne)
 
   implicit val paymentsFormat: Format[Payments] = Format(
     (
       (JsPath \ "periodStartDate").readNullable[String](pattern(datePattern, "invalid date")) and
-        (JsPath \ "periodEndDate").readNullable[String](pattern(datePattern, "invalid date")) and
-        (JsPath \ "startDate").readNullable[String](pattern(datePattern, "invalid date")) and
-        (JsPath \ "endDate").readNullable[String](pattern(datePattern, "invalid date")) and
-        (JsPath \ "status").readNullable[String](pattern(statusPattern, "invalid status")) and
-        (JsPath \ "postedDate").readNullable[String](pattern(datePattern, "invalid date")) and
-        (JsPath \ "nextDueDate").readNullable[String](pattern(datePattern, "invalid date")) and
-        (JsPath \ "frequency").readNullable[Int](min[Int](1).keepAnd(max[Int](999))) and
-        (JsPath \ "tcType").readNullable[String](pattern(tcTypePattern, "invalid tc type")) and
-        (JsPath \ "amount").readNullable[Double](applicationIdValidator) and
-        (JsPath \ "method").readNullable[String](pattern(methodPattern, "invalid method"))
-      )(Payments.apply _),
+      (JsPath \ "periodEndDate").readNullable[String](pattern(datePattern, "invalid date")) and
+      (JsPath \ "startDate").readNullable[String](pattern(datePattern, "invalid date")) and
+      (JsPath \ "endDate").readNullable[String](pattern(datePattern, "invalid date")) and
+      (JsPath \ "status").readNullable[String](pattern(statusPattern, "invalid status")) and
+      (JsPath \ "postedDate").readNullable[String](pattern(datePattern, "invalid date")) and
+      (JsPath \ "nextDueDate").readNullable[String](pattern(datePattern, "invalid date")) and
+      (JsPath \ "frequency").readNullable[Int](min[Int](1).keepAnd(max[Int](999))) and
+      (JsPath \ "tcType").readNullable[String](pattern(tcTypePattern, "invalid tc type")) and
+      (JsPath \ "amount").readNullable[Double](paymentAmountValidator) and
+      (JsPath \ "method").readNullable[String](pattern(methodPattern, "invalid method"))
+    )(Payments.apply _),
     (
       (JsPath \ "periodStartDate").writeNullable[String] and
-        (JsPath \ "periodEndDate").writeNullable[String] and
-        (JsPath \ "startDate").writeNullable[String] and
-        (JsPath \ "endDate").writeNullable[String] and
-        (JsPath \ "status").writeNullable[String] and
-        (JsPath \ "postedDate").writeNullable[String] and
-        (JsPath \ "nextDueDate").writeNullable[String] and
-        (JsPath \ "frequency").writeNullable[Int] and
-        (JsPath \ "tcType").writeNullable[String] and
-        (JsPath \ "amount").writeNullable[Double] and
-        (JsPath \ "method").writeNullable[String]
-      )(unlift(Payments.unapply))
+      (JsPath \ "periodEndDate").writeNullable[String] and
+      (JsPath \ "startDate").writeNullable[String] and
+      (JsPath \ "endDate").writeNullable[String] and
+      (JsPath \ "status").writeNullable[String] and
+      (JsPath \ "postedDate").writeNullable[String] and
+      (JsPath \ "nextDueDate").writeNullable[String] and
+      (JsPath \ "frequency").writeNullable[Int] and
+      (JsPath \ "tcType").writeNullable[String] and
+      (JsPath \ "amount").writeNullable[Double] and
+      (JsPath \ "method").writeNullable[String]
+    )(unlift(Payments.unapply))
   )
 
   implicit val childTaxCreditFormat: Format[ChildTaxCredit] = Format(
     (
-      (JsPath \ "childCareAmount").readNullable[Double](applicationIdValidator) and
-      (JsPath \ "ctcChildAmount").readNullable[Double](applicationIdValidator) and
-      (JsPath \ "familyAmount").readNullable[Double](applicationIdValidator) and
-      (JsPath \ "babyAmount").readNullable[Double](applicationIdValidator) and
-      (JsPath \ "entitlementYTD").readNullable[Double](applicationIdValidator) and
-      (JsPath \ "paidYTD").readNullable[Double](applicationIdValidator)
-  )(ChildTaxCredit.apply _),
-  (
-    (JsPath \ "childCareAmount").writeNullable[Double] and
+      (JsPath \ "childCareAmount").readNullable[Double](paymentAmountValidator) and
+      (JsPath \ "ctcChildAmount").readNullable[Double](paymentAmountValidator) and
+      (JsPath \ "familyAmount").readNullable[Double](paymentAmountValidator) and
+      (JsPath \ "babyAmount").readNullable[Double](paymentAmountValidator) and
+      (JsPath \ "entitlementYTD").readNullable[Double](paymentAmountValidator) and
+      (JsPath \ "paidYTD").readNullable[Double](paymentAmountValidator)
+    )(ChildTaxCredit.apply _),
+    (
+      (JsPath \ "childCareAmount").writeNullable[Double] and
       (JsPath \ "ctcChildAmount").writeNullable[Double] and
       (JsPath \ "familyAmount").writeNullable[Double] and
       (JsPath \ "babyAmount").writeNullable[Double] and
@@ -133,55 +135,55 @@ object TaxCredits {
 
   implicit val workTaxCreditFormat: Format[WorkTaxCredit] = Format(
     (
-      (JsPath \ "amount").readNullable[Double](applicationIdValidator) and
-        (JsPath \ "entitlementYTD").readNullable[Double](applicationIdValidator) and
-        (JsPath \ "paidYTD").readNullable[Double](applicationIdValidator)
-      )(WorkTaxCredit.apply _),
+      (JsPath \ "amount").readNullable[Double](paymentAmountValidator) and
+      (JsPath \ "entitlementYTD").readNullable[Double](paymentAmountValidator) and
+      (JsPath \ "paidYTD").readNullable[Double](paymentAmountValidator)
+    )(WorkTaxCredit.apply _),
     (
       (JsPath \ "amount").writeNullable[Double] and
-        (JsPath \ "entitlementYTD").writeNullable[Double] and
-        (JsPath \ "paidYTD").writeNullable[Double]
-      )(unlift(WorkTaxCredit.unapply))
+      (JsPath \ "entitlementYTD").writeNullable[Double] and
+      (JsPath \ "paidYTD").writeNullable[Double]
+    )(unlift(WorkTaxCredit.unapply))
   )
 
   implicit val awardsFormat: Format[Awards] = Format(
     (
       (JsPath \ "payProfCalcDate").readNullable[String](pattern(datePattern, "invalid date")) and
-        (JsPath \ "startDate").readNullable[String](pattern(datePattern, "invalid date")) and
-        (JsPath \ "endDate").readNullable[String](pattern(datePattern, "invalid date")) and
-        (JsPath \ "totalEntitlement").readNullable[Double](applicationIdValidator) and
-        (JsPath \ "workTaxCredit").readNullable[WorkTaxCredit] and
-        (JsPath \ "childTaxCredit").readNullable[ChildTaxCredit] and
-        (JsPath \ "grossYearTaxAmount").readNullable[Double](applicationIdValidator) and
-        (JsPath \ "payments").readNullable[Payments]
-      )(Awards.apply _),
+      (JsPath \ "startDate").readNullable[String](pattern(datePattern, "invalid date")) and
+      (JsPath \ "endDate").readNullable[String](pattern(datePattern, "invalid date")) and
+      (JsPath \ "totalEntitlement").readNullable[Double](paymentAmountValidator) and
+      (JsPath \ "workTaxCredit").readNullable[WorkTaxCredit] and
+      (JsPath \ "childTaxCredit").readNullable[ChildTaxCredit] and
+      (JsPath \ "grossYearTaxAmount").readNullable[Double](paymentAmountValidator) and
+      (JsPath \ "payments").readNullable[Payments]
+    )(Awards.apply _),
     (
       (JsPath \ "payProfCalcDate").writeNullable[String] and
-        (JsPath \ "startDate").writeNullable[String] and
-        (JsPath \ "endDate").writeNullable[String] and
-        (JsPath \ "totalEntitlement").writeNullable[Double] and
-        (JsPath \ "workTaxCredit").writeNullable[WorkTaxCredit] and
-        (JsPath \ "childTaxCredit").writeNullable[ChildTaxCredit] and
-        (JsPath \ "grossYearTaxAmount").writeNullable[Double] and
-        (JsPath \ "payments").writeNullable[Payments]
-      )(unlift(Awards.unapply))
+      (JsPath \ "startDate").writeNullable[String] and
+      (JsPath \ "endDate").writeNullable[String] and
+      (JsPath \ "totalEntitlement").writeNullable[Double] and
+      (JsPath \ "workTaxCredit").writeNullable[WorkTaxCredit] and
+      (JsPath \ "childTaxCredit").writeNullable[ChildTaxCredit] and
+      (JsPath \ "grossYearTaxAmount").writeNullable[Double] and
+      (JsPath \ "payments").writeNullable[Payments]
+    )(unlift(Awards.unapply))
   )
 
   implicit val applicationFormat: Format[Application] = Format(
     (
       (JsPath \ "id").read[Double](applicationIdValidator) and
-        (JsPath \ "ceasedDate").readNullable[String](pattern(datePattern, "invalid date")) and
-        (JsPath \ "entStartDate").readNullable[String](pattern(datePattern, "invalid date")) and
-        (JsPath \ "entEndDate").readNullable[String](pattern(datePattern, "invalid date")) and
-        (JsPath \ "awards").readNullable[Awards]
-      )(Application.apply _),
+      (JsPath \ "ceasedDate").readNullable[String](pattern(datePattern, "invalid date")) and
+      (JsPath \ "entStartDate").readNullable[String](pattern(datePattern, "invalid date")) and
+      (JsPath \ "entEndDate").readNullable[String](pattern(datePattern, "invalid date")) and
+      (JsPath \ "awards").readNullable[Awards]
+    )(Application.apply _),
     (
       (JsPath \ "id").write[Double] and
-        (JsPath \ "ceasedDate").writeNullable[String] and
-        (JsPath \ "entStartDate").writeNullable[String] and
-        (JsPath \ "entEndDate").writeNullable[String] and
-        (JsPath \ "awards").writeNullable[Awards]
-      )(unlift(Application.unapply))
+      (JsPath \ "ceasedDate").writeNullable[String] and
+      (JsPath \ "entStartDate").writeNullable[String] and
+      (JsPath \ "entEndDate").writeNullable[String] and
+      (JsPath \ "awards").writeNullable[Awards]
+    )(unlift(Application.unapply))
   )
 
   implicit val applicationsFormat: Format[Applications] = Format(
@@ -192,11 +194,11 @@ object TaxCredits {
   val taxCreditsEntryFormat: Format[TaxCreditsEntry] = Format(
     (
       (JsPath \ "id").read[Id] and
-        (JsPath \ "applications").read[Seq[Application]]
-      )(TaxCreditsEntry.apply _),
+      (JsPath \ "applications").read[Seq[Application]]
+    )(TaxCreditsEntry.apply _),
     (
       (JsPath \ "id").write[Id] and
-        (JsPath \ "applications").write[Seq[Application]]
-      )(unlift(TaxCreditsEntry.unapply))
+      (JsPath \ "applications").write[Seq[Application]]
+    )(unlift(TaxCreditsEntry.unapply))
   )
 }

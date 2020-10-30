@@ -22,7 +22,7 @@ import uk.gov.hmrc.individualsifapistub.domain.TaxCredits._
 import uk.gov.hmrc.individualsifapistub.domain.{Application, Awards, ChildTaxCredit, Payments, TaxCredits, WorkTaxCredit}
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
-class ApplicationsSpec extends UnitSpec with TestHelpers {
+class TaxCreditsSpec extends UnitSpec with TestHelpers {
 
   val idValue: Double = 12345
 
@@ -76,90 +76,98 @@ class ApplicationsSpec extends UnitSpec with TestHelpers {
 
   "Payments" should {
 
-    "Write to JSON successfully" in {
+    "write to JSON successfully" in {
       val result = Json.toJson(validPayments).validate[Payments]
       result.isSuccess shouldBe true
     }
 
-    "fail when status is not one of: A, D, S, C, X" in {
-      val result = Json.toJson(validPayments.copy(status = Some("XX"))).validate[Payments]
-      result.isError shouldBe true
-    }
+    "fail validation" when {
+      "status is not one of: A, D, S, C, X" in {
+        val result = Json.toJson(validPayments.copy(status = Some("XX"))).validate[Payments]
+        result.isError shouldBe true
+      }
 
-    "fail when method is not one of: R, O, M" in {
-      val result = Json.toJson(validPayments.copy(method = Some("X"))).validate[Payments]
-      result.isError shouldBe true
-    }
+      "method is not one of: R, O, M" in {
+        val result = Json.toJson(validPayments.copy(method = Some("X"))).validate[Payments]
+        result.isError shouldBe true
+      }
 
-    "fail to validate incorrect period start date" in {
-      val result = Json.toJson(validPayments.copy(periodStartDate = Some("2012-12-50"))).validate[Payments]
-      result.isError shouldBe true
-    }
+      "period start date is incorrect" in {
+        val result = Json.toJson(validPayments.copy(periodStartDate = Some("2012-12-50"))).validate[Payments]
+        result.isError shouldBe true
+      }
 
-    "fail to validate incorrect period end date" in {
-      val result = Json.toJson(validPayments.copy(periodEndDate = Some("2020-12-50"))).validate[Payments]
-      result.isError shouldBe true
-    }
+      "period end date is incorrect" in {
+        val result = Json.toJson(validPayments.copy(periodEndDate = Some("2020-12-50"))).validate[Payments]
+        result.isError shouldBe true
+      }
 
-    "fail to validate incorrect start date" in {
-      val result = Json.toJson(validPayments.copy(startDate = Some("2020-12-50"))).validate[Payments]
-      result.isError shouldBe true
-    }
+      "start date is incorrect" in {
+        val result = Json.toJson(validPayments.copy(startDate = Some("2020-12-50"))).validate[Payments]
+        result.isError shouldBe true
+      }
 
-    "fail to validate incorrect end date" in {
-      val result = Json.toJson(validPayments.copy(endDate = Some("2020-12-50"))).validate[Payments]
-      result.isError shouldBe true
-    }
+      "end date is incorrect" in {
+        val result = Json.toJson(validPayments.copy(endDate = Some("2020-12-50"))).validate[Payments]
+        result.isError shouldBe true
+      }
 
-    "fail to validate incorrect posted date" in {
-      val result = Json.toJson(validPayments.copy(postedDate = Some("2020-12-50"))).validate[Payments]
-      result.isError shouldBe true
-    }
+      "posted date is incorrect" in {
+        val result = Json.toJson(validPayments.copy(postedDate = Some("2020-12-50"))).validate[Payments]
+        result.isError shouldBe true
+      }
 
-    "fail to validate incorrect next due date" in {
-      val result = Json.toJson(validPayments.copy(nextDueDate = Some("2020-12-50"))).validate[Payments]
-      result.isError shouldBe true
+      "next due date is incorrect" in {
+        val result = Json.toJson(validPayments.copy(nextDueDate = Some("2020-12-50"))).validate[Payments]
+        result.isError shouldBe true
+      }
     }
   }
 
   "ChildTaxCredit" should {
-    "Write to JSON successfully" in {
+
+    "write to JSON successfully" in {
       val result = Json.toJson(validChildTaxCredit).validate[ChildTaxCredit]
       result.isSuccess shouldBe true
     }
 
-    "fail to validate when not a multiple of 0.01" in {
-      val result = Json.toJson(validChildTaxCredit.copy(childCareAmount = Some(123.4312123123123))).validate[ChildTaxCredit]
-      result.isError shouldBe true
-    }
+    "fail validation" when {
 
-    "fail to validate when value is smaller than min value" in {
-      val result = Json.toJson(validChildTaxCredit.copy(childCareAmount = Some(TaxCredits.minPaymentValue - 1.0))).validate[ChildTaxCredit]
-      result.isError shouldBe true
-    }
+      "not a multiple of 0.01" in {
+        val result = Json.toJson(validChildTaxCredit.copy(childCareAmount = Some(123.4312123123123))).validate[ChildTaxCredit]
+        result.isError shouldBe true
+      }
 
-    "fail to validate when value is larger than max value" in {
-      val result = Json.toJson(validChildTaxCredit.copy(childCareAmount = Some(TaxCredits.maxPaymentValue + 1.0))).validate[ChildTaxCredit]
-      result.isError shouldBe true
+
+      "value is smaller than min value" in {
+        val result = Json.toJson(validChildTaxCredit.copy(childCareAmount = Some(TaxCredits.minPaymentValue - 1.0))).validate[ChildTaxCredit]
+        result.isError shouldBe true
+      }
+
+
+      "value is larger than max value" in {
+        val result = Json.toJson(validChildTaxCredit.copy(childCareAmount = Some(TaxCredits.maxPaymentValue + 1.0))).validate[ChildTaxCredit]
+        result.isError shouldBe true
+      }
     }
   }
 
   "Awards" should {
-    "Write to JSON successfully" in {
+    "write to JSON successfully" in {
       val result = Json.toJson(validAwards).validate[Awards]
       result.isSuccess shouldBe true
     }
   }
 
   "WorkTaxCredit" should {
-    "Write to JSON successfully" in {
+    "write to JSON successfully" in {
       val result = Json.toJson(validWorkTaxCredit).validate[WorkTaxCredit]
       result.isSuccess shouldBe true
     }
   }
 
   "Application" should {
-    "Write to JSON successfully" in {
+    "write to JSON successfully" in {
       val result = Json.toJson(validResponse).validate[Application]
       result.isSuccess shouldBe true
     }

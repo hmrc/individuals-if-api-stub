@@ -77,21 +77,21 @@ class EmploymentRepositorySpec
   override lazy val fakeApplication = buildFakeApplication(
     Configuration("mongodb.uri" -> mongoUri))
 
-  val employmentRepository =
+  val repository =
     fakeApplication.injector.instanceOf[EmploymentRepository]
 
   override def beforeEach() {
-    await(employmentRepository.drop)
-    await(employmentRepository.ensureIndexes)
+    await(repository.drop)
+    await(repository.ensureIndexes)
   }
 
   override def afterEach() {
-    await(employmentRepository.drop)
+    await(repository.drop)
   }
 
   "collection" should {
     "have a unique index on nino" in {
-      await(employmentRepository.collection.indexesManager.list()).find({ i =>
+      await(repository.collection.indexesManager.list()).find({ i =>
         i.name.contains("nino") &&
           i.key == Seq("id.nino" -> Ascending) &&
           i.background &&
@@ -99,7 +99,7 @@ class EmploymentRepositorySpec
       }) should not be None
     }
     "have a unique index on trn" in {
-      await(employmentRepository.collection.indexesManager.list()).find({ i =>
+      await(repository.collection.indexesManager.list()).find({ i =>
         i.name.contains("trn") &&
           i.key == Seq("id.trn" -> Ascending) &&
           i.background &&
@@ -110,36 +110,35 @@ class EmploymentRepositorySpec
 
   "create" should {
     "create an employment with a nino" in {
-      val result = await(employmentRepository.create("nino", nino, employments))
+      val result = await(repository.create("nino", nino, employments))
       result shouldBe employments
     }
 
     "create an employment with a trn" in {
-      val result = await(employmentRepository.create("trn", trn, employments))
+      val result = await(repository.create("trn", trn, employments))
       result shouldBe employments
     }
 
     "fail to create duplicate details" in {
-      await(employmentRepository.create("nino", nino, employments))
-      intercept[Exception](await(employmentRepository.create("nino", nino, employments)))
+      await(repository.create("nino", nino, employments))
+      intercept[Exception](await(repository.create("nino", nino, employments)))
     }
   }
 
   "findByIdAndType" should {
 
     "return None when there are no details for a given nino" in {
-      await(employmentRepository.findByIdAndType("nino", nino)) shouldBe None
+      await(repository.findByIdAndType("nino", nino)) shouldBe None
     }
 
     "return None when there are no details for a given trn" in {
-      await(employmentRepository.findByIdAndType("trn", trn)) shouldBe None
+      await(repository.findByIdAndType("trn", trn)) shouldBe None
     }
 
     "return a single record with id" in {
-      await(employmentRepository.create("nino", nino, employments))
-      val result = await(employmentRepository.findByIdAndType("nino", nino))
+      await(repository.create("nino", nino, employments))
+      val result = await(repository.findByIdAndType("nino", nino))
       result.get shouldBe employments
     }
-
   }
 }

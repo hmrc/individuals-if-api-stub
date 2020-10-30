@@ -34,8 +34,8 @@ class TaxCreditsControllerSpec extends TestSupport {
 
   trait Setup {
     val fakeRequest = FakeRequest()
-    val mockBenefitsAndCreditsService = mock[TaxCreditsService]
-    val underTest = new TaxCreditsController(bodyParsers, controllerComponents, mockBenefitsAndCreditsService)
+    val mockTaxCreditsService = mock[TaxCreditsService]
+    val underTest = new TaxCreditsController(bodyParsers, controllerComponents, mockTaxCreditsService)
   }
 
   val application: Application = Application(
@@ -52,34 +52,31 @@ class TaxCreditsControllerSpec extends TestSupport {
 
   val request = Applications(Seq(application))
 
-  "Create BenefitsAndCredits" should {
-    "Successfully create a details record and return created record as response" in new Setup {
-
-      when(mockBenefitsAndCreditsService.create(idType, idValue, request)).thenReturn(Future.successful(request))
-
+  "Create TaxCredits" should {
+    "Successfully create a record and return created record as response" in new Setup {
+      when(mockTaxCreditsService.create(idType, idValue, request)).thenReturn(Future.successful(request))
       val result = await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson(request))))
-
       status(result) shouldBe CREATED
       jsonBodyOf(result) shouldBe Json.toJson(request)
     }
 
-    "Fail when a request is not provided" in new Setup {
-      when(mockBenefitsAndCreditsService.create(idType, idValue, request)).thenReturn(Future.successful(request))
+    "fail when a request is not provided" in new Setup {
+      when(mockTaxCreditsService.create(idType, idValue, request)).thenReturn(Future.successful(request))
       val response = await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson(""))))
       status(response) shouldBe BAD_REQUEST
     }
   }
 
-  "Retrieve Details" should {
-    "Return details when successfully retrieved from service" in new Setup {
-      when(mockBenefitsAndCreditsService.get(idType, idValue)).thenReturn(Future.successful(Some(request)))
+  "Retrieve tax credits" should {
+    "Return applications when successfully retrieved from service" in new Setup {
+      when(mockTaxCreditsService.get(idType, idValue)).thenReturn(Future.successful(Some(request)))
       val result = await(underTest.retrieve(idType, idValue)(fakeRequest))
       status(result) shouldBe OK
       jsonBodyOf(result) shouldBe Json.toJson[Applications](request)
     }
 
-    "Fail when it cannot get from service" in new Setup {
-      when(mockBenefitsAndCreditsService.get(idType, idValue)).thenReturn(Future.failed(new Exception))
+    "fail when it cannot get from service" in new Setup {
+      when(mockTaxCreditsService.get(idType, idValue)).thenReturn(Future.failed(new Exception))
       assertThrows[Exception] { await(underTest.retrieve(idType, idValue)(fakeRequest)) }
     }
   }
