@@ -3,10 +3,12 @@
   "value": {
     "contactDetails": [
       {
-        "detail": "07123 987654"
+        "detail": "07123 987654",
+        "type": "MOBILE TELEPHONE"
       },
       {
-        "detail": "07124 987655"
+        "detail": "07124 987655",
+        "type": "EVENING TELEPHONE"
       }
     ],
     "residences": [

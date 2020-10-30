@@ -3,7 +3,8 @@
   "value": {
     "contactDetails": [
       {
-        "detail": "07123 987654"
+        "detail": "07123 987654",
+        "type": "MOBILE TELEPHONE"
       }
     ],
     "residences": [
