@@ -19,7 +19,7 @@ package it.uk.gov.hmrc.individualsifapistub
 import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
 import reactivemongo.api.indexes.IndexType.Ascending
-import uk.gov.hmrc.individualsifapistub.domain.{BenefitsAndCredits, CreateBenefitsAndCreditsRequest, DuplicateException, Income}
+import uk.gov.hmrc.individualsifapistub.domain.{Application, BenefitsAndCredits, CreateBenefitsAndCreditsRequest, DuplicateException, Income}
 import uk.gov.hmrc.individualsifapistub.repository.BenefitsAndCreditsRepository
 import uk.gov.hmrc.mongo.MongoSpecSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
@@ -34,9 +34,17 @@ class BenefitsAndCreditsRepositorySpec
 
   val repository = fakeApplication.injector.instanceOf[BenefitsAndCreditsRepository]
 
+  val application: Application = Application(
+    id = 12345,
+    ceasedDate = Some("2012-12-12"),
+    entStartDate = Some("2012-12-12"),
+    entEndDate = Some("2012-12-12"),
+    None
+  )
+
   val id = "2432552635"
-  val request = CreateBenefitsAndCreditsRequest("request")
-  val benefitsAndCredits = BenefitsAndCredits(id, request.body)
+  val request = Seq(application)
+  val benefitsAndCredits = BenefitsAndCredits(id, request)
 
   override def beforeEach() {
     await(repository.drop)

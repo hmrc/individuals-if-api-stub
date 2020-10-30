@@ -20,6 +20,7 @@ package unit.uk.gov.hmrc.individualsifapistub.util.domain
 import play.api.libs.json.Json
 import testUtils.AddressHelpers
 import uk.gov.hmrc.individualsifapistub.domain.{ContactDetail, Details, DetailsResponse, Residence}
+import uk.gov.hmrc.individualsifapistub.domain.DetailsResponse._
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class DetailsResponseSpec extends UnitSpec with AddressHelpers {

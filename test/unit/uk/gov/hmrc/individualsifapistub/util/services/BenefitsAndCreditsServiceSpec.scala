@@ -18,7 +18,7 @@ package unit.uk.gov.hmrc.individualsifapistub.util.services
 
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
-import uk.gov.hmrc.individualsifapistub.domain.{BenefitsAndCredits, CreateBenefitsAndCreditsRequest}
+import uk.gov.hmrc.individualsifapistub.domain.{Application, BenefitsAndCredits}
 import uk.gov.hmrc.individualsifapistub.repository.BenefitsAndCreditsRepository
 import uk.gov.hmrc.individualsifapistub.services.BenefitsAndCreditsService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
@@ -31,7 +31,15 @@ class BenefitsAndCreditsServiceSpec extends TestSupport {
     val idType = "idType"
     val idValue = "idValue"
 
-    val request = CreateBenefitsAndCreditsRequest("something")
+    val application: Application = Application(
+      id = 12345,
+      ceasedDate = Some("2012-12-12"),
+      entStartDate = Some("2012-12-12"),
+      entEndDate = Some("2012-12-12"),
+      None
+    )
+
+    val request = Seq(application)
 
     val mockBenefitsAndCreditsRepository = mock[BenefitsAndCreditsRepository]
     val underTest = new BenefitsAndCreditsService(mockBenefitsAndCreditsRepository)
@@ -40,7 +48,7 @@ class BenefitsAndCreditsServiceSpec extends TestSupport {
   "Benefits and Credits Service" when {
     "Create" should {
       "Return the created record when created" in new Setup {
-        val employment = BenefitsAndCredits(s"$idType-$idValue", request.body)
+        val employment = BenefitsAndCredits(s"$idType-$idValue", request)
         when(mockBenefitsAndCreditsRepository.create(s"$idType-$idValue", request)).thenReturn(Future.successful(employment));
         val response = await(underTest.create(idType, idValue, request))
         response shouldBe employment
@@ -56,7 +64,7 @@ class BenefitsAndCreditsServiceSpec extends TestSupport {
 
     "Get" should {
       "Return record when successfully retrieved from mongo" in new Setup {
-        val employment = BenefitsAndCredits(s"$idType-$idValue", request.body)
+        val employment = BenefitsAndCredits(s"$idType-$idValue", request)
         when(mockBenefitsAndCreditsRepository.findById(s"$idType-$idValue")).thenReturn(Future.successful(Some(employment)));
         val response = await(underTest.get(idType, idValue))
         response shouldBe Some(employment)

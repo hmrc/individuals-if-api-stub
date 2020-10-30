@@ -18,7 +18,7 @@ package unit.uk.gov.hmrc.individualsifapistub.util.domain
 
 import play.api.libs.json.Json
 import testUtils.AddressHelpers
-import uk.gov.hmrc.individualsifapistub.domain.BenefitsAndCredits._
+import uk.gov.hmrc.individualsifapistub.domain.Application._
 import uk.gov.hmrc.individualsifapistub.domain._
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
@@ -35,9 +35,9 @@ class BenefitsAndCreditsResponseSpec extends UnitSpec with AddressHelpers {
     Some("2012-12-12"),
     Some("2012-12-12"),
     Some(12),
-    Some("2012-12-12"),
+    Some("ETC"),
     Some(1234134123),
-    Some("2012-12-12")
+    Some("R")
   )
 
   val validChildTaxCredit: ChildTaxCredit = ChildTaxCredit(
@@ -85,6 +85,11 @@ class BenefitsAndCreditsResponseSpec extends UnitSpec with AddressHelpers {
       result.isError shouldBe true
     }
 
+    "fail when method is not one of: R, O, M" in {
+      val result = Json.toJson(validPayments.copy(method = Some("X"))).validate[Payments]
+      result.isError shouldBe true
+    }
+
     "fail to validate incorrect period start date" in {
       val result = Json.toJson(validPayments.copy(periodStartDate = Some("2012-12-50"))).validate[Payments]
       result.isError shouldBe true
@@ -127,68 +132,35 @@ class BenefitsAndCreditsResponseSpec extends UnitSpec with AddressHelpers {
       result.isError shouldBe true
     }
 
-//    "fail to validate when value is smaller than min value" in {
-//      val result = Json.toJson(validChildTaxCredit.copy(childCareAmount = Some(Bene.minValue - 1.0))).validate[ChildTaxCredit]
-//      result.isError shouldBe true
-//    }
-//
-//    "fail to validate when value is larger than max value" in {
-//      val result = Json.toJson(payment.copy(ytdTaxablePay = Some(Employments.maxValue + 1.0))).validate[Payment]
-//      result.isError shouldBe true
-//    }
+    "fail to validate when value is smaller than min value" in {
+      val result = Json.toJson(validChildTaxCredit.copy(childCareAmount = Some(Application.minValue - 1.0))).validate[ChildTaxCredit]
+      result.isError shouldBe true
+    }
+
+    "fail to validate when value is larger than max value" in {
+      val result = Json.toJson(validChildTaxCredit.copy(childCareAmount = Some(Application.maxValue + 1.0))).validate[ChildTaxCredit]
+      result.isError shouldBe true
+    }
   }
-//
-//  "Payment" should {
-//    "Write to JSON successfully" in {
-//      val result = Json.toJson(payment).validate[Payment]
-//      result.isSuccess shouldBe true
-//    }
-//
-//    "fail to validate when week is below 1" in {
-//      val result = Json.toJson(payment.copy(week = Some(0))).validate[Payment]
-//      result.isError shouldBe true
-//    }
-//
-//    "fail to validate when week is above 56" in {
-//      val result = Json.toJson(payment.copy(week = Some(57))).validate[Payment]
-//      result.isError shouldBe true
-//    }
-//
-//    "fail to validate when month is below 1" in {
-//      val result = Json.toJson(payment.copy(month = Some(0))).validate[Payment]
-//      result.isError shouldBe true
-//    }
-//
-//    "fail to validate when month is above 12" in {
-//      val result = Json.toJson(payment.copy(month = Some(13))).validate[Payment]
-//      result.isError shouldBe true
-//    }
-//
-//    "fail to validate when not a multiple of 0.01" in {
-//      val result = Json.toJson(payment.copy(ytdTaxablePay = Some(123.4312123123123))).validate[Payment]
-//      result.isError shouldBe true
-//    }
-//
-//    "fail to validate when value is smaller than min value" in {
-//      val result = Json.toJson(payment.copy(ytdTaxablePay = Some(Employments.minValue - 1.0))).validate[Payment]
-//      result.isError shouldBe true
-//    }
-//
-//    "fail to validate when value is larger than max value" in {
-//      val result = Json.toJson(payment.copy(ytdTaxablePay = Some(Employments.maxValue + 1.0))).validate[Payment]
-//      result.isError shouldBe true
-//    }
-//  }
-//
-//  "Employments" should {
-//    "Write to JSON successfully" in {
-//      val result = Json.toJson( Employments(Seq(employment))).validate[Employments]
-//      result.isSuccess shouldBe true
-//    }
-//
-//    "Write to JSON successfully when employments is empty" in {
-//      val result = Json.toJson( Employments(Seq())).validate[Employments]
-//      result.isSuccess shouldBe true
-//    }
-//  }
+
+  "Awards" should {
+    "Write to JSON successfully" in {
+      val result = Json.toJson(validAwards).validate[Awards]
+      result.isSuccess shouldBe true
+    }
+  }
+
+  "WorkTaxCredit" should {
+    "Write to JSON successfully" in {
+      val result = Json.toJson(validWorkTaxCredit).validate[WorkTaxCredit]
+      result.isSuccess shouldBe true
+    }
+  }
+
+  "Application" should {
+    "Write to JSON successfully" in {
+      val result = Json.toJson(validResponse).validate[Application]
+      result.isSuccess shouldBe true
+    }
+  }
 }

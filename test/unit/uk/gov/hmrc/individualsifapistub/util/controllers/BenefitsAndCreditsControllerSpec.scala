@@ -23,7 +23,7 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.individualsifapistub.controllers.BenefitsAndCreditsController
 import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
-import uk.gov.hmrc.individualsifapistub.domain.{BenefitsAndCredits, CreateBenefitsAndCreditsRequest}
+import uk.gov.hmrc.individualsifapistub.domain.{Application, BenefitsAndCredits, CreateBenefitsAndCreditsRequest}
 import uk.gov.hmrc.individualsifapistub.services.BenefitsAndCreditsService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
@@ -37,14 +37,22 @@ class BenefitsAndCreditsControllerSpec extends TestSupport {
     val underTest = new BenefitsAndCreditsController(bodyParsers, controllerComponents, mockBenefitsAndCreditsService)
   }
 
+  val application: Application = Application(
+    id = 12345,
+    ceasedDate = Some("2012-12-12"),
+    entStartDate = Some("2012-12-12"),
+    entEndDate = Some("2012-12-12"),
+    None
+  )
+
   val idType = "idType"
   val idValue = "idValue"
 
-  val request = CreateBenefitsAndCreditsRequest("something")
+  val request = Seq(application)
 
   "Create BenefitsAndCredits" should {
     "Successfully create a details record and return created record as response" in new Setup {
-      val employment = BenefitsAndCredits(s"$idType-$idValue", request.body)
+      val employment = BenefitsAndCredits(s"$idType-$idValue", request)
       when(mockBenefitsAndCreditsService.create(idType, idValue, request)).thenReturn(Future.successful(employment))
 
       val result = await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson(request))))
@@ -54,7 +62,7 @@ class BenefitsAndCreditsControllerSpec extends TestSupport {
     }
 
     "Fail when a request is not provided" in new Setup {
-      val employment = BenefitsAndCredits(s"$idType-$idValue", request.body)
+      val employment = BenefitsAndCredits(s"$idType-$idValue", request)
       when(mockBenefitsAndCreditsService.create(idType, idValue, request)).thenReturn(Future.successful(employment))
       assertThrows[Exception] { await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson("")))) }
     }
@@ -62,7 +70,7 @@ class BenefitsAndCreditsControllerSpec extends TestSupport {
 
   "Retrieve Details" should {
     "Return details when successfully retrieved from service" in new Setup {
-      val employment = BenefitsAndCredits(s"$idType-$idValue", request.body)
+      val employment = BenefitsAndCredits(s"$idType-$idValue", request)
       when(mockBenefitsAndCreditsService.get(idType, idValue)).thenReturn(Future.successful(Some(employment)))
 
       val result = await(underTest.retrieve(idType, idValue)(fakeRequest))
