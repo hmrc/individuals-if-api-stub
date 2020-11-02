@@ -22,8 +22,6 @@ import uk.gov.hmrc.individualsifapistub.domain.{Address, Employer, Employment, E
 import uk.gov.hmrc.individualsifapistub.domain.Employments._
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
-import scala.util.Random
-
 class EmploymentsSpec extends UnitSpec with TestHelpers {
 
   val ninoDetails = Id(Some("XH123456A"), None)
@@ -315,6 +313,57 @@ class EmploymentsSpec extends UnitSpec with TestHelpers {
         val result = Json.toJson( Employments(Seq())).validate[Employments]
         result.isSuccess shouldBe true
       }
+    }
+
+    "read from JSON successfully" in {
+
+      val employmentsJson:String =
+        """
+          |{
+          |  "employments" : [ {
+          |    "employer" : {
+          |      "name" : "Name",
+          |      "address" : {
+          |        "line1" : "line1",
+          |        "line2" : "line2",
+          |        "line3" : "line3",
+          |        "line4" : "line4",
+          |        "line5" : "line5",
+          |        "postcode" : "postcode"
+          |      },
+          |      "districtNumber" : "ABC",
+          |      "schemeRef" : "ABC"
+          |    },
+          |    "employment" : {
+          |      "startDate" : "2001-12-31",
+          |      "endDate" : "2002-05-12",
+          |      "payFrequency" : "W2",
+          |      "payrollId" : "12341234",
+          |      "address" : {
+          |        "line1" : "line1",
+          |        "line2" : "line2",
+          |        "line3" : "line3",
+          |        "line4" : "line4",
+          |        "line5" : "line5",
+          |        "postcode" : "postcode"
+          |      }
+          |    },
+          |    "payments" : [ {
+          |      "date" : "2001-12-31",
+          |      "ytdTaxablePay" : 162081.23,
+          |      "paidTaxablePay" : 112.75,
+          |      "paidNonTaxOrNICPayment" : 123123.32,
+          |      "week" : 52,
+          |      "month" : 12
+          |    } ]
+          |  } ]
+          |}
+          |""".stripMargin
+
+      println(employmentsJson)
+      val result = Json.parse(employmentsJson).validate[Employments]
+      result.isSuccess shouldBe true
+      result.get shouldBe Employments(Seq(employment))
     }
   }
 }
