@@ -6,8 +6,6 @@
         "taxYear": "2019",
         "returnList": [
           {
-            "busStartDate": "2018-02-28",
-            "busEndDate": "2018-02-28",
             "businessDescription": "c",
             "address": {
               "line1": "c",
@@ -42,8 +40,6 @@
             "tradingIncomeAllowance": 100
           },
           {
-            "busStartDate": "2018-02-01",
-            "busEndDate": "2018-02-01",
             "businessDescription": "c",
             "address": {
               "line1": "c",
