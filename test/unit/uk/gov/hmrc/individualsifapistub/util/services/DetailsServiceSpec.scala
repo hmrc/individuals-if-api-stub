@@ -19,7 +19,7 @@ package unit.uk.gov.hmrc.individualsifapistub.util.services
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import testUtils.TestHelpers
-import uk.gov.hmrc.individualsifapistub.domain.{ContactDetail, CreateDetailsRequest, Details, DetailsResponse, Residence}
+import uk.gov.hmrc.individualsifapistub.domain.{ContactDetail, CreateDetailsRequest, DetailsResponse, Id, Residence}
 import uk.gov.hmrc.individualsifapistub.repository.DetailsRepository
 import uk.gov.hmrc.individualsifapistub.services.DetailsService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
@@ -46,7 +46,7 @@ class DetailsServiceSpec extends TestSupport with TestHelpers {
   "Details Service" when {
     "Create" should {
       "Return the created details when created with a NINO" in new Setup {
-        val details = Details(Some(idValue), None)
+        val details = Id(Some(idValue), None)
         val detailsResponse = DetailsResponse(details, request.contactDetails, request.residences)
         when(mockDetailsRepository.create("NINO", idValue, request)).thenReturn(Future.successful(detailsResponse))
         val response = await(underTest.create(idType, idValue, request))
@@ -63,7 +63,7 @@ class DetailsServiceSpec extends TestSupport with TestHelpers {
 
     "Get" should {
       "Return details when successfully retrieved from mongo" in new Setup {
-        val details = Details(Some(idValue), None)
+        val details = Id(Some(idValue), None)
         val detailsResponse = DetailsResponse(details, request.contactDetails, request.residences)
         when(mockDetailsRepository.findByIdAndType(idType, idValue)).thenReturn(Future.successful(Some(detailsResponse)));
         val response = await(underTest.get(idType, idValue))

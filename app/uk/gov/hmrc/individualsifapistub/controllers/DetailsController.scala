@@ -32,7 +32,7 @@ class DetailsController @Inject()(  bodyParsers: PlayBodyParsers,
                                  )(implicit val ec: ExecutionContext) extends CommonController(cc) {
 
   def create(idType: String, idValue: String): Action[JsValue] = Action.async(bodyParsers.json) { implicit request =>
-    withJsonBody[CreateDetailsRequest] { createRequest =>
+    withJsonBodyAndValidId[CreateDetailsRequest](idType, idValue) { createRequest =>
       detailsService.create(idType, idValue, createRequest) map (e => Created(Json.toJson(e)))
     } recover recovery
   }

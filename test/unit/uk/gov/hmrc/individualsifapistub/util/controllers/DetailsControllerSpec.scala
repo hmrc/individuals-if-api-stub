@@ -38,8 +38,9 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
     val underTest = new DetailsController(bodyParsers, controllerComponents, mockDetailsService)
   }
 
-  val idType = "NINO"
-  val idValue = "QW1234QW"
+  val idType = "nino"
+  val idValue = "XH123456A"
+
   val request = CreateDetailsRequest(
     Some(Seq(ContactDetail(9, "MOBILE TELEPHONE", "07123 987654"), ContactDetail(9,"MOBILE TELEPHONE", "07123 987655"))),
     Some(Seq(
@@ -49,10 +50,10 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
 
   "Create details" should {
     "Successfully create a details record and return created record as response" in new Setup {
-      val details = Details(Some(idValue), None)
+      val details = Id(Some(idValue), None)
       val detailsResponse = DetailsResponse(details, request.contactDetails, request.residences)
-      when(mockDetailsService.create(idType, idValue, request)).thenReturn(Future.successful(detailsResponse))
 
+      when(mockDetailsService.create(idType, idValue, request)).thenReturn(Future.successful(detailsResponse))
       val result = await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson(request))))
 
       status(result) shouldBe CREATED
@@ -60,7 +61,7 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
     }
 
     "Fail when a request is not provided" in new Setup {
-      val details = Details(Some(idValue), None)
+      val details = Id(Some(idValue), None)
       val detailsResponse = DetailsResponse(details, None, None)
       when(mockDetailsService.create(idType, idValue, request)).thenReturn(Future.successful(detailsResponse))
       val response = await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson(""))))
@@ -70,7 +71,7 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
 
   "Retrieve Details" should {
     "Return details when successfully retrieved from service" in new Setup {
-      val details = Details(Some(idValue), None)
+      val details = Id(Some(idValue), None)
       val detailsResponse = DetailsResponse(details, request.contactDetails, request.residences)
       when(mockDetailsService.get(idType, idValue)).thenReturn(Future.successful(Some(detailsResponse)))
 

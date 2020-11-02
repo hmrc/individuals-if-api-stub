@@ -49,9 +49,7 @@ case class Residence(statusCode: Option[String] = None,
                      startDateTime: Option[String] = None,
                      noLongerUsed: Option[String] = None)
 
-case class Details(nino: Option[String], trn: Option[String])
-
-case class DetailsResponse(details: Details, contactDetails: Option[Seq[ContactDetail]], residences: Option[Seq[Residence]])
+case class DetailsResponse(details: Id, contactDetails: Option[Seq[ContactDetail]], residences: Option[Seq[Residence]])
 
 object DetailsResponse {
   val ninoPattern: Regex = "^((?!(BG|GB|KN|NK|NT|TN|ZZ)|(D|F|I|Q|U|V)[A-Z]|[A-Z](D|F|I|O|Q|U|V))[A-Z]{2})[0-9]{6}[A-D\\s]?$".r
@@ -61,17 +59,6 @@ object DetailsResponse {
     """^(((19|20)([2468][048]|[13579][26]|0[48])|2000)[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)
       |[-](0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-](0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|
       |(19|20)[0-9]{2}[-]02[-](0[1-9]|1[0-9]|2[0-8])))$""".r
-
-  implicit val detailsFormat: Format[Details] = Format(
-    (
-      (JsPath \ "nino").readNullable[String](pattern(ninoPattern, "InvalidNino")) and
-      (JsPath \ "trn").readNullable[String](pattern(trnPattern, "InvalidTrn"))
-    )(Details.apply _),
-    (
-      (JsPath \ "nino").writeNullable[String] and
-      (JsPath \ "trn").writeNullable[String]
-    )(unlift(Details.unapply))
-  )
 
   implicit val addressFormat: Format[Address] = Format(
     (
@@ -121,7 +108,7 @@ object DetailsResponse {
       (JsPath \ "otherCountry").readNullable[String](maxLength[String](35)) and
       (JsPath \ "deadLetterOfficeDate").readNullable[String](pattern(datePattern, "Date is invalid")) and
 
-      // TODO: Datetime format
+      // TODO: Datetime format?
 
       (JsPath \ "startDateTime").readNullable[String] and
       (JsPath \ "noLongerUsed").readNullable[String](minLength[String](1) andKeep maxLength[String](1))
@@ -147,12 +134,12 @@ object DetailsResponse {
 
   implicit val detailsResponseFormat: Format[DetailsResponse] = Format(
     (
-      (JsPath \ "details").read[Details] and
+      (JsPath \ "details").read[Id] and
       (JsPath \ "contactDetails").readNullable[Seq[ContactDetail]] and
       (JsPath \ "residence").readNullable[Seq[Residence]]
     )(DetailsResponse.apply _),
     (
-      (JsPath \ "details").write[Details] and
+      (JsPath \ "details").write[Id] and
       (JsPath \ "contactDetails").writeNullable[Seq[ContactDetail]] and
       (JsPath \ "residence").writeNullable[Seq[Residence]]
     )(unlift(DetailsResponse.unapply))

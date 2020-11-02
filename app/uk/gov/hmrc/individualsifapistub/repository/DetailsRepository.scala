@@ -23,7 +23,8 @@ import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.bson.BSONObjectID
 import reactivemongo.play.json._
-import uk.gov.hmrc.individualsifapistub.domain.{CreateDetailsRequest, Details, DetailsResponse, JsonFormatters}
+import uk.gov.hmrc.individualsifapistub.domain.IdType.{Nino, Trn}
+import uk.gov.hmrc.individualsifapistub.domain.{CreateDetailsRequest, DetailsResponse, Id, IdType, JsonFormatters}
 import uk.gov.hmrc.mongo.ReactiveRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -42,19 +43,16 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
 
   def create(idType: String, idValue: String, createDetailsRequest: CreateDetailsRequest): Future[DetailsResponse] = {
 
-    val details = idType match {
-      case "nino" => Details(Some(idValue), None)
-      case "trn" => Details(None, Some(idValue))
-      case _ => throw new Exception()
+    val id = IdType.parse(idType) match {
+      case Nino => Id(Some(idValue), None)
+      case Trn => Id(None, Some(idValue))
     }
 
-    val detailsResponse = DetailsResponse(details, createDetailsRequest.contactDetails, createDetailsRequest.residences)
+    val detailsResponse = DetailsResponse(id, createDetailsRequest.contactDetails, createDetailsRequest.residences)
     insert(detailsResponse) map (_ => detailsResponse)
   }
 
   def findByIdAndType(idType: String, idValue: String): Future[Option[DetailsResponse]] = {
-
     collection.find[JsObject, JsObject](obj("details" -> obj(idType -> idValue)), None).one[DetailsResponse]
-
   }
 }

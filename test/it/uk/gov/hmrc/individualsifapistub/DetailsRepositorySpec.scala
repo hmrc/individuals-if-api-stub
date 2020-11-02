@@ -20,7 +20,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
 import reactivemongo.api.indexes.IndexType.Ascending
 import testUtils.TestHelpers
-import uk.gov.hmrc.individualsifapistub.domain.{ContactDetail, CreateDetailsRequest, Details, DetailsResponse, Residence}
+import uk.gov.hmrc.individualsifapistub.domain.{ContactDetail, CreateDetailsRequest, DetailsResponse, Id, Residence}
 import uk.gov.hmrc.individualsifapistub.repository.DetailsRepository
 import uk.gov.hmrc.mongo.MongoSpecSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
@@ -35,7 +35,9 @@ class DetailsRepositorySpec
 
   val repository = fakeApplication.injector.instanceOf[DetailsRepository]
 
-  val idValue = "2432552635"
+  val ninoValue = "XH123456A"
+  val trnValue = "2432552635"
+
   val request = CreateDetailsRequest(
     Some(Seq(ContactDetail(9, "MOBILE TELEPHONE", "07123 987654"), ContactDetail(9,"MOBILE TELEPHONE", "07123 987655"))),
     Some(Seq(
@@ -72,51 +74,46 @@ class DetailsRepositorySpec
 
   "create" should {
     "create a details response with a nino" in {
-      val details = Details(Some(idValue), None)
+      val details = Id(Some(ninoValue), None)
       val detailsResponse = DetailsResponse(details, request.contactDetails, request.residences)
 
-      val result = await(repository.create("nino", idValue, request))
+      val result = await(repository.create("nino", ninoValue, request))
 
       result shouldBe detailsResponse
     }
 
     "create a details response with a trn" in {
-      val details = Details(None, Some(idValue))
+      val details = Id(None, Some(trnValue))
       val detailsResponse = DetailsResponse(details, request.contactDetails, request.residences)
 
-      val result = await(repository.create("trn", idValue, request))
+      val result = await(repository.create("trn", trnValue, request))
 
       result shouldBe detailsResponse
     }
 
     "fail to create duplicate details" in {
-      val details = Details(None, Some(idValue))
-
-      await(repository.create("trn", idValue, request))
-
-      intercept[Exception](await(repository.create("trn", idValue, request)))
+      await(repository.create("trn", trnValue, request))
+      intercept[Exception](await(repository.create("trn", trnValue, request)))
     }
   }
 
   "find by id and type" should {
     "return None when there are no details for a given nino" in {
-      await(repository.findByIdAndType("nino", idValue)) shouldBe None
+      await(repository.findByIdAndType("nino", ninoValue)) shouldBe None
     }
 
     "return None when there are no details for a given trn" in {
-      await(repository.findByIdAndType("trn", idValue)) shouldBe None
+      await(repository.findByIdAndType("trn", trnValue)) shouldBe None
     }
-
 
     "return details when nino found" in {
 
-      val details = Details(Some(idValue), None)
+      val details = Id(Some(ninoValue), None)
       val detailsResponse = DetailsResponse(details, request.contactDetails, request.residences)
 
-      await(repository.create("nino", idValue, request))
+      await(repository.create("nino", ninoValue, request))
 
-      val result = await(repository.findByIdAndType("nino", idValue))
-
+      val result = await(repository.findByIdAndType("nino", ninoValue))
       result shouldBe Some(detailsResponse)
     }
   }

@@ -29,7 +29,7 @@ import scala.concurrent.ExecutionContext
 class TaxCreditsController @Inject()(bodyParsers: PlayBodyParsers,
                                      cc: ControllerComponents,
                                      taxCreditsService: TaxCreditsService
-                                            )(implicit val ec: ExecutionContext) extends CommonController(cc) {
+                                    )(implicit val ec: ExecutionContext) extends CommonController(cc) {
 
   def create(idType: String, idValue: String): Action[JsValue] = {
     Action.async(bodyParsers.json) { implicit request =>
