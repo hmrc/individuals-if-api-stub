@@ -17,9 +17,9 @@
 package unit.uk.gov.hmrc.individualsifapistub.util.domain.income
 
 import play.api.libs.json.Json
-import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
-import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
 import uk.gov.hmrc.individualsifapistub.domain.PostGradLoan
+import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
+import uk.gov.hmrc.individualsifapistub.domain.PayeResponseObject._
 
 class PostGradLoanSpec extends UnitSpec {
 

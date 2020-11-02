@@ -19,9 +19,10 @@ package uk.gov.hmrc.individualsifapistub.controllers
 import javax.inject.Inject
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
-import uk.gov.hmrc.individualsifapistub.domain.{IncomePayeResponse, IncomeSaResponse}
+import uk.gov.hmrc.individualsifapistub.domain.{IncomePaye, IncomeSa}
 import uk.gov.hmrc.individualsifapistub.services.IncomeService
-import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
+import uk.gov.hmrc.individualsifapistub.domain.PayeResponseObject._
+import uk.gov.hmrc.individualsifapistub.domain.SaResponseObject._
 
 import scala.concurrent.ExecutionContext
 
@@ -31,7 +32,7 @@ class IncomeController @Inject()( bodyParser: PlayBodyParsers,
                                 ) (implicit val ec: ExecutionContext) extends CommonController(cc) {
 
   def createSa(idType: String, idValue: String): Action[JsValue] = Action.async(bodyParser.json) { implicit request =>
-    withJsonBody[IncomeSaResponse] { createRequest =>
+    withJsonBody[IncomeSa] { createRequest =>
       incomeService.createSa(idType, idValue, createRequest) map (e => Created(Json.toJson(e)))
     } recover recovery
   }
@@ -44,7 +45,7 @@ class IncomeController @Inject()( bodyParser: PlayBodyParsers,
   }
 
   def createPaye(idType: String, idValue: String): Action[JsValue] = Action.async(bodyParser.json) { implicit request =>
-    withJsonBody[IncomePayeResponse] { createRequest =>
+    withJsonBody[IncomePaye] { createRequest =>
       incomeService.createPaye(idType, idValue, createRequest) map (e => Created(Json.toJson(e)))
     } recover recovery
   }

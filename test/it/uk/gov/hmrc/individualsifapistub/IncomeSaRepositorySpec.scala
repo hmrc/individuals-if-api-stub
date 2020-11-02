@@ -19,7 +19,7 @@ package it.uk.gov.hmrc.individualsifapistub
 import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
 import reactivemongo.api.indexes.IndexType.Ascending
-import uk.gov.hmrc.individualsifapistub.domain.{DuplicateException, IncomeSaResponse}
+import uk.gov.hmrc.individualsifapistub.domain.{DuplicateException, IncomeSa}
 import uk.gov.hmrc.individualsifapistub.repository.IncomeSaRepository
 import uk.gov.hmrc.mongo.MongoSpecSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
@@ -40,7 +40,7 @@ class IncomeSaRepositorySpec
   val trn = "12345678"
 
   val innerValue = Seq(createValidSaTaxYearEntry(), createValidSaTaxYearEntry())
-  val request = IncomeSaResponse(Some(innerValue))
+  val request = IncomeSa(Some(innerValue))
 
   override def beforeEach() {
     await(repository.drop)

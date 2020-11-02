@@ -25,39 +25,39 @@ import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.bson.BSONObjectID
 import reactivemongo.play.json._
 import uk.gov.hmrc.individualsifapistub.domain.IdType.{Nino, Trn}
-import uk.gov.hmrc.individualsifapistub.domain.{DuplicateException, Id, IdType, IncomeSaRecord, IncomeSaResponse}
-import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
+import uk.gov.hmrc.individualsifapistub.domain.SaResponseObject.incomeSaEntryFormat
+import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.mongo.ReactiveRepository
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class IncomeSaRepository @Inject()(mongoConnectionProvider: MongoConnectionProvider)(implicit val ec: ExecutionContext)
-  extends ReactiveRepository[IncomeSaRecord, BSONObjectID]( "incomeSa",
+  extends ReactiveRepository[IncomeSaEntry, BSONObjectID]( "incomeSa",
                                                             mongoConnectionProvider.mongoDatabase,
-                                                            incomeSaRecordFormat ) {
+                                                            incomeSaEntryFormat ) {
 
   override lazy val indexes = Seq(
     Index(key = Seq(("id.nino", Ascending)), name = Some("nino"), unique = true, background = true),
     Index(key = Seq(("id.trn", Ascending)), name = Some("trn"), unique = true, background = true)
   )
 
-  def create(idType: String, idValue: String, request: IncomeSaResponse): Future[IncomeSaResponse] = {
+  def create(idType: String, idValue: String, request: IncomeSa): Future[IncomeSa] = {
 
     val id = IdType.parse(idType) match {
       case Nino => Id(Some(idValue), None)
       case Trn => Id(None, Some(idValue))
     }
 
-    val incomeSaRecord = IncomeSaRecord(id, request)
+    val incomeSaRecord = IncomeSaEntry(id, request)
 
-    insert(incomeSaRecord) map (_ => incomeSaRecord.incomeSaResponse) recover {
+    insert(incomeSaRecord) map (_ => incomeSaRecord.incomeSa) recover {
       case WriteResult.Code(11000) => throw new DuplicateException
     }
   }
 
-  def findByTypeAndId(idType: String, idValue: String): Future[Option[IncomeSaResponse]] = {
+  def findByTypeAndId(idType: String, idValue: String): Future[Option[IncomeSa]] = {
     collection.find[JsObject, JsObject](obj("id" -> obj(idType -> idValue)), None)
-      .one[IncomeSaRecord].map(value => value.map(_.incomeSaResponse))
+      .one[IncomeSaEntry].map(value => value.map(_.incomeSa))
   }
 }

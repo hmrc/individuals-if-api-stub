@@ -17,26 +17,26 @@
 package uk.gov.hmrc.individualsifapistub.services
 
 import javax.inject.Inject
-import uk.gov.hmrc.individualsifapistub.domain.{IncomePayeResponse, IncomeSaResponse}
+import uk.gov.hmrc.individualsifapistub.domain.{IncomePaye, IncomeSa}
 import uk.gov.hmrc.individualsifapistub.repository.{IncomePayeRepository, IncomeSaRepository}
 
 import scala.concurrent.Future
 
 class IncomeService @Inject()(incomeSaRepository: IncomeSaRepository, incomePayeRepository: IncomePayeRepository) {
 
-  def createSa(idType: String, idValue: String, createSelfAssessmentRequest: IncomeSaResponse): Future[IncomeSaResponse] = {
+  def createSa(idType: String, idValue: String, createSelfAssessmentRequest: IncomeSa): Future[IncomeSa] = {
     incomeSaRepository.create(idType, idValue, createSelfAssessmentRequest)
   }
 
-  def getSa(idType: String, idValue: String): Future[Option[IncomeSaResponse]] = {
+  def getSa(idType: String, idValue: String): Future[Option[IncomeSa]] = {
     incomeSaRepository.findByTypeAndId(idType, idValue)
   }
 
-  def createPaye(idType: String, idValue: String, createIncomePayeRequest: IncomePayeResponse): Future[IncomePayeResponse] = {
+  def createPaye(idType: String, idValue: String, createIncomePayeRequest: IncomePaye): Future[IncomePaye] = {
     incomePayeRepository.create(idType, idValue, createIncomePayeRequest)
   }
 
-  def getPaye(idType: String, idValue: String): Future[Option[IncomePayeResponse]] = {
+  def getPaye(idType: String, idValue: String): Future[Option[IncomePaye]] = {
     incomePayeRepository.findByTypeAndId(idType, idValue)
   }
 }

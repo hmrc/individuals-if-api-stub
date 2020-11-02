@@ -19,12 +19,23 @@ package unit.uk.gov.hmrc.individualsifapistub.util.domain.income
 import play.api.libs.json.Json
 import uk.gov.hmrc.individualsifapistub.domain.GrossEarningsForNics
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
-import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
+import uk.gov.hmrc.individualsifapistub.domain.PayeResponseObject._
 
 class GrossEarningsForNicsSpec extends UnitSpec {
 
-  val validGrossEarningsForNics = GrossEarningsForNics(Some(995979.04), Some(606456.38), Some(797877.34), Some(166334.69))
-  val invalidGrossEarningsForNics = GrossEarningsForNics(Some(9999999999.99 + 1), Some(9999999999.99 + 1), Some(9999999999.99 + 1), Some(9999999999.99 + 1))
+  val validGrossEarningsForNics = GrossEarningsForNics(
+    Some(995979.04),
+    Some(606456.38),
+    Some(797877.34),
+    Some(166334.69)
+  )
+
+  val invalidGrossEarningsForNics = GrossEarningsForNics(
+    Some(9999999999.99 + 1),
+    Some(9999999999.99 + 1),
+    Some(9999999999.99 + 1),
+    Some(9999999999.99 + 1)
+  )
 
   "GrossEarningsForNics" should {
     "Write to Json" in {

@@ -22,8 +22,9 @@ import play.api.http.Status.{CREATED, OK}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.individualsifapistub.controllers.IncomeController
-import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
-import uk.gov.hmrc.individualsifapistub.domain.{IncomePayeResponse, IncomeSaResponse}
+import uk.gov.hmrc.individualsifapistub.domain.PayeResponseObject._
+import uk.gov.hmrc.individualsifapistub.domain.SaResponseObject._
+import uk.gov.hmrc.individualsifapistub.domain.{IncomePaye, IncomeSa}
 import uk.gov.hmrc.individualsifapistub.services.IncomeService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.testUtils.{IncomePayeHelpers, IncomeSaHelpers}
@@ -42,10 +43,10 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
   val idValue = "ANINO123"
 
   val innerSaValue = Seq(createValidSaTaxYearEntry(), createValidSaTaxYearEntry())
-  val incomeSaResponse = IncomeSaResponse(Some(innerSaValue))
+  val incomeSaResponse = IncomeSa(Some(innerSaValue))
 
   val innerPayeValue = Seq(createValidPayeEntry(), createValidPayeEntry())
-  val incomePayeResponse = IncomePayeResponse(Some(innerPayeValue))
+  val incomePayeResponse = IncomePaye(Some(innerPayeValue))
 
   "Sa" should {
     "Create Sa" should {

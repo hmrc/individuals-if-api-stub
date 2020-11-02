@@ -24,17 +24,17 @@ import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.individualsifapistub.domain.IdType.{Nino, Trn}
-import uk.gov.hmrc.individualsifapistub.domain.{DuplicateException, Id, IdType, IncomePayeRecord, IncomePayeResponse }
-import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
+import uk.gov.hmrc.individualsifapistub.domain.PayeResponseObject.incomePayeEntryFormat
+import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.mongo.ReactiveRepository
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class IncomePayeRepository  @Inject()(mongoConnectionProvider: MongoConnectionProvider)(implicit val ec: ExecutionContext)
-  extends ReactiveRepository[IncomePayeRecord, BSONObjectID]( "incomePaye",
+  extends ReactiveRepository[IncomePayeEntry, BSONObjectID]( "incomePaye",
     mongoConnectionProvider.mongoDatabase,
-    incomePayeRecordFormat ) {
+    incomePayeEntryFormat ) {
 
 
   override lazy val indexes = Seq(
@@ -42,22 +42,22 @@ class IncomePayeRepository  @Inject()(mongoConnectionProvider: MongoConnectionPr
     Index(key = Seq(("id.trn", Ascending)), name = Some("trn"), unique = true, background = true)
   )
 
-  def create(idType: String, idValue: String, request: IncomePayeResponse): Future[IncomePayeResponse] = {
+  def create(idType: String, idValue: String, request: IncomePaye): Future[IncomePaye] = {
 
     val id = IdType.parse(idType) match {
       case Nino => Id(Some(idValue), None)
       case Trn => Id(None, Some(idValue))
     }
 
-    val incomeSaRecord = IncomePayeRecord(id, request)
+    val incomeSaRecord = IncomePayeEntry(id, request)
 
-    insert(incomeSaRecord) map (_ => incomeSaRecord.incomePayeResponse) recover {
+    insert(incomeSaRecord) map (_ => incomeSaRecord.incomePaye) recover {
       case WriteResult.Code(11000) => throw new DuplicateException
     }
   }
 
-  def findByTypeAndId(idType: String, idValue: String): Future[Option[IncomePayeResponse]] = {
+  def findByTypeAndId(idType: String, idValue: String): Future[Option[IncomePaye]] = {
     collection.find[JsObject, JsObject](obj("id" -> obj(idType -> idValue)), None)
-      .one[IncomePayeRecord].map(value => value.map(_.incomePayeResponse))
+      .one[IncomePayeEntry].map(value => value.map(_.incomePaye))
   }
 }
