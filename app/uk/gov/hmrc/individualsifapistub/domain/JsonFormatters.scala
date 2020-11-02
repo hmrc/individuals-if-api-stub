@@ -31,23 +31,6 @@ object JsonFormatters {
     override def writes(o: DateTime): JsValue = JodaDateTimeNumberWrites.writes(o)
   }
 
-  implicit val addressFormat: Format[Address] = Format(
-    (
-      (JsPath \ "line1").readNullable[String](minLength[String](0).andKeep(maxLength[String](100))) and
-        (JsPath \ "line2").readNullable[String](minLength[String](0).andKeep(maxLength[String](100))) and
-        (JsPath \ "line3").readNullable[String](minLength[String](0).andKeep(maxLength[String](100))) and
-        (JsPath \ "line4").readNullable[String](minLength[String](0).andKeep(maxLength[String](100))) and
-        (JsPath \ "postcode").readNullable[String](minLength[String](1).andKeep(maxLength[String](10)))
-      ) (Address.apply _),
-    (
-      (JsPath \ "line1").writeNullable[String] and
-        (JsPath \ "line2").writeNullable[String] and
-        (JsPath \ "line3").writeNullable[String] and
-        (JsPath \ "line4").writeNullable[String] and
-        (JsPath \ "postcode").writeNullable[String]
-      ) (unlift(Address.unapply))
-  )
-
   implicit val createEmploymentRequestFormat = Json.format[CreateEmploymentRequest]
   implicit val createDetailsRequestFormat = Json.format[CreateDetailsRequest]
   implicit val createBenefitsAndCreditsRequestFormat = Json.format[CreateBenefitsAndCreditsRequest]
