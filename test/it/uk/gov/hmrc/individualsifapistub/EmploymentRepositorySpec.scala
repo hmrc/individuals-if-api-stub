@@ -16,18 +16,11 @@
 
 package it.uk.gov.hmrc.individualsifapistub
 
-import org.scalatest.BeforeAndAfterEach
-import play.api.Configuration
-import reactivemongo.api.indexes.IndexType.Ascending
+import testUtils.RepositoryTestHelper
 import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.individualsifapistub.repository.EmploymentRepository
-import uk.gov.hmrc.mongo.MongoSpecSupport
-import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
-class EmploymentRepositorySpec
-    extends TestSupport
-    with MongoSpecSupport
-    with BeforeAndAfterEach {
+class EmploymentRepositorySpec extends RepositoryTestHelper {
 
   val nino = "XH123456A"
   val trn = "123456789"
@@ -74,36 +67,18 @@ class EmploymentRepositorySpec
 
   val employments = Employments(Seq(employment))
 
-  override lazy val fakeApplication = buildFakeApplication(
-    Configuration("mongodb.uri" -> mongoUri))
-
   val repository =
     fakeApplication.injector.instanceOf[EmploymentRepository]
 
-  override def beforeEach() {
-    await(repository.drop)
-    await(repository.ensureIndexes)
-  }
-
-  override def afterEach() {
-    await(repository.drop)
-  }
-
   "collection" should {
-    "have a unique index on nino" in {
-      await(repository.collection.indexesManager.list()).find({ i =>
-        i.name.contains("nino") &&
-          i.key == Seq("id.nino" -> Ascending) &&
+    "have a unique index on nino and trn" in {
+      await(repository.collection.indexesManager.list()).find({ i => {
+        i.name.contains("nino-trn") &&
+          i.key.exists(key => key._1 == "id.nino") &&
+          i.key.exists(key => key._1 == "id.trn")
           i.background &&
           i.unique
-      }) should not be None
-    }
-    "have a unique index on trn" in {
-      await(repository.collection.indexesManager.list()).find({ i =>
-        i.name.contains("trn") &&
-          i.key == Seq("id.trn" -> Ascending) &&
-          i.background &&
-          i.unique
+      }
       }) should not be None
     }
   }

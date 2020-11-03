@@ -17,15 +17,15 @@
 package uk.gov.hmrc.individualsifapistub.repository
 
 import javax.inject.{Inject, Singleton}
-import play.api.libs.json.{Format, JsObject, Reads, Writes}
+import play.api.libs.json.JsObject
 import play.api.libs.json.Json.obj
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes.Index
-import reactivemongo.api.indexes.IndexType.Ascending
+import reactivemongo.api.indexes.IndexType.Text
 import reactivemongo.bson.BSONObjectID
-import uk.gov.hmrc.individualsifapistub.domain.{DuplicateException, Employment, EmploymentEntry, Employments, Id, IdType}
 import uk.gov.hmrc.individualsifapistub.domain.Employments._
 import uk.gov.hmrc.individualsifapistub.domain.IdType.{Nino, Trn}
+import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.mongo.ReactiveRepository
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,8 +38,7 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
                                                         createEmploymentEntryFormat) {
 
   override lazy val indexes = Seq(
-    Index(key = Seq(("id.nino", Ascending)), name = Some("nino"), unique = true, background = true),
-    Index(key = Seq(("id.trn", Ascending)), name = Some("trn"), unique = true, background = true)
+    Index(key = Seq(("id.nino", Text), ("id.trn", Text)), name = Some("nino-trn"), unique = true, background = true)
   )
 
   def create(idType: String, idValue: String, employments: Employments): Future[Employments] = {

@@ -360,7 +360,6 @@ class EmploymentsSpec extends UnitSpec with TestHelpers {
           |}
           |""".stripMargin
 
-      println(employmentsJson)
       val result = Json.parse(employmentsJson).validate[Employments]
       result.isSuccess shouldBe true
       result.get shouldBe Employments(Seq(employment))

@@ -61,17 +61,16 @@ case class Awards(
                    payments: Option[Payments]
                  )
 
-case class Application(id: Double, ceasedDate: Option[String], entStartDate: Option[String], entEndDate: Option[String], awards: Option[Awards])
+case class Application(id: Double, ceasedDate: Option[String], entStartDate: Option[String], entEndDate: Option[String], awards: Option[Seq[Awards]])
 
 object TaxCredits {
 
   val statusPattern = "^([ADSCX])$".r
   val methodPattern = "^([ROM])$".r
   val tcTypePattern = "^(ETC|ITC])$".r
-  val datePattern =
-    """^(((19|20)([2468][048]|[13579][26]|0[48])|2000)[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)[-]
-      |(0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-](0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|(19|20)
-      |[0-9]{2}[-]02[-](0[1-9]|1[0-9]|2[0-8])))$""".r
+  val datePattern = ("^(((19|20)([2468][048]|[13579][26]|0[48])|2000)[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)[-]" +
+    "(0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-](0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}[-]02[-]" +
+    "(0[1-9]|1[0-9]|2[0-8])))$").r
 
   val minPaymentValue = 0.0
   val maxPaymentValue = 1000000000000000.0
@@ -175,14 +174,14 @@ object TaxCredits {
       (JsPath \ "ceasedDate").readNullable[String](pattern(datePattern, "invalid date")) and
       (JsPath \ "entStartDate").readNullable[String](pattern(datePattern, "invalid date")) and
       (JsPath \ "entEndDate").readNullable[String](pattern(datePattern, "invalid date")) and
-      (JsPath \ "awards").readNullable[Awards]
+      (JsPath \ "awards").readNullable[Seq[Awards]]
     )(Application.apply _),
     (
       (JsPath \ "id").write[Double] and
       (JsPath \ "ceasedDate").writeNullable[String] and
       (JsPath \ "entStartDate").writeNullable[String] and
       (JsPath \ "entEndDate").writeNullable[String] and
-      (JsPath \ "awards").writeNullable[Awards]
+      (JsPath \ "awards").writeNullable[Seq[Awards]]
     )(unlift(Application.unapply))
   )
 

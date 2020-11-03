@@ -16,21 +16,11 @@
 
 package it.uk.gov.hmrc.individualsifapistub
 
-import org.scalatest.BeforeAndAfterEach
-import play.api.Configuration
-import reactivemongo.api.indexes.IndexType.Ascending
+import testUtils.RepositoryTestHelper
 import uk.gov.hmrc.individualsifapistub.domain.{Application, Applications}
 import uk.gov.hmrc.individualsifapistub.repository.TaxCreditsRepository
-import uk.gov.hmrc.mongo.MongoSpecSupport
-import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
-class TaxCreditsRepositorySpec
-    extends TestSupport
-    with MongoSpecSupport
-    with BeforeAndAfterEach {
-
-  override lazy val fakeApplication = buildFakeApplication(
-    Configuration("mongodb.uri" -> mongoUri))
+class TaxCreditsRepositorySpec extends RepositoryTestHelper {
 
   val repository = fakeApplication.injector.instanceOf[TaxCreditsRepository]
 
@@ -47,30 +37,16 @@ class TaxCreditsRepositorySpec
 
   val applications = Applications(Seq(application))
 
-  override def beforeEach() {
-    await(repository.drop)
-    await(repository.ensureIndexes)
-  }
-
-  override def afterEach() {
-    await(repository.drop)
-  }
-
   "collection" should {
-    "have a unique index on nino" in {
+    "have a unique index on nino and trn" in {
       await(repository.collection.indexesManager.list()).find({ i =>
-        i.name.contains("nino") &&
-          i.key == Seq("id.nino" -> Ascending) &&
+        {
+          i.name.contains("nino-trn") &&
+          i.key.exists(key => key._1 == "id.nino") &&
+          i.key.exists(key => key._1 == "id.trn")
           i.background &&
           i.unique
-      }) should not be None
-    }
-    "have a unique index on trn" in {
-      await(repository.collection.indexesManager.list()).find({ i =>
-        i.name.contains("trn") &&
-          i.key == Seq("id.trn" -> Ascending) &&
-          i.background &&
-          i.unique
+        }
       }) should not be None
     }
   }
@@ -87,8 +63,8 @@ class TaxCreditsRepositorySpec
     }
 
     "fail to create duplicate details" in {
-      await(repository.create("nino", nino, applications))
-      intercept[Exception](await(repository.create("nino", nino, applications)))
+      await(repository.create("trn", trn, applications))
+      intercept[Exception](await(repository.create("trn", trn, applications)))
     }
   }
 

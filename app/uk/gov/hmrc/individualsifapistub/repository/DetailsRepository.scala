@@ -20,25 +20,23 @@ import javax.inject.{Inject, Singleton}
 import play.api.libs.json.JsObject
 import play.api.libs.json.Json.obj
 import reactivemongo.api.indexes.Index
-import reactivemongo.api.indexes.IndexType.Ascending
+import reactivemongo.api.indexes.IndexType.Text
 import reactivemongo.bson.BSONObjectID
 import reactivemongo.play.json._
 import uk.gov.hmrc.individualsifapistub.domain.IdType.{Nino, Trn}
-import uk.gov.hmrc.individualsifapistub.domain.{CreateDetailsRequest, DetailsResponse, Id, IdType, JsonFormatters}
+import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.mongo.ReactiveRepository
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvider)
+class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvider)(implicit val ec: ExecutionContext)
   extends ReactiveRepository[DetailsResponse, BSONObjectID]("details",
     mongoConnectionProvider.mongoDatabase,
     JsonFormatters.detailsResponseFormat) {
 
   override lazy val indexes = Seq(
-    Index(key = Seq(("details.nino", Ascending)), name = Some("nino"), unique = true, background = true),
-    Index(key = Seq(("details.trn", Ascending)), name = Some("trn"), unique = true, background = true)
+    Index(key = Seq(("details.nino", Text), ("details.trn", Text)), name = Some("nino-trn"), unique = true, background = true)
   )
 
   def create(idType: String, idValue: String, createDetailsRequest: CreateDetailsRequest): Future[DetailsResponse] = {

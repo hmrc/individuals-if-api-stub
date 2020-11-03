@@ -19,18 +19,13 @@ package it.uk.gov.hmrc.individualsifapistub
 import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
 import reactivemongo.api.indexes.IndexType.Ascending
+import testUtils.RepositoryTestHelper
 import uk.gov.hmrc.individualsifapistub.domain.{CreateIncomeRequest, DuplicateException, Income}
 import uk.gov.hmrc.individualsifapistub.repository.IncomeRepository
 import uk.gov.hmrc.mongo.MongoSpecSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
-class IncomeRepositorySpec
-    extends TestSupport
-    with MongoSpecSupport
-    with BeforeAndAfterEach {
-
-  override lazy val fakeApplication = buildFakeApplication(
-    Configuration("mongodb.uri" -> mongoUri))
+class IncomeRepositorySpec extends RepositoryTestHelper {
 
   val repository = fakeApplication.injector.instanceOf[IncomeRepository]
 
@@ -38,14 +33,6 @@ class IncomeRepositorySpec
   val request = CreateIncomeRequest("request")
   val selfAssessment = Income(id, request.body)
 
-  override def beforeEach() {
-    await(repository.drop)
-    await(repository.ensureIndexes)
-  }
-
-  override def afterEach() {
-    await(repository.drop)
-  }
 
   "collection" should {
     "have a unique index on id" in {

@@ -21,13 +21,13 @@ import play.api.libs.json.JsObject
 import play.api.libs.json.Json.obj
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes.Index
-import reactivemongo.api.indexes.IndexType.Ascending
+import reactivemongo.api.indexes.IndexType.Text
 import reactivemongo.bson.BSONObjectID
 import reactivemongo.play.json._
 import uk.gov.hmrc.individualsifapistub.domain.IdType.{Nino, Trn}
-import uk.gov.hmrc.individualsifapistub.domain.{Applications, DuplicateException, Employments, Id, IdType, JsonFormatters, TaxCredits, TaxCreditsEntry}
-import uk.gov.hmrc.mongo.ReactiveRepository
 import uk.gov.hmrc.individualsifapistub.domain.TaxCredits._
+import uk.gov.hmrc.individualsifapistub.domain._
+import uk.gov.hmrc.mongo.ReactiveRepository
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -35,11 +35,11 @@ import scala.concurrent.{ExecutionContext, Future}
 class TaxCreditsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvider)(implicit val ec: ExecutionContext)
   extends ReactiveRepository[TaxCreditsEntry, BSONObjectID]( "taxCredits",
                                                                 mongoConnectionProvider.mongoDatabase,
-                                                                TaxCredits.taxCreditsEntryFormat) {
+                                                                TaxCredits.taxCreditsEntryFormat
+                                                              ) {
 
   override lazy val indexes = Seq(
-    Index(key = Seq(("id.nino", Ascending)), name = Some("nino"), unique = true, background = true),
-    Index(key = Seq(("id.trn", Ascending)), name = Some("trn"), unique = true, background = true)
+    Index(key = Seq(("id.nino", Text), ("id.trn", Text)), name = Some("nino-trn"), unique = true, background = true)
   )
 
   def create(idType: String, idValue: String, applications: Applications): Future[Applications] = {

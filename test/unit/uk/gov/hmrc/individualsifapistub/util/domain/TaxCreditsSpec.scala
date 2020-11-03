@@ -71,7 +71,7 @@ class TaxCreditsSpec extends UnitSpec with TestHelpers {
     ceasedDate = Some("2012-12-12"),
     entStartDate = Some("2012-12-12"),
     entEndDate = Some("2012-12-12"),
-    awards = Some(validAwards)
+    awards = Some(Seq(validAwards))
   )
 
   "Payments" should {
@@ -285,7 +285,7 @@ class TaxCreditsSpec extends UnitSpec with TestHelpers {
           |  "ceasedDate" : "2012-12-12",
           |  "entStartDate" : "2012-12-12",
           |  "entEndDate" : "2012-12-12",
-          |  "awards" : {
+          |  "awards" : [ {
           |    "payProfCalcDate" : "2012-12-12",
           |    "startDate" : "2012-12-12",
           |    "endDate" : "2012-12-12",
@@ -317,11 +317,10 @@ class TaxCreditsSpec extends UnitSpec with TestHelpers {
           |      "amount" : 1234134123,
           |      "method" : "R"
           |    }
-          |  }
+          |  } ]
           |}
           |""".stripMargin
 
-      println(applicationJson)
       val result = Json.parse(applicationJson).validate[Application]
       result.isSuccess shouldBe true
       result.get shouldBe validApplication

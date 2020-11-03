@@ -16,22 +16,12 @@
 
 package it.uk.gov.hmrc.individualsifapistub
 
-import org.scalatest.BeforeAndAfterEach
-import play.api.Configuration
-import reactivemongo.api.indexes.IndexType.Ascending
-import testUtils.TestHelpers
-import uk.gov.hmrc.individualsifapistub.domain.{ContactDetail, CreateDetailsRequest, DetailsResponse, Id, Residence}
+import reactivemongo.api.indexes.IndexType.Text
+import testUtils.{RepositoryTestHelper, TestHelpers}
+import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.individualsifapistub.repository.DetailsRepository
-import uk.gov.hmrc.mongo.MongoSpecSupport
-import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
-class DetailsRepositorySpec
-    extends TestSupport
-    with MongoSpecSupport
-    with BeforeAndAfterEach with TestHelpers{
-
-  override lazy val fakeApplication = buildFakeApplication(
-    Configuration("mongodb.uri" -> mongoUri))
+class DetailsRepositorySpec extends RepositoryTestHelper with TestHelpers {
 
   val repository = fakeApplication.injector.instanceOf[DetailsRepository]
 
@@ -45,29 +35,16 @@ class DetailsRepositorySpec
       Residence(residenceType = Some("NOMINATED"), address = generateAddress(1))))
   )
 
-  override def beforeEach() {
-    await(repository.drop)
-    await(repository.ensureIndexes)
-  }
-
-  override def afterEach() {
-  }
-
   "collection" should {
-    "have a unique index on nino" in {
+    "have a unique index on nino and trn" in {
       await(repository.collection.indexesManager.list()).find({ i =>
-        i.name.contains("nino") &&
-        i.key == Seq("details.nino" -> Ascending) &&
-        i.background &&
-        i.unique
-      }) should not be None
-    }
-    "have a unique index on trn" in {
-      await(repository.collection.indexesManager.list()).find({ i =>
-        i.name.contains("trn") &&
-          i.key == Seq("details.trn" -> Ascending) &&
+      {
+        i.name.contains("nino-trn") &&
+          i.key.exists(key => key._1 == "id.nino") &&
+          i.key.exists(key => key._1 == "id.trn")
           i.background &&
           i.unique
+      }
       }) should not be None
     }
   }

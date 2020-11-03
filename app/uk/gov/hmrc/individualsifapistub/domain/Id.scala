@@ -34,12 +34,12 @@ object Id {
   implicit val idFormat: Format[Id] = Format(
     (
       (JsPath \ "nino").readNullable[String](pattern(ninoPattern, "InvalidNino")) and
-        (JsPath \ "trn").readNullable[String](pattern(trnPattern, "InvalidTrn"))
-      )(Id.apply _),
+      (JsPath \ "trn").readNullable[String](pattern(trnPattern, "InvalidTrn"))
+    )(Id.apply _),
     (
       (JsPath \ "nino").writeNullable[String] and
-        (JsPath \ "trn").writeNullable[String]
-      )(unlift(Id.unapply))
+      (JsPath \ "trn").writeNullable[String]
+    )(unlift(Id.unapply))
   )
 }
 
