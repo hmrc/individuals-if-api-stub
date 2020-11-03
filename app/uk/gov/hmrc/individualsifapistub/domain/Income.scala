@@ -19,9 +19,15 @@ package uk.gov.hmrc.individualsifapistub.domain
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.libs.json.Reads._
-import uk.gov.hmrc.individualsifapistub.domain.SaResponseObject.paymentAmountValidator
+import uk.gov.hmrc.individualsifapistub.domain.IncomeSa.paymentAmountValidator
 
-case class Address(line1: Option[String], line2: Option[String], line3: Option[String], line4: Option[String], postcode: Option[String])
+case class Address(
+                    line1: Option[String],
+                    line2: Option[String],
+                    line3: Option[String],
+                    line4: Option[String],
+                    postcode: Option[String]
+                  )
 
 case class PostGradLoan(repaymentsInPayPeriod: Option[Double], repaymentsYtd: Option[Double])
 
@@ -75,7 +81,7 @@ case class PayeEntry(
                       employeeNics: Option[EmployeeNics],
                       employeePensionContribs: Option[EmployeePensionContribs],
                       benefits: Option[Benefits],
-                      parentalBereavement: Option[Double], // REMINDER TO SEL, THIS IS NESTED statutoryPayYTD / parentalBereavement
+                      parentalBereavement: Option[Double],
                       studentLoan: Option[StudentLoan],
                       postGradLoan: Option[PostGradLoan]
                     )
@@ -124,13 +130,18 @@ case class IncomeSa(sa: Option[Seq[SaTaxYearEntry]])
 
 case class IncomePaye(paye: Option[Seq[PayeEntry]])
 
-object SaResponseObject {
+object IncomeSa {
 
   val minValue = -9999999999.99
   val maxValue = 9999999999.99
 
   val utrPattern = "^[0-9]{10}$".r
-  val dateStringPattern = "^(((19|20)([2468][048]|[13579][26]|0[48])|2000)[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)[-](0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-](0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}[-]02[-](0[1-9]|1[0-9]|2[0-8])))$".r
+  val dateStringPattern = ("^(((19|20)([2468][048]|[13579][26]|0[48])|2000)" +
+    "[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)[-]" +
+    "(0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-]" +
+    "(0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}[-]02[-]" +
+    "(0[1-9]|1[0-9]|2[0-8])))$").r
+
   val taxYearPattern = "^20[0-9]{2}$".r
 
   def isMultipleOfPointZeroOne(value: Double): Boolean = (BigDecimal(value) * 100.0) % 1 == 0
@@ -195,12 +206,18 @@ object SaResponseObject {
   implicit val saReturnTypeFormat: Format[SaReturnType] = Format(
     (
       (JsPath \ "utr").readNullable[String](pattern(utrPattern, "Invalid UTR")) and
-        (JsPath \ "caseStartDate").readNullable[String](pattern(dateStringPattern, "Invalid Case Start Date")) and
-        (JsPath \ "receivedDate").readNullable[String](pattern(dateStringPattern, "Invalid Received Date")) and
-        (JsPath \ "businessDescription").readNullable[String](minLength[String](0).keepAnd(maxLength[String](100))) and
-        (JsPath \ "telephoneNumber").readNullable[String](minLength[String](0).keepAnd(maxLength[String](100))) and
-        (JsPath \ "busStartDate").readNullable[String](pattern(dateStringPattern, "Invalid Business Start Date")) and
-        (JsPath \ "busEndDate").readNullable[String](pattern(dateStringPattern, "Invalid Business End Date")) and
+        (JsPath \ "caseStartDate").readNullable[String]
+          (pattern(dateStringPattern, "Invalid Case Start Date")) and
+        (JsPath \ "receivedDate").readNullable[String]
+          (pattern(dateStringPattern, "Invalid Received Date")) and
+        (JsPath \ "businessDescription").readNullable[String]
+          (minLength[String](0).keepAnd(maxLength[String](100))) and
+        (JsPath \ "telephoneNumber").readNullable[String]
+          (minLength[String](0).keepAnd(maxLength[String](100))) and
+        (JsPath \ "busStartDate").readNullable[String]
+          (pattern(dateStringPattern, "Invalid Business Start Date")) and
+        (JsPath \ "busEndDate").readNullable[String]
+          (pattern(dateStringPattern, "Invalid Business End Date")) and
         (JsPath \ "totalTaxPaid").readNullable[Double](paymentAmountValidator) and
         (JsPath \ "totalNIC").readNullable[Double](paymentAmountValidator) and
         (JsPath \ "turnover").readNullable[Double](paymentAmountValidator) and
@@ -257,12 +274,15 @@ object SaResponseObject {
   )
 }
 
-object PayeResponseObject {
+object IncomePaye {
   val studentLoanPlanTypePattern = "^(01|02)$".r
   val taxCodePattern = "^([1-9][0-9]{0,5}[LMNPTY])|(BR)|(0T)|(NT)|(D[0-8])|([K][1-9][0-9]{0,5})$".r
   val paidHoursWorkPattern = "^[^ ].{0,34}$".r
   val employerPayeRefPattern = "^[^ ].{1,9}$".r
-  val paymentDatePattern = "^(((19|20)([2468][048]|[13579][26]|0[48])|2000)[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)[-](0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-](0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}[-]02[-](0[1-9]|1[0-9]|2[0-8])))$".r
+  val paymentDatePattern = ("^(((19|20)([2468][048]|[13579][26]|0[48])|2000)[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)" +
+    "[-](0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-](0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}" +
+    "[-]02[-](0[1-9]|1[0-9]|2[0-8])))$").r
+
   val payeTaxYearPattern = "^[0-9]{2}\\-[0-9]{2}$".r
   val monthlyPeriodNumberPattern = "^([1-9]|1[0-2])$".r
   val weeklyPeriodNumberPattern = "^([1-9]|[1-4][0-9]|5[0-46])$".r
@@ -286,7 +306,8 @@ object PayeResponseObject {
 
   implicit val studentLoanFormat: Format[StudentLoan] = Format(
     (
-      (JsPath \ "planType").readNullable[String](pattern(studentLoanPlanTypePattern, "Invalid student loan plan type")) and
+      (JsPath \ "planType").readNullable[String]
+        (pattern(studentLoanPlanTypePattern, "Invalid student loan plan type")) and
         (JsPath \ "repaymentsInPayPeriod").readNullable[Double](paymentAmountValidator) and
         (JsPath \ "repaymentsYTD").readNullable[Double](paymentAmountValidator)
       ) (StudentLoan.apply _),
@@ -363,17 +384,28 @@ object PayeResponseObject {
 
   implicit val payeEntryFormat: Format[PayeEntry] = Format(
     (
-      (JsPath \ "taxCode").readNullable[String](minLength[String](2).keepAnd(maxLength[String](7).keepAnd(pattern(taxCodePattern, "Invalid Tax Code")))) and
-        (JsPath \ "paidHoursWorked").readNullable[String](maxLength[String](35).keepAnd(pattern(paidHoursWorkPattern, "Invalid Paid Hours Work"))) and
+      (JsPath \ "taxCode").readNullable[String]
+        (minLength[String](2)
+          .keepAnd(maxLength[String](7)
+            .keepAnd(pattern(taxCodePattern, "Invalid Tax Code")))) and
+        (JsPath \ "paidHoursWorked").readNullable[String]
+          (maxLength[String](35)
+            .keepAnd(pattern(paidHoursWorkPattern, "Invalid Paid Hours Work"))) and
         (JsPath \ "taxablePayToDate").readNullable[Double](paymentAmountValidator) and
         (JsPath \ "totalTaxToDate").readNullable[Double](paymentAmountValidator) and
         (JsPath \ "taxDeductedOrRefunded").readNullable[Double](paymentAmountValidator) and
-        (JsPath \ "employerPayeRef").readNullable[String](maxLength[String](10).keepAnd(pattern(employerPayeRefPattern, "Invalid employer PAYE reference"))) and
+        (JsPath \ "employerPayeRef").readNullable[String]
+          (maxLength[String](10)
+            .keepAnd(pattern(employerPayeRefPattern, "Invalid employer PAYE reference"))) and
         (JsPath \ "paymentDate").readNullable[String](pattern(paymentDatePattern, "Invalid Payment Date")) and
         (JsPath \ "taxablePay").readNullable[Double](paymentAmountValidator) and
         (JsPath \ "taxYear").readNullable[String](pattern(payeTaxYearPattern, "Invalid Tax Year")) and
-        (JsPath \ "monthlyPeriodNumber").readNullable[String](pattern(monthlyPeriodNumberPattern, "Invalid Monthly Period Number").keepAnd(minLength[String](1)).keepAnd(maxLength[String](2))) and
-        (JsPath \ "weeklyPeriodNumber").readNullable[String](pattern(weeklyPeriodNumberPattern, "Invalid Weekly Period Number").keepAnd(minLength[String](1)).keepAnd(maxLength[String](2))) and
+        (JsPath \ "monthlyPeriodNumber").readNullable[String]
+          (pattern(monthlyPeriodNumberPattern, "Invalid Monthly Period Number")
+            .keepAnd(minLength[String](1)).keepAnd(maxLength[String](2))) and
+        (JsPath \ "weeklyPeriodNumber").readNullable[String]
+          (pattern(weeklyPeriodNumberPattern, "Invalid Weekly Period Number")
+            .keepAnd(minLength[String](1)).keepAnd(maxLength[String](2))) and
         (JsPath \ "payFrequency").readNullable[String](isInPayFrequency) and
         (JsPath \ "dednsFromNetPay").readNullable[Double](paymentAmountValidator) and
         (JsPath \ "employeeNICs").readNullable[EmployeeNics] and

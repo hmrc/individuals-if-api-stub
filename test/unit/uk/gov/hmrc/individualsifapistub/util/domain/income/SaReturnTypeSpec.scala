@@ -19,7 +19,7 @@ package unit.uk.gov.hmrc.individualsifapistub.util.domain.income
 import play.api.libs.json.Json
 import uk.gov.hmrc.individualsifapistub.domain.{Address, SaIncome, SaReturnType}
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
-import uk.gov.hmrc.individualsifapistub.domain.SaResponseObject._
+import uk.gov.hmrc.individualsifapistub.domain.IncomeSa._
 
 class SaReturnTypeSpec extends  UnitSpec {
 

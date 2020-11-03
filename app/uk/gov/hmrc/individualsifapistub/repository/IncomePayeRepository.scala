@@ -24,7 +24,7 @@ import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Text
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.individualsifapistub.domain.IdType.{Nino, Trn}
-import uk.gov.hmrc.individualsifapistub.domain.PayeResponseObject.incomePayeEntryFormat
+import uk.gov.hmrc.individualsifapistub.domain.IncomePaye.incomePayeEntryFormat
 import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.mongo.ReactiveRepository
 

@@ -21,8 +21,8 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
 import uk.gov.hmrc.individualsifapistub.domain.{IncomePaye, IncomeSa}
 import uk.gov.hmrc.individualsifapistub.services.IncomeService
-import uk.gov.hmrc.individualsifapistub.domain.PayeResponseObject._
-import uk.gov.hmrc.individualsifapistub.domain.SaResponseObject._
+import uk.gov.hmrc.individualsifapistub.domain.IncomePaye._
+import uk.gov.hmrc.individualsifapistub.domain.IncomeSa._
 
 import scala.concurrent.ExecutionContext
 

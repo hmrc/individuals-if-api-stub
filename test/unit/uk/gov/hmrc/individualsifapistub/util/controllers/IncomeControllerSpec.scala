@@ -22,8 +22,8 @@ import play.api.http.Status.{CREATED, OK}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.individualsifapistub.controllers.IncomeController
-import uk.gov.hmrc.individualsifapistub.domain.PayeResponseObject._
-import uk.gov.hmrc.individualsifapistub.domain.SaResponseObject._
+import uk.gov.hmrc.individualsifapistub.domain.IncomePaye._
+import uk.gov.hmrc.individualsifapistub.domain.IncomeSa._
 import uk.gov.hmrc.individualsifapistub.domain.{IncomePaye, IncomeSa}
 import uk.gov.hmrc.individualsifapistub.services.IncomeService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport

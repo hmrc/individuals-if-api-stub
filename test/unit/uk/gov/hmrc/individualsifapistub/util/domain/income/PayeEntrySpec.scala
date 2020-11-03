@@ -19,7 +19,7 @@ package unit.uk.gov.hmrc.individualsifapistub.util.domain.income
 import play.api.libs.json.Json
 import uk.gov.hmrc.individualsifapistub.domain._
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
-import uk.gov.hmrc.individualsifapistub.domain.PayeResponseObject._
+import uk.gov.hmrc.individualsifapistub.domain.IncomePaye._
 
 class PayeEntrySpec extends UnitSpec {
 
