@@ -18,7 +18,7 @@ package unit.uk.gov.hmrc.individualsifapistub.util.controllers
 
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
-import play.api.http.Status.{CREATED, OK}
+import play.api.http.Status.{CREATED, OK, BAD_REQUEST}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.individualsifapistub.controllers.IncomeController

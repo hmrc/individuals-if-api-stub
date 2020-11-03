@@ -17,20 +17,20 @@
 package uk.gov.hmrc.individualsifapistub.services
 
 import javax.inject.Inject
-import uk.gov.hmrc.individualsifapistub.domain.{BenefitsAndCredits, CreateBenefitsAndCreditsRequest}
-import uk.gov.hmrc.individualsifapistub.repository.BenefitsAndCreditsRepository
+import uk.gov.hmrc.individualsifapistub.domain.Applications
+import uk.gov.hmrc.individualsifapistub.repository.TaxCreditsRepository
 
 import scala.concurrent.Future
 
-class BenefitsAndCreditsService @Inject()(repository: BenefitsAndCreditsRepository) {
+class TaxCreditsService @Inject()(repository: TaxCreditsRepository) {
 
   def create(idType: String,
              idValue: String,
-             createBenefitsAndCreditsRequest: CreateBenefitsAndCreditsRequest): Future[BenefitsAndCredits] = {
-    repository.create(s"$idType-$idValue", createBenefitsAndCreditsRequest)
+             applications: Applications): Future[Applications] = {
+    repository.create(idType, idValue, applications)
   }
 
-  def get(idType: String, idValue: String): Future[Option[BenefitsAndCredits]] = {
-    repository.findById(s"$idType-$idValue")
+  def get(idType: String, idValue: String): Future[Option[Applications]] = {
+    repository.findByIdAndType(idType, idValue)
   }
 }

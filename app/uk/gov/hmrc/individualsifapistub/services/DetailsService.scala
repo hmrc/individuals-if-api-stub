@@ -17,7 +17,7 @@
 package uk.gov.hmrc.individualsifapistub.services
 
 import javax.inject.Inject
-import uk.gov.hmrc.individualsifapistub.domain.{CreateDetailsRequest, Details}
+import uk.gov.hmrc.individualsifapistub.domain.{CreateDetailsRequest, DetailsResponse}
 import uk.gov.hmrc.individualsifapistub.repository.DetailsRepository
 
 import scala.concurrent.Future
@@ -26,11 +26,11 @@ class DetailsService @Inject()(detailsRepository: DetailsRepository) {
 
   def create( idType: String,
               idValue:String,
-              createDetailsRequest: CreateDetailsRequest): Future[Details] = {
-    detailsRepository.create(s"$idType-$idValue", createDetailsRequest)
+              createDetailsRequest: CreateDetailsRequest): Future[DetailsResponse] = {
+    detailsRepository.create(idType, idValue, createDetailsRequest)
   }
 
-  def get(idType: String, idValue:String): Future[Option[Details]] = {
-    detailsRepository.findById(s"$idType-$idValue")
+  def get(idType: String, idValue:String): Future[Option[DetailsResponse]] = {
+    detailsRepository.findByIdAndType(idType, idValue)
   }
 }

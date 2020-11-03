@@ -19,8 +19,8 @@ package uk.gov.hmrc.individualsifapistub.controllers
 import javax.inject.Inject
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
-import uk.gov.hmrc.individualsifapistub.domain.CreateEmploymentRequest
-import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
+import uk.gov.hmrc.individualsifapistub.domain.Employments
+import uk.gov.hmrc.individualsifapistub.domain.Employments._
 import uk.gov.hmrc.individualsifapistub.services.EmploymentsService
 
 import scala.concurrent.ExecutionContext
@@ -30,10 +30,12 @@ class EmploymentsController @Inject()( bodyParser: PlayBodyParsers,
                                        employmentsService: EmploymentsService
                                      ) (implicit val ec: ExecutionContext) extends CommonController(cc) {
 
-  def create(idType: String, idValue: String): Action[JsValue] = Action.async(bodyParser.json) { implicit request =>
-    withJsonBody[CreateEmploymentRequest] { createRequest =>
-      employmentsService.create(idType, idValue, createRequest) map (e => Created(Json.toJson(e)))
-    } recover recovery
+  def create(idType: String, idValue: String): Action[JsValue] = {
+    Action.async(bodyParser.json) { implicit request =>
+      withJsonBodyAndValidId[Employments](idType, idValue) {
+          jsonBody => employmentsService.create(idType, idValue, jsonBody) map (e => Created(Json.toJson(e)))
+      } recover recovery
+    }
   }
 
   def retrieve(idType: String, idValue: String): Action[AnyContent] = Action.async { implicit request =>

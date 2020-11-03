@@ -18,19 +18,19 @@ package uk.gov.hmrc.individualsifapistub.domain
 
 object IdType {
 
-  sealed trait IdTypeEnum
+    sealed trait IdTypeEnum
 
-  case object Nino extends IdTypeEnum {
-    override def toString: String = "nino"
-  }
-  case object Trn extends IdTypeEnum {
-    override def toString: String = "trn"
-  }
-
-  def parse(value: String): IdTypeEnum =
-    value.toLowerCase match {
-      case "nino" => Nino
-      case "trn" => Trn
-      case _ => throw new IllegalArgumentException(s"$value is not a valid IdType")
+    case object Nino extends IdTypeEnum {
+        override def toString: String = "nino"
     }
+    case object Trn extends IdTypeEnum {
+        override def toString: String = "trn"
+    }
+
+    def parse(value: String): IdTypeEnum =
+        value.toLowerCase match {
+            case "nino" => Nino
+            case "trn" => Trn
+            case _ => throw new IllegalArgumentException(s"$value is not a valid IdType")
+        }
 }

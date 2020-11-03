@@ -20,29 +20,37 @@ import javax.inject.{Inject, Singleton}
 import play.api.libs.json.JsObject
 import play.api.libs.json.Json.obj
 import reactivemongo.api.indexes.Index
-import reactivemongo.api.indexes.IndexType.Ascending
+import reactivemongo.api.indexes.IndexType.Text
 import reactivemongo.bson.BSONObjectID
 import reactivemongo.play.json._
-import uk.gov.hmrc.individualsifapistub.domain.{CreateDetailsRequest, Details, JsonFormatters}
+import uk.gov.hmrc.individualsifapistub.domain.IdType.{Nino, Trn}
+import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.mongo.ReactiveRepository
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvider)
-  extends ReactiveRepository[Details, BSONObjectID](  "details",
-                                                      mongoConnectionProvider.mongoDatabase,
-                                                      JsonFormatters.detailsFormat) {
+class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvider)(implicit val ec: ExecutionContext)
+  extends ReactiveRepository[DetailsResponse, BSONObjectID]("details",
+    mongoConnectionProvider.mongoDatabase,
+    JsonFormatters.detailsResponseFormat) {
 
   override lazy val indexes = Seq(
-    Index(key = Seq(("id", Ascending)), name = Some("idIndex"), unique = true, background = true)
+    Index(key = Seq(("details.nino", Text), ("details.trn", Text)), name = Some("nino-trn"), unique = true, background = true)
   )
 
-  def create(id: String, createDetailsRequest: CreateDetailsRequest): Future[Details] = {
-    val details = Details(id, createDetailsRequest.body)
-    insert(details) map (_ => details)
+  def create(idType: String, idValue: String, createDetailsRequest: CreateDetailsRequest): Future[DetailsResponse] = {
+
+    val id = IdType.parse(idType) match {
+      case Nino => Id(Some(idValue), None)
+      case Trn => Id(None, Some(idValue))
+    }
+
+    val detailsResponse = DetailsResponse(id, createDetailsRequest.contactDetails, createDetailsRequest.residences)
+    insert(detailsResponse) map (_ => detailsResponse)
   }
 
-  def findById(id: String): Future[Option[Details]] = collection.find[JsObject, JsObject](obj("id" -> id), None).one[Details]
+  def findByIdAndType(idType: String, idValue: String): Future[Option[DetailsResponse]] = {
+    collection.find[JsObject, JsObject](obj("details" -> obj(idType -> idValue)), None).one[DetailsResponse]
+  }
 }

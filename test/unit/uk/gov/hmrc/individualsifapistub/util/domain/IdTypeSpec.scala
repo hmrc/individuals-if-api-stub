@@ -16,11 +16,12 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.domain
 
+import testUtils.TestHelpers
 import uk.gov.hmrc.individualsifapistub.domain.IdType.{Nino, Trn}
 import uk.gov.hmrc.individualsifapistub.domain._
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
-class IdTypeSpec extends UnitSpec {
+class IdTypeSpec extends UnitSpec with TestHelpers {
 
   "IdType" should {
     "parse 'nino' successfully" in {
