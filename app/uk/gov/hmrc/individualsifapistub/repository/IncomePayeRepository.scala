@@ -38,7 +38,7 @@ class IncomePayeRepository  @Inject()(mongoConnectionProvider: MongoConnectionPr
 
 
   override lazy val indexes = Seq(
-    Index(key = Seq(("details.nino", Text), ("details.trn", Text)), name = Some("nino-trn"), unique = true, background = true)
+    Index(key = Seq(("id.nino", Text), ("id.trn", Text)), name = Some("nino-trn"), unique = true, background = true)
   )
 
   def create(idType: String, idValue: String, request: IncomePaye): Future[IncomePaye] = {
@@ -48,9 +48,9 @@ class IncomePayeRepository  @Inject()(mongoConnectionProvider: MongoConnectionPr
       case Trn => Id(None, Some(idValue))
     }
 
-    val incomeSaRecord = IncomePayeEntry(id, request)
+    val incomeSaEntry = IncomePayeEntry(id, request)
 
-    insert(incomeSaRecord) map (_ => incomeSaRecord.incomePaye) recover {
+    insert(incomeSaEntry) map (_ => incomeSaEntry.incomePaye) recover {
       case WriteResult.Code(11000) => throw new DuplicateException
     }
   }

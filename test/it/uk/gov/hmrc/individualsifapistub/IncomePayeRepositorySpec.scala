@@ -63,7 +63,7 @@ class IncomePayeRepositorySpec
 
     "fail to create a duplicate paye" in {
       await(repository.create("nino", nino, request))
-      intercept[Exception](
+      intercept[DuplicateException](
         await(repository.create("nino", nino, request))
       )
     }
@@ -77,7 +77,7 @@ class IncomePayeRepositorySpec
 
     "fail to create a duplicate paye record" in {
       await(repository.create("trn", trn, request))
-      intercept[Exception](
+      intercept[DuplicateException](
         await(repository.create("trn", trn, request))
       )
     }

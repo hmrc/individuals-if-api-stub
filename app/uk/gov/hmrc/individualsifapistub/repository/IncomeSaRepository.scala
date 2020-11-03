@@ -38,7 +38,7 @@ class IncomeSaRepository @Inject()(mongoConnectionProvider: MongoConnectionProvi
                                                             incomeSaEntryFormat ) {
 
   override lazy val indexes = Seq(
-    Index(key = Seq(("details.nino", Text), ("details.trn", Text)), name = Some("nino-trn"), unique = true, background = true)
+    Index(key = Seq(("id.nino", Text), ("id.trn", Text)), name = Some("nino-trn"), unique = true, background = true)
   )
 
   def create(idType: String, idValue: String, request: IncomeSa): Future[IncomeSa] = {
