@@ -18,15 +18,15 @@ package it.uk.gov.hmrc.individualsifapistub
 
 import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
-import reactivemongo.api.indexes.IndexType.Ascending
+import reactivemongo.api.indexes.IndexType.Text
+import testUtils.RepositoryTestHelper
 import uk.gov.hmrc.individualsifapistub.domain.{DuplicateException, IncomePaye}
 import uk.gov.hmrc.individualsifapistub.repository.IncomePayeRepository
 import uk.gov.hmrc.mongo.MongoSpecSupport
-import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.testUtils.IncomePayeHelpers
 
 class IncomePayeRepositorySpec
-    extends TestSupport
+    extends RepositoryTestHelper
     with MongoSpecSupport
     with BeforeAndAfterEach
     with IncomePayeHelpers {
@@ -42,30 +42,15 @@ class IncomePayeRepositorySpec
   val innerValue = Seq(createValidPayeEntry(), createValidPayeEntry())
   val request = IncomePaye(Some(innerValue))
 
-  override def beforeEach() {
-    await(repository.drop)
-    await(repository.ensureIndexes)
-  }
-
-  override def afterEach() {
-    await(repository.drop)
-  }
-
   "collection" should {
-    "have a unique index on nino" in {
-      await(repository.collection.indexesManager.list()).find({ i =>
-        i.name.contains("nino") &&
-          i.key == Seq("id.nino" -> Ascending) &&
-          i.background &&
+    "have a unique index on nino and trn" in {
+      await(repository.collection.indexesManager.list()).find({ i => {
+        i.name.contains("nino-trn") &&
+          i.key.exists(key => key._1 == "id.nino") &&
+          i.key.exists(key => key._1 == "id.trn")
+        i.background &&
           i.unique
-      }) should not be None
-    }
-    "have a unique index on trn" in {
-      await(repository.collection.indexesManager.list()).find({ i =>
-        i.name.contains("trn") &&
-          i.key == Seq("id.trn" -> Ascending) &&
-          i.background &&
-          i.unique
+      }
       }) should not be None
     }
   }
@@ -78,7 +63,7 @@ class IncomePayeRepositorySpec
 
     "fail to create a duplicate paye" in {
       await(repository.create("nino", nino, request))
-      intercept[DuplicateException](
+      intercept[Exception](
         await(repository.create("nino", nino, request))
       )
     }
@@ -92,7 +77,7 @@ class IncomePayeRepositorySpec
 
     "fail to create a duplicate paye record" in {
       await(repository.create("trn", trn, request))
-      intercept[DuplicateException](
+      intercept[Exception](
         await(repository.create("trn", trn, request))
       )
     }

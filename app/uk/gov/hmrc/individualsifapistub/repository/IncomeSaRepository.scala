@@ -21,7 +21,7 @@ import play.api.libs.json.JsObject
 import play.api.libs.json.Json.obj
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes.Index
-import reactivemongo.api.indexes.IndexType.Ascending
+import reactivemongo.api.indexes.IndexType.Text
 import reactivemongo.bson.BSONObjectID
 import reactivemongo.play.json._
 import uk.gov.hmrc.individualsifapistub.domain.IdType.{Nino, Trn}
@@ -38,8 +38,7 @@ class IncomeSaRepository @Inject()(mongoConnectionProvider: MongoConnectionProvi
                                                             incomeSaEntryFormat ) {
 
   override lazy val indexes = Seq(
-    Index(key = Seq(("id.nino", Ascending)), name = Some("nino"), unique = true, background = true),
-    Index(key = Seq(("id.trn", Ascending)), name = Some("trn"), unique = true, background = true)
+    Index(key = Seq(("details.nino", Text), ("details.trn", Text)), name = Some("nino-trn"), unique = true, background = true)
   )
 
   def create(idType: String, idValue: String, request: IncomeSa): Future[IncomeSa] = {
