@@ -18,7 +18,7 @@ package testUtils
 
 import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
-import uk.gov.hmrc.individualsifapistub.repository.{DetailsRepository, EmploymentRepository, IncomeRepository, TaxCreditsRepository}
+import uk.gov.hmrc.individualsifapistub.repository.{DetailsRepository, EmploymentRepository, IncomePayeRepository, IncomeSaRepository, TaxCreditsRepository}
 import uk.gov.hmrc.mongo.MongoSpecSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
@@ -33,7 +33,8 @@ trait RepositoryTestHelper extends TestSupport
     fakeApplication.injector.instanceOf[TaxCreditsRepository],
     fakeApplication.injector.instanceOf[EmploymentRepository],
     fakeApplication.injector.instanceOf[DetailsRepository],
-    fakeApplication.injector.instanceOf[IncomeRepository],
+    fakeApplication.injector.instanceOf[IncomePayeRepository],
+    fakeApplication.injector.instanceOf[IncomeSaRepository]
   )
 
   override def beforeEach() {

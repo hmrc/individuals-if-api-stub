@@ -23,8 +23,8 @@ import uk.gov.hmrc.individualsifapistub.domain.IncomeSa._
 
 class AddressSpec extends UnitSpec {
 
-  val validAddress = Address(Some("line1"), Some("line2"), Some("line3"), Some("line4"), Some("QW123QW"))
-  val invalidAddress = Address(Some("line1"), Some("line2"), Some("line3"), Some("line4"), Some("1234567891011121314151617181920"))
+  val validAddress = Address(Some("line1"), Some("line2"), Some("line3"), Some("line4"), None, Some("QW123QW"))
+  val invalidAddress = Address(Some("line1"), Some("line2"), Some("line3"), Some("line4"), None, Some("1234567891011121314151617181920"))
 
   "Address" should {
     "Write to Json" in {

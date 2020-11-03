@@ -29,7 +29,7 @@ case class Address(
                     line2: Option[String],
                     line3: Option[String],
                     line4: Option[String],
-                    line5: Option[String],
+                    line5: Option[String] = None,
                     postcode: Option[String]
                   )
 

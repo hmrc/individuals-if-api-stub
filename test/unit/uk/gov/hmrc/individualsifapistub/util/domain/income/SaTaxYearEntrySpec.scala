@@ -122,7 +122,7 @@ class SaTaxYearEntrySpec extends UnitSpec {
       Some(100.01),
       Some(100.01),
       Some(100.01),
-      Some(Address(Some("line1"), Some("line2"), Some("line3"), Some("line4"), Some("QW123QW"))),
+      Some(Address(Some("line1"), Some("line2"), Some("line3"), Some("line4"), None, Some("QW123QW"))),
       Some(validSaIncome)
     )
   }

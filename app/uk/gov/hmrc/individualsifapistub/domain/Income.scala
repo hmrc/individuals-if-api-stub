@@ -21,14 +21,6 @@ import play.api.libs.json._
 import play.api.libs.json.Reads._
 import uk.gov.hmrc.individualsifapistub.domain.IncomeSa.paymentAmountValidator
 
-case class Address(
-                    line1: Option[String],
-                    line2: Option[String],
-                    line3: Option[String],
-                    line4: Option[String],
-                    postcode: Option[String]
-                  )
-
 case class PostGradLoan(repaymentsInPayPeriod: Option[Double], repaymentsYtd: Option[Double])
 
 case class StudentLoan(
@@ -157,6 +149,7 @@ object IncomeSa {
         (JsPath \ "line2").readNullable[String](minLength[String](0).andKeep(maxLength[String](100))) and
         (JsPath \ "line3").readNullable[String](minLength[String](0).andKeep(maxLength[String](100))) and
         (JsPath \ "line4").readNullable[String](minLength[String](0).andKeep(maxLength[String](100))) and
+        (JsPath \ "line5").readNullable[String](minLength[String](0).andKeep(maxLength[String](100))) and
         (JsPath \ "postcode").readNullable[String](minLength[String](1).andKeep(maxLength[String](10)))
       ) (Address.apply _),
     (
@@ -164,6 +157,7 @@ object IncomeSa {
         (JsPath \ "line2").writeNullable[String] and
         (JsPath \ "line3").writeNullable[String] and
         (JsPath \ "line4").writeNullable[String] and
+        (JsPath \ "line5").writeNullable[String] and
         (JsPath \ "postcode").writeNullable[String]
       ) (unlift(Address.unapply))
   )
