@@ -16,74 +16,82 @@
 
 package it.uk.gov.hmrc.individualsifapistub
 
-import org.scalatest.BeforeAndAfterEach
-import play.api.Configuration
-import reactivemongo.api.indexes.IndexType.Ascending
-import uk.gov.hmrc.individualsifapistub.domain.{CreateDetailsRequest, Details}
+import reactivemongo.api.indexes.IndexType.Text
+import testUtils.{RepositoryTestHelper, TestHelpers}
+import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.individualsifapistub.repository.DetailsRepository
-import uk.gov.hmrc.mongo.MongoSpecSupport
-import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
-class DetailsRepositorySpec
-    extends TestSupport
-    with MongoSpecSupport
-    with BeforeAndAfterEach {
-
-  override lazy val fakeApplication = buildFakeApplication(
-    Configuration("mongodb.uri" -> mongoUri))
+class DetailsRepositorySpec extends RepositoryTestHelper with TestHelpers {
 
   val repository = fakeApplication.injector.instanceOf[DetailsRepository]
 
-  val id = "2432552635"
-  val requestBody = "requestBody"
-  val request = CreateDetailsRequest(requestBody)
-  val details = Details(id, request.body)
+  val ninoValue = "XH123456A"
+  val trnValue = "2432552635"
 
-  override def beforeEach() {
-    await(repository.drop)
-    await(repository.ensureIndexes)
-  }
-
-  override def afterEach() {
-  }
+  val request = CreateDetailsRequest(
+    Some(Seq(ContactDetail(9, "MOBILE TELEPHONE", "07123 987654"), ContactDetail(9,"MOBILE TELEPHONE", "07123 987655"))),
+    Some(Seq(
+      Residence(residenceType = Some("BASE"), address = generateAddress(2)),
+      Residence(residenceType = Some("NOMINATED"), address = generateAddress(1))))
+  )
 
   "collection" should {
-    "have a unique index on saUtr" in {
+    "have a unique index on nino and trn" in {
       await(repository.collection.indexesManager.list()).find({ i =>
-        i.name.contains("idIndex") &&
-        i.key == Seq("id" -> Ascending) &&
-        i.background &&
-        i.unique
+      {
+        i.name.contains("nino-trn") &&
+          i.key.exists(key => key._1 == "id.nino") &&
+          i.key.exists(key => key._1 == "id.trn")
+          i.background &&
+          i.unique
+      }
       }) should not be None
     }
   }
 
   "create" should {
-    "create a self assessment" in {
-      val result = await(repository.create(id, request))
+    "create a details response with a nino" in {
+      val details = Id(Some(ninoValue), None)
+      val detailsResponse = DetailsResponse(details, request.contactDetails, request.residences)
 
-      result shouldBe details
+      val result = await(repository.create("nino", ninoValue, request))
+
+      result shouldBe detailsResponse
+    }
+
+    "create a details response with a trn" in {
+      val details = Id(None, Some(trnValue))
+      val detailsResponse = DetailsResponse(details, request.contactDetails, request.residences)
+
+      val result = await(repository.create("trn", trnValue, request))
+
+      result shouldBe detailsResponse
     }
 
     "fail to create duplicate details" in {
-      await(repository.create(id, request))
-
-      intercept[Exception](await(repository.create(id, request)))
+      await(repository.create("trn", trnValue, request))
+      intercept[Exception](await(repository.create("trn", trnValue, request)))
     }
   }
 
-  "find by id" should {
-    "return None when there are no details for a given id" in {
-      await(repository.findById(id)) shouldBe None
+  "find by id and type" should {
+    "return None when there are no details for a given nino" in {
+      await(repository.findByIdAndType("nino", ninoValue)) shouldBe None
     }
 
-    "return details" in {
-      await(repository.create(id, request))
+    "return None when there are no details for a given trn" in {
+      await(repository.findByIdAndType("trn", trnValue)) shouldBe None
+    }
 
-      val result = await(repository.findById(id))
+    "return details when nino found" in {
 
-      result shouldBe Some(details
-      )
+      val details = Id(Some(ninoValue), None)
+      val detailsResponse = DetailsResponse(details, request.contactDetails, request.residences)
+
+      await(repository.create("nino", ninoValue, request))
+
+      val result = await(repository.findByIdAndType("nino", ninoValue))
+      result shouldBe Some(detailsResponse)
     }
   }
 }

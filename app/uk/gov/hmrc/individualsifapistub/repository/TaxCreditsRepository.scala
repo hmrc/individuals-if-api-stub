@@ -23,37 +23,38 @@ import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Text
 import reactivemongo.bson.BSONObjectID
-import uk.gov.hmrc.individualsifapistub.domain.Employments._
+import reactivemongo.play.json._
 import uk.gov.hmrc.individualsifapistub.domain.IdType.{Nino, Trn}
+import uk.gov.hmrc.individualsifapistub.domain.TaxCredits._
 import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.mongo.ReactiveRepository
 
 import scala.concurrent.{ExecutionContext, Future}
 
-
 @Singleton
-class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionProvider)(implicit val ec: ExecutionContext)
-  extends ReactiveRepository[EmploymentEntry, BSONObjectID]( "employment",
-                                                        mongoConnectionProvider.mongoDatabase,
-                                                        createEmploymentEntryFormat) {
+class TaxCreditsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvider)(implicit val ec: ExecutionContext)
+  extends ReactiveRepository[TaxCreditsEntry, BSONObjectID]( "taxCredits",
+                                                                mongoConnectionProvider.mongoDatabase,
+                                                                TaxCredits.taxCreditsEntryFormat
+                                                              ) {
 
   override lazy val indexes = Seq(
     Index(key = Seq(("id.nino", Text), ("id.trn", Text)), name = Some("nino-trn"), unique = true, background = true)
   )
 
-  def create(idType: String, idValue: String, employments: Employments): Future[Employments] = {
+  def create(idType: String, idValue: String, applications: Applications): Future[Applications] = {
     val id = IdType.parse(idType) match {
       case Nino => Id(Some(idValue), None)
       case Trn => Id(None, Some(idValue))
     }
-    insert(EmploymentEntry(id, employments.employments)) map (_ => employments) recover {
+    insert(TaxCreditsEntry(id, applications.applications)) map (_ => applications) recover {
       case WriteResult.Code(11000) => throw new DuplicateException
     }
   }
 
-  def findByIdAndType(idType: String, idValue: String): Future[Option[Employments]] = {
+  def findByIdAndType(idType: String, idValue: String): Future[Option[Applications]] = {
     collection
       .find[JsObject, JsObject](obj("id" -> obj(idType -> idValue)), None)
-      .one[Employments]
+      .one[Applications]
   }
 }

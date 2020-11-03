@@ -22,6 +22,8 @@ import play.api.http.Status.{BAD_REQUEST, NOT_FOUND}
 import play.api.libs.json._
 import play.api.mvc.Results.{BadRequest, NotFound, Status}
 import play.api.mvc.{ControllerComponents, Request, RequestHeader, Result}
+import uk.gov.hmrc.individualsifapistub.domain.Id._
+import uk.gov.hmrc.individualsifapistub.domain.IdType.{Nino, Trn}
 import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
@@ -92,8 +94,29 @@ abstract class CommonController(controllerComponents: ControllerComponents)
     }
   }
 
+  protected def withJsonBodyAndValidId[T](idType: String, id: String)(f: (T) => Future[Result])(
+    implicit request: Request[JsValue],
+    m: Manifest[T],
+    reads: Reads[T]): Future[Result] = {
+    Try(IdType.parse(idType)) match {
+      case Failure(e) => Future.successful(ErrorInvalidRequest(e.getLocalizedMessage).toHttpResponse)
+      case Success(idType) =>
+        (idType match {
+          case Nino => Json.toJson(Id(nino = Some(id), trn = None))
+          case Trn => Json.toJson(Id(trn = Some(id), nino = None))
+        }).validate[Id] match {
+          case JsError(errs) => Future.successful(ErrorInvalidRequest(s"${errs.head._1.toString()} is invalid").toHttpResponse)
+          case JsSuccess(_, _) => withJsonBody(f)
+        }
+    }
+  }
+
   private def fieldName[T](errs: Seq[(JsPath, Seq[JsonValidationError])]) = {
-    errs.head._1.toString().substring(1)
+    val e = errs.head._1.toString()
+    if(!e.isEmpty)
+      e.substring(1)
+    else
+      e
   }
 
   private[controllers] def recovery: PartialFunction[Throwable, Result] = {

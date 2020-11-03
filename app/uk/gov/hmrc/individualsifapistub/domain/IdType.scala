@@ -16,8 +16,21 @@
 
 package uk.gov.hmrc.individualsifapistub.domain
 
-//TODO build out to IF
-case class Employment(id: String, body:String)
+object IdType {
 
-case class CreateEmploymentRequest(body: String)
+    sealed trait IdTypeEnum
 
+    case object Nino extends IdTypeEnum {
+        override def toString: String = "nino"
+    }
+    case object Trn extends IdTypeEnum {
+        override def toString: String = "trn"
+    }
+
+    def parse(value: String): IdTypeEnum =
+        value.toLowerCase match {
+            case "nino" => Nino
+            case "trn" => Trn
+            case _ => throw new IllegalArgumentException(s"$value is not a valid IdType")
+        }
+}

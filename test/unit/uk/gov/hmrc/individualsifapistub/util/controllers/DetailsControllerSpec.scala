@@ -18,19 +18,19 @@ package unit.uk.gov.hmrc.individualsifapistub.util.controllers
 
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
+import play.api.http.Status._
 import play.api.libs.json.Json
-import play.api.mvc.ControllerComponents
 import play.api.test.FakeRequest
+import testUtils.TestHelpers
 import uk.gov.hmrc.individualsifapistub.controllers.DetailsController
-import uk.gov.hmrc.individualsifapistub.domain.{CreateDetailsRequest, Details}
+import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
+import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.individualsifapistub.services.DetailsService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
-import play.api.http.Status._
-import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
-class DetailsControllerSpec extends TestSupport {
+class DetailsControllerSpec extends TestSupport with TestHelpers {
 
   trait Setup {
     val fakeRequest = FakeRequest()
@@ -38,37 +38,47 @@ class DetailsControllerSpec extends TestSupport {
     val underTest = new DetailsController(bodyParsers, controllerComponents, mockDetailsService)
   }
 
-  val idType = "NINO"
-  val idValue = "QW1234QW"
-  val request = CreateDetailsRequest("test")
+  val idType = "nino"
+  val idValue = "XH123456A"
+
+  val request = CreateDetailsRequest(
+    Some(Seq(ContactDetail(9, "MOBILE TELEPHONE", "07123 987654"), ContactDetail(9,"MOBILE TELEPHONE", "07123 987655"))),
+    Some(Seq(
+      Residence(residenceType = Some("BASE"), address = generateAddress(2)),
+      Residence(residenceType = Some("NOMINATED"), address = generateAddress(1))))
+  )
 
   "Create details" should {
     "Successfully create a details record and return created record as response" in new Setup {
-      val details = Details(s"$idType-$idValue", request.body)
-      when(mockDetailsService.create(idType, idValue, request)).thenReturn(Future.successful(details))
+      val details = Id(Some(idValue), None)
+      val detailsResponse = DetailsResponse(details, request.contactDetails, request.residences)
 
+      when(mockDetailsService.create(idType, idValue, request)).thenReturn(Future.successful(detailsResponse))
       val result = await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson(request))))
 
       status(result) shouldBe CREATED
-      jsonBodyOf(result) shouldBe Json.toJson(details)
+      jsonBodyOf(result) shouldBe Json.toJson(detailsResponse)
     }
 
     "Fail when a request is not provided" in new Setup {
-      val details = Details(s"$idType-$idValue", request.body)
-      when(mockDetailsService.create(idType, idValue, request)).thenReturn(Future.successful(details))
-      assertThrows[Exception] { await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson("")))) }
+      val details = Id(Some(idValue), None)
+      val detailsResponse = DetailsResponse(details, None, None)
+      when(mockDetailsService.create(idType, idValue, request)).thenReturn(Future.successful(detailsResponse))
+      val response = await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson(""))))
+      status(response) shouldBe BAD_REQUEST
     }
   }
 
   "Retrieve Details" should {
     "Return details when successfully retrieved from service" in new Setup {
-      val details = Details(s"$idType-$idValue", request.body)
-      when(mockDetailsService.get(idType, idValue)).thenReturn(Future.successful(Some(details)))
+      val details = Id(Some(idValue), None)
+      val detailsResponse = DetailsResponse(details, request.contactDetails, request.residences)
+      when(mockDetailsService.get(idType, idValue)).thenReturn(Future.successful(Some(detailsResponse)))
 
       val result = await(underTest.retrieve(idType, idValue)(fakeRequest))
 
       status(result) shouldBe OK
-      jsonBodyOf(result) shouldBe Json.toJson(Some(details))
+      jsonBodyOf(result) shouldBe Json.toJson(Some(detailsResponse))
     }
 
     "Fails when it cannot get from service" in new Setup {

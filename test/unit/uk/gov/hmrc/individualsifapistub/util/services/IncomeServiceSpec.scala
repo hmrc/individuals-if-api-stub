@@ -18,9 +18,9 @@ package unit.uk.gov.hmrc.individualsifapistub.util.services
 
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
-import uk.gov.hmrc.individualsifapistub.domain.{CreateDetailsRequest, CreateIncomeRequest, Details, Income}
-import uk.gov.hmrc.individualsifapistub.repository.{DetailsRepository, IncomeRepository}
-import uk.gov.hmrc.individualsifapistub.services.{DetailsService, IncomeService}
+import uk.gov.hmrc.individualsifapistub.domain.{CreateIncomeRequest, Income}
+import uk.gov.hmrc.individualsifapistub.repository.IncomeRepository
+import uk.gov.hmrc.individualsifapistub.services.IncomeService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 import scala.concurrent.Future

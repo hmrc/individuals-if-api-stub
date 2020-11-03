@@ -19,26 +19,28 @@ package uk.gov.hmrc.individualsifapistub.controllers
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
-import uk.gov.hmrc.individualsifapistub.domain.CreateBenefitsAndCreditsRequest
-import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
-import uk.gov.hmrc.individualsifapistub.services.BenefitsAndCreditsService
+import uk.gov.hmrc.individualsifapistub.domain.Applications
+import uk.gov.hmrc.individualsifapistub.domain.TaxCredits.applicationsFormat
+import uk.gov.hmrc.individualsifapistub.services.TaxCreditsService
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class BenefitsAndCreditsController @Inject()( bodyParsers: PlayBodyParsers,
-                                              cc: ControllerComponents,
-                                              benefitsAndCreditsService: BenefitsAndCreditsService
-                                            )(implicit val ec: ExecutionContext) extends CommonController(cc) {
+class TaxCreditsController @Inject()(bodyParsers: PlayBodyParsers,
+                                     cc: ControllerComponents,
+                                     taxCreditsService: TaxCreditsService
+                                    )(implicit val ec: ExecutionContext) extends CommonController(cc) {
 
-  def create(idType: String, idValue: String): Action[JsValue] = Action.async(bodyParsers.json) { implicit request =>
-    withJsonBody[CreateBenefitsAndCreditsRequest] { createRequest =>
-      benefitsAndCreditsService.create(idType, idValue, createRequest) map (e => Created(Json.toJson(e)))
-    } recover recovery
+  def create(idType: String, idValue: String): Action[JsValue] = {
+    Action.async(bodyParsers.json) { implicit request =>
+      withJsonBodyAndValidId[Applications](idType, idValue) { applications =>
+        taxCreditsService.create(idType, idValue, applications) map (e => Created(Json.toJson(e)))
+      } recover recovery
+    }
   }
 
   def retrieve(idType: String, idValue: String): Action[AnyContent] = Action.async { implicit request =>
-    benefitsAndCreditsService.get(idType, idValue) map {
+    taxCreditsService.get(idType, idValue) map {
       case Some(value) => Ok(Json.toJson(value))
       case None => NotFound
     } recover recovery
