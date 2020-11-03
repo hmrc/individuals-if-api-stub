@@ -16,19 +16,14 @@
 
 package it.uk.gov.hmrc.individualsifapistub
 
-import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
-import reactivemongo.api.indexes.IndexType.Text
 import testUtils.RepositoryTestHelper
 import uk.gov.hmrc.individualsifapistub.domain.{DuplicateException, IncomePaye}
 import uk.gov.hmrc.individualsifapistub.repository.IncomePayeRepository
-import uk.gov.hmrc.mongo.MongoSpecSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.testUtils.IncomePayeHelpers
 
 class IncomePayeRepositorySpec
     extends RepositoryTestHelper
-    with MongoSpecSupport
-    with BeforeAndAfterEach
     with IncomePayeHelpers {
 
   override lazy val fakeApplication = buildFakeApplication(
