@@ -79,9 +79,9 @@ class EmploymentsControllerSpec extends TestSupport {
           week = Some(52),
           month = Some(12)
         )
-        )
-        )
       )
+    )
+  )
 
   val employments = Employments(Seq(employment))
 
@@ -121,8 +121,6 @@ class EmploymentsControllerSpec extends TestSupport {
         status(result) shouldBe BAD_REQUEST
       }
     }
-
-
   }
 
   "Retrieve Employment" should {

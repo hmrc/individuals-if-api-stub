@@ -107,9 +107,6 @@ object DetailsResponse {
       (JsPath \ "homeCountry").readNullable[String](maxLength[String](16)) and
       (JsPath \ "otherCountry").readNullable[String](maxLength[String](35)) and
       (JsPath \ "deadLetterOfficeDate").readNullable[String](pattern(datePattern, "Date is invalid")) and
-
-      // TODO: Datetime format?
-
       (JsPath \ "startDateTime").readNullable[String] and
       (JsPath \ "noLongerUsed").readNullable[String](minLength[String](1) andKeep maxLength[String](1))
     )(Residence.apply _),

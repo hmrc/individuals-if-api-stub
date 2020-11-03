@@ -67,9 +67,9 @@ class EmploymentsServiceSpec extends TestSupport {
             week = Some(52),
             month = Some(12)
           )
-          )
-          )
         )
+      )
+    )
 
     val employments = Employments(Seq(employment))
     val request = EmploymentEntry(Id(Some("XH123456A"), None), Seq(employment))

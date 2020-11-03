@@ -76,8 +76,6 @@ class TaxCreditsSpec extends UnitSpec with TestHelpers {
 
   "Payments" should {
 
-
-
     "write to JSON successfully" in {
       val result = Json.toJson(validPayments).validate[Payments]
       result.isSuccess shouldBe true

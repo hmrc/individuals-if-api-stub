@@ -61,9 +61,9 @@ class EmploymentRepositorySpec extends RepositoryTestHelper {
           week = Some(52),
           month = Some(12)
         )
-        )
-        )
       )
+    )
+  )
 
   val employments = Employments(Seq(employment))
 
