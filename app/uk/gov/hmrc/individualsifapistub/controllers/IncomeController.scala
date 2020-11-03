@@ -19,9 +19,10 @@ package uk.gov.hmrc.individualsifapistub.controllers
 import javax.inject.Inject
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
-import uk.gov.hmrc.individualsifapistub.domain.CreateIncomeRequest
+import uk.gov.hmrc.individualsifapistub.domain.{IncomePaye, IncomeSa}
 import uk.gov.hmrc.individualsifapistub.services.IncomeService
-import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
+import uk.gov.hmrc.individualsifapistub.domain.IncomePaye._
+import uk.gov.hmrc.individualsifapistub.domain.IncomeSa._
 
 import scala.concurrent.ExecutionContext
 
@@ -30,14 +31,27 @@ class IncomeController @Inject()( bodyParser: PlayBodyParsers,
                                   incomeService: IncomeService
                                 ) (implicit val ec: ExecutionContext) extends CommonController(cc) {
 
-  def create(incomeType: String ,idType: String, idValue: String): Action[JsValue] = Action.async(bodyParser.json) { implicit request =>
-    withJsonBody[CreateIncomeRequest] { createRequest =>
-      incomeService.create(incomeType, idType, idValue, createRequest) map (e => Created(Json.toJson(e)))
+  def createSa(idType: String, idValue: String): Action[JsValue] = Action.async(bodyParser.json) { implicit request =>
+    withJsonBody[IncomeSa] { createRequest =>
+      incomeService.createSa(idType, idValue, createRequest) map (e => Created(Json.toJson(e)))
     } recover recovery
   }
 
-  def retrieve(incomeType: String, idType: String, idValue: String): Action[AnyContent] = Action.async { implicit request =>
-    incomeService.get(incomeType,idType, idValue) map {
+  def retrieveSa(idType: String, idValue: String): Action[AnyContent] = Action.async { implicit request =>
+    incomeService.getSa(idType, idValue) map {
+      case Some(value) => Ok(Json.toJson(value))
+      case None => NotFound
+    } recover recovery
+  }
+
+  def createPaye(idType: String, idValue: String): Action[JsValue] = Action.async(bodyParser.json) { implicit request =>
+    withJsonBody[IncomePaye] { createRequest =>
+      incomeService.createPaye(idType, idValue, createRequest) map (e => Created(Json.toJson(e)))
+    } recover recovery
+  }
+
+  def retrievePaye(idType: String, idValue: String): Action[AnyContent] = Action.async { implicit request =>
+    incomeService.getPaye(idType, idValue) map {
       case Some(value) => Ok(Json.toJson(value))
       case None => NotFound
     } recover recovery

@@ -17,7 +17,9 @@
 package uk.gov.hmrc.individualsifapistub.domain
 
 import org.joda.time.DateTime
+import play.api.libs.functional.syntax.{unlift, _}
 import play.api.libs.json.JodaWrites._
+import play.api.libs.json.Reads.{maxLength, minLength}
 import play.api.libs.json._
 
 import scala.util.{Failure, Try}
@@ -25,6 +27,7 @@ import scala.util.{Failure, Try}
 object JsonFormatters {
   implicit val dateFormatDefault = new Format[DateTime] {
     override def reads(json: JsValue): JsResult[DateTime] = JodaReads.DefaultJodaDateTimeReads.reads(json)
+
     override def writes(o: DateTime): JsValue = JodaDateTimeNumberWrites.writes(o)
   }
 
@@ -38,9 +41,6 @@ object JsonFormatters {
   implicit val testIndividualFormat = Json.format[TestIndividual]
   implicit val testOrganisationDetailsFormat = Json.format[TestOrganisationDetails]
   implicit val testOrganisationFormat = Json.format[TestOrganisation]
-
-  implicit val incomeFormat = Json.format[Income]
-  implicit val createIncomeRequestFormat = Json.format[CreateIncomeRequest]
 
   implicit val errorInvalidRequestFormat = new Format[ErrorInvalidRequest] {
     def reads(json: JsValue): JsResult[ErrorInvalidRequest] = JsSuccess(
@@ -77,4 +77,4 @@ object EnumJson {
   }
 }
 
-class InvalidEnumException(className: String, input:String) extends RuntimeException(s"Enumeration expected of type: '$className', but it does not contain '$input'")
+class InvalidEnumException(className: String, input: String) extends RuntimeException(s"Enumeration expected of type: '$className', but it does not contain '$input'")

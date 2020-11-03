@@ -18,54 +18,91 @@ package unit.uk.gov.hmrc.individualsifapistub.util.services
 
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
-import uk.gov.hmrc.individualsifapistub.domain.{CreateIncomeRequest, Income}
-import uk.gov.hmrc.individualsifapistub.repository.IncomeRepository
+import uk.gov.hmrc.individualsifapistub.domain.{IncomePaye, IncomeSa}
+import uk.gov.hmrc.individualsifapistub.repository.{IncomePayeRepository, IncomeSaRepository}
 import uk.gov.hmrc.individualsifapistub.services.IncomeService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
+import unit.uk.gov.hmrc.individualsifapistub.util.testUtils.{IncomePayeHelpers, IncomeSaHelpers}
 
 import scala.concurrent.Future
 
-class IncomeServiceSpec extends TestSupport {
+class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePayeHelpers {
   trait Setup {
 
-    val idType = "NINO"
-    val idValue = "QW1234QW"
-    val incomeType = "incomeType"
-    val request = CreateIncomeRequest("test")
+    val idType = "nino"
+    val idValue = "ANINO123"
 
-    val mockSelfAssessmentRepository = mock[IncomeRepository]
-    val underTest = new IncomeService(mockSelfAssessmentRepository)
+    val innerSaValue = Seq(createValidSaTaxYearEntry(), createValidSaTaxYearEntry())
+    val incomeSaResponse = IncomeSa(Some(innerSaValue))
+
+    val innerPayeValue = Seq(createValidPayeEntry(), createValidPayeEntry())
+    val incomePayeResponse = IncomePaye(Some(innerPayeValue))
+
+    val mockSelfAssessmentRepository = mock[IncomeSaRepository]
+    val mockPayeRepository = mock[IncomePayeRepository]
+    val underTest = new IncomeService(mockSelfAssessmentRepository, mockPayeRepository)
   }
 
   "Income Service" when {
-    "Create" should {
-      "Return the created income when created" in new Setup {
-        val selfAssessment = Income(s"$incomeType-$idType-$idValue", request.body)
-        when(mockSelfAssessmentRepository.create(s"$incomeType-$idType-$idValue", request)).thenReturn(Future.successful(selfAssessment));
-        val response = await(underTest.create(incomeType,idType, idValue, request))
-        response shouldBe selfAssessment
+    "Sa" should {
+      "Create" should {
+        "Return the created SA when created" in new Setup {
+          when(mockSelfAssessmentRepository.create(idType, idValue, incomeSaResponse)).thenReturn(Future.successful(incomeSaResponse));
+          val response = await(underTest.createSa(idType, idValue, incomeSaResponse))
+          response shouldBe incomeSaResponse
+        }
+
+        "Return failure when unable to create SA object" in new Setup {
+          when(mockSelfAssessmentRepository.create(idType, idValue, incomeSaResponse)).thenReturn(Future.failed(new Exception));
+          assertThrows[Exception] {
+            await(underTest.createSa(idType, idValue, incomeSaResponse))
+          }
+        }
       }
 
-      "Return failure when unable to create Income object" in new Setup {
-        when(mockSelfAssessmentRepository.create(s"$idType-$idValue", request)).thenReturn(Future.failed(new Exception));
-        assertThrows[Exception] {
-          await(underTest.create(incomeType, idType, idValue, request))
+      "Get" should {
+        "Return SA when successfully retrieved from mongo" in new Setup {
+          when(mockSelfAssessmentRepository.findByTypeAndId(idType, idValue)).thenReturn(Future.successful(Some(incomeSaResponse)))
+          val response = await(underTest.getSa(idType, idValue))
+          response shouldBe Some(incomeSaResponse)
+        }
+
+        "Return none if cannot be found in mongo" in new Setup {
+          when(mockSelfAssessmentRepository.findByTypeAndId(idType, idValue)).thenReturn(Future.successful(None));
+          val response = await(underTest.getSa(idType, idValue))
+          response shouldBe None
         }
       }
     }
 
-    "Get" should {
-      "Return income when successfully retrieved from mongo" in new Setup {
-        val selfAssessment = Income(s"$incomeType-$idType-$idValue", request.body)
-        when(mockSelfAssessmentRepository.findById(s"$incomeType-$idType-$idValue")).thenReturn(Future.successful(Some(selfAssessment)));
-        val response = await(underTest.get(incomeType, idType, idValue))
-        response shouldBe Some(selfAssessment)
+    "PAYE" should {
+      "Create" should {
+        "Return the created PAYE when created" in new Setup {
+          when(mockPayeRepository.create(idType, idValue, incomePayeResponse)).thenReturn(Future.successful(incomePayeResponse));
+          val response = await(underTest.createPaye(idType, idValue, incomePayeResponse))
+          response shouldBe incomePayeResponse
+        }
+
+        "Return failure when unable to create PAYE object" in new Setup {
+          when(mockPayeRepository.create(idType, idValue, incomePayeResponse)).thenReturn(Future.failed(new Exception));
+          assertThrows[Exception] {
+            await(underTest.createPaye(idType, idValue, incomePayeResponse))
+          }
+        }
       }
 
-      "Return none if cannot be found in mongo" in new Setup {
-        when(mockSelfAssessmentRepository.findById(s"$incomeType-$idType-$idValue")).thenReturn(Future.successful(None));
-        val response = await(underTest.get(incomeType, idType, idValue))
-        response shouldBe None
+      "Get" should {
+        "Return PAYE when successfully retrieved from mongo" in new Setup {
+          when(mockPayeRepository.findByTypeAndId(idType, idValue)).thenReturn(Future.successful(Some(incomePayeResponse)))
+          val response = await(underTest.getPaye(idType, idValue))
+          response shouldBe Some(incomePayeResponse)
+        }
+
+        "Return none if cannot be found in mongo" in new Setup {
+          when(mockPayeRepository.findByTypeAndId(idType, idValue)).thenReturn(Future.successful(None));
+          val response = await(underTest.getPaye(idType, idValue))
+          response shouldBe None
+        }
       }
     }
   }
