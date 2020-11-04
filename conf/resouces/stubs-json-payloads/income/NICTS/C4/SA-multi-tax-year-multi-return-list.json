@@ -1,0 +1,129 @@
+{
+  "summary": "Self Assessment income details multi tax year multi return list NICTS C4",
+  "value": {
+    "sa": [
+      {
+        "taxYear": "2019",
+        "returnList": [
+          {
+            "caseStartDate": "2019-02-28",
+            "receivedDate": "2019-02-28",
+            "income": {
+              "selfAssessment": 99999999999.99,
+              "trusts": 99999999999.99,
+              "allEmployments": 99999999999.99,
+              "selfEmployment": 99999999999.99,
+              "partnerships": 99999999999.99,
+              "ukProperty": 99999999999.99,
+              "foreignDivs": 99999999999.99,
+              "ukInterest": 99999999999.99,
+              "ukDivsAndInterest": 99999999999.99,
+              "pensions": 99999999999.99,
+              "other": 99999999999.99,
+              "lifePolicies": 99999999999.99,
+              "shares": 99999999999.99
+            },
+            "businessDescription": "c",
+            "address": {
+              "line1": "a",
+              "line2": "a",
+              "line3": "a",
+              "line4": "a",
+              "postcode": "a"
+            },
+            "telephoneNumber": "213231"
+          },
+          {
+            "caseStartDate": "2019-08-28",
+            "receivedDate": "2019-08-28",
+            "income": {
+              "selfAssessment": 89999999999.99,
+              "trusts": 89999999999.99,
+              "allEmployments": 89999999999.99,
+              "selfEmployment": 89999999999.99,
+              "partnerships": 89999999999.99,
+              "ukProperty": 89999999999.99,
+              "foreignDivs": 89999999999.99,
+              "ukInterest": 89999999999.99,
+              "ukDivsAndInterest": 89999999999.99,
+              "pensions": 89999999999.99,
+              "other": 89999999999.99,
+              "lifePolicies": 89999999999.99,
+              "shares": 89999999999.99
+            },
+            "businessDescription": "c",
+            "address": {
+              "line1": "e",
+              "line2": "f",
+              "line3": "g",
+              "line4": "h",
+              "postcode": "i"
+            },
+            "telephoneNumber": "32142423"
+          }
+        ]
+      },
+      {
+        "taxYear": "2018",
+        "returnList": [
+          {
+            "caseStartDate": "2018-02-28",
+            "receivedDate": "2018-02-28",
+            "income": {
+              "selfAssessment": 79999999999.99,
+              "trusts": 79999999999.99,
+              "allEmployments": 79999999999.99,
+              "selfEmployment": 79999999999.99,
+              "partnerships": 79999999999.99,
+              "ukProperty": 79999999999.99,
+              "foreignDivs": 79999999999.99,
+              "ukInterest": 79999999999.99,
+              "ukDivsAndInterest": 79999999999.99,
+              "pensions": 79999999999.99,
+              "other": 79999999999.99,
+              "lifePolicies": 79999999999.99,
+              "shares": 79999999999.99
+            },
+            "businessDescription": "c",
+            "address": {
+              "line1": "j",
+              "line2": "k",
+              "line3": "l",
+              "line4": "m",
+              "postcode": "n"
+            },
+            "telephoneNumber": "213231"
+          },
+          {
+            "caseStartDate": "2018-08-28",
+            "receivedDate": "2018-08-28",
+            "income": {
+              "selfAssessment": 69999999999.99,
+              "trusts": 69999999999.99,
+              "allEmployments": 69999999999.99,
+              "selfEmployment": 69999999999.99,
+              "partnerships": 69999999999.99,
+              "ukProperty": 69999999999.99,
+              "foreignDivs": 69999999999.99,
+              "ukInterest": 69999999999.99,
+              "ukDivsAndInterest": 69999999999.99,
+              "pensions": 69999999999.99,
+              "other": 69999999999.99,
+              "lifePolicies": 69999999999.99,
+              "shares": 69999999999.99
+            },
+            "businessDescription": "c",
+            "address": {
+              "line1": "o",
+              "line2": "p",
+              "line3": "q",
+              "line4": "r",
+              "postcode": "s"
+            },
+            "telephoneNumber": "32142423"
+          }
+        ]
+      }
+    ]
+  }
+}
