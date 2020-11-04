@@ -1,0 +1,26 @@
+{
+  "summary": "Employment details with maximum data single employment for HMCTS C4",
+  "value": {
+    "employments": [
+      {
+        "employer": {
+          "name": "ACME Industries Limited",
+          "address": {
+            "line1": "Unit 23",
+            "line2": "Utilitarian Industrial Park",
+            "line3": "Utilitown",
+            "line4": "County Durham",
+            "line5": "UK",
+            "postcode": "DH4 4YY"
+          },
+          "districtNumber": "247",
+          "schemeRef": "ZT6767895A"
+        },
+        "employment": {
+          "startDate": "2019-01-01",
+          "endDate": "2019-03-31"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "summary": "Employment details with maximum data for multi employment LAA C2",
+  "value": {
+    "employments": [
+      {
+        "employment": {
+          "startDate": "2019-01-01",
+          "endDate": "2019-03-31"
+        }
+      },
+      {
+        "employment": {
+          "startDate": "2018-01-01",
+          "endDate": "2018-03-31"
+        }
+      }
+    ]
+  }
+}

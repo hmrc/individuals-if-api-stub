@@ -1,0 +1,109 @@
+{
+  "summary": "Employment details with maximum data",
+  "value": {
+    "employments": [
+      {
+        "employer": {
+          "name": "ACME Industries Limited",
+          "address": {
+            "line1": "Unit 23",
+            "line2": "Utilitarian Industrial Park",
+            "line3": "Utilitown",
+            "line4": "County Durham",
+            "line5": "UK",
+            "postcode": "DH4 4YY"
+          },
+          "districtNumber": "247",
+          "schemeRef": "ZT6767895A"
+        },
+        "employment": {
+          "startDate": "2019-01-01",
+          "endDate": "2019-03-31",
+          "payFrequency": "M1",
+          "payrollId": "324/BD",
+          "address": {
+            "line1": "Rose Cottage",
+            "line2": "Blackfriars Lane",
+            "line3": "Churchtown",
+            "line4": "Cumbria",
+            "line5": "UK",
+            "postcode": "KN23 4AB"
+          }
+        },
+        "payments": [
+          {
+            "date": "2019-01-31",
+            "ytdTaxablePay": 4765.32,
+            "paidTaxablePay": 4765.32,
+            "paidNonTaxOrNICPayment": 0,
+            "week": 4,
+            "month": 1
+          },
+          {
+            "date": "2019-02-28",
+            "ytdTaxablePay": 9876.54,
+            "paidTaxablePay": 9876.54,
+            "paidNonTaxOrNICPayment": 0,
+            "week": 8,
+            "month": 2
+          },
+          {
+            "date": "2019-03-31",
+            "ytdTaxablePay": 13244,
+            "paidTaxablePay": 13244,
+            "paidNonTaxOrNICPayment": 0,
+            "week": 13,
+            "month": 3
+          }
+        ]
+      },
+      {
+        "employer": {
+          "name": "Robson & Robson and Sons",
+          "address": {
+            "line1": "Robson House",
+            "line2": "Fairfield Drive",
+            "line3": "Utilitown",
+            "line4": "County Durham",
+            "line5": "UK",
+            "postcode": "DH4 2CC"
+          },
+          "districtNumber": "247",
+          "schemeRef": "A1987CB"
+        },
+        "employment": {
+          "startDate": "2019-05-10",
+          "endDate": "2019-07-12",
+          "payFrequency": "M1",
+          "payrollId": "DX-6874",
+          "address": {
+            "line1": "Rose Cottage",
+            "line2": "Blackfriars Lane",
+            "line3": "Churchtown",
+            "line4": "Cumbria",
+            "line5": "UK",
+            "postcode": "KN23 4AB"
+          }
+        },
+        "payments": [
+          {
+            "date": "2019-06-30",
+            "ytdTaxablePay": 15000,
+            "paidTaxablePay": 15000,
+            "paidNonTaxOrNICPayment": 0,
+            "week": 26,
+            "month": 6
+          },
+          {
+            "date": "2019-07-31",
+            "ytdTaxablePay": 18876.54,
+            "paidTaxablePay": 18876.54,
+            "paidNonTaxOrNICPayment": 0,
+            "week": 30,
+            "month": 7
+          }
+        ]
+      }
+    ]
+  }
+}

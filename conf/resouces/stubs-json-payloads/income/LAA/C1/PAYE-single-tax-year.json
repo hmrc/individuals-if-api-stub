@@ -1,0 +1,47 @@
+{
+  "summary": "PAYE income details with maximum data single tax year LAA C1",
+  "value": {
+    "paye": [
+      {
+        "taxYear": "18-19",
+        "payFrequency": "W4",
+        "weeklyPeriodNumber": "2",
+        "monthlyPeriodNumber": "3",
+        "paymentDate": "2006-02-27",
+        "paidHoursWorked": "36",
+        "taxablePayToDate": 19157.5,
+        "totalTaxToDate": 3095.89,
+        "taxablePay": 16533.95,
+        "taxDeductedOrRefunded": 159228.49,
+        "employeePensionContribs": {
+          "paidYTD": 169731.51,
+          "notPaidYTD": 173987.07,
+          "paid": 822317.49,
+          "notPaid": 818841.65
+        },
+        "statutoryPayYTD": {
+          "maternity": 628562.9,
+          "paternity": 98600.58,
+          "adoption": 48703.26,
+          "parentalBereavement": 39708.7
+        },
+        "grossEarningsForNICs": {
+          "inPayPeriod1": 995979.04,
+          "inPayPeriod2": 606456.38,
+          "inPayPeriod3": 797877.34,
+          "inPayPeriod4": 166334.69
+        },
+        "employeeNICs": {
+          "inPayPeriod1": 15797.45,
+          "inPayPeriod2": 13170.69,
+          "inPayPeriod3": 16193.76,
+          "inPayPeriod4": 30846.56,
+          "ytd1": 10633.5,
+          "ytd2": 15579.18,
+          "ytd3": 110849.27,
+          "ytd4": 162081.23
+        }
+      }
+    ]
+  }
+}

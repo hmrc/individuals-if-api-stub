@@ -1,0 +1,41 @@
+{
+  "summary": "Employment details with maximum data multi employment for LAA C4",
+  "value": {
+    "employments": [
+      {
+        "employer": {
+          "name": "ACME Industries Limited",
+          "address": {
+            "line1": "Unit 23",
+            "line2": "Utilitarian Industrial Park",
+            "line3": "Utilitown",
+            "line4": "County Durham",
+            "line5": "UK",
+            "postcode": "DH4 4YY"
+          }
+        },
+        "employment": {
+          "startDate": "2019-01-01",
+          "endDate": "2019-03-31"
+        }
+      },
+      {
+        "employer": {
+          "name": "ACME PLC",
+          "address": {
+            "line1": "Unit 24",
+            "line2": "Utilitarian Industrial Park",
+            "line3": "Utilitowntington",
+            "line4": "County Durham",
+            "line5": "UK",
+            "postcode": "DH4 5YY"
+          }
+        },
+        "employment": {
+          "startDate": "2018-01-01",
+          "endDate": "2018-03-31"
+        }
+      }
+    ]
+  }
+}

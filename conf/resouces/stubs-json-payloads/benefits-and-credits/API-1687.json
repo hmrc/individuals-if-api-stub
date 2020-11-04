@@ -1,0 +1,998 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "API#1687 Individual Tax Credits",
+    "description": "This API retrieves the tax credit details of the individual identified by NINO across a date range",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Wayne Morris",
+      "email": "wayne.morris@hmrc.gov.uk"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://{hostname}:{port}",
+      "description": "Different hostnames and ports are used in different IF environments",
+      "variables": {
+        "hostname": {
+          "default": "localhost",
+          "description": "The hostname for one of IST, Clone, and Production"
+        },
+        "port": {
+          "default": "8443",
+          "description": "The port for one of IST, Clone, and Production"
+        }
+      }
+    }
+  ],
+  "tags": [
+    {
+      "name": "API#1687",
+      "description": "API for Individual Tax Credits."
+    }
+  ],
+  "paths": {
+    "/individuals/tax-credits/{idType}/{idValue}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/idTypeParam"
+        },
+        {
+          "$ref": "#/components/parameters/idValueParam"
+        }
+      ],
+      "get": {
+        "summary": "API#1687 Individual Tax Credits",
+        "description": "Retrieve an individual's tax credit details for a date range using a NINO. Optionally specify a subset of data items to return using the 'fields' query string parameter.\n\n/individuals/tax-credits/{idType}/{idValue}?startDate={date}&endDate={date}[&fields={data items spec}]\n\nExample URIs:\n/individuals/tax-credits/nino/AB123456C?startDate=2015-04-06&endDate=2019-04-05\n\n/individuals/tax-credits/nino/AB123456C?startDate=2015-04-06&endDate=2019-04-05&fields=applications(id,awards(startDate,endDate,totalEntitlement,workingTaxCredit(amount),childTaxCredit(childCareAmount,ctcChildAmount),grossTaxYearAmount,payments(nextDueDate,frequency,tcType,amount)))\n\n```\nChange Log:\nVersion Date       Author         Description\n0.1.0   24-08-2020 Wayne Morris   Initial draft for review\n0.2.0   17-09-2020 Wayne Morris   Baseline candidate. Changes since v0.1.0:\n                                  1) Removed the 'Content-Type' response header from all responses\n                                  2) Added the 422 error response which is about validating the contents of the 'fields' query string\n                                  3) Added 'description' to most response properties\n                                  4) Renamed 'entYearToDate' to 'entToDate'\n                                  5) Renamed 'grossYearToDate' to 'grossTaxYearAmount'\n                                  6) enum on 'status' replaced with minLength and maxLength, both 1\n                                  7) 'frequency' changed from string to integer\n                                  8) enum on 'tcType' replaced with minLength and maxLength, both 3\n                                  9) enum on 'method' replaced with minLength and maxLength, both 1\n                                  10) maximum on 'amountType' corrected from 1000000000000000 to 999999999999999.99\n                                  11) Updated the example responses\n                                  12) Changed the operationId to getIndividualTaxCredits\n                                  13) Added optional request header x-end-client-id\n0.3.0   25-09-2020 Wayne Morris   Baseline candidate. Changes since v0.2.0:\n                                  1) Tightened the regex on the 'fields' query parameter string; see the definition 'fieldsQueryParam'\n                                  2) Changed the supported string value of the optional'x-end-client-id' header from 'XMOJ0000' to 'MOJ-MDTP-IF'\n                                  3) Enhanced some property descriptions\n                                  4) Renamed 'totalTaperAward' to 'totalEntitlement'\n                                  5) Renamed 'etc' to 'workingTaxCredit'\n                                  6) Renamed both 'entToDate' properties to 'entitlementYTD'\n                                  7) Renamed both 'actualAmount' properties to 'paidYTD'\n                                  8) Renamed 'icc' to 'childTaxCredit'\n1.0.0   15-10-2020 Wayne Morris   Baseline version 1.0.0. Changes since v0.3.0:\n                                  1) Removed the 'x-end-client-id' header\n                                  2) Updated the regex pattern for the 'fields' query string parameter\n                                  3) Added 2 400 error responses - MISSING_STARTDATE and MISSING_ENDDATE\n```",
+        "operationId": "getIndividualTaxCredits",
+        "tags": [
+          "API#1687"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/environment"
+          },
+          {
+            "$ref": "#/components/parameters/correlationId"
+          },
+          {
+            "$ref": "#/components/parameters/startDateQueryParam"
+          },
+          {
+            "$ref": "#/components/parameters/endDateQueryParam"
+          },
+          {
+            "$ref": "#/components/parameters/fieldsQueryParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "headers": {
+              "CorrelationId": {
+                "$ref": "#/components/headers/CorrelationId"
+              }
+            },
+            "content": {
+              "application/json;charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/successResponse"
+                },
+                "examples": {
+                  "Full Response": {
+                    "summary": "Tax Credits details with maximum data",
+                    "value": {
+                      "applications": [
+                        {
+                          "id": 123,
+                          "ceasedDate": "2002-04-08",
+                          "entStartDate": "1996-07-21",
+                          "entEndDate": "2002-03-31",
+                          "awards": [
+                            {
+                              "payProfCalcDate": "1996-08-01",
+                              "startDate": "1996-08-01",
+                              "endDate": "1997-07-31",
+                              "totalEntitlement": 18765.23,
+                              "workingTaxCredit": {
+                                "amount": 930.98,
+                                "entitlementYTD": 9934.56,
+                                "paidYTD": 8976.34
+                              },
+                              "childTaxCredit": {
+                                "childCareAmount": 930.98,
+                                "ctcChildAmount": 730.49,
+                                "familyAmount": 100.49,
+                                "babyAmount": 100,
+                                "entitlementYTD": 9934.56,
+                                "paidYTD": 8976.34
+                              },
+                              "grossTaxYearAmount": 19768.42,
+                              "payments": [
+                                {
+                                  "periodStartDate": "1996-08-01",
+                                  "periodEndDate": "1996-08-31",
+                                  "startDate": "1996-08-01",
+                                  "endDate": "1996-08-07",
+                                  "status": "A",
+                                  "postedDate": "1996-08-10",
+                                  "nextDueDate": "1996-08-17",
+                                  "frequency": 7,
+                                  "tcType": "ETC",
+                                  "amount": 76.34,
+                                  "method": "R"
+                                },
+                                {
+                                  "periodStartDate": "1996-08-01",
+                                  "periodEndDate": "1996-08-31",
+                                  "startDate": "1996-08-08",
+                                  "endDate": "1996-08-14",
+                                  "status": "A",
+                                  "postedDate": "1996-08-17",
+                                  "nextDueDate": "1996-08-24",
+                                  "frequency": 7,
+                                  "tcType": "ETC",
+                                  "amount": 76.34,
+                                  "method": "O"
+                                },
+                                {
+                                  "periodStartDate": "1996-08-01",
+                                  "periodEndDate": "1996-08-31",
+                                  "startDate": "1996-08-15",
+                                  "endDate": "1996-08-22",
+                                  "status": "A",
+                                  "postedDate": "1996-08-24",
+                                  "nextDueDate": "1996-08-31",
+                                  "frequency": 7,
+                                  "tcType": "ETC",
+                                  "amount": 76.34,
+                                  "method": "R"
+                                },
+                                {
+                                  "periodStartDate": "1996-08-01",
+                                  "periodEndDate": "1996-08-31",
+                                  "startDate": "1996-08-23",
+                                  "endDate": "1996-08-30",
+                                  "status": "A",
+                                  "postedDate": "1996-08-31",
+                                  "nextDueDate": "1996-09-06",
+                                  "frequency": 7,
+                                  "tcType": "ETC",
+                                  "amount": 76.34,
+                                  "method": "R"
+                                }
+                              ]
+                            },
+                            {
+                              "payProfCalcDate": "1997-07-01",
+                              "startDate": "1997-08-01",
+                              "endDate": "2002-02-28",
+                              "totalEntitlement": 20094.23,
+                              "workingTaxCredit": {
+                                "amount": 930.98,
+                                "entitlementYTD": 9934.56,
+                                "paidYTD": 8976.34
+                              },
+                              "childTaxCredit": {
+                                "childCareAmount": 930.98,
+                                "ctcChildAmount": 730.49,
+                                "familyAmount": 100.49,
+                                "babyAmount": 100,
+                                "entitlementYTD": 9934.56,
+                                "paidYTD": 8976.34
+                              },
+                              "grossTaxYearAmount": 19768.42,
+                              "payments": [
+                                {
+                                  "periodStartDate": "1997-08-01",
+                                  "periodEndDate": "1997-08-31",
+                                  "startDate": "1997-08-01",
+                                  "endDate": "1997-08-07",
+                                  "status": "A",
+                                  "postedDate": "1997-08-10",
+                                  "nextDueDate": "1997-08-17",
+                                  "frequency": 7,
+                                  "tcType": "ETC",
+                                  "amount": 76.34,
+                                  "method": "R"
+                                },
+                                {
+                                  "periodStartDate": "1997-08-01",
+                                  "periodEndDate": "1997-08-31",
+                                  "startDate": "1997-08-08",
+                                  "endDate": "1997-08-14",
+                                  "status": "A",
+                                  "postedDate": "1997-08-17",
+                                  "nextDueDate": "1997-08-24",
+                                  "frequency": 7,
+                                  "tcType": "ETC",
+                                  "amount": 76.34,
+                                  "method": "R"
+                                },
+                                {
+                                  "periodStartDate": "1997-08-01",
+                                  "periodEndDate": "1997-08-31",
+                                  "startDate": "1997-08-15",
+                                  "endDate": "1997-08-22",
+                                  "status": "A",
+                                  "postedDate": "1997-08-24",
+                                  "nextDueDate": "1997-08-31",
+                                  "frequency": 7,
+                                  "tcType": "ETC",
+                                  "amount": 76.34,
+                                  "method": "R"
+                                },
+                                {
+                                  "periodStartDate": "1997-08-01",
+                                  "periodEndDate": "1997-08-31",
+                                  "startDate": "1997-08-23",
+                                  "endDate": "1997-08-30",
+                                  "status": "A",
+                                  "postedDate": "1997-08-31",
+                                  "nextDueDate": "1997-09-06",
+                                  "frequency": 7,
+                                  "tcType": "ETC",
+                                  "amount": 76.34,
+                                  "method": "R"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  "Filtered Response": {
+                    "summary": "Tax Credits details with filtered data",
+                    "value": {
+                      "applications": [
+                        {
+                          "id": 327467868,
+                          "awards": [
+                            {
+                              "startDate": "2016-07-30",
+                              "endDate": "2016-09-08",
+                              "totalEntitlement": 18765.23,
+                              "workingTaxCredit": {
+                                "amount": 930.98
+                              },
+                              "childTaxCredit": {
+                                "childCareAmount": 930.98,
+                                "ctcChildAmount": 730.49
+                              },
+                              "grossTaxYearAmount": 19768.42,
+                              "payments": [
+                                {
+                                  "nextDueDate": "2016-08-17",
+                                  "frequency": 7,
+                                  "tcType": "ETC",
+                                  "amount": 76.34
+                                },
+                                {
+                                  "nextDueDate": "2016-08-24",
+                                  "frequency": 7,
+                                  "tcType": "ETC",
+                                  "amount": 76.34
+                                },
+                                {
+                                  "nextDueDate": "2016-08-31",
+                                  "frequency": 7,
+                                  "tcType": "ETC",
+                                  "amount": 76.34
+                                },
+                                {
+                                  "nextDueDate": "2016-09-06",
+                                  "frequency": 7,
+                                  "tcType": "ETC",
+                                  "amount": 76.34
+                                }
+                              ]
+                            },
+                            {
+                              "startDate": "2017-08-16",
+                              "endDate": "2017-09-08",
+                              "totalEntitlement": 20094.23,
+                              "workingTaxCredit": {
+                                "amount": 930.98
+                              },
+                              "childTaxCredit": {
+                                "childCareAmount": 930.98,
+                                "ctcChildAmount": 730.49
+                              },
+                              "grossTaxYearAmount": 19768.42,
+                              "payments": [
+                                {
+                                  "nextDueDate": "2017-08-17",
+                                  "frequency": 7,
+                                  "tcType": "ETC",
+                                  "amount": 76.34
+                                },
+                                {
+                                  "nextDueDate": "2017-08-24",
+                                  "frequency": 7,
+                                  "tcType": "ETC",
+                                  "amount": 76.34
+                                },
+                                {
+                                  "nextDueDate": "2017-08-31",
+                                  "frequency": 7,
+                                  "tcType": "ETC",
+                                  "amount": 76.34
+                                },
+                                {
+                                  "nextDueDate": "2017-09-06",
+                                  "frequency": 7,
+                                  "tcType": "ETC",
+                                  "amount": 76.34
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request\n```\nA bad request has been made; this could be due to one or more issues with the request\n\"code\"                 \"reason\"\nINVALID_IDTYPE          Submission has not passed validation. Invalid parameter idType.\nINVALID_IDVALUE         Submission has not passed validation. Invalid parameter idValue.\nINVALID_CORRELATIONID   Submission has not passed validation. Invalid header CorrelationId.\nINVALID_STARTDATE       Submission has not passed validation. Invalid parameter startDate.\nINVALID_ENDDATE         Submission has not passed validation. Invalid parameter endDate.\nINVALID_FIELDS          Submission has not passed validation. Invalid parameter fields.\nMISSING_STARTDATE       Submission has not passed validation. Required parameter startDate has not been supplied.\nMISSING_ENDDATE         Submission has not passed validation. Required parameter endDate has not been supplied.",
+            "headers": {
+              "CorrelationId": {
+                "$ref": "#/components/headers/CorrelationId"
+              }
+            },
+            "content": {
+              "application/json;charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                },
+                "examples": {
+                  "Single Error Code": {
+                    "value": {
+                      "failures": [
+                        {
+                          "code": "INVALID_IDTYPE",
+                          "reason": "Submission has not passed validation. Invalid parameter idType."
+                        }
+                      ]
+                    }
+                  },
+                  "Multiple Error Codes": {
+                    "value": {
+                      "failures": [
+                        {
+                          "code": "INVALID_IDTYPE",
+                          "reason": "Submission has not passed validation. Invalid parameter idType."
+                        },
+                        {
+                          "code": "INVALID_IDVALUE",
+                          "reason": "Submission has not passed validation. Invalid parameter idValue."
+                        },
+                        {
+                          "code": "INVALID_CORRELATIONID",
+                          "reason": "Submission has not passed validation. Invalid header CorrelationId."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found\n```\n\"code\"                        \"reason\"\nNO_DATA_FOUND                 The remote endpoint has indicated that there was no data available.",
+            "headers": {
+              "CorrelationId": {
+                "$ref": "#/components/headers/CorrelationId"
+              }
+            },
+            "content": {
+              "application/json;charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                },
+                "examples": {
+                  "NO_DATA_FOUND": {
+                    "value": {
+                      "failures": [
+                        {
+                          "code": "NO_DATA_FOUND",
+                          "reason": "The remote endpoint has indicated that there was no data available."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity\n```\n\"code\"                   \"reason\"\nUNKNOWN_DATA_ITEM        There are 1 or more unknown data items in the 'fields' query string.",
+            "headers": {
+              "CorrelationId": {
+                "$ref": "#/components/headers/CorrelationId"
+              }
+            },
+            "content": {
+              "application/json;charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                },
+                "examples": {
+                  "Actual response": {
+                    "value": {
+                      "failures": [
+                        {
+                          "code": "UNKNOWN_DATA_ITEM",
+                          "reason": "There are 1 or more unknown data items in the 'fields' query string."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "428": {
+            "description": "Precondition Required\n```\nIncluded for future use when the endpoint supports multiple types of identifiers\n\n\"code\"                  \"reason\"\nINVALID_IDENTIFIERS     Submission has not passed validation. The idType and idValue path parameters are not a valid combination.",
+            "headers": {
+              "CorrelationId": {
+                "$ref": "#/components/headers/CorrelationId"
+              }
+            },
+            "content": {
+              "application/json;charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                },
+                "examples": {
+                  "Single Error Code": {
+                    "value": {
+                      "failures": [
+                        {
+                          "code": "INVALID_IDENTIFIERS",
+                          "reason": "Submission has not passed validation. The idType and idValue path parameters are not a valid combination."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error\n```\n\"code\"         \"reason\"\nSERVER_ERROR   IF is currently experiencing problems that require live service intervention.",
+            "headers": {
+              "CorrelationId": {
+                "$ref": "#/components/headers/CorrelationId"
+              }
+            },
+            "content": {
+              "application/json;charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                },
+                "examples": {
+                  "SERVER_ERROR": {
+                    "value": {
+                      "failures": [
+                        {
+                          "code": "SERVER_ERROR",
+                          "reason": "IF is currently experiencing problems that require live service intervention."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable\n```\n\"code\"         \"reason\"\nSERVICE_UNAVAILABLE   Dependent systems are currently not responding.",
+            "headers": {
+              "CorrelationId": {
+                "$ref": "#/components/headers/CorrelationId"
+              }
+            },
+            "content": {
+              "application/json;charset=UTF-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                },
+                "examples": {
+                  "SERVICE_UNAVAILABLE": {
+                    "value": {
+                      "failures": [
+                        {
+                          "code": "SERVICE_UNAVAILABLE",
+                          "reason": "Dependent systems are currently not responding."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "headers": {
+      "CorrelationId": {
+        "description": "CorrelationID - Used for traceability purposes when present. UUID format",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F]{8}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{12}$"
+        }
+      }
+    },
+    "parameters": {
+      "environment": {
+        "in": "header",
+        "name": "Environment",
+        "description": "Mandatory. The environment in use.",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "ist0",
+            "clone",
+            "live"
+          ]
+        }
+      },
+      "correlationId": {
+        "in": "header",
+        "name": "CorrelationId",
+        "description": "Mandatory. A UUID format string for the transaction. If not specified the IF will create a UUID value to be used",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F]{8}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{12}$"
+        }
+      },
+      "idTypeParam": {
+        "in": "path",
+        "name": "idType",
+        "description": "Mandatory. Identification type. Possible values are 'nino' only",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "pattern": "^(nino)$"
+        }
+      },
+      "idValueParam": {
+        "in": "path",
+        "name": "idValue",
+        "description": "Mandatory. Currently only a NINO with optional suffix is supported",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "pattern": "^((?!(BG|GB|KN|NK|NT|TN|ZZ)|(D|F|I|Q|U|V)[A-Z]|[A-Z](D|F|I|O|Q|U|V))[A-Z]{2})[0-9]{6}[A-D\\s]?$"
+        }
+      },
+      "startDateQueryParam": {
+        "in": "query",
+        "name": "startDate",
+        "description": "Mandatory query string parameter to specify a start date in YYYY-MM-DD format for the range of data required.",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/dateType"
+        }
+      },
+      "endDateQueryParam": {
+        "in": "query",
+        "name": "endDate",
+        "description": "Mandatory query string parameter to specify an end date in YYYY-MM-DD format for the range of data required.",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/dateType"
+        }
+      },
+      "fieldsQueryParam": {
+        "in": "query",
+        "name": "fields",
+        "description": "Optional query string parameter to specify a subset of data to be returned.\n\nA comma-separated list of response property names. Where the response property is an object or array then each required property within that object/array must be specified by inclusion as a comma-separated list within round brackets immediately after the object/array property name e.g.\n\nfields=applications(id,awards(startDate,endDate,totalEntitlement,workingTaxCredit(amount),childTaxCredit(childCareAmount,ctcChildAmount),grossTaxYearAmount,payments(nextDueDate,frequency,tcType,amount)))\n",
+        "required": false,
+        "schema": {
+          "description": "Don't allow: 1) the following characters at the start of the string: ,()_-\n             2) leading hyphen or underscore on property names i.e. after '(', ')', and ','\n             3) the following character combinations: ,,  ,(  ,)  (,  ((  ()  )(\nOnly allow alphanumeric characters and ')' at the end of the string\n",
+          "type": "string",
+          "pattern": "^((?!^[,()_-])(?![(,)][_-])(?![,(][,()])(?!\\)[(])(?![)][a-zA-Z0-9(_-])[a-zA-Z0-9(),_-])*[a-zA-Z0-9)]$"
+        }
+      }
+    },
+    "schemas": {
+      "errorResponse": {
+        "title": "API#1687 Individual Tax Credits Error Response Schema 1.0.0",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "failures"
+        ],
+        "properties": {
+          "failures": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "code",
+                "reason"
+              ],
+              "properties": {
+                "code": {
+                  "description": "Keys for all the errors returned",
+                  "type": "string",
+                  "pattern": "^[A-Z0-9_-]{1,160}$"
+                },
+                "reason": {
+                  "description": "A simple description for the failure",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 160
+                }
+              }
+            }
+          }
+        }
+      },
+      "successResponse": {
+        "title": "API#1687 Individual Tax Credits Success Response Schema 1.0.0",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "applications": {
+            "description": "The applications that are active during the date range requested",
+            "type": "array",
+            "minItems": 0,
+            "uniqueItems": true,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "description": "The identifier for the household application that the individual is active on. Multiple individuals can be active on the same application id.",
+                  "type": "number",
+                  "multipleOf": 1,
+                  "maximum": 999999999999,
+                  "exclusiveMaximum": false,
+                  "minimum": 0,
+                  "exclusiveMinimum": true
+                },
+                "ceasedDate": {
+                  "allOf": [
+                    {
+                      "description": "The date that the household ceased for NTC purposes (i.e. broke up)."
+                    },
+                    {
+                      "$ref": "#/components/schemas/dateType"
+                    }
+                  ]
+                },
+                "entStartDate": {
+                  "allOf": [
+                    {
+                      "description": "The effective start date of the entitlement unit"
+                    },
+                    {
+                      "$ref": "#/components/schemas/dateType"
+                    }
+                  ]
+                },
+                "entEndDate": {
+                  "allOf": [
+                    {
+                      "description": "The date on which eligibility to tax credit ceased for this entitlement unit."
+                    },
+                    {
+                      "$ref": "#/components/schemas/dateType"
+                    }
+                  ]
+                },
+                "awards": {
+                  "description": "The awards that were active for this application during the time period",
+                  "type": "array",
+                  "minItems": 0,
+                  "uniqueItems": true,
+                  "items": {
+                    "$ref": "#/components/schemas/awardType"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "awardType": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "payProfCalcDate": {
+            "allOf": [
+              {
+                "description": "The date on which the calculation of the payment profile was carried out."
+              },
+              {
+                "$ref": "#/components/schemas/dateType"
+              }
+            ]
+          },
+          "startDate": {
+            "allOf": [
+              {
+                "description": "Tax credits period start date"
+              },
+              {
+                "$ref": "#/components/schemas/dateType"
+              }
+            ]
+          },
+          "endDate": {
+            "allOf": [
+              {
+                "description": "Tax credits period end date"
+              },
+              {
+                "$ref": "#/components/schemas/dateType"
+              }
+            ]
+          },
+          "totalEntitlement": {
+            "allOf": [
+              {
+                "description": "The sum of all the award entitlements for an award version; the net amount the entitlement unit will receive"
+              },
+              {
+                "$ref": "#/components/schemas/amountType"
+              }
+            ]
+          },
+          "workingTaxCredit": {
+            "description": "Working Tax Credit (WTC) amounts",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "amount": {
+                "allOf": [
+                  {
+                    "description": "Working Tax Credit element of the overall entitlement (totalEntitlement)"
+                  },
+                  {
+                    "$ref": "#/components/schemas/amountType"
+                  }
+                ]
+              },
+              "entitlementYTD": {
+                "allOf": [
+                  {
+                    "description": "The amount of WTC that the applicant is entitled to in this tax year for the period from the start of entitlement to the calculation date of the payment profile"
+                  },
+                  {
+                    "$ref": "#/components/schemas/amountType"
+                  }
+                ]
+              },
+              "paidYTD": {
+                "allOf": [
+                  {
+                    "description": "The actual amount of payment out both PVE and direct, from the start of the tax credit period up to the calculated date of the payment profile. Will be returned for the payee only."
+                  },
+                  {
+                    "$ref": "#/components/schemas/amountType"
+                  }
+                ]
+              }
+            }
+          },
+          "childTaxCredit": {
+            "description": "Child Tax Credit amounts",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "childCareAmount": {
+                "$ref": "#/components/schemas/amountType"
+              },
+              "ctcChildAmount": {
+                "allOf": [
+                  {
+                    "description": "CTC Child Entitlements"
+                  },
+                  {
+                    "$ref": "#/components/schemas/amountType"
+                  }
+                ]
+              },
+              "familyAmount": {
+                "allOf": [
+                  {
+                    "description": "Family Entitlement"
+                  },
+                  {
+                    "$ref": "#/components/schemas/amountType"
+                  }
+                ]
+              },
+              "babyAmount": {
+                "allOf": [
+                  {
+                    "description": "Baby Entitlement (no longer available after 2017)"
+                  },
+                  {
+                    "$ref": "#/components/schemas/amountType"
+                  }
+                ]
+              },
+              "entitlementYTD": {
+                "allOf": [
+                  {
+                    "description": "The amount of this tax credit that the applicant is entitled to in this tax year for the period from the start of entitlement to the calculation date of the payment profile"
+                  },
+                  {
+                    "$ref": "#/components/schemas/amountType"
+                  }
+                ]
+              },
+              "paidYTD": {
+                "allOf": [
+                  {
+                    "description": "The actual amount of payment out both PVE and direct, from the start of the tax credit period up to the calculated date of the payment profile"
+                  },
+                  {
+                    "$ref": "#/components/schemas/amountType"
+                  }
+                ]
+              }
+            }
+          },
+          "grossTaxYearAmount": {
+            "allOf": [
+              {
+                "description": "The gross amount of this tax credit that has been paid in this tax year at the calculation date of the payment profile"
+              },
+              {
+                "$ref": "#/components/schemas/amountType"
+              }
+            ]
+          },
+          "payments": {
+            "description": "All payments made to the individual during the time period. If no payments to this individual an empty array will be returned.\n",
+            "type": "array",
+            "minItems": 0,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "periodStartDate": {
+                  "allOf": [
+                    {
+                      "description": "Tax Credit Period Start Date"
+                    },
+                    {
+                      "$ref": "#/components/schemas/dateType"
+                    }
+                  ]
+                },
+                "periodEndDate": {
+                  "allOf": [
+                    {
+                      "description": "Tax Credit Period End Date"
+                    },
+                    {
+                      "$ref": "#/components/schemas/dateType"
+                    }
+                  ]
+                },
+                "startDate": {
+                  "allOf": [
+                    {
+                      "description": "Due date of first payment"
+                    },
+                    {
+                      "$ref": "#/components/schemas/dateType"
+                    }
+                  ]
+                },
+                "endDate": {
+                  "allOf": [
+                    {
+                      "description": "Due date of last payment (for single payments this is the same as start_date)"
+                    },
+                    {
+                      "$ref": "#/components/schemas/dateType"
+                    }
+                  ]
+                },
+                "status": {
+                  "description": "The current status of the payment. Currently supported values:\n```\nA – Active\nD – DPP\nS – Suspended\nC – Ceased\nX – Cancelled, to allow amended giros to be processed with the same PMF reference\n```\n",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1
+                },
+                "postedDate": {
+                  "allOf": [
+                    {
+                      "description": "The date to which regular payments have been posted to the NTC applicant award account"
+                    },
+                    {
+                      "$ref": "#/components/schemas/dateType"
+                    }
+                  ]
+                },
+                "nextDueDate": {
+                  "allOf": [
+                    {
+                      "description": "The date on which the next regular payment is due"
+                    },
+                    {
+                      "$ref": "#/components/schemas/dateType"
+                    }
+                  ]
+                },
+                "frequency": {
+                  "description": "The number of days between payments. Currently supported values are 1, 7, 14, and 28",
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 999,
+                  "multipleOf": 1
+                },
+                "tcType": {
+                  "description": "The type of tax credit. Currently supported values are ETC and ICC",
+                  "type": "string",
+                  "minLength": 3,
+                  "maxLength": 3
+                },
+                "amount": {
+                  "allOf": [
+                    {
+                      "description": "The amount to be paid to recipient"
+                    },
+                    {
+                      "$ref": "#/components/schemas/amountType"
+                    }
+                  ]
+                },
+                "method": {
+                  "description": "Indicates the type of payment. Currently supported values:\n```\nR – regular automatic payment\nO – single automatic payment\nM – single manual payment\n```\n",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1
+                }
+              }
+            }
+          }
+        }
+      },
+      "amountType": {
+        "type": "number",
+        "maximum": 1000000000000000,
+        "multipleOf": 0.01,
+        "exclusiveMaximum": false,
+        "minimum": 0,
+        "exclusiveMinimum": false
+      },
+      "dateType": {
+        "description": "Format YYYY-MM-DD e.g. 2020-08-18",
+        "type": "string",
+        "pattern": "^(((19|20)([2468][048]|[13579][26]|0[48])|2000)[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)[-](0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-](0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}[-]02[-](0[1-9]|1[0-9]|2[0-8])))$"
+      }
+    }
+  }
+}

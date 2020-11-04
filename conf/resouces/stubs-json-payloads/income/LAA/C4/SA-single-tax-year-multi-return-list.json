@@ -1,0 +1,34 @@
+{
+  "summary": "Self Assessment income details single tax year multi return list LAA C4",
+  "value": {
+    "sa": [
+      {
+        "taxYear": "2019",
+        "returnList": [
+          {
+            "businessDescription": "c",
+            "address": {
+              "line1": "c",
+              "line2": "c",
+              "line3": "c",
+              "line4": "c",
+              "postcode": "c"
+            },
+            "telephoneNumber": "a"
+          },
+          {
+            "businessDescription": "d",
+            "address": {
+              "line1": "e",
+              "line2": "f",
+              "line3": "g",
+              "line4": "h",
+              "postcode": "c"
+            },
+            "telephoneNumber": "b"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "summary": "Individual Details with maximum data for two address types HMCTS C4",
+  "value": {
+    "contactDetails": [
+      {
+        "detail": "07123 987654",
+        "type": "MOBILE TELEPHONE"
+      }
+    ],
+    "residences": [
+      {
+        "type": "NOMINATED",
+        "address": {
+          "line1": "24 Trinity Street",
+          "line2": "Dawley Bank",
+          "line3": "Telford",
+          "line4": "Shropshire",
+          "line5": "UK",
+          "postcode": "TF3 4ER"
+        }
+      }
+    ]
+  }
+}
