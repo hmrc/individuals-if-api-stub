@@ -23,16 +23,16 @@ import uk.gov.hmrc.individualsifapistub.domain.IncomePaye._
 
 class PostGradLoanSpec extends UnitSpec {
 
-  val validPostGradLoan = PostGradLoan(Some(1588498.34), Some(2217757.33))
-  val invalidPostGradLoan = PostGradLoan(Some(9999999999.99 + 1), Some(9999999999.99 + 1))
+  val validPostGradLoan = PostGradLoan(Some(15884), Some(22177))
+  val invalidPostGradLoan = PostGradLoan(Some(99999 + 1), Some(-1))
 
   "PostGradLoan" should {
     "Write to json" in {
       val expectedJson = Json.parse(
         """
           |{
-          |  "repaymentsInPayPeriod": 1588498.34,
-          |  "repaymentsYTD": 2217757.33
+          |  "repaymentsInPayPeriod": 15884,
+          |  "repaymentsYTD": 22177
           |}
           |""".stripMargin
       )

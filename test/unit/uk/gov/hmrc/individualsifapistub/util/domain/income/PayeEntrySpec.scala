@@ -110,12 +110,12 @@ class PayeEntrySpec extends UnitSpec {
           |    },
           |    "studentLoan": {
           |        "planType": "02",
-          |        "repaymentsInPayPeriod": 88478.16,
-          |        "repaymentsYTD": 545.52
+          |        "repaymentsInPayPeriod": 88478,
+          |        "repaymentsYTD": 545
           |    },
           |    "postGradLoan": {
-          |        "repaymentsInPayPeriod": 15636.22,
-          |        "repaymentsYTD": 46849.26
+          |        "repaymentsInPayPeriod": 15636,
+          |        "repaymentsYTD": 46849
           |    }
           |}
           |""".stripMargin
@@ -154,7 +154,7 @@ class PayeEntrySpec extends UnitSpec {
 
   private def createValidBenefits() = Benefits(Some(506328.1), Some(246594.83))
 
-  private def createValidStudentLoan() = StudentLoan(Some("02"), Some(88478.16), Some(545.52))
+  private def createValidStudentLoan() = StudentLoan(Some("02"), Some(88478), Some(545))
 
-  private def createValidPostGradLoan() = PostGradLoan(Some(15636.22), Some(46849.26))
+  private def createValidPostGradLoan() = PostGradLoan(Some(15636), Some(46849))
 }
