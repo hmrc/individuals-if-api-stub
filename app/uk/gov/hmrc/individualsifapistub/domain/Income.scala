@@ -19,15 +19,18 @@ package uk.gov.hmrc.individualsifapistub.domain
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.libs.json.Reads._
-import uk.gov.hmrc.individualsifapistub.domain.IncomeSa.paymentAmountValidator
-
-case class PostGradLoan(repaymentsInPayPeriod: Option[Double], repaymentsYtd: Option[Double])
+import uk.gov.hmrc.individualsifapistub.domain.IncomeSa._
 
 case class StudentLoan(
                         planType: Option[String],
-                        repaymentsInPayPeriod: Option[Double],
-                        repaymentsYTD: Option[Double]
+                        repaymentsInPayPeriod: Option[Int],
+                        repaymentsYTD: Option[Int]
                       )
+
+case class PostGradLoan(
+                         repaymentsInPayPeriod: Option[Int],
+                         repaymentsYtd: Option[Int]
+                       )
 
 case class Benefits(taxedViaPayroll: Option[Double], taxedViaPayrollYtd: Option[Double])
 
@@ -126,6 +129,10 @@ object IncomeSa {
 
   val minValue = -9999999999.99
   val maxValue = 9999999999.99
+  val payeWholeUnitsPaymentTypeMinValue = -99999
+  val payeWholeUnitsPaymentTypeMaxValue = 99999
+  val payeWholeUnitsPositivePaymentTypeMinValue = 0
+  val payeWholeUnitsPositivePaymentTypeMaxValue = 99999
 
   val utrPattern = "^[0-9]{10}$".r
   val dateStringPattern = ("^(((19|20)([2468][048]|[13579][26]|0[48])|2000)" +
@@ -140,8 +147,20 @@ object IncomeSa {
 
   def isInRange(value: Double): Boolean = value > minValue && value < maxValue
 
+  def isInRangeWholeUnits(value: Double): Boolean =
+    value >= payeWholeUnitsPaymentTypeMinValue && value <= payeWholeUnitsPaymentTypeMaxValue
+
+  def isInRangePositiveWholeUnits(value: Double): Boolean =
+    value >= payeWholeUnitsPositivePaymentTypeMinValue && value <= payeWholeUnitsPositivePaymentTypeMaxValue
+
   def paymentAmountValidator(implicit rds: Reads[Double]): Reads[Double] =
     verifying[Double](value => isInRange(value) && isMultipleOfPointZeroOne(value))
+
+  def payeWholeUnitsPaymentTypeValidator(implicit rds: Reads[Int]): Reads[Int] =
+    verifying[Int](value => isInRangeWholeUnits(value))
+
+  def payeWholeUnitsPositivePaymentTypeValidator(implicit rds: Reads[Int]): Reads[Int] =
+    verifying[Int](value => isInRangePositiveWholeUnits(value))
 
   implicit val addressFormat: Format[Address] = Format(
     (
@@ -289,12 +308,12 @@ object IncomePaye {
 
   implicit val postGradLoanFormat: Format[PostGradLoan] = Format(
     (
-      (JsPath \ "repaymentsInPayPeriod").readNullable[Double](paymentAmountValidator) and
-        (JsPath \ "repaymentsYTD").readNullable[Double](paymentAmountValidator)
+      (JsPath \ "repaymentsInPayPeriod").readNullable[Int](payeWholeUnitsPaymentTypeValidator) and
+        (JsPath \ "repaymentsYTD").readNullable[Int](payeWholeUnitsPositivePaymentTypeValidator)
       ) (PostGradLoan.apply _),
     (
-      (JsPath \ "repaymentsInPayPeriod").writeNullable[Double] and
-        (JsPath \ "repaymentsYTD").writeNullable[Double]
+      (JsPath \ "repaymentsInPayPeriod").writeNullable[Int] and
+        (JsPath \ "repaymentsYTD").writeNullable[Int]
       ) (unlift(PostGradLoan.unapply))
   )
 
@@ -302,13 +321,13 @@ object IncomePaye {
     (
       (JsPath \ "planType").readNullable[String]
         (pattern(studentLoanPlanTypePattern, "Invalid student loan plan type")) and
-        (JsPath \ "repaymentsInPayPeriod").readNullable[Double](paymentAmountValidator) and
-        (JsPath \ "repaymentsYTD").readNullable[Double](paymentAmountValidator)
+        (JsPath \ "repaymentsInPayPeriod").readNullable[Int](payeWholeUnitsPaymentTypeValidator) and
+        (JsPath \ "repaymentsYTD").readNullable[Int](payeWholeUnitsPositivePaymentTypeValidator)
       ) (StudentLoan.apply _),
     (
       (JsPath \ "planType").writeNullable[String] and
-        (JsPath \ "repaymentsInPayPeriod").writeNullable[Double] and
-        (JsPath \ "repaymentsYTD").writeNullable[Double]
+        (JsPath \ "repaymentsInPayPeriod").writeNullable[Int] and
+        (JsPath \ "repaymentsYTD").writeNullable[Int]
       ) (unlift(StudentLoan.unapply))
   )
 

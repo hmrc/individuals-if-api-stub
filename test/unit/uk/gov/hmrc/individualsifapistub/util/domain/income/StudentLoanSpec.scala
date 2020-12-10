@@ -23,7 +23,7 @@ import uk.gov.hmrc.individualsifapistub.domain.IncomePaye._
 
 class StudentLoanSpec extends UnitSpec {
   val validStudentLoan = StudentLoan(Some("01"),Some(100), Some(100))
-  val invalidStudentLoan = StudentLoan(Some("NotValid"),Some(9999999999.99 + 1), Some(9999999999.99 + 1))
+  val invalidStudentLoan = StudentLoan(Some("NotValid"),Some(99999 + 1), Some(-1))
 
   "Student Loan" should {
     "WriteToJson" in {
