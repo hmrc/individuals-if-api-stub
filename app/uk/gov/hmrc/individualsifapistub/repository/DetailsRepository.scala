@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,8 +42,8 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
   def create(idType: String, idValue: String, createDetailsRequest: CreateDetailsRequest): Future[DetailsResponse] = {
 
     val id = IdType.parse(idType) match {
-      case Nino => Id(Some(idValue), None)
-      case Trn => Id(None, Some(idValue))
+      case Nino => Identifier(Some(idValue), None)
+      case Trn => Identifier(None, Some(idValue))
     }
 
     val detailsResponse = DetailsResponse(id, createDetailsRequest.contactDetails, createDetailsRequest.residences)

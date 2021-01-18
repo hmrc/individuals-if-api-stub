@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,8 +44,8 @@ class IncomeSaRepository @Inject()(mongoConnectionProvider: MongoConnectionProvi
   def create(idType: String, idValue: String, request: IncomeSa): Future[IncomeSa] = {
 
     val id = IdType.parse(idType) match {
-      case Nino => Id(Some(idValue), None)
-      case Trn => Id(None, Some(idValue))
+      case Nino => Identifier(Some(idValue), None)
+      case Trn => Identifier(None, Some(idValue))
     }
 
     val incomeSaRecord = IncomeSaEntry(id, request)

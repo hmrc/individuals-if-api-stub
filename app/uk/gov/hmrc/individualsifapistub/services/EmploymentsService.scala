@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,11 +26,18 @@ class EmploymentsService @Inject()(employmentsRepository: EmploymentRepository) 
 
   def create(idType: String,
              idValue: String,
+             startDate: String,
+             endDate: String,
+             consumer: String,
              employments: Employments): Future[Employments] = {
-    employmentsRepository.create(idType, idValue, employments)
+    employmentsRepository.create(idType, idValue, startDate, endDate, consumer, employments)
   }
 
-  def get(idType: String, idValue: String): Future[Option[Employments]] = {
-    employmentsRepository.findByIdAndType(idType, idValue)
+  def get(idType: String,
+          idValue: String,
+          startDate: String,
+          endDate: String,
+          fields: Option[String]): Future[Option[Employments]] = {
+    employmentsRepository.findByIdAndType(idType, idValue, startDate, endDate, fields)
   }
 }

@@ -20,7 +20,7 @@ package unit.uk.gov.hmrc.individualsifapistub.util.domain
 import play.api.libs.json.Json
 import testUtils.TestHelpers
 import uk.gov.hmrc.individualsifapistub.domain.DetailsResponse._
-import uk.gov.hmrc.individualsifapistub.domain.{ContactDetail, DetailsResponse, Id, Residence}
+import uk.gov.hmrc.individualsifapistub.domain.{ContactDetail, DetailsResponse, Identifier, Residence}
 import uk.gov.hmrc.individualsifapistub.domain.DetailsResponse._
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
@@ -28,8 +28,8 @@ class DetailsResponseSpec extends UnitSpec with TestHelpers {
 
   val idValue = "2432552635"
 
-  val ninoDetails = Id(Some("XH123456A"), None)
-  val trnDetails = Id(None, Some("12345678"))
+  val ninoDetails = Identifier(Some("XH123456A"), None)
+  val trnDetails = Identifier(None, Some("12345678"))
   val contactDetail1 = ContactDetail(9, "MOBILE TELEPHONE", "07123 987654")
   val contactDetail2 = ContactDetail(9, "MOBILE TELEPHONE", "07123 987655")
   val residence1 = Residence(residenceType = Some("BASE"), address = generateAddress(2))
@@ -40,8 +40,8 @@ class DetailsResponseSpec extends UnitSpec with TestHelpers {
     Some(Seq(residence1, residence2))
   )
 
-  val invalidNinoDetails = Id(Some("QWERTYUIOP"), None)
-  val invalidTrnDetails = Id(None, Some("QWERTYUIOP"))
+  val invalidNinoDetails = Identifier(Some("QWERTYUIOP"), None)
+  val invalidTrnDetails = Identifier(None, Some("QWERTYUIOP"))
   val invalidContactDetail = ContactDetail(-42, "abcdefghijklmnopqrstuvwxyz0123456789", "a")
   val invalidResidence = Residence(residenceType =  Some(""), address = generateAddress(2))
   val invalidDetailsResponse = DetailsResponse(
@@ -75,22 +75,22 @@ class DetailsResponseSpec extends UnitSpec with TestHelpers {
     }
 
     "Validate successful when reading valid nino" in {
-      val result = Json.toJson(ninoDetails).validate[Id]
+      val result = Json.toJson(ninoDetails).validate[Identifier]
       result.isSuccess shouldBe true
     }
 
     "Validate successful when reading valid trn" in {
-      val result = Json.toJson(trnDetails).validate[Id]
+      val result = Json.toJson(trnDetails).validate[Identifier]
       result.isSuccess shouldBe true
     }
 
     "Validate unsuccessfully when reading invalid nino" in {
-      val result = Json.toJson(invalidNinoDetails).validate[Id]
+      val result = Json.toJson(invalidNinoDetails).validate[Identifier]
       result.isError shouldBe true
     }
 
     "Validate unsuccessfully when reading invalid trn" in {
-      val result = Json.toJson(invalidTrnDetails).validate[Id]
+      val result = Json.toJson(invalidTrnDetails).validate[Identifier]
       result.isError shouldBe true
     }
 

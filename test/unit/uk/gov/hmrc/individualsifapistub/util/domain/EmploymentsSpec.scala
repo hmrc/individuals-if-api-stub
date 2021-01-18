@@ -18,14 +18,14 @@ package unit.uk.gov.hmrc.individualsifapistub.util.domain
 
 import play.api.libs.json.{JsNumber, Json}
 import testUtils.TestHelpers
-import uk.gov.hmrc.individualsifapistub.domain.{Address, Employer, Employment, EmploymentDetail, Employments, Id, Payment}
+import uk.gov.hmrc.individualsifapistub.domain.{Address, Employer, Employment, EmploymentDetail, Employments, Identifier, Payment}
 import uk.gov.hmrc.individualsifapistub.domain.Employments._
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class EmploymentsSpec extends UnitSpec with TestHelpers {
 
-  val ninoDetails = Id(Some("XH123456A"), None)
-  val trnDetails = Id(None, Some("12345678"))
+  val ninoDetails = Identifier(Some("XH123456A"), None)
+  val trnDetails = Identifier(None, Some("12345678"))
 
   val address = Address(
     Some("line1"),

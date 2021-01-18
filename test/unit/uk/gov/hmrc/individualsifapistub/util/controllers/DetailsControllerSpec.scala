@@ -50,7 +50,7 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
 
   "Create details" should {
     "Successfully create a details record and return created record as response" in new Setup {
-      val details = Id(Some(idValue), None)
+      val details = Identifier(Some(idValue), None)
       val detailsResponse = DetailsResponse(details, request.contactDetails, request.residences)
 
       when(mockDetailsService.create(idType, idValue, request)).thenReturn(Future.successful(detailsResponse))
@@ -61,7 +61,7 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
     }
 
     "Fail when a request is not provided" in new Setup {
-      val details = Id(Some(idValue), None)
+      val details = Identifier(Some(idValue), None)
       val detailsResponse = DetailsResponse(details, None, None)
       when(mockDetailsService.create(idType, idValue, request)).thenReturn(Future.successful(detailsResponse))
       val response = await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson(""))))
@@ -71,7 +71,7 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
 
   "Retrieve Details" should {
     "Return details when successfully retrieved from service" in new Setup {
-      val details = Id(Some(idValue), None)
+      val details = Identifier(Some(idValue), None)
       val detailsResponse = DetailsResponse(details, request.contactDetails, request.residences)
       when(mockDetailsService.get(idType, idValue)).thenReturn(Future.successful(Some(detailsResponse)))
 

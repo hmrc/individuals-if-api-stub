@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,16 +30,31 @@ class EmploymentsController @Inject()( bodyParser: PlayBodyParsers,
                                        employmentsService: EmploymentsService
                                      ) (implicit val ec: ExecutionContext) extends CommonController(cc) {
 
-  def create(idType: String, idValue: String): Action[JsValue] = {
+  def create(idType: String,
+             idValue: String,
+             startDate: String,
+             endDate: String,
+             consumer: String): Action[JsValue] = {
     Action.async(bodyParser.json) { implicit request =>
-      withJsonBodyAndValidId[Employments](idType, idValue) {
-          jsonBody => employmentsService.create(idType, idValue, jsonBody) map (e => Created(Json.toJson(e)))
+      withJsonBodyAndValidId[Employments](idType, idValue, startDate, endDate, Some(consumer)) {
+        jsonBody => employmentsService.create(
+          idType,
+          idValue,
+          startDate,
+          endDate,
+          consumer,
+          jsonBody
+        ) map (e => Created(Json.toJson(e)))
       } recover recovery
     }
   }
 
-  def retrieve(idType: String, idValue: String): Action[AnyContent] = Action.async { implicit request =>
-    employmentsService.get(idType, idValue) map {
+  def retrieve(idType: String,
+               idValue: String,
+               startDate: String,
+               endDate: String,
+               fields: Option[String]): Action[AnyContent] = Action.async { implicit request =>
+    employmentsService.get(idType, idValue, startDate, endDate, fields) map {
       case Some(value) => Ok(Json.toJson(value))
       case None => NotFound
     } recover recovery

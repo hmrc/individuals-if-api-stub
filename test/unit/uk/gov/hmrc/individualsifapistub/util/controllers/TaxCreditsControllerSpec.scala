@@ -24,7 +24,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.individualsifapistub.controllers.TaxCreditsController
 
 import uk.gov.hmrc.individualsifapistub.domain.TaxCredits._
-import uk.gov.hmrc.individualsifapistub.domain.{Application, Applications, Id}
+import uk.gov.hmrc.individualsifapistub.domain.{Application, Applications, Identifier}
 import uk.gov.hmrc.individualsifapistub.services.TaxCreditsService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
@@ -48,7 +48,7 @@ class TaxCreditsControllerSpec extends TestSupport {
 
   val idType = "nino"
   val idValue = "XH123456A"
-  val id = Id(Some(idValue), None)
+  val id = Identifier(Some(idValue), None)
 
   val request = Applications(Seq(application))
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@ package uk.gov.hmrc.individualsifapistub.domain
 import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
-import uk.gov.hmrc.individualsifapistub.domain.Id._
+import uk.gov.hmrc.individualsifapistub.domain.Identifier._
 
-case class TaxCreditsEntry(id: Id, applications: Seq[Application])
+case class TaxCreditsEntry(id: Identifier, applications: Seq[Application])
 
 case class Applications(applications: Seq[Application])
 
@@ -192,11 +192,11 @@ object TaxCredits {
 
   val taxCreditsEntryFormat: Format[TaxCreditsEntry] = Format(
     (
-      (JsPath \ "id").read[Id] and
+      (JsPath \ "id").read[Identifier] and
       (JsPath \ "applications").read[Seq[Application]]
     )(TaxCreditsEntry.apply _),
     (
-      (JsPath \ "id").write[Id] and
+      (JsPath \ "id").write[Identifier] and
       (JsPath \ "applications").write[Seq[Application]]
     )(unlift(TaxCreditsEntry.unapply))
   )

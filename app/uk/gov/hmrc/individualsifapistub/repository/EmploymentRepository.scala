@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,22 +38,54 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
                                                         createEmploymentEntryFormat) {
 
   override lazy val indexes = Seq(
-    Index(key = Seq(("id.nino", Text), ("id.trn", Text)), name = Some("nino-trn"), unique = true, background = true)
+    Index(key = Seq(("id", Text)), name = Some("cache-key"), unique = true, background = true)
   )
 
-  def create(idType: String, idValue: String, employments: Employments): Future[Employments] = {
-    val id = IdType.parse(idType) match {
-      case Nino => Id(Some(idValue), None)
-      case Trn => Id(None, Some(idValue))
+  def create(idType: String,
+             idValue: String,
+             startDate: String,
+             endDate: String,
+             consumer: String,
+             employments: Employments): Future[Employments] = {
+    val ident = IdType.parse(idType) match {
+      case Nino => Identifier(Some(idValue), None, startDate, endDate, Some(consumer))
+      case Trn => Identifier(None, Some(idValue), startDate, endDate, Some(consumer))
     }
+
+    val id = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-${consumer}"
+
     insert(EmploymentEntry(id, employments.employments)) map (_ => employments) recover {
       case WriteResult.Code(11000) => throw new DuplicateException
     }
   }
 
-  def findByIdAndType(idType: String, idValue: String): Future[Option[Employments]] = {
+  def findByIdAndType(idType: String,
+                      idValue: String,
+                      startDate: String,
+                      endDate: String,
+                      fields: Option[String]): Future[Option[Employments]] = {
+
+    val fieldsMap = Map("employments(employment(endDate,startDate))" -> "LAA-C1_LAA-C2",
+      "employments(employer(name),employment(endDate,startDate))" -> "LAA-C3_LSANI-C1_LSANI-C3",
+      "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employment(endDate,startDate))" -> "LAA-C4",
+      "employments(employment(endDate))" -> "HMCTS-C2_HMCTS-C3",
+      "employments(employer(address(line1,line2,line3,line4,line5,postcode),districtNumber,name,schemeRef),employment(endDate,startDate))" -> "HMCTS-C4",
+      "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employment(startDate))" -> "NICTSEJO-C4"
+    )
+
+    val ident = IdType.parse(idType) match {
+      case Nino => Identifier(
+        Some(idValue), None, startDate, endDate, fields.flatMap(value => fieldsMap.get(value))
+      )
+      case Trn => Identifier(
+        None, Some(idValue), startDate, endDate, fields.flatMap(value => fieldsMap.get(value))
+      )
+    }
+
+    val id = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-${fields.flatMap(value => fieldsMap.get(value))}"
+
     collection
-      .find[JsObject, JsObject](obj("id" -> obj(idType -> idValue)), None)
+      .find[JsObject, JsObject](obj("id" -> id), None)
       .one[Employments]
   }
 }

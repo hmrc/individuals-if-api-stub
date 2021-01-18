@@ -72,7 +72,7 @@ class EmploymentsServiceSpec extends TestSupport {
     )
 
     val employments = Employments(Seq(employment))
-    val request = EmploymentEntry(Id(Some("XH123456A"), None), Seq(employment))
+    val request = EmploymentEntry(Identifier(Some("XH123456A"), None), Seq(employment))
     val mockEmploymentRepository = mock[EmploymentRepository]
     val underTest = new EmploymentsService(mockEmploymentRepository)
   }

@@ -85,7 +85,7 @@ class EmploymentsControllerSpec extends TestSupport {
 
   val employments = Employments(Seq(employment))
 
-  val request = EmploymentEntry(Id(Some("XH123456A"), None), Seq(employment))
+  val request = EmploymentEntry(Identifier(Some("XH123456A"), None), Seq(employment))
 
   "Create Employment" should {
     "Successfully create a record and return created record as response" in new Setup {

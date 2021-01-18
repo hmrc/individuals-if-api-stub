@@ -51,7 +51,7 @@ class DetailsRepositorySpec extends RepositoryTestHelper with TestHelpers {
 
   "create" should {
     "create a details response with a nino" in {
-      val details = Id(Some(ninoValue), None)
+      val details = Identifier(Some(ninoValue), None)
       val detailsResponse = DetailsResponse(details, request.contactDetails, request.residences)
 
       val result = await(repository.create("nino", ninoValue, request))
@@ -60,7 +60,7 @@ class DetailsRepositorySpec extends RepositoryTestHelper with TestHelpers {
     }
 
     "create a details response with a trn" in {
-      val details = Id(None, Some(trnValue))
+      val details = Identifier(None, Some(trnValue))
       val detailsResponse = DetailsResponse(details, request.contactDetails, request.residences)
 
       val result = await(repository.create("trn", trnValue, request))
@@ -85,7 +85,7 @@ class DetailsRepositorySpec extends RepositoryTestHelper with TestHelpers {
 
     "return details when nino found" in {
 
-      val details = Id(Some(ninoValue), None)
+      val details = Identifier(Some(ninoValue), None)
       val detailsResponse = DetailsResponse(details, request.contactDetails, request.residences)
 
       await(repository.create("nino", ninoValue, request))
