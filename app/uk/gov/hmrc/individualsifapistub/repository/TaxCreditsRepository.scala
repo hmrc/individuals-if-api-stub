@@ -70,10 +70,6 @@ class TaxCreditsRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
     val tag = overlapMap.get(consumer).getOrElse("")
     val id  = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$tag"
 
-    insert(TaxCreditsEntry(id, applications.applications)) map (_ => applications) recover {
-      case WriteResult.Code(11000) => throw new DuplicateException
-    }
-
     for {
       _        <- collection.findAndRemove(obj("id" -> id)) map (_.result[TaxCreditsEntry])
       inserted <- insert(TaxCreditsEntry(id, applications.applications)) map (_ => applications)

@@ -48,18 +48,22 @@ class IncomeSaRepository @Inject()(mongoConnectionProvider: MongoConnectionProvi
              consumer: String,
              request: IncomeSa): Future[IncomeSa] = {
 
+    val overlapMap = Map(
+      "HMCTS-C2" -> "HMCTS-C2_HMCTS-C3",
+      "HMCTS-C2" -> "HMCTS-C2_HMCTS-C2",
+      "LSANI-C1" -> "LSANI-C1_LSANI-C2",
+      "LSANI-C2" -> "LSANI-C1_LSANI-C2"
+    )
+
     val ident = IdType.parse(idType) match {
       case Nino => Identifier(Some(idValue), None, startYear, endYear, Some(consumer))
       case Trn => Identifier(None, Some(idValue), startYear, endYear, Some(consumer))
     }
 
-    val id = s"${ident.nino.getOrElse(ident.trn)}-$startYear-$endYear-$consumer"
+    val tag = overlapMap.get(consumer).getOrElse("")
+    val id  = s"${ident.nino.getOrElse(ident.trn)}-$startYear-$endYear-$tag"
 
     val incomeSaRecord = IncomeSaEntry(id, request)
-
-    insert(incomeSaRecord) map (_ => incomeSaRecord.incomeSa) recover {
-      case WriteResult.Code(11000) => throw new DuplicateException
-    }
 
     for {
       _        <- collection.findAndRemove(obj("id" -> id)) map (_.result[IncomeSaEntry])
@@ -74,15 +78,16 @@ class IncomeSaRepository @Inject()(mongoConnectionProvider: MongoConnectionProvi
                       endYear: String,
                       fields: Option[String]): Future[Option[IncomeSa]] = {
 
-    val fieldsMap = Map("sa(returnList(addressLine1,addressLine2,addressLine3,addressLine4," +
-      "busEndDate,busStartDate,caseStartDate,deducts(totalBusExpenses,totalDisallowBusExp)," +
-      "income(allEmployments,foreign,foreignDivs,lifePolicies,other,partnerships,pensions," +
-      "selfAssessment,shares,trusts,ukDivsAndInterest,ukInterest,ukProperty),otherBusIncome," +
-      "postcode,totalNIC,totalTaxPaid,tradingIncomeAllowance,turnover),taxYear)" -> "LAA-C1",
-      "sa(returnList(busEndDate,busStartDate,deducts(totalBusExpenses),income(allEmployments,foreign," +
-      "foreignDivs,lifePolicies,other,partnerships,pensions,selfAssessment," +
-      "selfEmployment,shares,trusts,ukDivsAndInterest,ukInterest,ukProperty),receivedDate," +
-      "totalNIC,totalTaxPaid),taxYear)" -> "LSANI-C1")
+    val fieldsMap = Map(
+      "sa(returnList(addressLine1,addressLine2,addressLine3,addressLine4,busEndDate,busStartDate,caseStartDate,deducts(totalBusExpenses,totalDisallowBusExp),income(allEmployments,foreign,foreignDivs,lifePolicies,other,partnerships,pensions,selfAssessment,shares,trusts,ukDivsAndInterest,ukInterest,ukProperty),otherBusIncome,postcode,totalNIC,totalTaxPaid,tradingIncomeAllowance,turnover),taxYear)" -> "LAA-C1",
+      "sa(returnList(busEndDate,busStartDate,caseStartDate,deducts(totalBusExpenses,totalDisallowBusExp),income(allEmployments,foreign,foreignDivs,lifePolicies,other,partnerships,pensions,selfAssessment,shares,trusts,ukDivsAndInterest,ukInterest,ukProperty),otherBusIncome,tradingIncomeAllowance,turnover),taxYear)" -> "LAA-C2",
+      "sa(returnList(addressLine1,addressLine2,addressLine3,addressLine4,busEndDate,busStartDate,businessDescription,deducts(totalBusExpenses,totalDisallowBusExp),income(allEmployments,foreign,foreignDivs,lifePolicies,other,partnerships,pensions,selfAssessment,trusts,ukDivsAndInterest,ukInterest,ukProperty),otherBusIncome,postcode,tradingIncomeAllowance,turnover),taxYear)" -> "LAA-C3",
+      "sa(returnList(addressLine1,addressLine2,addressLine3,addressLine4,businessDescription,postcode,telephoneNumber),taxYear)" -> "LAA-C4",
+      "sa(returnList(caseStartDate,income(foreign,foreignDivs,selfAssessment,selfEmployment,ukDivsAndInterest,ukInterest,ukProperty)),taxYear)" -> "HMCTS-C2_HMCTS-C3",
+      "sa(returnList(addressLine1,addressLine2,addressLine3,addressLine4,businessDescription,caseStartDate,postcode,telephoneNumber),taxYear)" -> "HMCTS-C4",
+      "sa(returnList(busEndDate,busStartDate,deducts(totalBusExpenses),income(allEmployments,foreign,foreignDivs,lifePolicies,other,partnerships,pensions,selfAssessment,selfEmployment,shares,trusts,ukDivsAndInterest,ukInterest,ukProperty),receivedDate,totalNIC,totalTaxPaid),taxYear)" -> "LSANI-C1_LSANI-C2",
+      "sa(returnList(addressLine1,addressLine2,addressLine3,addressLine4,businessDescription,caseStartDate,income(allEmployments,foreignDivs,lifePolicies,other,partnerships,pensions,selfAssessment,selfEmployment,shares,trusts,ukDivsAndInterest,ukInterest,ukProperty),postcode,receivedDate,telephoneNumber),taxYear)" -> "NICTSEJO-C4"
+    )
 
     val ident = IdType.parse(idType) match {
       case Nino => Identifier(
@@ -93,7 +98,8 @@ class IncomeSaRepository @Inject()(mongoConnectionProvider: MongoConnectionProvi
       )
     }
 
-    val id = s"${ident.nino.getOrElse(ident.trn)}-$startYear-$endYear-${fields.flatMap(value => fieldsMap.get(value))}"
+    val tag = fields.flatMap(value => fieldsMap.get(value)).getOrElse("")
+    val id  = s"${ident.nino.getOrElse(ident.trn)}-$startYear-$endYear-$tag"
 
     collection.find[JsObject, JsObject](obj("id" -> id), None)
       .one[IncomeSaEntry].map(value => value.map(_.incomeSa))
