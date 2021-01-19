@@ -36,14 +36,12 @@ object Identifier {
 
   val trnPattern: Regex = "^[0-9]{8}$".r
 
-  val datePattern: Regex = ???
-
   implicit val idFormat: Format[Identifier] = Format(
     (
       (JsPath \ "nino").readNullable[String](pattern(ninoPattern, "InvalidNino")) and
       (JsPath \ "trn").readNullable[String](pattern(trnPattern, "InvalidTrn")) and
-      (JsPath \ "from").read[String](pattern(datePattern, "InvalidFrom")) and
-      (JsPath \ "to").read[String](pattern(datePattern, "InvalidTo")) and
+      (JsPath \ "from").read[String] and
+      (JsPath \ "to").read[String] and
       (JsPath \ "useCase").readNullable[String]
     )(Identifier.apply _),
     (

@@ -117,9 +117,9 @@ case class SaReturnType(
 
 case class SaTaxYearEntry(taxYear: Option[String], income: Option[Double], returnList: Option[Seq[SaReturnType]])
 
-case class IncomeSaEntry(id:Identifier, incomeSa: IncomeSa)
+case class IncomeSaEntry(id: String, incomeSa: IncomeSa)
 
-case class IncomePayeEntry(id:Identifier, incomePaye: IncomePaye)
+case class IncomePayeEntry(id: String, incomePaye: IncomePaye)
 
 case class IncomeSa(sa: Option[Seq[SaTaxYearEntry]])
 
@@ -277,11 +277,11 @@ object IncomeSa {
 
   val incomeSaEntryFormat: Format[IncomeSaEntry] = Format(
     (
-      (JsPath \ "id").read[Identifier] and
+      (JsPath \ "id").read[String] and
         (JsPath \ "incomeSaResponse").read[IncomeSa]
       )(IncomeSaEntry.apply _),
     (
-      (JsPath \ "id").write[Identifier] and
+      (JsPath \ "id").write[String] and
         (JsPath \ "incomeSaResponse").write[IncomeSa]
       )(unlift(IncomeSaEntry.unapply))
   )
@@ -458,11 +458,11 @@ object IncomePaye {
 
   val incomePayeEntryFormat: Format[IncomePayeEntry] = Format(
     (
-      (JsPath \ "id").read[Identifier] and
+      (JsPath \ "id").read[String] and
         (JsPath \ "incomePaye").read[IncomePaye]
       )(IncomePayeEntry.apply _),
     (
-      (JsPath \ "id").write[Identifier] and
+      (JsPath \ "id").write[String] and
         (JsPath \ "incomePaye").write[IncomePaye]
       )(unlift(IncomePayeEntry.unapply))
   )

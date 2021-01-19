@@ -41,12 +41,19 @@ class IncomeSaRepository @Inject()(mongoConnectionProvider: MongoConnectionProvi
     Index(key = Seq(("id.nino", Text), ("id.trn", Text)), name = Some("nino-trn"), unique = true, background = true)
   )
 
-  def create(idType: String, idValue: String, request: IncomeSa): Future[IncomeSa] = {
+  def create(idType: String,
+             idValue: String,
+             startYear: String,
+             endYear: String,
+             consumer: String,
+             request: IncomeSa): Future[IncomeSa] = {
 
-    val id = IdType.parse(idType) match {
-      case Nino => Identifier(Some(idValue), None)
-      case Trn => Identifier(None, Some(idValue))
+    val ident = IdType.parse(idType) match {
+      case Nino => Identifier(Some(idValue), None, startYear, endYear, Some(consumer))
+      case Trn => Identifier(None, Some(idValue), startYear, endYear, Some(consumer))
     }
+
+    val id = s"${ident.nino.getOrElse(ident.trn)}-$startYear-$endYear-$consumer"
 
     val incomeSaRecord = IncomeSaEntry(id, request)
 
@@ -55,8 +62,34 @@ class IncomeSaRepository @Inject()(mongoConnectionProvider: MongoConnectionProvi
     }
   }
 
-  def findByTypeAndId(idType: String, idValue: String): Future[Option[IncomeSa]] = {
-    collection.find[JsObject, JsObject](obj("id" -> obj(idType -> idValue)), None)
+  def findByTypeAndId(idType: String,
+                      idValue: String,
+                      startYear: String,
+                      endYear: String,
+                      fields: Option[String]): Future[Option[IncomeSa]] = {
+
+    val fieldsMap = Map("sa(returnList(addressLine1,addressLine2,addressLine3,addressLine4," +
+      "busEndDate,busStartDate,caseStartDate,deducts(totalBusExpenses,totalDisallowBusExp)," +
+      "income(allEmployments,foreign,foreignDivs,lifePolicies,other,partnerships,pensions," +
+      "selfAssessment,shares,trusts,ukDivsAndInterest,ukInterest,ukProperty),otherBusIncome," +
+      "postcode,totalNIC,totalTaxPaid,tradingIncomeAllowance,turnover),taxYear)" -> "LAA-C1",
+      "sa(returnList(busEndDate,busStartDate,deducts(totalBusExpenses),income(allEmployments,foreign," +
+      "foreignDivs,lifePolicies,other,partnerships,pensions,selfAssessment," +
+      "selfEmployment,shares,trusts,ukDivsAndInterest,ukInterest,ukProperty),receivedDate," +
+      "totalNIC,totalTaxPaid),taxYear)" -> "LSANI-C1")
+
+    val ident = IdType.parse(idType) match {
+      case Nino => Identifier(
+        Some(idValue), None, startYear, endYear, fields.flatMap(value => fieldsMap.get(value))
+      )
+      case Trn => Identifier(
+        None, Some(idValue), startYear, endYear, fields.flatMap(value => fieldsMap.get(value))
+      )
+    }
+
+    val id = s"${ident.nino.getOrElse(ident.trn)}-$startYear-$endYear-${fields.flatMap(value => fieldsMap.get(value))}"
+
+    collection.find[JsObject, JsObject](obj("id" -> id), None)
       .one[IncomeSaEntry].map(value => value.map(_.incomeSa))
   }
 }

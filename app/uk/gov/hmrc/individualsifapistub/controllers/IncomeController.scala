@@ -37,7 +37,9 @@ class IncomeController @Inject()( bodyParser: PlayBodyParsers,
                endYear: String,
                consumer: String): Action[JsValue] = Action.async(bodyParser.json) { implicit request =>
     withJsonBody[IncomeSa] { createRequest =>
-      incomeService.createSa(idType, idValue, createRequest) map (e => Created(Json.toJson(e)))
+      incomeService.createSa(idType, idValue, startYear, endYear, consumer, createRequest) map (
+        e => Created(Json.toJson(e))
+      )
     } recover recovery
   }
 
@@ -46,7 +48,7 @@ class IncomeController @Inject()( bodyParser: PlayBodyParsers,
                  startYear: String,
                  endYear: String,
                  fields: Option[String]): Action[AnyContent] = Action.async { implicit request =>
-    incomeService.getSa(idType, idValue) map {
+    incomeService.getSa(idType, idValue, startYear, endYear, fields) map {
       case Some(value) => Ok(Json.toJson(value))
       case None => NotFound
     } recover recovery
@@ -58,7 +60,9 @@ class IncomeController @Inject()( bodyParser: PlayBodyParsers,
                  endDate: String,
                  consumer: String): Action[JsValue] = Action.async(bodyParser.json) { implicit request =>
     withJsonBody[IncomePaye] { createRequest =>
-      incomeService.createPaye(idType, idValue, createRequest) map (e => Created(Json.toJson(e)))
+      incomeService.createPaye(idType, idValue, startDate, endDate, consumer, createRequest) map (
+        e => Created(Json.toJson(e))
+      )
     } recover recovery
   }
 
@@ -67,7 +71,7 @@ class IncomeController @Inject()( bodyParser: PlayBodyParsers,
                    startDate: String,
                    endDate: String,
                    fields: Option[String]): Action[AnyContent] = Action.async { implicit request =>
-    incomeService.getPaye(idType, idValue) map {
+    incomeService.getPaye(idType, idValue, startDate, endDate, fields) map {
       case Some(value) => Ok(Json.toJson(value))
       case None => NotFound
     } recover recovery

@@ -24,13 +24,20 @@ import scala.concurrent.Future
 
 class DetailsService @Inject()(detailsRepository: DetailsRepository) {
 
-  def create( idType: String,
-              idValue:String,
-              createDetailsRequest: CreateDetailsRequest): Future[DetailsResponse] = {
-    detailsRepository.create(idType, idValue, createDetailsRequest)
+  def create(idType: String,
+             idValue:String,
+             startDate: String,
+             endDate: String,
+             consumer: String,
+             createDetailsRequest: CreateDetailsRequest): Future[DetailsResponse] = {
+    detailsRepository.create(idType, idValue, startDate, endDate, consumer, createDetailsRequest)
   }
 
-  def get(idType: String, idValue:String): Future[Option[DetailsResponse]] = {
-    detailsRepository.findByIdAndType(idType, idValue)
+  def get(idType: String,
+          idValue:String,
+          startDate: String,
+          endDate: String,
+          fields: Option[String]): Future[Option[DetailsResponse]] = {
+    detailsRepository.findByIdAndType(idType, idValue, startDate, endDate, fields)
   }
 }

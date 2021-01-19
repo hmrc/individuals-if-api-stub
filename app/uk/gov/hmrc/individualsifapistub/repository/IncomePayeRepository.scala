@@ -41,12 +41,19 @@ class IncomePayeRepository  @Inject()(mongoConnectionProvider: MongoConnectionPr
     Index(key = Seq(("id.nino", Text), ("id.trn", Text)), name = Some("nino-trn"), unique = true, background = true)
   )
 
-  def create(idType: String, idValue: String, request: IncomePaye): Future[IncomePaye] = {
+  def create(idType: String,
+             idValue: String,
+             startDate: String,
+             endDate: String,
+             consumer: String,
+             request: IncomePaye): Future[IncomePaye] = {
 
-    val id = IdType.parse(idType) match {
-      case Nino => Identifier(Some(idValue), None)
-      case Trn => Identifier(None, Some(idValue))
+    val ident = IdType.parse(idType) match {
+      case Nino => Identifier(Some(idValue), None, startDate, endDate, Some(consumer))
+      case Trn => Identifier(None, Some(idValue), startDate, endDate, Some(consumer))
     }
+
+    val id = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$consumer"
 
     val incomeSaEntry = IncomePayeEntry(id, request)
 
@@ -55,8 +62,32 @@ class IncomePayeRepository  @Inject()(mongoConnectionProvider: MongoConnectionPr
     }
   }
 
-  def findByTypeAndId(idType: String, idValue: String): Future[Option[IncomePaye]] = {
-    collection.find[JsObject, JsObject](obj("id" -> obj(idType -> idValue)), None)
+  def findByTypeAndId(idType: String,
+                      idValue: String,
+                      startDate: String,
+                      endDate: String,
+                      fields: Option[String]): Future[Option[IncomePaye]] = {
+
+    // TODO - enhance for other use cases when the IF-Stub ticket is complete
+    val fieldsMap = Map("paye(employeeNICs(inPayPeriod,inPayPeriod1,inPayPeriod3,inPayPeriod4,ytd1,ytd2,ytd3,ytd4)," +
+      "employeePensionContribs(notPaid,notPaidYTD,paid,paidYTD)," +
+      "grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4)," +
+      "monthlyPeriodNumber,paidHoursWorked,payFrequency,paymentDate," +
+      "statutoryPayYTD(adoption,maternity,parentalBereavement,paternity)," +
+      "taxDeductedOrRefunded,taxYear,taxablePay,taxablePayToDate," +
+      "totalEmployerNICs(InPayPeriod1,InPayPeriod2,InPayPeriod3,InPayPeriod4,ytd1,ytd2,ytd3,ytd4)" +
+      ",totalTaxToDate,weeklyPeriodNumber)" -> "LAA-C1")
+
+    val ident = IdType.parse(idType) match {
+      case Nino => Identifier(
+        Some(idValue), None, startDate, endDate, fields.flatMap(value => fieldsMap.get(value))
+      )
+      case Trn => Identifier(
+        None, Some(idValue), startDate, endDate, fields.flatMap(value => fieldsMap.get(value))
+      )
+    }
+
+    collection.find[JsObject, JsObject](obj("id" -> ident), None)
       .one[IncomePayeEntry].map(value => value.map(_.incomePaye))
   }
 }

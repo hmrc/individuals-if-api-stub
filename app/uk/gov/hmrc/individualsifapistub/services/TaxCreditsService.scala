@@ -26,11 +26,18 @@ class TaxCreditsService @Inject()(repository: TaxCreditsRepository) {
 
   def create(idType: String,
              idValue: String,
+             startDate: String,
+             endDate: String,
+             consumer: String,
              applications: Applications): Future[Applications] = {
-    repository.create(idType, idValue, applications)
+    repository.create(idType, idValue, startDate, endDate, consumer, applications)
   }
 
-  def get(idType: String, idValue: String): Future[Option[Applications]] = {
-    repository.findByIdAndType(idType, idValue)
+  def get(idType: String,
+          idValue: String,
+          startDate: String,
+          endDate: String,
+          fields: Option[String]): Future[Option[Applications]] = {
+    repository.findByIdAndType(idType, idValue, startDate, endDate, fields)
   }
 }

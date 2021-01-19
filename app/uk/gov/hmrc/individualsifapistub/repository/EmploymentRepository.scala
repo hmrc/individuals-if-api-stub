@@ -52,7 +52,7 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
       case Trn => Identifier(None, Some(idValue), startDate, endDate, Some(consumer))
     }
 
-    val id = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-${consumer}"
+    val id = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$consumer"
 
     insert(EmploymentEntry(id, employments.employments)) map (_ => employments) recover {
       case WriteResult.Code(11000) => throw new DuplicateException

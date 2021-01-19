@@ -21,7 +21,7 @@ import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 import uk.gov.hmrc.individualsifapistub.domain.Identifier._
 
-case class TaxCreditsEntry(id: Identifier, applications: Seq[Application])
+case class TaxCreditsEntry(id: String, applications: Seq[Application])
 
 case class Applications(applications: Seq[Application])
 
@@ -192,11 +192,11 @@ object TaxCredits {
 
   val taxCreditsEntryFormat: Format[TaxCreditsEntry] = Format(
     (
-      (JsPath \ "id").read[Identifier] and
+      (JsPath \ "id").read[String] and
       (JsPath \ "applications").read[Seq[Application]]
     )(TaxCreditsEntry.apply _),
     (
-      (JsPath \ "id").write[Identifier] and
+      (JsPath \ "id").write[String] and
       (JsPath \ "applications").write[Seq[Application]]
     )(unlift(TaxCreditsEntry.unapply))
   )

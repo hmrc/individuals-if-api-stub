@@ -24,19 +24,38 @@ import scala.concurrent.Future
 
 class IncomeService @Inject()(incomeSaRepository: IncomeSaRepository, incomePayeRepository: IncomePayeRepository) {
 
-  def createSa(idType: String, idValue: String, createSelfAssessmentRequest: IncomeSa): Future[IncomeSa] = {
-    incomeSaRepository.create(idType, idValue, createSelfAssessmentRequest)
+  def createSa(idType: String,
+               idValue: String,
+               startYear: String,
+               endYear: String,
+               consumer: String,
+               createSelfAssessmentRequest: IncomeSa): Future[IncomeSa] = {
+    incomeSaRepository.create(idType, idValue, startYear, endYear, consumer, createSelfAssessmentRequest)
   }
 
-  def getSa(idType: String, idValue: String): Future[Option[IncomeSa]] = {
-    incomeSaRepository.findByTypeAndId(idType, idValue)
+  def getSa(idType: String,
+            idValue: String,
+            startYear: String,
+            endYear: String,
+            fields: Option[String]
+           ): Future[Option[IncomeSa]] = {
+    incomeSaRepository.findByTypeAndId(idType, idValue, startYear, endYear, fields)
   }
 
-  def createPaye(idType: String, idValue: String, createIncomePayeRequest: IncomePaye): Future[IncomePaye] = {
-    incomePayeRepository.create(idType, idValue, createIncomePayeRequest)
+  def createPaye(idType: String,
+                 idValue: String,
+                 startDate: String,
+                 endDate: String,
+                 consumer: String,
+                 createIncomePayeRequest: IncomePaye): Future[IncomePaye] = {
+    incomePayeRepository.create(idType, idValue, startDate, endDate, consumer, createIncomePayeRequest)
   }
 
-  def getPaye(idType: String, idValue: String): Future[Option[IncomePaye]] = {
-    incomePayeRepository.findByTypeAndId(idType, idValue)
+  def getPaye(idType: String,
+              idValue: String,
+              startDate: String,
+              endDate: String,
+              fields: Option[String]): Future[Option[IncomePaye]] = {
+    incomePayeRepository.findByTypeAndId(idType, idValue, startDate, endDate, fields)
   }
 }

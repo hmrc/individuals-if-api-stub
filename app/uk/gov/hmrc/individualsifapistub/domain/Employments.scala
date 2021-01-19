@@ -143,11 +143,11 @@ object Employments {
 
   val createEmploymentEntryFormat: Format[EmploymentEntry] = Format(
     (
-      (JsPath \ "id").read[Identifier] and
+      (JsPath \ "id").read[String] and
       (JsPath \ "employments").read[Seq[Employment]]
     )(EmploymentEntry.apply _),
     (
-      (JsPath \ "id").write[Identifier] and
+      (JsPath \ "id").write[String] and
       (JsPath \ "employments").write[Seq[Employment]]
     )(unlift(EmploymentEntry.unapply))
   )

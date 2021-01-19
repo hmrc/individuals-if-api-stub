@@ -39,18 +39,46 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
     Index(key = Seq(("details.nino", Text), ("details.trn", Text)), name = Some("nino-trn"), unique = true, background = true)
   )
 
-  def create(idType: String, idValue: String, createDetailsRequest: CreateDetailsRequest): Future[DetailsResponse] = {
+  def create(idType: String,
+             idValue: String,
+             startDate: String,
+             endDate: String,
+             consumer: String,
+             createDetailsRequest: CreateDetailsRequest): Future[DetailsResponse] = {
 
-    val id = IdType.parse(idType) match {
-      case Nino => Identifier(Some(idValue), None)
-      case Trn => Identifier(None, Some(idValue))
+    val ident = IdType.parse(idType) match {
+      case Nino => Identifier(Some(idValue), None, startDate, endDate, Some(consumer))
+      case Trn => Identifier(None, Some(idValue), startDate, endDate, Some(consumer))
     }
+
+    val id = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$consumer"
 
     val detailsResponse = DetailsResponse(id, createDetailsRequest.contactDetails, createDetailsRequest.residences)
     insert(detailsResponse) map (_ => detailsResponse)
   }
 
-  def findByIdAndType(idType: String, idValue: String): Future[Option[DetailsResponse]] = {
-    collection.find[JsObject, JsObject](obj("details" -> obj(idType -> idValue)), None).one[DetailsResponse]
+  def findByIdAndType(idType: String,
+                      idValue: String,
+                      startDate: String,
+                      endDate: String,
+                      fields: Option[String]): Future[Option[DetailsResponse]] = {
+
+    def fieldsMap = Map(
+      "residences(address(line1,line2,line3,line4,line5,postcode),noLongerUsed,type)&filter=contains(residences/noLongerUsed,'N')" -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4_Residences",
+      "contactDetails(code,detail,type)&filter=contains(contactDetails/type,'TELEPHONE')" -> "LAA-C4_HMCTS-C4_ContactDetails"
+    )
+
+    val ident = IdType.parse(idType) match {
+      case Nino => Identifier(
+        Some(idValue), None, startDate, endDate, fields.flatMap(value => fieldsMap.get(value))
+      )
+      case Trn => Identifier(
+        None, Some(idValue), startDate, endDate, fields.flatMap(value => fieldsMap.get(value))
+      )
+    }
+
+    val id = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-${fields.flatMap(value => fieldsMap.get(value))}"
+
+    collection.find[JsObject, JsObject](obj("details" ->id), None).one[DetailsResponse]
   }
 }

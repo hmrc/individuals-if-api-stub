@@ -49,7 +49,7 @@ case class Residence(statusCode: Option[String] = None,
                      startDateTime: Option[String] = None,
                      noLongerUsed: Option[String] = None)
 
-case class DetailsResponse(details: Identifier, contactDetails: Option[Seq[ContactDetail]], residences: Option[Seq[Residence]])
+case class DetailsResponse(details: String, contactDetails: Option[Seq[ContactDetail]], residences: Option[Seq[Residence]])
 
 object DetailsResponse {
   val ninoPattern: Regex = "^((?!(BG|GB|KN|NK|NT|TN|ZZ)|(D|F|I|Q|U|V)[A-Z]|[A-Z](D|F|I|O|Q|U|V))[A-Z]{2})[0-9]{6}[A-D\\s]?$".r
@@ -131,12 +131,12 @@ object DetailsResponse {
 
   implicit val detailsResponseFormat: Format[DetailsResponse] = Format(
     (
-      (JsPath \ "details").read[Identifier] and
+      (JsPath \ "details").read[String] and
       (JsPath \ "contactDetails").readNullable[Seq[ContactDetail]] and
       (JsPath \ "residence").readNullable[Seq[Residence]]
     )(DetailsResponse.apply _),
     (
-      (JsPath \ "details").write[Identifier] and
+      (JsPath \ "details").write[String] and
       (JsPath \ "contactDetails").writeNullable[Seq[ContactDetail]] and
       (JsPath \ "residence").writeNullable[Seq[Residence]]
     )(unlift(DetailsResponse.unapply))

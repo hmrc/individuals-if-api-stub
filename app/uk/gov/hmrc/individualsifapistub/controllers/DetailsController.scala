@@ -36,8 +36,9 @@ class DetailsController @Inject()(  bodyParsers: PlayBodyParsers,
              startDate: String,
              endDate: String,
              consumer: String): Action[JsValue] = Action.async(bodyParsers.json) { implicit request =>
-    withJsonBodyAndValidId[CreateDetailsRequest](idType, idValue) { createRequest =>
-      detailsService.create(idType, idValue, createRequest) map (e => Created(Json.toJson(e)))
+    withJsonBodyAndValidId[CreateDetailsRequest](idType, idValue, startDate, endDate, Some(consumer)) { createRequest =>
+      detailsService.create(idType, idValue, startDate, endDate, consumer, createRequest) map (
+        e => Created(Json.toJson(e)))
     } recover recovery
   }
 
@@ -46,7 +47,7 @@ class DetailsController @Inject()(  bodyParsers: PlayBodyParsers,
                startDate: String,
                endDate: String,
                fields: Option[String]): Action[AnyContent] = Action.async { implicit request =>
-    detailsService.get(idType, idValue) map {
+    detailsService.get(idType, idValue, startDate, endDate, fields) map {
       case Some(value) => Ok(Json.toJson(value))
       case None => NotFound
     } recover recovery

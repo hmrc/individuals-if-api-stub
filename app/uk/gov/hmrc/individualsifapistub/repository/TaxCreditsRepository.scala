@@ -42,19 +42,50 @@ class TaxCreditsRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
     Index(key = Seq(("id.nino", Text), ("id.trn", Text)), name = Some("nino-trn"), unique = true, background = true)
   )
 
-  def create(idType: String, idValue: String, applications: Applications): Future[Applications] = {
-    val id = IdType.parse(idType) match {
-      case Nino => Identifier(Some(idValue), None)
-      case Trn => Identifier(None, Some(idValue))
+  def create(idType: String,
+             idValue: String,
+             startDate: String,
+             endDate: String,
+             consumer: String,
+             applications: Applications): Future[Applications] = {
+    val ident = IdType.parse(idType) match {
+      case Nino => Identifier(Some(idValue), None, startDate, endDate, Some(consumer))
+      case Trn => Identifier(None, Some(idValue), startDate, endDate, Some(consumer))
     }
+
+    val id = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$consumer"
+
     insert(TaxCreditsEntry(id, applications.applications)) map (_ => applications) recover {
       case WriteResult.Code(11000) => throw new DuplicateException
     }
   }
 
-  def findByIdAndType(idType: String, idValue: String): Future[Option[Applications]] = {
+  def findByIdAndType(idType: String,
+                      idValue: String,
+                      startDate: String,
+                      endDate: String,
+                      fields: Option[String]): Future[Option[Applications]] = {
+
+    def fieldsMap = Map(
+      "applications(awards(childTaxCredit(childCareAmount),payProfCalcDate,payments(amount,endDate,frequency,startDate,tcType),totalEntitlement,workingTaxCredit(amount,paidYTD)))" -> "LAA-C1_LAA-C2_LAA-C3_WorkingTaxCredit",
+      "applications(awards(childTaxCredit(childCareAmount),payProfCalcDate,payments(amount,endDate,frequency,startDate,tcType),totalEntitlement,workingTaxCredit(amount,paidYTD)),id)" -> "HMCTS-C2_HMCTS-C3_LSANI-C1_LSANI-C3_WorkingTaxCredit",
+      "applications(awards(childTaxCredit(babyAmount,childCareAmount,ctcChildAmount,familyAmount,paidYTD),payProfCalcDate,payments(amount,endDate,frequency,startDate,tcType),totalEntitlement))" -> "LAA-C1_LAA-C2_LAA-C3_ChildTaxCredits",
+      "applications(awards(childTaxCredit(babyAmount,childCareAmount,ctcChildAmount,familyAmount,paidYTD),payProfCalcDate,payments(amount,endDate,frequency,startDate,tcType),totalEntitlement),id)" -> "HMCTS-C2_HMCTS-C3_LSANI-C1_LSANI-C3_ChildTaxCredit"
+    )
+
+    val ident = IdType.parse(idType) match {
+      case Nino => Identifier(
+        Some(idValue), None, startDate, endDate, fields.flatMap(value => fieldsMap.get(value))
+      )
+      case Trn => Identifier(
+        None, Some(idValue), startDate, endDate, fields.flatMap(value => fieldsMap.get(value))
+      )
+    }
+
+    val id = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-${fields.flatMap(value => fieldsMap.get(value))}"
+
     collection
-      .find[JsObject, JsObject](obj("id" -> obj(idType -> idValue)), None)
+      .find[JsObject, JsObject](obj("id" -> id), None)
       .one[Applications]
   }
 }
