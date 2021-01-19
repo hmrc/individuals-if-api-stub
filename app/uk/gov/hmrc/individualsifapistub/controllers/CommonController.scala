@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.individualsifapistub.controllers
 
+import java.util.UUID
+
 import javax.inject.Inject
 import play.api.Configuration
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND}
@@ -131,4 +133,5 @@ abstract class CommonController(controllerComponents: ControllerComponents)
     case _: DuplicateException =>
       ErrorDuplicate.toHttpResponse
   }
+
 }

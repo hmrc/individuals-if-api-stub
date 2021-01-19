@@ -19,7 +19,6 @@ package uk.gov.hmrc.individualsifapistub.repository
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.JsObject
 import play.api.libs.json.Json.obj
-import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Text
 import reactivemongo.bson.BSONObjectID
@@ -47,16 +46,30 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
              endDate: String,
              consumer: String,
              employments: Employments): Future[Employments] = {
+
+    val overlapMap = Map(
+      "LAA-C1"   -> "LAA-C1_LAA-C2",
+      "LAA-C2"   -> "LAA-C1_LAA-C2",
+      "LAA-C3"   -> "LAA-C3_LSANI-C1_LSANI-C3",
+      "LSANI-C1" -> "LAA-C3_LSANI-C1_LSANI-C3",
+      "LSANI-C3" -> "LAA-C3_LSANI-C1_LSANI-C3",
+      "HMCTS-C2" -> "HMCTS-C2_HMCTS-C3",
+      "HMCTS-C3" -> "HMCTS-C2_HMCTS-C3"
+    )
+
     val ident = IdType.parse(idType) match {
       case Nino => Identifier(Some(idValue), None, startDate, endDate, Some(consumer))
       case Trn => Identifier(None, Some(idValue), startDate, endDate, Some(consumer))
     }
 
-    val id = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$consumer"
+    val tag = overlapMap.get(consumer).getOrElse("")
+    val id  = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$tag"
 
-    insert(EmploymentEntry(id, employments.employments)) map (_ => employments) recover {
-      case WriteResult.Code(11000) => throw new DuplicateException
-    }
+    for {
+      _        <- collection.findAndRemove(obj("id" -> id)) map (_.result[EmploymentEntry])
+      inserted <- insert(EmploymentEntry(id, employments.employments)) map (_ => employments)
+    } yield inserted
+
   }
 
   def findByIdAndType(idType: String,
@@ -65,7 +78,8 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
                       endDate: String,
                       fields: Option[String]): Future[Option[Employments]] = {
 
-    val fieldsMap = Map("employments(employment(endDate,startDate))" -> "LAA-C1_LAA-C2",
+    val fieldsMap = Map(
+      "employments(employment(endDate,startDate))" -> "LAA-C1_LAA-C2",
       "employments(employer(name),employment(endDate,startDate))" -> "LAA-C3_LSANI-C1_LSANI-C3",
       "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employment(endDate,startDate))" -> "LAA-C4",
       "employments(employment(endDate))" -> "HMCTS-C2_HMCTS-C3",
@@ -82,7 +96,8 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
       )
     }
 
-    val id = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-${fields.flatMap(value => fieldsMap.get(value))}"
+    val tag = fields.flatMap(value => fieldsMap.get(value)).getOrElse("")
+    val id  = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$tag"
 
     collection
       .find[JsObject, JsObject](obj("id" -> id), None)

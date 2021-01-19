@@ -60,6 +60,12 @@ class IncomeSaRepository @Inject()(mongoConnectionProvider: MongoConnectionProvi
     insert(incomeSaRecord) map (_ => incomeSaRecord.incomeSa) recover {
       case WriteResult.Code(11000) => throw new DuplicateException
     }
+
+    for {
+      _        <- collection.findAndRemove(obj("id" -> id)) map (_.result[IncomeSaEntry])
+      inserted <- insert(incomeSaRecord) map (_ => incomeSaRecord.incomeSa)
+    } yield inserted
+
   }
 
   def findByTypeAndId(idType: String,

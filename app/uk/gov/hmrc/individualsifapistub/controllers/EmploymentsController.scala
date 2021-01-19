@@ -30,12 +30,14 @@ class EmploymentsController @Inject()( bodyParser: PlayBodyParsers,
                                        employmentsService: EmploymentsService
                                      ) (implicit val ec: ExecutionContext) extends CommonController(cc) {
 
+
   def create(idType: String,
              idValue: String,
              startDate: String,
              endDate: String,
              consumer: String): Action[JsValue] = {
     Action.async(bodyParser.json) { implicit request =>
+
       withJsonBodyAndValidId[Employments](idType, idValue, startDate, endDate, Some(consumer)) {
         jsonBody => employmentsService.create(
           idType,

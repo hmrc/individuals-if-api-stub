@@ -46,15 +46,33 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
              consumer: String,
              createDetailsRequest: CreateDetailsRequest): Future[DetailsResponse] = {
 
+    val overlapMap = Map(
+      "LAA-C3-residences"        -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
+      "LAA-C4-residences"        -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
+      "HMCTS-C3-residences"      -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
+      "HMCTS-C4-residences"      -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
+      "LSANI-C1-residences"      -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
+      "LSANI-C4-residences"      -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
+      "NICTSEJO-C4-residences"   -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
+      "LAA-C4-contact-details"   -> "LAA-C4_HMCTS-C4-contact-details",
+      "HMCTS-C4-contact-details" -> "LAA-C4_HMCTS-C4-contact-details"
+    )
+
     val ident = IdType.parse(idType) match {
       case Nino => Identifier(Some(idValue), None, startDate, endDate, Some(consumer))
       case Trn => Identifier(None, Some(idValue), startDate, endDate, Some(consumer))
     }
 
-    val id = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$consumer"
+    val tag = overlapMap.get(consumer).getOrElse("")
+    val id  = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$tag"
 
     val detailsResponse = DetailsResponse(id, createDetailsRequest.contactDetails, createDetailsRequest.residences)
-    insert(detailsResponse) map (_ => detailsResponse)
+
+    for {
+      _        <- collection.findAndRemove(obj("id" -> id)) map (_.result[DetailsResponse])
+      inserted <- insert(detailsResponse) map (_ => detailsResponse)
+    } yield inserted
+
   }
 
   def findByIdAndType(idType: String,
@@ -64,8 +82,10 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
                       fields: Option[String]): Future[Option[DetailsResponse]] = {
 
     def fieldsMap = Map(
-      "residences(address(line1,line2,line3,line4,line5,postcode),noLongerUsed,type)&filter=contains(residences/noLongerUsed,'N')" -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4_Residences",
-      "contactDetails(code,detail,type)&filter=contains(contactDetails/type,'TELEPHONE')" -> "LAA-C4_HMCTS-C4_ContactDetails"
+      "residences(address(line1,line2,line3,line4,line5,postcode),noLongerUsed,type)&filter=contains(residences/noLongerUsed,'N')" ->
+        "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
+      "contactDetails(code,detail,type)&filter=contains(contactDetails/type,'TELEPHONE')" ->
+        "LAA-C4_HMCTS-C4-contact-details"
     )
 
     val ident = IdType.parse(idType) match {
@@ -77,8 +97,10 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
       )
     }
 
-    val id = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-${fields.flatMap(value => fieldsMap.get(value))}"
+    val tag = fields.flatMap(value => fieldsMap.get(value)).getOrElse("")
+    val id  = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$tag"
 
     collection.find[JsObject, JsObject](obj("details" ->id), None).one[DetailsResponse]
+
   }
 }

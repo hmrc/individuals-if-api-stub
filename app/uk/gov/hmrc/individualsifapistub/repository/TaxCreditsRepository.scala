@@ -48,16 +48,37 @@ class TaxCreditsRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
              endDate: String,
              consumer: String,
              applications: Applications): Future[Applications] = {
+
+    val overlapMap = Map(
+      "LAA-C1-working-tax-credit"   -> "LAA-C1_LAA-C2_LAA-C3_working-tax-credit",
+      "LAA-C2-working-tax-credit"   -> "LAA-C1_LAA-C2_LAA-C3_working-tax-credit",
+      "LAA-C3-working-tax-credit"   -> "LAA-C1_LAA-C2_LAA-C3_working-tax-credit",
+      "LAA-C1-child-tax-credit"     -> "LAA-C1_LAA-C2_LAA-C3_child-tax-credit",
+      "LAA-C2-child-tax-credit"     -> "LAA-C1_LAA-C2_LAA-C3_child-tax-credit",
+      "LAA-C3-child-tax-credit"     -> "LAA-C1_LAA-C2_LAA-C3_child-tax-credit",
+      "HMCTS-C2-working-tax-credit" -> "HMCTS-C2_HMCTS-C3_LSANI-C1_LSANI-C3_working-tax-credit",
+      "HMCTS-C3-working-tax-credit" -> "HMCTS-C2_HMCTS-C3_LSANI-C1_LSANI-C3_working-tax-credit",
+      "LSANI-C1-working-tax-credit" -> "HMCTS-C2_HMCTS-C3_LSANI-C1_LSANI-C3_working-tax-credit",
+      "LSANI-C3-working-tax-credit" -> "HMCTS-C2_HMCTS-C3_LSANI-C1_LSANI-C3_working-tax-credit"
+    )
+
     val ident = IdType.parse(idType) match {
       case Nino => Identifier(Some(idValue), None, startDate, endDate, Some(consumer))
       case Trn => Identifier(None, Some(idValue), startDate, endDate, Some(consumer))
     }
 
-    val id = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$consumer"
+    val tag = overlapMap.get(consumer).getOrElse("")
+    val id  = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$tag"
 
     insert(TaxCreditsEntry(id, applications.applications)) map (_ => applications) recover {
       case WriteResult.Code(11000) => throw new DuplicateException
     }
+
+    for {
+      _        <- collection.findAndRemove(obj("id" -> id)) map (_.result[TaxCreditsEntry])
+      inserted <- insert(TaxCreditsEntry(id, applications.applications)) map (_ => applications)
+    } yield inserted
+
   }
 
   def findByIdAndType(idType: String,
@@ -67,10 +88,14 @@ class TaxCreditsRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
                       fields: Option[String]): Future[Option[Applications]] = {
 
     def fieldsMap = Map(
-      "applications(awards(childTaxCredit(childCareAmount),payProfCalcDate,payments(amount,endDate,frequency,startDate,tcType),totalEntitlement,workingTaxCredit(amount,paidYTD)))" -> "LAA-C1_LAA-C2_LAA-C3_WorkingTaxCredit",
-      "applications(awards(childTaxCredit(childCareAmount),payProfCalcDate,payments(amount,endDate,frequency,startDate,tcType),totalEntitlement,workingTaxCredit(amount,paidYTD)),id)" -> "HMCTS-C2_HMCTS-C3_LSANI-C1_LSANI-C3_WorkingTaxCredit",
-      "applications(awards(childTaxCredit(babyAmount,childCareAmount,ctcChildAmount,familyAmount,paidYTD),payProfCalcDate,payments(amount,endDate,frequency,startDate,tcType),totalEntitlement))" -> "LAA-C1_LAA-C2_LAA-C3_ChildTaxCredits",
-      "applications(awards(childTaxCredit(babyAmount,childCareAmount,ctcChildAmount,familyAmount,paidYTD),payProfCalcDate,payments(amount,endDate,frequency,startDate,tcType),totalEntitlement),id)" -> "HMCTS-C2_HMCTS-C3_LSANI-C1_LSANI-C3_ChildTaxCredit"
+      "applications(awards(childTaxCredit(childCareAmount),payProfCalcDate,payments(amount,endDate,frequency,startDate,tcType),totalEntitlement,workingTaxCredit(amount,paidYTD)))" ->
+        "LAA-C1_LAA-C2_LAA-C3_working-tax-credit",
+      "applications(awards(childTaxCredit(babyAmount,childCareAmount,ctcChildAmount,familyAmount,paidYTD),payProfCalcDate,payments(amount,endDate,frequency,startDate,tcType),totalEntitlement))" ->
+        "LAA-C1_LAA-C2_LAA-C3_child-tax-credit",
+      "applications(awards(childTaxCredit(childCareAmount),payProfCalcDate,payments(amount,endDate,frequency,startDate,tcType),totalEntitlement,workingTaxCredit(amount,paidYTD)),id)" ->
+        "HMCTS-C2_HMCTS-C3_LSANI-C1_LSANI-C3_working-tax-credit",
+      "applications(awards(childTaxCredit(babyAmount,childCareAmount,ctcChildAmount,familyAmount,paidYTD),payProfCalcDate,payments(amount,endDate,frequency,startDate,tcType),totalEntitlement),id)" ->
+        "HMCTS-C2_HMCTS-C3_LSANI-C1_LSANI-C3_child-tax-credit"
     )
 
     val ident = IdType.parse(idType) match {
@@ -82,10 +107,12 @@ class TaxCreditsRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
       )
     }
 
-    val id = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-${fields.flatMap(value => fieldsMap.get(value))}"
+    val tag = fields.flatMap(value => fieldsMap.get(value)).getOrElse("")
+    val id  = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$tag"
 
     collection
       .find[JsObject, JsObject](obj("id" -> id), None)
       .one[Applications]
+
   }
 }
