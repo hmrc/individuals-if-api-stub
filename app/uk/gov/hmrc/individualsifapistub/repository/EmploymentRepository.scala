@@ -17,6 +17,7 @@
 package uk.gov.hmrc.individualsifapistub.repository
 
 import javax.inject.{Inject, Singleton}
+import play.api.Logger
 import play.api.libs.json.JsObject
 import play.api.libs.json.Json.obj
 import reactivemongo.api.indexes.Index
@@ -96,8 +97,12 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
       )
     }
 
+    Logger.debug(s"fields: ${fields}")
+
     val tag = fields.flatMap(value => fieldsMap.get(value)).getOrElse("")
     val id  = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$tag"
+
+    Logger.debug(s"key: ${id}")
 
     collection
       .find[JsObject, JsObject](obj("id" -> id), None)
