@@ -49,7 +49,10 @@ class IncomePayeRepository  @Inject()(mongoConnectionProvider: MongoConnectionPr
              request: IncomePaye): Future[IncomePaye] = {
 
     val overlapMap = Map(
-      "TODO" -> "TODO"
+      "HMCTS-C2" -> "HMCTS-C2_HMCTS-C3",
+      "HMCTS-C3" -> "HMCTS-C2_HMCTS-C3",
+      "LSANI-C1" -> "LSANI-C1_LSANI-C3",
+      "LSANI-C3" -> "LSANI-C1_LSANI-C3"
     )
 
     val ident = IdType.parse(idType) match {
@@ -76,7 +79,13 @@ class IncomePayeRepository  @Inject()(mongoConnectionProvider: MongoConnectionPr
                       fields: Option[String]): Future[Option[IncomePaye]] = {
 
     val fieldsMap = Map(
-      "TODO" -> "TODO"
+      "paye(employeeNICs(inPayPeriod,inPayPeriod1,inPayPeriod3,inPayPeriod4,ytd1,ytd2,ytd3,ytd4),employeePensionContribs(notPaid,notPaidYTD,paid,paidYTD),grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),monthlyPeriodNumber,paidHoursWorked,payFrequency,paymentDate,statutoryPayYTD(adoption,maternity,parentalBereavement,paternity),taxDeductedOrRefunded,taxYear,taxablePay,taxablePayToDate,totalEmployerNICs(InPayPeriod1,InPayPeriod2,InPayPeriod3,InPayPeriod4,ytd1,ytd2,ytd3,ytd4),totalTaxToDate,weeklyPeriodNumber)" -> "LAA-C1",
+      "paye(dednsFromNetPay,grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),monthlyPeriodNumber,paidHoursWorked,payFrequency,paymentDate,statutoryPayYTD(adoption,maternity,parentalBereavement,paternity),taxYear,taxablePayToDate,totalTaxToDate,weeklyPeriodNumber)" -> "LAA-C2",
+      "paye(employeeNICs(inPayPeriod,inPayPeriod1,inPayPeriod3,inPayPeriod4,ytd1,ytd2,ytd3,ytd4),grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),monthlyPeriodNumber,paidHoursWorked,payFrequency,paymentDate,statutoryPayYTD(adoption,maternity,parentalBereavement,paternity),taxCode,taxDeductedOrRefunded,taxYear,taxablePay,taxablePayToDate,totalEmployerNICs(InPayPeriod1,InPayPeriod2,InPayPeriod3,InPayPeriod4,ytd1,ytd2,ytd3,ytd4),totalTaxToDate,weeklyPeriodNumber)" -> "LAA-C3",
+      "paye(employee(hasPartner),grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),payFrequency,paymentDate)" -> "HMCTS-C2_HMCTS-C3",
+      "paye(employedPayeRef,grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),paymentDate,payroll(id))" -> "HMCTS-C4",
+      "paye(dednsFromNetPay,employee(hasPartner),employeeNICs(inPayPeriod,inPayPeriod1,inPayPeriod3,inPayPeriod4,ytd1,ytd2,ytd3,ytd4),employeePensionContribs(notPaid,notPaidYTD,paid,paidYTD),grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),monthlyPeriodNumber,payFrequency,paymentDate,statutoryPayYTD(adoption,maternity,parentalBereavement,paternity),taxCode,taxDeductedOrRefunded,taxYear,taxablePay,taxablePayToDate,totalEmployerNICs(InPayPeriod1,InPayPeriod2,InPayPeriod3,InPayPeriod4,ytd1,ytd2,ytd3,ytd4),totalTaxToDate,weeklyPeriodNumber)" -> "LSANI-C1_LSANI-C3",
+      "paye(employeeNICs(inPayPeriod,inPayPeriod1,inPayPeriod3,inPayPeriod4,ytd1,ytd2,ytd3,ytd4),employeePensionContribs(notPaid,notPaidYTD,paid,paidYTD),grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),paymentDate,payroll(id),statutoryPayYTD(adoption,maternity,paternity),taxDeductedOrRefunded,taxablePay,totalEmployerNICs(InPayPeriod1,InPayPeriod2,InPayPeriod3,InPayPeriod4,ytd1,ytd2,ytd3,ytd4))" -> "NICTSEJO-C4"
     )
 
     val ident = IdType.parse(idType) match {
