@@ -24,8 +24,13 @@ import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class EmploymentsSpec extends UnitSpec with TestHelpers {
 
-  val ninoDetails = Identifier(Some("XH123456A"), None)
-  val trnDetails = Identifier(None, Some("12345678"))
+  val startDate = "2020-01-01"
+  val endDate = "2020-21-31"
+  val useCase = "TEST"
+  val fields = "some(values)"
+
+  val ninoDetails = Identifier(Some("XH123456A"), None, startDate, endDate, Some(useCase))
+  val trnDetails = Identifier(None, Some("12345678"), startDate, endDate, Some(useCase))
 
   val address = Address(
     Some("line1"),

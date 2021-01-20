@@ -31,7 +31,12 @@ class TaxCreditsServiceSpec extends TestSupport {
 
     val idType = "nino"
     val idValue = "XH123456A"
-    val id = Identifier(Some(idValue), None)
+    val startDate = "2020-01-01"
+    val endDate = "2020-21-31"
+    val useCase = "TEST"
+    val fields = "some(values)"
+    val ident = Identifier(Some(idValue), None, startDate, endDate, Some(useCase))
+    val id = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$useCase"
 
     val application: Application = Application(
       id = 12345,
@@ -42,37 +47,62 @@ class TaxCreditsServiceSpec extends TestSupport {
     )
 
     val request = Applications(Seq(application))
-
     val taxCreditsRepository = mock[TaxCreditsRepository]
     val underTest = new TaxCreditsService(taxCreditsRepository)
+
   }
 
   "TaxCreditsService" when {
+
     "create" should {
+
       "return the created record" in new Setup {
-        when(taxCreditsRepository.create(idType, idValue, request)).thenReturn(Future.successful(request));
-        val response = await(underTest.create(idType, idValue, request))
+
+        when(taxCreditsRepository.create(idType, idValue,startDate, endDate, useCase, request)).thenReturn(
+          Future.successful(request)
+        )
+
+        val response = await(underTest.create(idType, idValue, startDate, endDate, useCase, request))
+
         response shouldBe request
+
       }
 
       "return failure when unable to create" in new Setup {
-        when(taxCreditsRepository.create(idType, idValue, request)).thenReturn(Future.failed(new Exception));
+
+        when(taxCreditsRepository.create(idType, idValue, startDate, endDate, useCase, request)).thenReturn(
+          Future.failed(new Exception)
+        )
+
         assertThrows[Exception] {
-          await(underTest.create(idType, idValue, request))
+          await(underTest.create(idType, idValue, startDate, endDate, useCase, request))
         }
+
       }
     }
 
     "Get" should {
+
       "return record when successfully retrieved from mongo" in new Setup {
-        when(taxCreditsRepository.findByIdAndType(idType, idValue)).thenReturn(Future.successful(Some(request)))
-        val response = await(underTest.get(idType, idValue))
+
+        when(taxCreditsRepository.findByIdAndType(idType, idValue, startDate, endDate, Some(fields))).thenReturn(
+          Future.successful(Some(request))
+        )
+
+        val response = await(underTest.get(idType, idValue, startDate, endDate, Some(fields)))
+
         response shouldBe Some(request)
+
       }
 
       "Return none if cannot be found in mongo" in new Setup {
-        when(taxCreditsRepository.findByIdAndType(idType, idValue)).thenReturn(Future.successful(None));
-        val response = await(underTest.get(idType,idValue))
+
+        when(taxCreditsRepository.findByIdAndType(idType, idValue, startDate, endDate, Some(fields))).thenReturn(
+          Future.successful(None)
+        )
+
+        val response = await(underTest.get(idType,idValue, startDate, endDate, Some(fields)))
+
         response shouldBe None
       }
     }

@@ -34,11 +34,17 @@ class TaxCreditsRepositorySpec extends RepositoryTestHelper {
 
   val nino = "XH123456A"
   val trn = "123456789"
+  val startDate = "2020-01-01"
+  val endDate = "2020-21-31"
+  val useCase = "TEST"
+  val fields = "some(values)"
 
   val applications = Applications(Seq(application))
 
   "collection" should {
+
     "have a unique index on nino and trn" in {
+
       await(repository.collection.indexesManager.list()).find({ i =>
         {
           i.name.contains("nino-trn") &&
@@ -49,39 +55,58 @@ class TaxCreditsRepositorySpec extends RepositoryTestHelper {
         }
       }) should not be None
     }
+
   }
 
   "create" should {
+
     "create an application with a nino" in {
-      val result = await(repository.create("nino", nino, applications))
+
+      val result = await(repository.create("nino", nino, startDate, endDate, useCase, applications))
+
       result shouldBe applications
+
     }
 
     "create an application with a trn" in {
-      val result = await(repository.create("trn", trn, applications))
+
+      val result = await(repository.create("trn", trn, startDate, endDate, useCase, applications))
+
       result shouldBe applications
+
     }
 
     "fail to create duplicate details" in {
-      await(repository.create("trn", trn, applications))
-      intercept[Exception](await(repository.create("trn", trn, applications)))
+
+      await(repository.create("trn", trn, startDate, endDate, useCase, applications))
+
+      intercept[Exception](await(repository.create("trn", trn, startDate, endDate, useCase, applications)))
+
     }
   }
 
   "findByIdAndType" should {
 
     "return None when there are no details for a given nino" in {
-      await(repository.findByIdAndType("nino", nino)) shouldBe None
+
+      await(repository.findByIdAndType("nino", nino, startDate, endDate, Some(fields))) shouldBe None
+
     }
 
     "return None when there are no details for a given trn" in {
-      await(repository.findByIdAndType("trn", trn)) shouldBe None
+
+      await(repository.findByIdAndType("trn", trn, startDate, endDate, Some(fields))) shouldBe None
+
     }
 
     "return a single record with id" in {
-      await(repository.create("nino", nino, applications))
-      val result = await(repository.findByIdAndType("nino", nino))
+
+      await(repository.create("nino", nino, startDate, endDate, useCase, applications))
+
+      val result = await(repository.findByIdAndType("nino", nino, startDate, endDate, Some(fields)))
+
       result.get shouldBe applications
+
     }
   }
 }

@@ -27,25 +27,33 @@ import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 class DetailsResponseSpec extends UnitSpec with TestHelpers {
 
   val idValue = "2432552635"
+  val startDate = "2020-01-01"
+  val endDate = "2020-21-31"
+  val useCase = "TEST"
+  val fields = "some(values)"
 
-  val ninoDetails = Identifier(Some("XH123456A"), None)
-  val trnDetails = Identifier(None, Some("12345678"))
+  val ninoDetails = Identifier(Some("XH123456A"), None, startDate, endDate, Some(useCase))
+  val idNino = s"${ninoDetails.nino.getOrElse(ninoDetails.trn)}-$startDate-$endDate-$useCase"
+  val trnDetails = Identifier(None, Some("12345678"), startDate, endDate, Some(useCase))
+  val idTrn = s"${trnDetails.nino.getOrElse(trnDetails.trn)}-$startDate-$endDate-$useCase"
+
   val contactDetail1 = ContactDetail(9, "MOBILE TELEPHONE", "07123 987654")
   val contactDetail2 = ContactDetail(9, "MOBILE TELEPHONE", "07123 987655")
   val residence1 = Residence(residenceType = Some("BASE"), address = generateAddress(2))
   val residence2 = Residence(residenceType = Some("NOMINATED"), address = generateAddress(1))
+
   val response = DetailsResponse(
-    ninoDetails,
+    idNino,
     Some(Seq(contactDetail1, contactDetail1)),
     Some(Seq(residence1, residence2))
   )
 
-  val invalidNinoDetails = Identifier(Some("QWERTYUIOP"), None)
-  val invalidTrnDetails = Identifier(None, Some("QWERTYUIOP"))
+  val invalidNinoDetails = Identifier(Some("QWERTYUIOP"), None, startDate, endDate, Some(useCase))
+  val invalidTrnDetails = Identifier(None, Some("QWERTYUIOP"),startDate, endDate, Some(useCase))
   val invalidContactDetail = ContactDetail(-42, "abcdefghijklmnopqrstuvwxyz0123456789", "a")
   val invalidResidence = Residence(residenceType =  Some(""), address = generateAddress(2))
   val invalidDetailsResponse = DetailsResponse(
-    invalidNinoDetails,
+    idTrn,
     Some(Seq(invalidContactDetail)),
     Some(Seq(invalidResidence))
   )

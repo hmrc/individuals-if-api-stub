@@ -41,6 +41,12 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
 
   val idType = "nino"
   val idValue = "ANINO123"
+  val startDate = "2020-01-01"
+  val endDate = "2020-21-31"
+  val startYear = "2019"
+  val endYear = "2020"
+  val useCase = "TEST"
+  val fields = "some(values)"
 
   val innerSaValue = Seq(createValidSaTaxYearEntry(), createValidSaTaxYearEntry())
   val incomeSaResponse = IncomeSa(Some(innerSaValue))
@@ -49,77 +55,131 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
   val incomePayeResponse = IncomePaye(Some(innerPayeValue))
 
   "Sa" should {
-    "Create Sa" should {
-      "Successfully create a SA record and return the SA as response" in new Setup {
-        when(incomeService.createSa(idType, idValue, incomeSaResponse)).thenReturn(Future.successful(incomeSaResponse))
 
-        val result = await(underTest.createSa(idType, idValue)(fakeRequest.withBody(Json.toJson(incomeSaResponse))))
+    "Create Sa" should {
+
+      "Successfully create a SA record and return the SA as response" in new Setup {
+
+        when(incomeService.createSa(idType, idValue, startYear, endYear, useCase, incomeSaResponse)).thenReturn(
+          Future.successful(incomeSaResponse)
+        )
+
+        val result = await(underTest.createSa(idType, idValue, startYear, endYear, useCase)(
+          fakeRequest.withBody(Json.toJson(incomeSaResponse)))
+        )
 
         status(result) shouldBe CREATED
         jsonBodyOf(result) shouldBe Json.toJson(incomeSaResponse)
+
       }
 
       "Fails to create SaIncome when a request is not provided" in new Setup {
-        when(incomeService.createSa(idType, idValue, incomeSaResponse)).thenReturn(Future.successful(incomeSaResponse))
+
+        when(incomeService.createSa(idType, idValue, startYear, endYear, useCase, incomeSaResponse)).thenReturn(
+          Future.successful(incomeSaResponse)
+        )
+
         assertThrows[Exception] {
-          await(underTest.createSa(idType, idValue)(fakeRequest.withBody(Json.toJson(""))))
+          await(underTest.createSa(idType, idValue, startYear, endYear, useCase)(
+            fakeRequest.withBody(Json.toJson("")))
+          )
         }
+
       }
     }
 
     "Retrieve Sa" should {
-      "Return Paye when successfully retrieved from service" in new Setup {
-        when(incomeService.getSa(idType, idValue)).thenReturn(Future.successful(Some(incomeSaResponse)))
 
-        val result = await(underTest.retrieveSa(idType, idValue)(fakeRequest))
+      "Return data when successfully retrieved from service" in new Setup {
+
+        when(incomeService.getSa(idType, idValue, startYear, endYear, Some(fields))).thenReturn(
+          Future.successful(Some(incomeSaResponse))
+        )
+
+        val result = await{
+          underTest.retrieveSa(idType, idValue, startYear, endYear, Some(fields))(fakeRequest)
+        }
 
         status(result) shouldBe OK
         jsonBodyOf(result) shouldBe Json.toJson(Some(incomeSaResponse))
+
       }
 
       "Fail when it cannot get sa from service" in new Setup {
-        when(incomeService.getSa(idType, idValue)).thenReturn(Future.failed(new Exception))
+
+        when(incomeService.getSa(idType, idValue, startYear, endYear, Some(fields))).thenReturn(
+          Future.failed(new Exception)
+        )
+
         assertThrows[Exception] {
-          await(underTest.retrieveSa(idType, idValue)(fakeRequest))
+          await(underTest.retrieveSa(idType, idValue, startYear, endYear, Some(fields))(fakeRequest))
         }
+
       }
     }
   }
 
   "Paye" should {
-    "Create Paye" should {
-      "Successfully create a PAYE record and return the PAYE as response" in new Setup {
-        when(incomeService.createPaye(idType, idValue, incomePayeResponse)).thenReturn(Future.successful(incomePayeResponse))
 
-        val result = await(underTest.createPaye(idType, idValue)(fakeRequest.withBody(Json.toJson(incomePayeResponse))))
+    "Create Paye" should {
+
+      "Successfully create a PAYE record and return the PAYE as response" in new Setup {
+
+        when(incomeService.createPaye(idType, idValue, startDate, endDate, useCase, incomePayeResponse)).thenReturn(
+          Future.successful(incomePayeResponse)
+        )
+
+        val result = await(underTest.createPaye(idType, idValue, startDate, endDate, useCase)(
+          fakeRequest.withBody(Json.toJson(incomePayeResponse)))
+        )
 
         status(result) shouldBe CREATED
+
         jsonBodyOf(result) shouldBe Json.toJson(incomePayeResponse)
+
       }
 
       "Fails to create PayeIncome when a request is not provided" in new Setup {
-        when(incomeService.createPaye(idType, idValue, incomePayeResponse)).thenReturn(Future.successful(incomePayeResponse))
+
+        when(incomeService.createPaye(idType, idValue, startDate, endDate, useCase, incomePayeResponse)).thenReturn(
+          Future.successful(incomePayeResponse)
+        )
+
         assertThrows[Exception] {
-          await(underTest.createPaye(idType, idValue)(fakeRequest.withBody(Json.toJson(""))))
+          await(underTest.createPaye(idType, idValue, startDate, endDate, useCase)(
+            fakeRequest.withBody(Json.toJson("")))
+          )
         }
       }
+
     }
 
     "Retrieve Paye" should {
-      "Return aye when successfully retrieved from service" in new Setup {
-        when(incomeService.getPaye(idType, idValue)).thenReturn(Future.successful(Some(incomePayeResponse)))
 
-        val result = await(underTest.retrievePaye(idType, idValue)(fakeRequest))
+      "Return aye when successfully retrieved from service" in new Setup {
+
+        when(incomeService.getPaye(idType, idValue, startDate, endDate, Some(fields))).thenReturn(
+          Future.successful(Some(incomePayeResponse))
+        )
+
+        val result = await(underTest.retrievePaye(idType, idValue, startDate, endDate, Some(fields))(fakeRequest))
 
         status(result) shouldBe OK
+
         jsonBodyOf(result) shouldBe Json.toJson(Some(incomePayeResponse))
+
       }
 
       "Fail when it cannot get from service" in new Setup {
-        when(incomeService.getPaye(idType, idValue)).thenReturn(Future.failed(new Exception))
+
+        when(incomeService.getPaye(idType, idValue, startDate, endDate, Some(fields))).thenReturn(
+          Future.failed(new Exception)
+        )
+
         assertThrows[Exception] {
-          await(underTest.retrievePaye(idType, idValue)(fakeRequest))
+          await(underTest.retrievePaye(idType, idValue, startDate, endDate, Some(fields))(fakeRequest))
         }
+
       }
     }
   }

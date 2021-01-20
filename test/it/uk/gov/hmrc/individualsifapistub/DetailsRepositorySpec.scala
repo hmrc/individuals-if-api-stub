@@ -27,6 +27,10 @@ class DetailsRepositorySpec extends RepositoryTestHelper with TestHelpers {
 
   val ninoValue = "XH123456A"
   val trnValue = "2432552635"
+  val startDate = "2020-01-01"
+  val endDate = "2020-21-31"
+  val useCase = "TEST"
+  val fields = "some(values)"
 
   val request = CreateDetailsRequest(
     Some(Seq(ContactDetail(9, "MOBILE TELEPHONE", "07123 987654"), ContactDetail(9,"MOBILE TELEPHONE", "07123 987655"))),
@@ -36,7 +40,9 @@ class DetailsRepositorySpec extends RepositoryTestHelper with TestHelpers {
   )
 
   "collection" should {
+
     "have a unique index on nino and trn" in {
+
       await(repository.collection.indexesManager.list()).find({ i =>
       {
         i.name.contains("nino-trn") &&
@@ -47,51 +53,76 @@ class DetailsRepositorySpec extends RepositoryTestHelper with TestHelpers {
       }
       }) should not be None
     }
+
   }
 
   "create" should {
-    "create a details response with a nino" in {
-      val details = Identifier(Some(ninoValue), None)
-      val detailsResponse = DetailsResponse(details, request.contactDetails, request.residences)
 
-      val result = await(repository.create("nino", ninoValue, request))
+    "create a details response with a nino" in {
+
+      val ident = Identifier(Some(ninoValue), None, startDate, endDate, Some(useCase))
+      val id = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$useCase"
+
+      val detailsResponse = DetailsResponse(id, request.contactDetails, request.residences)
+
+      val result = await(repository.create("nino", ninoValue, startDate, endDate, useCase, request))
 
       result shouldBe detailsResponse
+
     }
 
     "create a details response with a trn" in {
-      val details = Identifier(None, Some(trnValue))
-      val detailsResponse = DetailsResponse(details, request.contactDetails, request.residences)
 
-      val result = await(repository.create("trn", trnValue, request))
+      val ident = Identifier(None, Some(trnValue), startDate, endDate, Some(useCase))
+      val id = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$useCase"
+
+      val detailsResponse = DetailsResponse(id, request.contactDetails, request.residences)
+
+      val result = await(repository.create("trn", trnValue, startDate, endDate, useCase, request))
 
       result shouldBe detailsResponse
+
     }
 
     "fail to create duplicate details" in {
-      await(repository.create("trn", trnValue, request))
-      intercept[Exception](await(repository.create("trn", trnValue, request)))
+
+      await(repository.create("trn", trnValue, startDate, endDate, useCase, request))
+      intercept[Exception](await(repository.create("trn", trnValue, startDate, endDate, useCase, request)))
+
     }
   }
 
   "find by id and type" should {
+
     "return None when there are no details for a given nino" in {
-      await(repository.findByIdAndType("nino", ninoValue)) shouldBe None
+
+      await {
+        repository.findByIdAndType("nino", ninoValue, startDate, endDate, Some(fields))
+      } shouldBe None
+
     }
 
     "return None when there are no details for a given trn" in {
-      await(repository.findByIdAndType("trn", trnValue)) shouldBe None
+
+      await {
+        repository.findByIdAndType("trn", trnValue, startDate, endDate, Some(fields))
+      } shouldBe None
+
     }
 
     "return details when nino found" in {
 
-      val details = Identifier(Some(ninoValue), None)
-      val detailsResponse = DetailsResponse(details, request.contactDetails, request.residences)
+      val ident = Identifier(Some(ninoValue), None, startDate, endDate, Some(useCase))
+      val id = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$useCase"
 
-      await(repository.create("nino", ninoValue, request))
+      val detailsResponse = DetailsResponse(id, request.contactDetails, request.residences)
 
-      val result = await(repository.findByIdAndType("nino", ninoValue))
+      await(repository.create("nino", ninoValue, startDate, endDate, useCase, request))
+
+      val result = await(repository.findByIdAndType("nino", ninoValue, startDate, endDate, Some(fields)))
+
       result shouldBe Some(detailsResponse)
+
     }
   }
 }

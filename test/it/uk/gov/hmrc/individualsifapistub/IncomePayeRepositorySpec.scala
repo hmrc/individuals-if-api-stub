@@ -33,12 +33,18 @@ class IncomePayeRepositorySpec
 
   val nino = "XH123456A"
   val trn = "12345678"
+  val startDate = "2020-01-01"
+  val endDate = "2020-21-31"
+  val useCase = "TEST"
+  val fields = "some(values)"
 
   val innerValue = Seq(createValidPayeEntry(), createValidPayeEntry())
   val request = IncomePaye(Some(innerValue))
 
   "collection" should {
+
     "have a unique index on nino and trn" in {
+
       await(repository.collection.indexesManager.list()).find({ i => {
         i.name.contains("nino-trn") &&
           i.key.exists(key => key._1 == "id.nino") &&
@@ -48,57 +54,85 @@ class IncomePayeRepositorySpec
       }
       }) should not be None
     }
+
   }
 
   "create when type is nino" should {
+
     "create a paye record" in {
-      val result = await(repository.create("nino", nino, request))
+
+      val result = await(repository.create("nino", nino, startDate, endDate, useCase, request))
       result shouldBe request
+
     }
 
     "fail to create a duplicate paye" in {
-      await(repository.create("nino", nino, request))
+
+      await(repository.create("nino", nino, startDate, endDate, useCase, request))
+
       intercept[DuplicateException](
-        await(repository.create("nino", nino, request))
+        await(repository.create("nino", nino, startDate, endDate, useCase, request))
       )
+
     }
   }
 
   "create when type is trn" should {
+
     "create a paye" in {
-      val result = await(repository.create("trn", trn, request))
+
+      val result = await(repository.create("trn", trn, startDate, endDate, useCase, request))
       result shouldBe request
+
     }
 
     "fail to create a duplicate paye record" in {
-      await(repository.create("trn", trn, request))
+
+      await(repository.create("trn", trn, startDate, endDate, useCase, request))
+
       intercept[DuplicateException](
-        await(repository.create("trn", trn, request))
+        await(repository.create("trn", trn, startDate, endDate, useCase, request))
       )
+
     }
   }
 
   "find by id when type is Nino" should {
+
     "return None when there are no paye records for a given utr" in {
-      await(repository.findByTypeAndId("nino", nino)) shouldBe None
+
+      await(repository.findByTypeAndId("nino", nino, startDate, endDate, Some(fields))) shouldBe None
+
     }
 
     "return the paye response" in {
-      await(repository.create("nino", nino, request))
-      val result = await(repository.findByTypeAndId("nino", nino))
+
+      await(repository.create("nino", nino, startDate, endDate, useCase, request))
+
+      val result = await(repository.findByTypeAndId("nino", nino, startDate, endDate, Some(fields)))
+
       result shouldBe Some(request)
+
     }
   }
 
   "find by id when type is trn" should {
+
     "return None when there are no paye records for a given utr" in {
-      await(repository.findByTypeAndId("trn", trn)) shouldBe None
+
+      await(repository.findByTypeAndId("trn", trn, startDate, endDate, Some(fields))) shouldBe None
+
     }
 
     "return the paye response" in {
-      await(repository.create("trn", trn, request))
-      val result = await(repository.findByTypeAndId("trn", trn))
+
+
+      await(repository.create("trn", trn, startDate, endDate, useCase, request))
+
+      val result = await(repository.findByTypeAndId("trn", trn, startDate, endDate, Some(fields)))
+
       result shouldBe Some(request)
+
     }
   }
 }
