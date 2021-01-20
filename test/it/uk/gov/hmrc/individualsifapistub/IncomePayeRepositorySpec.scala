@@ -65,16 +65,6 @@ class IncomePayeRepositorySpec
       result shouldBe request
 
     }
-
-    "fail to create a duplicate paye" in {
-
-      await(repository.create("nino", nino, startDate, endDate, useCase, request))
-
-      intercept[DuplicateException](
-        await(repository.create("nino", nino, startDate, endDate, useCase, request))
-      )
-
-    }
   }
 
   "create when type is trn" should {
@@ -86,15 +76,6 @@ class IncomePayeRepositorySpec
 
     }
 
-    "fail to create a duplicate paye record" in {
-
-      await(repository.create("trn", trn, startDate, endDate, useCase, request))
-
-      intercept[DuplicateException](
-        await(repository.create("trn", trn, startDate, endDate, useCase, request))
-      )
-
-    }
   }
 
   "find by id when type is Nino" should {

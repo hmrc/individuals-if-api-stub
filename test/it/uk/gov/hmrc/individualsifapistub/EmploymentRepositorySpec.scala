@@ -107,14 +107,6 @@ class EmploymentRepositorySpec extends RepositoryTestHelper {
       result shouldBe employments
 
     }
-
-    "fail to create duplicate details" in {
-
-      await(repository.create("nino", nino, startDate, endDate, useCase, employments))
-
-      intercept[Exception](await(repository.create("nino", nino, startDate, endDate, useCase, employments)))
-
-    }
   }
 
   "findByIdAndType" should {

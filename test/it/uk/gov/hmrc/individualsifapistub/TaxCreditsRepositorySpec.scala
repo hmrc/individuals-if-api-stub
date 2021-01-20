@@ -76,13 +76,6 @@ class TaxCreditsRepositorySpec extends RepositoryTestHelper {
 
     }
 
-    "fail to create duplicate details" in {
-
-      await(repository.create("trn", trn, startDate, endDate, useCase, applications))
-
-      intercept[Exception](await(repository.create("trn", trn, startDate, endDate, useCase, applications)))
-
-    }
   }
 
   "findByIdAndType" should {

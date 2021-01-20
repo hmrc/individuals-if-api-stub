@@ -63,7 +63,7 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
       case Trn => Identifier(None, Some(idValue), startDate, endDate, Some(useCase))
     }
 
-    val tag = useCaseMap.get(useCase).getOrElse("")
+    val tag = useCaseMap.get(useCase).getOrElse("TEST")
     val id  = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$tag"
 
     val detailsResponse = DetailsResponse(id, createDetailsRequest.contactDetails, createDetailsRequest.residences)
@@ -97,7 +97,7 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
       )
     }
 
-    val tag = fields.flatMap(value => fieldsMap.get(value)).getOrElse("")
+    val tag = fields.flatMap(value => fieldsMap.get(value)).getOrElse("TEST")
     val id  = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$tag"
 
     collection.find[JsObject, JsObject](obj("details" ->id), None).one[DetailsResponse]

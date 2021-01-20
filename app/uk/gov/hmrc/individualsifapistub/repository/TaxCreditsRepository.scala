@@ -67,7 +67,7 @@ class TaxCreditsRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
       case Trn => Identifier(None, Some(idValue), startDate, endDate, Some(useCase))
     }
 
-    val tag = useCaseMap.get(useCase).getOrElse("")
+    val tag = useCaseMap.get(useCase).getOrElse("TEST")
     val id  = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$tag"
 
     for {
@@ -103,7 +103,7 @@ class TaxCreditsRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
       )
     }
 
-    val tag = fields.flatMap(value => fieldsMap.get(value)).getOrElse("")
+    val tag = fields.flatMap(value => fieldsMap.get(value)).getOrElse("TEST")
     val id  = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$tag"
 
     collection

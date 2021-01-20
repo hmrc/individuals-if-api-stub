@@ -84,12 +84,6 @@ class DetailsRepositorySpec extends RepositoryTestHelper with TestHelpers {
 
     }
 
-    "fail to create duplicate details" in {
-
-      await(repository.create("trn", trnValue, startDate, endDate, useCase, request))
-      intercept[Exception](await(repository.create("trn", trnValue, startDate, endDate, useCase, request)))
-
-    }
   }
 
   "find by id and type" should {

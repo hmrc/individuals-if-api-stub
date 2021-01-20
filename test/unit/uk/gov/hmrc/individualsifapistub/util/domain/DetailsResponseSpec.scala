@@ -64,7 +64,10 @@ class DetailsResponseSpec extends UnitSpec with TestHelpers {
       val expectedJson = Json.parse(
         """
           |{
-          |   "nino" : "XH123456A"
+          |  "nino":"XH123456A",
+          |  "from":"2020-01-01",
+          |  "to":"2020-21-31",
+          |  "useCase":"TEST"
           |}
         """.stripMargin)
       result shouldBe expectedJson
@@ -75,7 +78,10 @@ class DetailsResponseSpec extends UnitSpec with TestHelpers {
       val expectedJson = Json.parse(
         """
           |{
-          |  "trn" : "12345678"
+          |  "trn":"12345678",
+          |  "from":"2020-01-01",
+          |  "to":"2020-21-31",
+          |  "useCase":"TEST"
           |}
         """.stripMargin)
 
@@ -168,9 +174,7 @@ class DetailsResponseSpec extends UnitSpec with TestHelpers {
       val expectedJson = Json.parse(
         """
           |  {
-          |    "details" : {
-          |       "nino" : "XH123456A"
-          |     },
+          |    "details" : "XH123456A-2020-01-01-2020-21-31-TEST",
           |     "contactDetails" : [
           |       {
           |         "code" : 9,

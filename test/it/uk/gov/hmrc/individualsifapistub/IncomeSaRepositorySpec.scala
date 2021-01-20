@@ -67,15 +67,6 @@ class IncomeSaRepositorySpec
 
     }
 
-    "fail to create a duplicate self assessment" in {
-
-      await(repository.create("nino", nino, startYear, endYear, useCase, request))
-
-      intercept[DuplicateException](
-        await(repository.create("nino", nino,startYear, endYear, useCase, request))
-      )
-
-    }
   }
 
   "create when type is trn" should {
@@ -88,15 +79,6 @@ class IncomeSaRepositorySpec
 
     }
 
-    "fail to create a duplicate self assessment" in {
-
-      await(repository.create("trn", trn, startYear, endYear, useCase, request))
-
-      intercept[DuplicateException](
-        await(repository.create("trn", trn, startYear, endYear, useCase, request))
-      )
-
-    }
   }
 
   "find by id when type is nino" should {

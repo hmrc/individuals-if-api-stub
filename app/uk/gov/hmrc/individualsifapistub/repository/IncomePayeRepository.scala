@@ -60,7 +60,7 @@ class IncomePayeRepository  @Inject()(mongoConnectionProvider: MongoConnectionPr
       case Trn => Identifier(None, Some(idValue), startDate, endDate, Some(useCase))
     }
 
-    val tag = useCaseMap.get(useCase).getOrElse("")
+    val tag = useCaseMap.get(useCase).getOrElse("TEST")
     val id  = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$tag"
 
     val incomePayeEntry = IncomePayeEntry(id, request)
@@ -98,7 +98,7 @@ class IncomePayeRepository  @Inject()(mongoConnectionProvider: MongoConnectionPr
       )
     }
 
-    val tag = fields.flatMap(value => fieldsMap.get(value)).getOrElse("")
+    val tag = fields.flatMap(value => fieldsMap.get(value)).getOrElse("TEST")
     val id  = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$tag"
 
     collection.find[JsObject, JsObject](obj("id" -> id), None)
