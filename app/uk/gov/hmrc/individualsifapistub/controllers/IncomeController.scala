@@ -35,9 +35,9 @@ class IncomeController @Inject()( bodyParser: PlayBodyParsers,
                idValue: String,
                startYear: String,
                endYear: String,
-               consumer: String): Action[JsValue] = Action.async(bodyParser.json) { implicit request =>
+               useCase: String): Action[JsValue] = Action.async(bodyParser.json) { implicit request =>
     withJsonBody[IncomeSa] { createRequest =>
-      incomeService.createSa(idType, idValue, startYear, endYear, consumer, createRequest) map (
+      incomeService.createSa(idType, idValue, startYear, endYear, useCase, createRequest) map (
         e => Created(Json.toJson(e))
       )
     } recover recovery
@@ -58,9 +58,9 @@ class IncomeController @Inject()( bodyParser: PlayBodyParsers,
                  idValue: String,
                  startDate: String,
                  endDate: String,
-                 consumer: String): Action[JsValue] = Action.async(bodyParser.json) { implicit request =>
+                 useCase: String): Action[JsValue] = Action.async(bodyParser.json) { implicit request =>
     withJsonBody[IncomePaye] { createRequest =>
-      incomeService.createPaye(idType, idValue, startDate, endDate, consumer, createRequest) map (
+      incomeService.createPaye(idType, idValue, startDate, endDate, useCase, createRequest) map (
         e => Created(Json.toJson(e))
       )
     } recover recovery

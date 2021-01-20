@@ -35,16 +35,16 @@ class EmploymentsController @Inject()( bodyParser: PlayBodyParsers,
              idValue: String,
              startDate: String,
              endDate: String,
-             consumer: String): Action[JsValue] = {
+             useCase: String): Action[JsValue] = {
     Action.async(bodyParser.json) { implicit request =>
 
-      withJsonBodyAndValidId[Employments](idType, idValue, startDate, endDate, Some(consumer)) {
+      withJsonBodyAndValidId[Employments](idType, idValue, startDate, endDate, Some(useCase)) {
         jsonBody => employmentsService.create(
           idType,
           idValue,
           startDate,
           endDate,
-          consumer,
+          useCase,
           jsonBody
         ) map (e => Created(Json.toJson(e)))
       } recover recovery

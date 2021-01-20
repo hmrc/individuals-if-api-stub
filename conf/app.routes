@@ -1,17 +1,17 @@
 # Income
 GET     /individuals/income/sa/:idType/:idValue                         uk.gov.hmrc.individualsifapistub.controllers.IncomeController.retrieveSa(idType, idValue, startYear, endYear, fields: Option[String] ?= None)
 GET     /individuals/income/paye/:idType/:idValue                       uk.gov.hmrc.individualsifapistub.controllers.IncomeController.retrievePaye(idType, idValue, startDate, endDate, fields: Option[String] ?= None)
-POST    /individuals/income/sa/:idType/:idValue                         uk.gov.hmrc.individualsifapistub.controllers.IncomeController.createSa(idType, idValue, startYear, endYear, consumer)
-POST    /individuals/income/paye/:idType/:idValue                       uk.gov.hmrc.individualsifapistub.controllers.IncomeController.createPaye(idType, idValue, startDate, endDate, consumer)
+POST    /individuals/income/sa/:idType/:idValue                         uk.gov.hmrc.individualsifapistub.controllers.IncomeController.createSa(idType, idValue, startYear, endYear, useCase)
+POST    /individuals/income/paye/:idType/:idValue                       uk.gov.hmrc.individualsifapistub.controllers.IncomeController.createPaye(idType, idValue, startDate, endDate, useCase)
 
 # Benefits and Credits
 GET     /individuals/tax-credits/:idType/:idValue                       uk.gov.hmrc.individualsifapistub.controllers.TaxCreditsController.retrieve(idType, idValue, startDate, endDate, fields: Option[String] ?= None)
-POST    /individuals/tax-credits/:idType/:idValue                       uk.gov.hmrc.individualsifapistub.controllers.TaxCreditsController.create(idType, idValue, startDate, endDate, consumer)
+POST    /individuals/tax-credits/:idType/:idValue                       uk.gov.hmrc.individualsifapistub.controllers.TaxCreditsController.create(idType, idValue, startDate, endDate, useCase)
 
 # Employments
 GET     /individuals/employments/:idType/:idValue                       uk.gov.hmrc.individualsifapistub.controllers.EmploymentsController.retrieve(idType, idValue, startDate, endDate, fields: Option[String] ?= None)
-POST    /individuals/employments/:idType/:idValue                       uk.gov.hmrc.individualsifapistub.controllers.EmploymentsController.create(idType, idValue, startDate, endDate, consumer)
+POST    /individuals/employments/:idType/:idValue                       uk.gov.hmrc.individualsifapistub.controllers.EmploymentsController.create(idType, idValue, startDate, endDate, useCase)
 
 # Details
 GET     /individuals/contact/details/:idType/:idValue                   uk.gov.hmrc.individualsifapistub.controllers.DetailsController.retrieve(idType, idValue, startDate, endDate, fields: Option[String] ?= None)
-POST    /individuals/contact/details/:idType/:idValue                   uk.gov.hmrc.individualsifapistub.controllers.DetailsController.create(idType, idValue, startDate, endDate, consumer)
+POST    /individuals/contact/details/:idType/:idValue                   uk.gov.hmrc.individualsifapistub.controllers.DetailsController.create(idType, idValue, startDate, endDate, useCase)

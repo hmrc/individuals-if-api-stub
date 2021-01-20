@@ -28,9 +28,9 @@ class IncomeService @Inject()(incomeSaRepository: IncomeSaRepository, incomePaye
                idValue: String,
                startYear: String,
                endYear: String,
-               consumer: String,
+               useCase: String,
                createSelfAssessmentRequest: IncomeSa): Future[IncomeSa] = {
-    incomeSaRepository.create(idType, idValue, startYear, endYear, consumer, createSelfAssessmentRequest)
+    incomeSaRepository.create(idType, idValue, startYear, endYear, useCase, createSelfAssessmentRequest)
   }
 
   def getSa(idType: String,
@@ -46,9 +46,9 @@ class IncomeService @Inject()(incomeSaRepository: IncomeSaRepository, incomePaye
                  idValue: String,
                  startDate: String,
                  endDate: String,
-                 consumer: String,
+                 useCase: String,
                  createIncomePayeRequest: IncomePaye): Future[IncomePaye] = {
-    incomePayeRepository.create(idType, idValue, startDate, endDate, consumer, createIncomePayeRequest)
+    incomePayeRepository.create(idType, idValue, startDate, endDate, useCase, createIncomePayeRequest)
   }
 
   def getPaye(idType: String,

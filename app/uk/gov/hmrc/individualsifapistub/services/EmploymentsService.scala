@@ -28,9 +28,9 @@ class EmploymentsService @Inject()(employmentsRepository: EmploymentRepository) 
              idValue: String,
              startDate: String,
              endDate: String,
-             consumer: String,
+             useCase: String,
              employments: Employments): Future[Employments] = {
-    employmentsRepository.create(idType, idValue, startDate, endDate, consumer, employments)
+    employmentsRepository.create(idType, idValue, startDate, endDate, useCase, employments)
   }
 
   def get(idType: String,

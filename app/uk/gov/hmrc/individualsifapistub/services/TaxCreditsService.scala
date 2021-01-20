@@ -28,9 +28,9 @@ class TaxCreditsService @Inject()(repository: TaxCreditsRepository) {
              idValue: String,
              startDate: String,
              endDate: String,
-             consumer: String,
+             useCase: String,
              applications: Applications): Future[Applications] = {
-    repository.create(idType, idValue, startDate, endDate, consumer, applications)
+    repository.create(idType, idValue, startDate, endDate, useCase, applications)
   }
 
   def get(idType: String,

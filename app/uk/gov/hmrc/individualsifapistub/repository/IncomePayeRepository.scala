@@ -45,10 +45,10 @@ class IncomePayeRepository  @Inject()(mongoConnectionProvider: MongoConnectionPr
              idValue: String,
              startDate: String,
              endDate: String,
-             consumer: String,
+             useCase: String,
              request: IncomePaye): Future[IncomePaye] = {
 
-    val overlapMap = Map(
+    val useCaseMap = Map(
       "HMCTS-C2" -> "HMCTS-C2_HMCTS-C3",
       "HMCTS-C3" -> "HMCTS-C2_HMCTS-C3",
       "LSANI-C1" -> "LSANI-C1_LSANI-C3",
@@ -56,11 +56,11 @@ class IncomePayeRepository  @Inject()(mongoConnectionProvider: MongoConnectionPr
     )
 
     val ident = IdType.parse(idType) match {
-      case Nino => Identifier(Some(idValue), None, startDate, endDate, Some(consumer))
-      case Trn => Identifier(None, Some(idValue), startDate, endDate, Some(consumer))
+      case Nino => Identifier(Some(idValue), None, startDate, endDate, Some(useCase))
+      case Trn => Identifier(None, Some(idValue), startDate, endDate, Some(useCase))
     }
 
-    val tag = overlapMap.get(consumer).getOrElse("")
+    val tag = useCaseMap.get(useCase).getOrElse("")
     val id  = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$tag"
 
     val incomePayeEntry = IncomePayeEntry(id, request)

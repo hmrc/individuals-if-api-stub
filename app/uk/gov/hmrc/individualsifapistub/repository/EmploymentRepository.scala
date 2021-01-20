@@ -44,10 +44,10 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
              idValue: String,
              startDate: String,
              endDate: String,
-             consumer: String,
+             useCase: String,
              employments: Employments): Future[Employments] = {
 
-    val overlapMap = Map(
+    val useCaseMap = Map(
       "LAA-C1"   -> "LAA-C1_LAA-C2",
       "LAA-C2"   -> "LAA-C1_LAA-C2",
       "LAA-C3"   -> "LAA-C3_LSANI-C1_LSANI-C3",
@@ -58,11 +58,11 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
     )
 
     val ident = IdType.parse(idType) match {
-      case Nino => Identifier(Some(idValue), None, startDate, endDate, Some(consumer))
-      case Trn => Identifier(None, Some(idValue), startDate, endDate, Some(consumer))
+      case Nino => Identifier(Some(idValue), None, startDate, endDate, Some(useCase))
+      case Trn => Identifier(None, Some(idValue), startDate, endDate, Some(useCase))
     }
 
-    val tag = overlapMap.get(consumer).getOrElse("")
+    val tag = useCaseMap.get(useCase).getOrElse("")
     val id  = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$tag"
 
     for {

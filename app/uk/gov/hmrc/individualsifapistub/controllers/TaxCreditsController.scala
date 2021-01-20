@@ -35,10 +35,10 @@ class TaxCreditsController @Inject()(bodyParsers: PlayBodyParsers,
              idValue: String,
              startDate: String,
              endDate: String,
-             consumer: String): Action[JsValue] = {
+             useCase: String): Action[JsValue] = {
     Action.async(bodyParsers.json) { implicit request =>
-      withJsonBodyAndValidId[Applications](idType, idValue, startDate, endDate, Some(consumer)) { applications =>
-        taxCreditsService.create(idType, idValue, startDate, endDate, consumer, applications) map (
+      withJsonBodyAndValidId[Applications](idType, idValue, startDate, endDate, Some(useCase)) { applications =>
+        taxCreditsService.create(idType, idValue, startDate, endDate, useCase, applications) map (
           e => Created(Json.toJson(e)))
       } recover recovery
     }

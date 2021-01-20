@@ -46,10 +46,10 @@ class TaxCreditsRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
              idValue: String,
              startDate: String,
              endDate: String,
-             consumer: String,
+             useCase: String,
              applications: Applications): Future[Applications] = {
 
-    val overlapMap = Map(
+    val useCaseMap = Map(
       "LAA-C1-working-tax-credit"   -> "LAA-C1_LAA-C2_LAA-C3_working-tax-credit",
       "LAA-C2-working-tax-credit"   -> "LAA-C1_LAA-C2_LAA-C3_working-tax-credit",
       "LAA-C3-working-tax-credit"   -> "LAA-C1_LAA-C2_LAA-C3_working-tax-credit",
@@ -63,11 +63,11 @@ class TaxCreditsRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
     )
 
     val ident = IdType.parse(idType) match {
-      case Nino => Identifier(Some(idValue), None, startDate, endDate, Some(consumer))
-      case Trn => Identifier(None, Some(idValue), startDate, endDate, Some(consumer))
+      case Nino => Identifier(Some(idValue), None, startDate, endDate, Some(useCase))
+      case Trn => Identifier(None, Some(idValue), startDate, endDate, Some(useCase))
     }
 
-    val tag = overlapMap.get(consumer).getOrElse("")
+    val tag = useCaseMap.get(useCase).getOrElse("")
     val id  = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$tag"
 
     for {

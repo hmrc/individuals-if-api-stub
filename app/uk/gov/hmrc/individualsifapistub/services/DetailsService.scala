@@ -28,9 +28,9 @@ class DetailsService @Inject()(detailsRepository: DetailsRepository) {
              idValue:String,
              startDate: String,
              endDate: String,
-             consumer: String,
+             useCase: String,
              createDetailsRequest: CreateDetailsRequest): Future[DetailsResponse] = {
-    detailsRepository.create(idType, idValue, startDate, endDate, consumer, createDetailsRequest)
+    detailsRepository.create(idType, idValue, startDate, endDate, useCase, createDetailsRequest)
   }
 
   def get(idType: String,

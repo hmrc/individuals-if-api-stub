@@ -43,10 +43,10 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
              idValue: String,
              startDate: String,
              endDate: String,
-             consumer: String,
+             useCase: String,
              createDetailsRequest: CreateDetailsRequest): Future[DetailsResponse] = {
 
-    val overlapMap = Map(
+    val useCaseMap = Map(
       "LAA-C3-residences"        -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
       "LAA-C4-residences"        -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
       "HMCTS-C3-residences"      -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
@@ -59,11 +59,11 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
     )
 
     val ident = IdType.parse(idType) match {
-      case Nino => Identifier(Some(idValue), None, startDate, endDate, Some(consumer))
-      case Trn => Identifier(None, Some(idValue), startDate, endDate, Some(consumer))
+      case Nino => Identifier(Some(idValue), None, startDate, endDate, Some(useCase))
+      case Trn => Identifier(None, Some(idValue), startDate, endDate, Some(useCase))
     }
 
-    val tag = overlapMap.get(consumer).getOrElse("")
+    val tag = useCaseMap.get(useCase).getOrElse("")
     val id  = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$tag"
 
     val detailsResponse = DetailsResponse(id, createDetailsRequest.contactDetails, createDetailsRequest.residences)
