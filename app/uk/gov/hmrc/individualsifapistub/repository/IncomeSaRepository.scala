@@ -60,7 +60,7 @@ class IncomeSaRepository @Inject()(mongoConnectionProvider: MongoConnectionProvi
       case Trn => Identifier(None, Some(idValue), startYear, endYear, Some(useCase))
     }
 
-    val tag = useCaseMap.get(useCase).getOrElse("TEST")
+    val tag = useCaseMap.get(useCase).getOrElse(useCase)
     val id  = s"${ident.nino.getOrElse(ident.trn)}-$startYear-$endYear-$tag"
 
     val incomeSaRecord = IncomeSaEntry(id, request)
