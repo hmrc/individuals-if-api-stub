@@ -56,15 +56,15 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
 
     "Successfully create a details record and return created record as response" in new Setup {
 
-      val ident = Identifier(Some(idValue), None, startDate, endDate, Some(useCase))
-      val id = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$useCase"
+      val ident = Identifier(Some(idValue), None, None, None, Some(useCase))
+      val id = s"${ident.nino.getOrElse(ident.trn)}-$useCase"
       val detailsResponse = DetailsResponse(id, request.contactDetails, request.residences)
 
-      when(mockDetailsService.create(idType, idValue, startDate, endDate, useCase, request)).thenReturn(
+      when(mockDetailsService.create(idType, idValue, useCase, request)).thenReturn(
         Future.successful(detailsResponse)
       )
 
-      val result = await(underTest.create(idType, idValue, startDate, endDate, useCase)(
+      val result = await(underTest.create(idType, idValue, useCase)(
         fakeRequest.withBody(Json.toJson(request)))
       )
 
@@ -75,15 +75,15 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
 
     "Fail when a request is not provided" in new Setup {
 
-      val details = Identifier(Some(idValue), None, startDate, endDate, Some(useCase))
-      val id = s"${details.nino.getOrElse(details.trn)}-$startDate-$endDate-$useCase"
+      val details = Identifier(Some(idValue), None, None, None, Some(useCase))
+      val id = s"${details.nino.getOrElse(details.trn)}-$useCase"
       val detailsResponse = DetailsResponse(id, None, None)
 
-      when(mockDetailsService.create(idType, idValue, startDate, endDate, useCase, request)).thenReturn(
+      when(mockDetailsService.create(idType, idValue, useCase, request)).thenReturn(
         Future.successful(detailsResponse)
       )
 
-      val response = await(underTest.create(idType, idValue, startDate, endDate, useCase)(
+      val response = await(underTest.create(idType, idValue, useCase)(
         fakeRequest.withBody(Json.toJson("")))
       )
       status(response) shouldBe BAD_REQUEST
@@ -95,15 +95,15 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
 
     "Return details when successfully retrieved from service" in new Setup {
 
-      val details = Identifier(Some(idValue), None, startDate, endDate, Some(useCase))
-      val id = s"${details.nino.getOrElse(details.trn)}-$startDate-$endDate-$useCase"
+      val details = Identifier(Some(idValue), None, None, None, Some(useCase))
+      val id = s"${details.nino.getOrElse(details.trn)}-$useCase"
 
       val detailsResponse = DetailsResponse(id, request.contactDetails, request.residences)
-      when(mockDetailsService.get(idType, idValue, startDate, endDate, Some(fields))).thenReturn(
+      when(mockDetailsService.get(idType, idValue, Some(fields))).thenReturn(
         Future.successful(Some(detailsResponse))
       )
 
-      val result = await(underTest.retrieve(idType, idValue, startDate, endDate, Some(fields))(fakeRequest))
+      val result = await(underTest.retrieve(idType, idValue, Some(fields))(fakeRequest))
 
       status(result) shouldBe OK
       jsonBodyOf(result) shouldBe Json.toJson(Some(detailsResponse))
@@ -112,11 +112,11 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
 
     "Fails when it cannot get from service" in new Setup {
 
-      when(mockDetailsService.create(idType, idValue, startDate, endDate, useCase, request)).thenReturn(
+      when(mockDetailsService.create(idType, idValue, useCase, request)).thenReturn(
         Future.failed(new Exception)
       )
       assertThrows[Exception] {
-        await(underTest.retrieve(idType, idValue, startDate, endDate, Some(fields))(fakeRequest))
+        await(underTest.retrieve(idType, idValue, Some(fields))(fakeRequest))
       }
 
     }

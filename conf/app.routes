@@ -13,5 +13,5 @@ GET     /individuals/employment/:idType/:idValue                       uk.gov.hm
 POST    /individuals/employment/:idType/:idValue                       uk.gov.hmrc.individualsifapistub.controllers.EmploymentsController.create(idType, idValue, startDate, endDate, useCase)
 
 # Details
-GET     /individuals/contact/details/:idType/:idValue                   uk.gov.hmrc.individualsifapistub.controllers.DetailsController.retrieve(idType, idValue, startDate, endDate, fields: Option[String] ?= None)
-POST    /individuals/contact/details/:idType/:idValue                   uk.gov.hmrc.individualsifapistub.controllers.DetailsController.create(idType, idValue, startDate, endDate, useCase)
+GET     /individuals/contact/details/:idType/:idValue                   uk.gov.hmrc.individualsifapistub.controllers.DetailsController.retrieve(idType, idValue, fields: Option[String] ?= None)
+POST    /individuals/contact/details/:idType/:idValue                   uk.gov.hmrc.individualsifapistub.controllers.DetailsController.create(idType, idValue, useCase)

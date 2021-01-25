@@ -98,8 +98,8 @@ abstract class CommonController(controllerComponents: ControllerComponents)
 
   protected def withJsonBodyAndValidId[T](idType: String,
                                           id: String,
-                                          from: String,
-                                          to: String,
+                                          from: Option[String],
+                                          to: Option[String],
                                           useCase:
                                           Option[String])
                                          (f: (T) => Future[Result])(

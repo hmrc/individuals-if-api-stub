@@ -35,7 +35,7 @@ class TaxCreditsServiceSpec extends TestSupport {
     val endDate = "2020-21-31"
     val useCase = "TEST"
     val fields = "some(values)"
-    val ident = Identifier(Some(idValue), None, startDate, endDate, Some(useCase))
+    val ident = Identifier(Some(idValue), None, Some(startDate), Some(endDate), Some(useCase))
     val id = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$useCase"
 
     val application: Application = Application(

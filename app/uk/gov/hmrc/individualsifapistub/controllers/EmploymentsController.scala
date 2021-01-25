@@ -38,7 +38,7 @@ class EmploymentsController @Inject()( bodyParser: PlayBodyParsers,
              useCase: String): Action[JsValue] = {
     Action.async(bodyParser.json) { implicit request =>
 
-      withJsonBodyAndValidId[Employments](idType, idValue, startDate, endDate, Some(useCase)) {
+      withJsonBodyAndValidId[Employments](idType, idValue, Some(startDate), Some(endDate), Some(useCase)) {
         jsonBody => employmentsService.create(
           idType,
           idValue,

@@ -16,7 +16,6 @@
 
 package it.uk.gov.hmrc.individualsifapistub
 
-import reactivemongo.api.indexes.IndexType.Text
 import testUtils.{RepositoryTestHelper, TestHelpers}
 import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.individualsifapistub.repository.DetailsRepository
@@ -27,8 +26,6 @@ class DetailsRepositorySpec extends RepositoryTestHelper with TestHelpers {
 
   val ninoValue = "XH123456A"
   val trnValue = "2432552635"
-  val startDate = "2020-01-01"
-  val endDate = "2020-21-31"
   val useCase = "TEST"
   val fields = "some(values)"
 
@@ -60,12 +57,12 @@ class DetailsRepositorySpec extends RepositoryTestHelper with TestHelpers {
 
     "create a details response with a nino" in {
 
-      val ident = Identifier(Some(ninoValue), None, startDate, endDate, Some(useCase))
-      val id = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$useCase"
+      val ident = Identifier(Some(ninoValue), None, None, None, Some(useCase))
+      val id = s"${ident.nino.getOrElse(ident.trn)}-$useCase"
 
       val detailsResponse = DetailsResponse(id, request.contactDetails, request.residences)
 
-      val result = await(repository.create("nino", ninoValue, startDate, endDate, useCase, request))
+      val result = await(repository.create("nino", ninoValue, useCase, request))
 
       result shouldBe detailsResponse
 
@@ -73,12 +70,12 @@ class DetailsRepositorySpec extends RepositoryTestHelper with TestHelpers {
 
     "create a details response with a trn" in {
 
-      val ident = Identifier(None, Some(trnValue), startDate, endDate, Some(useCase))
-      val id = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$useCase"
+      val ident = Identifier(None, Some(trnValue), None, None, Some(useCase))
+      val id = s"${ident.nino.getOrElse(ident.trn)}-$useCase"
 
       val detailsResponse = DetailsResponse(id, request.contactDetails, request.residences)
 
-      val result = await(repository.create("trn", trnValue, startDate, endDate, useCase, request))
+      val result = await(repository.create("trn", trnValue, useCase, request))
 
       result shouldBe detailsResponse
 
@@ -91,7 +88,7 @@ class DetailsRepositorySpec extends RepositoryTestHelper with TestHelpers {
     "return None when there are no details for a given nino" in {
 
       await {
-        repository.findByIdAndType("nino", ninoValue, startDate, endDate, Some(fields))
+        repository.findByIdAndType("nino", ninoValue, Some(fields))
       } shouldBe None
 
     }
@@ -99,21 +96,21 @@ class DetailsRepositorySpec extends RepositoryTestHelper with TestHelpers {
     "return None when there are no details for a given trn" in {
 
       await {
-        repository.findByIdAndType("trn", trnValue, startDate, endDate, Some(fields))
+        repository.findByIdAndType("trn", trnValue, Some(fields))
       } shouldBe None
 
     }
 
     "return details when nino found" in {
 
-      val ident = Identifier(Some(ninoValue), None, startDate, endDate, Some(useCase))
-      val id = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$useCase"
+      val ident = Identifier(Some(ninoValue), None, None, None, Some(useCase))
+      val id = s"${ident.nino.getOrElse(ident.trn)}-$useCase"
 
       val detailsResponse = DetailsResponse(id, request.contactDetails, request.residences)
 
-      await(repository.create("nino", ninoValue, startDate, endDate, useCase, request))
+      await(repository.create("nino", ninoValue, useCase, request))
 
-      val result = await(repository.findByIdAndType("nino", ninoValue, startDate, endDate, Some(fields)))
+      val result = await(repository.findByIdAndType("nino", ninoValue, Some(fields)))
 
       result shouldBe Some(detailsResponse)
 
