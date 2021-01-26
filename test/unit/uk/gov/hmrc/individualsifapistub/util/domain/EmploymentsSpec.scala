@@ -29,8 +29,8 @@ class EmploymentsSpec extends UnitSpec with TestHelpers {
   val useCase = "TEST"
   val fields = "some(values)"
 
-  val ninoDetails = Identifier(Some("XH123456A"), None, startDate, endDate, Some(useCase))
-  val trnDetails = Identifier(None, Some("12345678"), startDate, endDate, Some(useCase))
+  val ninoDetails = Identifier(Some("XH123456A"), None, Some(startDate), Some(endDate), Some(useCase))
+  val trnDetails = Identifier(None, Some("12345678"), Some(startDate), Some(endDate), Some(useCase))
 
   val address = Address(
     Some("line1"),

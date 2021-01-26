@@ -88,7 +88,7 @@ class EmploymentsControllerSpec extends TestSupport {
   )
 
   val employments = Employments(Seq(employment))
-  val ident = Identifier(Some("XH123456A"), None, startDate, endDate, Some(useCase))
+  val ident = Identifier(Some("XH123456A"), None, Some(startDate), Some(endDate), Some(useCase))
   val id = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$useCase"
   val request = EmploymentEntry(id, Seq(employment))
 

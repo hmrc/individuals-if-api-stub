@@ -56,8 +56,8 @@ class IncomePayeRepository  @Inject()(mongoConnectionProvider: MongoConnectionPr
     )
 
     val ident = IdType.parse(idType) match {
-      case Nino => Identifier(Some(idValue), None, startDate, endDate, Some(useCase))
-      case Trn => Identifier(None, Some(idValue), startDate, endDate, Some(useCase))
+      case Nino => Identifier(Some(idValue), None, Some(startDate), Some(endDate), Some(useCase))
+      case Trn => Identifier(None, Some(idValue), Some(startDate), Some(endDate), Some(useCase))
     }
 
     val tag = useCaseMap.get(useCase).getOrElse(useCase)
@@ -91,10 +91,10 @@ class IncomePayeRepository  @Inject()(mongoConnectionProvider: MongoConnectionPr
 
     val ident = IdType.parse(idType) match {
       case Nino => Identifier(
-        Some(idValue), None, startDate, endDate, fields.flatMap(value => fieldsMap.get(value))
+        Some(idValue), None, Some(startDate), Some(endDate), fields.flatMap(value => fieldsMap.get(value))
       )
       case Trn => Identifier(
-        None, Some(idValue), startDate, endDate, fields.flatMap(value => fieldsMap.get(value))
+        None, Some(idValue), Some(startDate), Some(endDate), fields.flatMap(value => fieldsMap.get(value))
       )
     }
 

@@ -55,29 +55,29 @@ class DetailsServiceSpec extends TestSupport with TestHelpers {
 
       "Return the created details when created with a NINO" in new Setup {
 
-        val ident = Identifier(Some(idValue), None, startDate, endDate, Some(useCase))
-        val id = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$useCase"
+        val ident = Identifier(Some(idValue), None, None, None, Some(useCase))
+        val id = s"${ident.nino.getOrElse(ident.trn)}-$useCase"
 
 
         val detailsResponse = DetailsResponse(id, request.contactDetails, request.residences)
 
-        when(mockDetailsRepository.create("NINO", idValue, startDate, endDate, useCase, request)).thenReturn(
+        when(mockDetailsRepository.create("NINO", idValue, useCase, request)).thenReturn(
           Future.successful(detailsResponse)
         )
 
-        val response = await(underTest.create(idType, idValue, startDate, endDate, useCase, request))
+        val response = await(underTest.create(idType, idValue, useCase, request))
 
         response shouldBe detailsResponse
 
       }
 
       "Return failure when unable to create Details object" in new Setup {
-        when(mockDetailsRepository.create(idType, idValue, startDate, endDate, useCase, CreateDetailsRequest(None, None))).thenReturn(
+        when(mockDetailsRepository.create(idType, idValue, useCase, CreateDetailsRequest(None, None))).thenReturn(
           Future.failed(new Exception)
         )
 
         assertThrows[Exception] {
-          await(underTest.create(idType, idValue, startDate, endDate, useCase, request))
+          await(underTest.create(idType, idValue, useCase, request))
         }
 
       }
@@ -86,16 +86,16 @@ class DetailsServiceSpec extends TestSupport with TestHelpers {
     "Get" should {
       "Return details when successfully retrieved from mongo" in new Setup {
 
-        val ident = Identifier(Some(idValue), None, startDate, endDate, Some(useCase))
-        val id = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$useCase"
+        val ident = Identifier(Some(idValue), None, None, None, Some(useCase))
+        val id = s"${ident.nino.getOrElse(ident.trn)}-$useCase"
 
         val detailsResponse = DetailsResponse(id, request.contactDetails, request.residences)
 
-        when(mockDetailsRepository.findByIdAndType(idType, idValue, startDate, endDate, Some(fields))).thenReturn(
+        when(mockDetailsRepository.findByIdAndType(idType, idValue, Some(fields))).thenReturn(
           Future.successful(Some(detailsResponse))
         )
 
-        val response = await(underTest.get(idType, idValue, startDate, endDate, Some(fields)))
+        val response = await(underTest.get(idType, idValue, Some(fields)))
 
         response shouldBe Some(detailsResponse)
 
@@ -103,9 +103,9 @@ class DetailsServiceSpec extends TestSupport with TestHelpers {
 
       "Return none if cannot be found in mongo" in new Setup {
 
-        when(mockDetailsRepository.findByIdAndType(idType, idValue, startDate, endDate, Some(fields))).thenReturn(Future.successful(None));
+        when(mockDetailsRepository.findByIdAndType(idType, idValue, Some(fields))).thenReturn(Future.successful(None))
 
-        val response = await(underTest.get(idType, idValue, startDate, endDate, Some(fields)))
+        val response = await(underTest.get(idType, idValue, Some(fields)))
 
         response shouldBe None
 

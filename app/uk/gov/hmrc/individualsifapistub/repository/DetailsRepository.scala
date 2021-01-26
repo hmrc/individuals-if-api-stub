@@ -41,8 +41,6 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
 
   def create(idType: String,
              idValue: String,
-             startDate: String,
-             endDate: String,
              useCase: String,
              createDetailsRequest: CreateDetailsRequest): Future[DetailsResponse] = {
 
@@ -59,12 +57,14 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
     )
 
     val ident = IdType.parse(idType) match {
-      case Nino => Identifier(Some(idValue), None, startDate, endDate, Some(useCase))
-      case Trn => Identifier(None, Some(idValue), startDate, endDate, Some(useCase))
+      case Nino => Identifier(Some(idValue), None, None, None, Some(useCase))
+      case Trn => Identifier(None, Some(idValue), None, None, Some(useCase))
     }
 
     val tag = useCaseMap.get(useCase).getOrElse(useCase)
-    val id  = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$tag"
+    val id  = s"${ident.nino.getOrElse(ident.trn)}-$tag"
+
+    println("ACHI: in: " + id)
 
     val detailsResponse = DetailsResponse(id, createDetailsRequest.contactDetails, createDetailsRequest.residences)
 
@@ -77,8 +77,6 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
 
   def findByIdAndType(idType: String,
                       idValue: String,
-                      startDate: String,
-                      endDate: String,
                       fields: Option[String]): Future[Option[DetailsResponse]] = {
 
     def fieldsMap = Map(
@@ -90,15 +88,17 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
 
     val ident = IdType.parse(idType) match {
       case Nino => Identifier(
-        Some(idValue), None, startDate, endDate, fields.flatMap(value => fieldsMap.get(value))
+        Some(idValue), None, None, None, fields.flatMap(value => fieldsMap.get(value))
       )
       case Trn => Identifier(
-        None, Some(idValue), startDate, endDate, fields.flatMap(value => fieldsMap.get(value))
+        None, Some(idValue), None, None, fields.flatMap(value => fieldsMap.get(value))
       )
     }
 
     val tag = fields.flatMap(value => fieldsMap.get(value)).getOrElse("TEST")
-    val id  = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$tag"
+    val id  = s"${ident.nino.getOrElse(ident.trn)}-$tag"
+
+    println("ACHI: out: " + id)
 
     collection.find[JsObject, JsObject](obj("details" ->id), None).one[DetailsResponse]
 

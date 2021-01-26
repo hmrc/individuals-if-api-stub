@@ -24,8 +24,8 @@ import scala.util.matching.Regex
 
 case class Identifier(nino: Option[String],
                       trn: Option[String],
-                      from: String,
-                      to: String,
+                      from: Option[String],
+                      to: Option[String],
                       useCase: Option[String]
                      )
 
@@ -40,15 +40,15 @@ object Identifier {
     (
       (JsPath \ "nino").readNullable[String](pattern(ninoPattern, "InvalidNino")) and
       (JsPath \ "trn").readNullable[String](pattern(trnPattern, "InvalidTrn")) and
-      (JsPath \ "from").read[String] and
-      (JsPath \ "to").read[String] and
+      (JsPath \ "from").readNullable[String] and
+      (JsPath \ "to").readNullable[String] and
       (JsPath \ "useCase").readNullable[String]
     )(Identifier.apply _),
     (
       (JsPath \ "nino").writeNullable[String] and
       (JsPath \ "trn").writeNullable[String] and
-      (JsPath \ "from").write[String] and
-      (JsPath \ "to").write[String] and
+      (JsPath \ "from").writeNullable[String] and
+      (JsPath \ "to").writeNullable[String] and
       (JsPath \ "useCase").writeNullable[String]
     )(unlift(Identifier.unapply))
   )

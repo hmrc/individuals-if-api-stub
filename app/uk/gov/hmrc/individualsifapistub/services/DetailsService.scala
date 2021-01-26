@@ -26,18 +26,14 @@ class DetailsService @Inject()(detailsRepository: DetailsRepository) {
 
   def create(idType: String,
              idValue:String,
-             startDate: String,
-             endDate: String,
              useCase: String,
              createDetailsRequest: CreateDetailsRequest): Future[DetailsResponse] = {
-    detailsRepository.create(idType, idValue, startDate, endDate, useCase, createDetailsRequest)
+    detailsRepository.create(idType, idValue, useCase, createDetailsRequest)
   }
 
   def get(idType: String,
           idValue:String,
-          startDate: String,
-          endDate: String,
           fields: Option[String]): Future[Option[DetailsResponse]] = {
-    detailsRepository.findByIdAndType(idType, idValue, startDate, endDate, fields)
+    detailsRepository.findByIdAndType(idType, idValue, fields)
   }
 }
