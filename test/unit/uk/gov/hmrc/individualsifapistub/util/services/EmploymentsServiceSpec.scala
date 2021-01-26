@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,12 @@ class EmploymentsServiceSpec extends TestSupport {
 
     val idType = "idType"
     val idValue = "idValue"
+    val startDate = "2020-01-01"
+    val endDate = "2020-21-31"
+    val useCase = "TEST"
+    val fields = "some(values)"
+    val ident = Identifier(Some("XH123456A"), None, Some(startDate), Some(endDate), Some(useCase))
+    val id = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$useCase"
 
     val employment =
         Employment(
@@ -72,38 +78,64 @@ class EmploymentsServiceSpec extends TestSupport {
     )
 
     val employments = Employments(Seq(employment))
-    val request = EmploymentEntry(Id(Some("XH123456A"), None), Seq(employment))
+    val request = EmploymentEntry(id, Seq(employment))
     val mockEmploymentRepository = mock[EmploymentRepository]
     val underTest = new EmploymentsService(mockEmploymentRepository)
+
   }
 
   "Employments Service" when {
+
     "Create" should {
+
       "Return the created employment when created" in new Setup {
-        when(mockEmploymentRepository.create(idType, idValue, employments)).thenReturn(Future.successful(employments));
-        val response = await(underTest.create(idType, idValue, employments))
+
+        when(mockEmploymentRepository.create(idType, idValue, startDate, endDate, useCase, employments)).thenReturn(
+          Future.successful(employments)
+        )
+
+        val response = await(underTest.create(idType, idValue, startDate, endDate, useCase, employments))
+
         response shouldBe employments
+
       }
 
       "Return failure when unable to create Employment object" in new Setup {
-        when(mockEmploymentRepository.create(idType, idValue, employments)).thenReturn(Future.failed(new Exception));
+
+        when(mockEmploymentRepository.create(idType, idValue, startDate, endDate, useCase, employments)).thenReturn(
+          Future.failed(new Exception)
+        )
+
         assertThrows[Exception] {
-          await(underTest.create(idType, idValue, employments))
+          await(underTest.create(idType, idValue, startDate, endDate, useCase, employments))
         }
+
       }
     }
 
     "Get" should {
+
       "Return employment when successfully retrieved from mongo" in new Setup {
-        when(mockEmploymentRepository.findByIdAndType(idType, idValue)).thenReturn(Future.successful(Some(employments)));
-        val response = await(underTest.get(idType, idValue))
+
+        when(mockEmploymentRepository.findByIdAndType(idType, idValue, startDate, endDate, Some(fields))).thenReturn(
+          Future.successful(Some(employments))
+        )
+
+        val response = await(underTest.get(idType, idValue, startDate, endDate, Some(fields)))
+
         response shouldBe Some(employments)
+
       }
 
       "Return none if cannot be found in mongo" in new Setup {
-        when(mockEmploymentRepository.findByIdAndType(idType, idValue)).thenReturn(Future.successful(None));
-        val response = await(underTest.get(idType,idValue))
+        when(mockEmploymentRepository.findByIdAndType(idType, idValue, startDate, endDate, Some(fields))).thenReturn(
+          Future.successful(None)
+        )
+
+        val response = await(underTest.get(idType, idValue, startDate, endDate, Some(fields)))
+
         response shouldBe None
+
       }
     }
   }

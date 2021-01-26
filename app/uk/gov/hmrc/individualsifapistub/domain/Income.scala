@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -117,9 +117,9 @@ case class SaReturnType(
 
 case class SaTaxYearEntry(taxYear: Option[String], income: Option[Double], returnList: Option[Seq[SaReturnType]])
 
-case class IncomeSaEntry(id:Id, incomeSa: IncomeSa)
+case class IncomeSaEntry(id: String, incomeSa: IncomeSa)
 
-case class IncomePayeEntry(id:Id, incomePaye: IncomePaye)
+case class IncomePayeEntry(id: String, incomePaye: IncomePaye)
 
 case class IncomeSa(sa: Option[Seq[SaTaxYearEntry]])
 
@@ -277,11 +277,11 @@ object IncomeSa {
 
   val incomeSaEntryFormat: Format[IncomeSaEntry] = Format(
     (
-      (JsPath \ "id").read[Id] and
+      (JsPath \ "id").read[String] and
         (JsPath \ "incomeSaResponse").read[IncomeSa]
       )(IncomeSaEntry.apply _),
     (
-      (JsPath \ "id").write[Id] and
+      (JsPath \ "id").write[String] and
         (JsPath \ "incomeSaResponse").write[IncomeSa]
       )(unlift(IncomeSaEntry.unapply))
   )
@@ -458,11 +458,11 @@ object IncomePaye {
 
   val incomePayeEntryFormat: Format[IncomePayeEntry] = Format(
     (
-      (JsPath \ "id").read[Id] and
+      (JsPath \ "id").read[String] and
         (JsPath \ "incomePaye").read[IncomePaye]
       )(IncomePayeEntry.apply _),
     (
-      (JsPath \ "id").write[Id] and
+      (JsPath \ "id").write[String] and
         (JsPath \ "incomePaye").write[IncomePaye]
       )(unlift(IncomePayeEntry.unapply))
   )

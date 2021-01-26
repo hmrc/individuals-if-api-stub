@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,18 +39,68 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
     Index(key = Seq(("details.nino", Text), ("details.trn", Text)), name = Some("nino-trn"), unique = true, background = true)
   )
 
-  def create(idType: String, idValue: String, createDetailsRequest: CreateDetailsRequest): Future[DetailsResponse] = {
+  def create(idType: String,
+             idValue: String,
+             useCase: String,
+             createDetailsRequest: CreateDetailsRequest): Future[DetailsResponse] = {
 
-    val id = IdType.parse(idType) match {
-      case Nino => Id(Some(idValue), None)
-      case Trn => Id(None, Some(idValue))
+    val useCaseMap = Map(
+      "LAA-C3-residences"        -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
+      "LAA-C4-residences"        -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
+      "HMCTS-C3-residences"      -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
+      "HMCTS-C4-residences"      -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
+      "LSANI-C1-residences"      -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
+      "LSANI-C4-residences"      -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
+      "NICTSEJO-C4-residences"   -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
+      "LAA-C4-contact-details"   -> "LAA-C4_HMCTS-C4-contact-details",
+      "HMCTS-C4-contact-details" -> "LAA-C4_HMCTS-C4-contact-details"
+    )
+
+    val ident = IdType.parse(idType) match {
+      case Nino => Identifier(Some(idValue), None, None, None, Some(useCase))
+      case Trn => Identifier(None, Some(idValue), None, None, Some(useCase))
     }
 
+    val tag = useCaseMap.get(useCase).getOrElse(useCase)
+    val id  = s"${ident.nino.getOrElse(ident.trn)}-$tag"
+
+    println("ACHI: in: " + id)
+
     val detailsResponse = DetailsResponse(id, createDetailsRequest.contactDetails, createDetailsRequest.residences)
-    insert(detailsResponse) map (_ => detailsResponse)
+
+    for {
+      _        <- collection.findAndRemove(obj("id" -> id)) map (_.result[DetailsResponse])
+      inserted <- insert(detailsResponse) map (_ => detailsResponse)
+    } yield inserted
+
   }
 
-  def findByIdAndType(idType: String, idValue: String): Future[Option[DetailsResponse]] = {
-    collection.find[JsObject, JsObject](obj("details" -> obj(idType -> idValue)), None).one[DetailsResponse]
+  def findByIdAndType(idType: String,
+                      idValue: String,
+                      fields: Option[String]): Future[Option[DetailsResponse]] = {
+
+    def fieldsMap = Map(
+      "residences(address(line1,line2,line3,line4,line5,postcode),noLongerUsed,type)&filter=contains(residences/noLongerUsed,'N')" ->
+        "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
+      "contactDetails(code,detail,type)&filter=contains(contactDetails/type,'TELEPHONE')" ->
+        "LAA-C4_HMCTS-C4-contact-details"
+    )
+
+    val ident = IdType.parse(idType) match {
+      case Nino => Identifier(
+        Some(idValue), None, None, None, fields.flatMap(value => fieldsMap.get(value))
+      )
+      case Trn => Identifier(
+        None, Some(idValue), None, None, fields.flatMap(value => fieldsMap.get(value))
+      )
+    }
+
+    val tag = fields.flatMap(value => fieldsMap.get(value)).getOrElse("TEST")
+    val id  = s"${ident.nino.getOrElse(ident.trn)}-$tag"
+
+    println("ACHI: out: " + id)
+
+    collection.find[JsObject, JsObject](obj("details" ->id), None).one[DetailsResponse]
+
   }
 }

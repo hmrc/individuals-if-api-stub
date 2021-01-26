@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,19 +24,38 @@ import scala.concurrent.Future
 
 class IncomeService @Inject()(incomeSaRepository: IncomeSaRepository, incomePayeRepository: IncomePayeRepository) {
 
-  def createSa(idType: String, idValue: String, createSelfAssessmentRequest: IncomeSa): Future[IncomeSa] = {
-    incomeSaRepository.create(idType, idValue, createSelfAssessmentRequest)
+  def createSa(idType: String,
+               idValue: String,
+               startYear: String,
+               endYear: String,
+               useCase: String,
+               createSelfAssessmentRequest: IncomeSa): Future[IncomeSa] = {
+    incomeSaRepository.create(idType, idValue, startYear, endYear, useCase, createSelfAssessmentRequest)
   }
 
-  def getSa(idType: String, idValue: String): Future[Option[IncomeSa]] = {
-    incomeSaRepository.findByTypeAndId(idType, idValue)
+  def getSa(idType: String,
+            idValue: String,
+            startYear: String,
+            endYear: String,
+            fields: Option[String]
+           ): Future[Option[IncomeSa]] = {
+    incomeSaRepository.findByTypeAndId(idType, idValue, startYear, endYear, fields)
   }
 
-  def createPaye(idType: String, idValue: String, createIncomePayeRequest: IncomePaye): Future[IncomePaye] = {
-    incomePayeRepository.create(idType, idValue, createIncomePayeRequest)
+  def createPaye(idType: String,
+                 idValue: String,
+                 startDate: String,
+                 endDate: String,
+                 useCase: String,
+                 createIncomePayeRequest: IncomePaye): Future[IncomePaye] = {
+    incomePayeRepository.create(idType, idValue, startDate, endDate, useCase, createIncomePayeRequest)
   }
 
-  def getPaye(idType: String, idValue: String): Future[Option[IncomePaye]] = {
-    incomePayeRepository.findByTypeAndId(idType, idValue)
+  def getPaye(idType: String,
+              idValue: String,
+              startDate: String,
+              endDate: String,
+              fields: Option[String]): Future[Option[IncomePaye]] = {
+    incomePayeRepository.findByTypeAndId(idType, idValue, startDate, endDate, fields)
   }
 }

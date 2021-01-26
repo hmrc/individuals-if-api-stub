@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,19 +42,73 @@ class TaxCreditsRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
     Index(key = Seq(("id.nino", Text), ("id.trn", Text)), name = Some("nino-trn"), unique = true, background = true)
   )
 
-  def create(idType: String, idValue: String, applications: Applications): Future[Applications] = {
-    val id = IdType.parse(idType) match {
-      case Nino => Id(Some(idValue), None)
-      case Trn => Id(None, Some(idValue))
+  def create(idType: String,
+             idValue: String,
+             startDate: String,
+             endDate: String,
+             useCase: String,
+             applications: Applications): Future[Applications] = {
+
+    val useCaseMap = Map(
+      "LAA-C1-working-tax-credit"   -> "LAA-C1_LAA-C2_LAA-C3_working-tax-credit",
+      "LAA-C2-working-tax-credit"   -> "LAA-C1_LAA-C2_LAA-C3_working-tax-credit",
+      "LAA-C3-working-tax-credit"   -> "LAA-C1_LAA-C2_LAA-C3_working-tax-credit",
+      "LAA-C1-child-tax-credit"     -> "LAA-C1_LAA-C2_LAA-C3_child-tax-credit",
+      "LAA-C2-child-tax-credit"     -> "LAA-C1_LAA-C2_LAA-C3_child-tax-credit",
+      "LAA-C3-child-tax-credit"     -> "LAA-C1_LAA-C2_LAA-C3_child-tax-credit",
+      "HMCTS-C2-working-tax-credit" -> "HMCTS-C2_HMCTS-C3_LSANI-C1_LSANI-C3_working-tax-credit",
+      "HMCTS-C3-working-tax-credit" -> "HMCTS-C2_HMCTS-C3_LSANI-C1_LSANI-C3_working-tax-credit",
+      "LSANI-C1-working-tax-credit" -> "HMCTS-C2_HMCTS-C3_LSANI-C1_LSANI-C3_working-tax-credit",
+      "LSANI-C3-working-tax-credit" -> "HMCTS-C2_HMCTS-C3_LSANI-C1_LSANI-C3_working-tax-credit"
+    )
+
+    val ident = IdType.parse(idType) match {
+      case Nino => Identifier(Some(idValue), None, Some(startDate), Some(endDate), Some(useCase))
+      case Trn => Identifier(None, Some(idValue), Some(startDate), Some(endDate), Some(useCase))
     }
-    insert(TaxCreditsEntry(id, applications.applications)) map (_ => applications) recover {
-      case WriteResult.Code(11000) => throw new DuplicateException
-    }
+
+    val tag = useCaseMap.get(useCase).getOrElse(useCase)
+    val id  = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$tag"
+
+    for {
+      _        <- collection.findAndRemove(obj("id" -> id)) map (_.result[TaxCreditsEntry])
+      inserted <- insert(TaxCreditsEntry(id, applications.applications)) map (_ => applications)
+    } yield inserted
+
   }
 
-  def findByIdAndType(idType: String, idValue: String): Future[Option[Applications]] = {
+  def findByIdAndType(idType: String,
+                      idValue: String,
+                      startDate: String,
+                      endDate: String,
+                      fields: Option[String]): Future[Option[Applications]] = {
+
+    def fieldsMap = Map(
+      "applications(awards(childTaxCredit(childCareAmount),payProfCalcDate,payments(amount,endDate,frequency,startDate,tcType),totalEntitlement,workingTaxCredit(amount,paidYTD)))" ->
+        "LAA-C1_LAA-C2_LAA-C3_working-tax-credit",
+      "applications(awards(childTaxCredit(babyAmount,childCareAmount,ctcChildAmount,familyAmount,paidYTD),payProfCalcDate,payments(amount,endDate,frequency,startDate,tcType),totalEntitlement))" ->
+        "LAA-C1_LAA-C2_LAA-C3_child-tax-credit",
+      "applications(awards(childTaxCredit(childCareAmount),payProfCalcDate,payments(amount,endDate,frequency,startDate,tcType),totalEntitlement,workingTaxCredit(amount,paidYTD)),id)" ->
+        "HMCTS-C2_HMCTS-C3_LSANI-C1_LSANI-C3_working-tax-credit",
+      "applications(awards(childTaxCredit(babyAmount,childCareAmount,ctcChildAmount,familyAmount,paidYTD),payProfCalcDate,payments(amount,endDate,frequency,startDate,tcType),totalEntitlement),id)" ->
+        "HMCTS-C2_HMCTS-C3_LSANI-C1_LSANI-C3_child-tax-credit"
+    )
+
+    val ident = IdType.parse(idType) match {
+      case Nino => Identifier(
+        Some(idValue), None, Some(startDate), Some(endDate), fields.flatMap(value => fieldsMap.get(value))
+      )
+      case Trn => Identifier(
+        None, Some(idValue), Some(startDate), Some(endDate), fields.flatMap(value => fieldsMap.get(value))
+      )
+    }
+
+    val tag = fields.flatMap(value => fieldsMap.get(value)).getOrElse("TEST")
+    val id  = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$tag"
+
     collection
-      .find[JsObject, JsObject](obj("id" -> obj(idType -> idValue)), None)
+      .find[JsObject, JsObject](obj("id" -> id), None)
       .one[Applications]
+
   }
 }

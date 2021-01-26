@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,10 @@ class EmploymentRepositorySpec extends RepositoryTestHelper {
 
   val nino = "XH123456A"
   val trn = "123456789"
+  val startDate = "2020-01-01"
+  val endDate = "2020-21-31"
+  val useCase = "TEST"
+  val fields = "some(values)"
 
   val employment: Employment =
       Employment(
@@ -71,7 +75,9 @@ class EmploymentRepositorySpec extends RepositoryTestHelper {
     fakeApplication.injector.instanceOf[EmploymentRepository]
 
   "collection" should {
+
     "have a unique index on nino and trn" in {
+
       await(repository.collection.indexesManager.list()).find({ i => {
         i.name.contains("nino-trn") &&
           i.key.exists(key => key._1 == "id.nino") &&
@@ -80,40 +86,51 @@ class EmploymentRepositorySpec extends RepositoryTestHelper {
           i.unique
       }
       }) should not be None
+
     }
   }
 
   "create" should {
+
     "create an employment with a nino" in {
-      val result = await(repository.create("nino", nino, employments))
+
+      val result = await(repository.create("nino", nino, startDate, endDate, useCase, employments))
+
       result shouldBe employments
+
     }
 
     "create an employment with a trn" in {
-      val result = await(repository.create("trn", trn, employments))
-      result shouldBe employments
-    }
 
-    "fail to create duplicate details" in {
-      await(repository.create("nino", nino, employments))
-      intercept[Exception](await(repository.create("nino", nino, employments)))
+      val result = await(repository.create("trn", trn, startDate, endDate, useCase, employments))
+
+      result shouldBe employments
+
     }
   }
 
   "findByIdAndType" should {
 
     "return None when there are no details for a given nino" in {
-      await(repository.findByIdAndType("nino", nino)) shouldBe None
+
+      await(repository.findByIdAndType("nino", nino, startDate, endDate, Some(fields))) shouldBe None
+
     }
 
     "return None when there are no details for a given trn" in {
-      await(repository.findByIdAndType("trn", trn)) shouldBe None
+
+      await(repository.findByIdAndType("trn", trn, startDate, endDate, Some(fields))) shouldBe None
+
     }
 
     "return a single record with id" in {
-      await(repository.create("nino", nino, employments))
-      val result = await(repository.findByIdAndType("nino", nino))
+
+      await(repository.create("nino", nino, startDate, endDate, useCase, employments))
+
+      val result = await(repository.findByIdAndType("nino", nino, startDate, endDate, Some(fields)))
+
       result.get shouldBe employments
+
     }
   }
 }

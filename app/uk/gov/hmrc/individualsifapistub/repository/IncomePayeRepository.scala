@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,22 +41,68 @@ class IncomePayeRepository  @Inject()(mongoConnectionProvider: MongoConnectionPr
     Index(key = Seq(("id.nino", Text), ("id.trn", Text)), name = Some("nino-trn"), unique = true, background = true)
   )
 
-  def create(idType: String, idValue: String, request: IncomePaye): Future[IncomePaye] = {
+  def create(idType: String,
+             idValue: String,
+             startDate: String,
+             endDate: String,
+             useCase: String,
+             request: IncomePaye): Future[IncomePaye] = {
 
-    val id = IdType.parse(idType) match {
-      case Nino => Id(Some(idValue), None)
-      case Trn => Id(None, Some(idValue))
+    val useCaseMap = Map(
+      "HMCTS-C2" -> "HMCTS-C2_HMCTS-C3",
+      "HMCTS-C3" -> "HMCTS-C2_HMCTS-C3",
+      "LSANI-C1" -> "LSANI-C1_LSANI-C3",
+      "LSANI-C3" -> "LSANI-C1_LSANI-C3"
+    )
+
+    val ident = IdType.parse(idType) match {
+      case Nino => Identifier(Some(idValue), None, Some(startDate), Some(endDate), Some(useCase))
+      case Trn => Identifier(None, Some(idValue), Some(startDate), Some(endDate), Some(useCase))
     }
 
-    val incomeSaEntry = IncomePayeEntry(id, request)
+    val tag = useCaseMap.get(useCase).getOrElse(useCase)
+    val id  = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$tag"
 
-    insert(incomeSaEntry) map (_ => incomeSaEntry.incomePaye) recover {
-      case WriteResult.Code(11000) => throw new DuplicateException
-    }
+    val incomePayeEntry = IncomePayeEntry(id, request)
+
+    for {
+      _        <- collection.findAndRemove(obj("id" -> id)) map (_.result[IncomePayeEntry])
+      inserted <- insert(incomePayeEntry) map (_ => incomePayeEntry.incomePaye)
+    } yield inserted
+
   }
 
-  def findByTypeAndId(idType: String, idValue: String): Future[Option[IncomePaye]] = {
-    collection.find[JsObject, JsObject](obj("id" -> obj(idType -> idValue)), None)
+  def findByTypeAndId(idType: String,
+                      idValue: String,
+                      startDate: String,
+                      endDate: String,
+                      fields: Option[String]): Future[Option[IncomePaye]] = {
+
+    val fieldsMap = Map(
+      "paye(employeeNICs(inPayPeriod,inPayPeriod1,inPayPeriod3,inPayPeriod4,ytd1,ytd2,ytd3,ytd4),employeePensionContribs(notPaid,notPaidYTD,paid,paidYTD),grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),monthlyPeriodNumber,paidHoursWorked,payFrequency,paymentDate,statutoryPayYTD(adoption,maternity,parentalBereavement,paternity),taxDeductedOrRefunded,taxYear,taxablePay,taxablePayToDate,totalEmployerNICs(InPayPeriod1,InPayPeriod2,InPayPeriod3,InPayPeriod4,ytd1,ytd2,ytd3,ytd4),totalTaxToDate,weeklyPeriodNumber)" -> "LAA-C1",
+      "paye(dednsFromNetPay,grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),monthlyPeriodNumber,paidHoursWorked,payFrequency,paymentDate,statutoryPayYTD(adoption,maternity,parentalBereavement,paternity),taxYear,taxablePayToDate,totalTaxToDate,weeklyPeriodNumber)" -> "LAA-C2",
+      "paye(employeeNICs(inPayPeriod,inPayPeriod1,inPayPeriod3,inPayPeriod4,ytd1,ytd2,ytd3,ytd4),grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),monthlyPeriodNumber,paidHoursWorked,payFrequency,paymentDate,statutoryPayYTD(adoption,maternity,parentalBereavement,paternity),taxCode,taxDeductedOrRefunded,taxYear,taxablePay,taxablePayToDate,totalEmployerNICs(InPayPeriod1,InPayPeriod2,InPayPeriod3,InPayPeriod4,ytd1,ytd2,ytd3,ytd4),totalTaxToDate,weeklyPeriodNumber)" -> "LAA-C3",
+      "paye(grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),paymentDate,payroll(id))" -> "LAA-C4",
+      "paye(employee(hasPartner),grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),payFrequency,paymentDate)" -> "HMCTS-C2_HMCTS-C3",
+      "paye(employedPayeRef,grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),paymentDate,payroll(id))" -> "HMCTS-C4",
+      "paye(dednsFromNetPay,employee(hasPartner),employeeNICs(inPayPeriod,inPayPeriod1,inPayPeriod3,inPayPeriod4,ytd1,ytd2,ytd3,ytd4),employeePensionContribs(notPaid,notPaidYTD,paid,paidYTD),grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),monthlyPeriodNumber,payFrequency,paymentDate,statutoryPayYTD(adoption,maternity,parentalBereavement,paternity),taxCode,taxDeductedOrRefunded,taxYear,taxablePay,taxablePayToDate,totalEmployerNICs(InPayPeriod1,InPayPeriod2,InPayPeriod3,InPayPeriod4,ytd1,ytd2,ytd3,ytd4),totalTaxToDate,weeklyPeriodNumber)" -> "LSANI-C1_LSANI-C3",
+      "paye(employeeNICs(inPayPeriod,inPayPeriod1,inPayPeriod3,inPayPeriod4,ytd1,ytd2,ytd3,ytd4),employeePensionContribs(notPaid,notPaidYTD,paid,paidYTD),grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),paymentDate,payroll(id),statutoryPayYTD(adoption,maternity,paternity),taxDeductedOrRefunded,taxablePay,totalEmployerNICs(InPayPeriod1,InPayPeriod2,InPayPeriod3,InPayPeriod4,ytd1,ytd2,ytd3,ytd4))" -> "NICTSEJO-C4"
+    )
+
+    val ident = IdType.parse(idType) match {
+      case Nino => Identifier(
+        Some(idValue), None, Some(startDate), Some(endDate), fields.flatMap(value => fieldsMap.get(value))
+      )
+      case Trn => Identifier(
+        None, Some(idValue), Some(startDate), Some(endDate), fields.flatMap(value => fieldsMap.get(value))
+      )
+    }
+
+    val tag = fields.flatMap(value => fieldsMap.get(value)).getOrElse("TEST")
+    val id  = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$tag"
+
+    collection.find[JsObject, JsObject](obj("id" -> id), None)
       .one[IncomePayeEntry].map(value => value.map(_.incomePaye))
+
   }
 }

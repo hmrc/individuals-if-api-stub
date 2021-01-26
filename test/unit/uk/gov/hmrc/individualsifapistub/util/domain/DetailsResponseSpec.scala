@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,32 +20,40 @@ package unit.uk.gov.hmrc.individualsifapistub.util.domain
 import play.api.libs.json.Json
 import testUtils.TestHelpers
 import uk.gov.hmrc.individualsifapistub.domain.DetailsResponse._
-import uk.gov.hmrc.individualsifapistub.domain.{ContactDetail, DetailsResponse, Id, Residence}
+import uk.gov.hmrc.individualsifapistub.domain.{ContactDetail, DetailsResponse, Identifier, Residence}
 import uk.gov.hmrc.individualsifapistub.domain.DetailsResponse._
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class DetailsResponseSpec extends UnitSpec with TestHelpers {
 
   val idValue = "2432552635"
+  val startDate = "2020-01-01"
+  val endDate = "2020-21-31"
+  val useCase = "TEST"
+  val fields = "some(values)"
 
-  val ninoDetails = Id(Some("XH123456A"), None)
-  val trnDetails = Id(None, Some("12345678"))
+  val ninoDetails = Identifier(Some("XH123456A"), None, Some(startDate), Some(endDate), Some(useCase))
+  val idNino = s"${ninoDetails.nino.getOrElse(ninoDetails.trn)}-$startDate-$endDate-$useCase"
+  val trnDetails = Identifier(None, Some("12345678"), Some(startDate), Some(endDate), Some(useCase))
+  val idTrn = s"${trnDetails.nino.getOrElse(trnDetails.trn)}-$startDate-$endDate-$useCase"
+
   val contactDetail1 = ContactDetail(9, "MOBILE TELEPHONE", "07123 987654")
   val contactDetail2 = ContactDetail(9, "MOBILE TELEPHONE", "07123 987655")
   val residence1 = Residence(residenceType = Some("BASE"), address = generateAddress(2))
   val residence2 = Residence(residenceType = Some("NOMINATED"), address = generateAddress(1))
+
   val response = DetailsResponse(
-    ninoDetails,
+    idNino,
     Some(Seq(contactDetail1, contactDetail1)),
     Some(Seq(residence1, residence2))
   )
 
-  val invalidNinoDetails = Id(Some("QWERTYUIOP"), None)
-  val invalidTrnDetails = Id(None, Some("QWERTYUIOP"))
+  val invalidNinoDetails = Identifier(Some("QWERTYUIOP"), None, Some(startDate), Some(endDate), Some(useCase))
+  val invalidTrnDetails = Identifier(None, Some("QWERTYUIOP"),Some(startDate), Some(endDate), Some(useCase))
   val invalidContactDetail = ContactDetail(-42, "abcdefghijklmnopqrstuvwxyz0123456789", "a")
   val invalidResidence = Residence(residenceType =  Some(""), address = generateAddress(2))
   val invalidDetailsResponse = DetailsResponse(
-    invalidNinoDetails,
+    idTrn,
     Some(Seq(invalidContactDetail)),
     Some(Seq(invalidResidence))
   )
@@ -56,7 +64,10 @@ class DetailsResponseSpec extends UnitSpec with TestHelpers {
       val expectedJson = Json.parse(
         """
           |{
-          |   "nino" : "XH123456A"
+          |  "nino":"XH123456A",
+          |  "from":"2020-01-01",
+          |  "to":"2020-21-31",
+          |  "useCase":"TEST"
           |}
         """.stripMargin)
       result shouldBe expectedJson
@@ -67,7 +78,10 @@ class DetailsResponseSpec extends UnitSpec with TestHelpers {
       val expectedJson = Json.parse(
         """
           |{
-          |  "trn" : "12345678"
+          |  "trn":"12345678",
+          |  "from":"2020-01-01",
+          |  "to":"2020-21-31",
+          |  "useCase":"TEST"
           |}
         """.stripMargin)
 
@@ -75,22 +89,22 @@ class DetailsResponseSpec extends UnitSpec with TestHelpers {
     }
 
     "Validate successful when reading valid nino" in {
-      val result = Json.toJson(ninoDetails).validate[Id]
+      val result = Json.toJson(ninoDetails).validate[Identifier]
       result.isSuccess shouldBe true
     }
 
     "Validate successful when reading valid trn" in {
-      val result = Json.toJson(trnDetails).validate[Id]
+      val result = Json.toJson(trnDetails).validate[Identifier]
       result.isSuccess shouldBe true
     }
 
     "Validate unsuccessfully when reading invalid nino" in {
-      val result = Json.toJson(invalidNinoDetails).validate[Id]
+      val result = Json.toJson(invalidNinoDetails).validate[Identifier]
       result.isError shouldBe true
     }
 
     "Validate unsuccessfully when reading invalid trn" in {
-      val result = Json.toJson(invalidTrnDetails).validate[Id]
+      val result = Json.toJson(invalidTrnDetails).validate[Identifier]
       result.isError shouldBe true
     }
 
@@ -160,9 +174,7 @@ class DetailsResponseSpec extends UnitSpec with TestHelpers {
       val expectedJson = Json.parse(
         """
           |  {
-          |    "details" : {
-          |       "nino" : "XH123456A"
-          |     },
+          |    "details" : "XH123456A-2020-01-01-2020-21-31-TEST",
           |     "contactDetails" : [
           |       {
           |         "code" : 9,

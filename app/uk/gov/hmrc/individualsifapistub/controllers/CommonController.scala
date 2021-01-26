@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,15 @@
 
 package uk.gov.hmrc.individualsifapistub.controllers
 
+import java.util.UUID
+
 import javax.inject.Inject
 import play.api.Configuration
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND}
 import play.api.libs.json._
 import play.api.mvc.Results.{BadRequest, NotFound, Status}
 import play.api.mvc.{ControllerComponents, Request, RequestHeader, Result}
-import uk.gov.hmrc.individualsifapistub.domain.Id._
+import uk.gov.hmrc.individualsifapistub.domain.Identifier._
 import uk.gov.hmrc.individualsifapistub.domain.IdType.{Nino, Trn}
 import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.play.HeaderCarrierConverter
@@ -94,7 +96,13 @@ abstract class CommonController(controllerComponents: ControllerComponents)
     }
   }
 
-  protected def withJsonBodyAndValidId[T](idType: String, id: String)(f: (T) => Future[Result])(
+  protected def withJsonBodyAndValidId[T](idType: String,
+                                          id: String,
+                                          from: Option[String],
+                                          to: Option[String],
+                                          useCase:
+                                          Option[String])
+                                         (f: (T) => Future[Result])(
     implicit request: Request[JsValue],
     m: Manifest[T],
     reads: Reads[T]): Future[Result] = {
@@ -102,9 +110,9 @@ abstract class CommonController(controllerComponents: ControllerComponents)
       case Failure(e) => Future.successful(ErrorInvalidRequest(e.getLocalizedMessage).toHttpResponse)
       case Success(idType) =>
         (idType match {
-          case Nino => Json.toJson(Id(nino = Some(id), trn = None))
-          case Trn => Json.toJson(Id(trn = Some(id), nino = None))
-        }).validate[Id] match {
+          case Nino => Json.toJson(Identifier(Some(id), None, from, to, useCase))
+          case Trn  => Json.toJson(Identifier(None, Some(id), from, to, useCase))
+        }).validate[Identifier] match {
           case JsError(errs) => Future.successful(ErrorInvalidRequest(s"${errs.head._1.toString()} is invalid").toHttpResponse)
           case JsSuccess(_, _) => withJsonBody(f)
         }
@@ -125,4 +133,5 @@ abstract class CommonController(controllerComponents: ControllerComponents)
     case _: DuplicateException =>
       ErrorDuplicate.toHttpResponse
   }
+
 }

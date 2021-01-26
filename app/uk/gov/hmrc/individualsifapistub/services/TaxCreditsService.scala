@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,11 +26,18 @@ class TaxCreditsService @Inject()(repository: TaxCreditsRepository) {
 
   def create(idType: String,
              idValue: String,
+             startDate: String,
+             endDate: String,
+             useCase: String,
              applications: Applications): Future[Applications] = {
-    repository.create(idType, idValue, applications)
+    repository.create(idType, idValue, startDate, endDate, useCase, applications)
   }
 
-  def get(idType: String, idValue: String): Future[Option[Applications]] = {
-    repository.findByIdAndType(idType, idValue)
+  def get(idType: String,
+          idValue: String,
+          startDate: String,
+          endDate: String,
+          fields: Option[String]): Future[Option[Applications]] = {
+    repository.findByIdAndType(idType, idValue, startDate, endDate, fields)
   }
 }

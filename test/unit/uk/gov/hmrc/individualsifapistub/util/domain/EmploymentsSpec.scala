@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +18,19 @@ package unit.uk.gov.hmrc.individualsifapistub.util.domain
 
 import play.api.libs.json.{JsNumber, Json}
 import testUtils.TestHelpers
-import uk.gov.hmrc.individualsifapistub.domain.{Address, Employer, Employment, EmploymentDetail, Employments, Id, Payment}
+import uk.gov.hmrc.individualsifapistub.domain.{Address, Employer, Employment, EmploymentDetail, Employments, Identifier, Payment}
 import uk.gov.hmrc.individualsifapistub.domain.Employments._
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class EmploymentsSpec extends UnitSpec with TestHelpers {
 
-  val ninoDetails = Id(Some("XH123456A"), None)
-  val trnDetails = Id(None, Some("12345678"))
+  val startDate = "2020-01-01"
+  val endDate = "2020-21-31"
+  val useCase = "TEST"
+  val fields = "some(values)"
+
+  val ninoDetails = Identifier(Some("XH123456A"), None, Some(startDate), Some(endDate), Some(useCase))
+  val trnDetails = Identifier(None, Some("12345678"), Some(startDate), Some(endDate), Some(useCase))
 
   val address = Address(
     Some("line1"),

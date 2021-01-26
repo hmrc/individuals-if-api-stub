@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,10 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
 
   val idType = "nino"
   val idValue = "XH123456A"
+  val startDate = "2020-01-01"
+  val endDate = "2020-21-31"
+  val useCase = "TEST"
+  val fields = "some(values)"
 
   val request = CreateDetailsRequest(
     Some(Seq(ContactDetail(9, "MOBILE TELEPHONE", "07123 987654"), ContactDetail(9,"MOBILE TELEPHONE", "07123 987655"))),
@@ -49,41 +53,72 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
   )
 
   "Create details" should {
-    "Successfully create a details record and return created record as response" in new Setup {
-      val details = Id(Some(idValue), None)
-      val detailsResponse = DetailsResponse(details, request.contactDetails, request.residences)
 
-      when(mockDetailsService.create(idType, idValue, request)).thenReturn(Future.successful(detailsResponse))
-      val result = await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson(request))))
+    "Successfully create a details record and return created record as response" in new Setup {
+
+      val ident = Identifier(Some(idValue), None, None, None, Some(useCase))
+      val id = s"${ident.nino.getOrElse(ident.trn)}-$useCase"
+      val detailsResponse = DetailsResponse(id, request.contactDetails, request.residences)
+
+      when(mockDetailsService.create(idType, idValue, useCase, request)).thenReturn(
+        Future.successful(detailsResponse)
+      )
+
+      val result = await(underTest.create(idType, idValue, useCase)(
+        fakeRequest.withBody(Json.toJson(request)))
+      )
 
       status(result) shouldBe CREATED
       jsonBodyOf(result) shouldBe Json.toJson(detailsResponse)
+
     }
 
     "Fail when a request is not provided" in new Setup {
-      val details = Id(Some(idValue), None)
-      val detailsResponse = DetailsResponse(details, None, None)
-      when(mockDetailsService.create(idType, idValue, request)).thenReturn(Future.successful(detailsResponse))
-      val response = await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson(""))))
+
+      val details = Identifier(Some(idValue), None, None, None, Some(useCase))
+      val id = s"${details.nino.getOrElse(details.trn)}-$useCase"
+      val detailsResponse = DetailsResponse(id, None, None)
+
+      when(mockDetailsService.create(idType, idValue, useCase, request)).thenReturn(
+        Future.successful(detailsResponse)
+      )
+
+      val response = await(underTest.create(idType, idValue, useCase)(
+        fakeRequest.withBody(Json.toJson("")))
+      )
       status(response) shouldBe BAD_REQUEST
     }
+
   }
 
   "Retrieve Details" should {
-    "Return details when successfully retrieved from service" in new Setup {
-      val details = Id(Some(idValue), None)
-      val detailsResponse = DetailsResponse(details, request.contactDetails, request.residences)
-      when(mockDetailsService.get(idType, idValue)).thenReturn(Future.successful(Some(detailsResponse)))
 
-      val result = await(underTest.retrieve(idType, idValue)(fakeRequest))
+    "Return details when successfully retrieved from service" in new Setup {
+
+      val details = Identifier(Some(idValue), None, None, None, Some(useCase))
+      val id = s"${details.nino.getOrElse(details.trn)}-$useCase"
+
+      val detailsResponse = DetailsResponse(id, request.contactDetails, request.residences)
+      when(mockDetailsService.get(idType, idValue, Some(fields))).thenReturn(
+        Future.successful(Some(detailsResponse))
+      )
+
+      val result = await(underTest.retrieve(idType, idValue, Some(fields))(fakeRequest))
 
       status(result) shouldBe OK
       jsonBodyOf(result) shouldBe Json.toJson(Some(detailsResponse))
+
     }
 
     "Fails when it cannot get from service" in new Setup {
-      when(mockDetailsService.create(idType, idValue, request)).thenReturn(Future.failed(new Exception))
-      assertThrows[Exception] { await(underTest.retrieve(idType, idValue)(fakeRequest)) }
+
+      when(mockDetailsService.create(idType, idValue, useCase, request)).thenReturn(
+        Future.failed(new Exception)
+      )
+      assertThrows[Exception] {
+        await(underTest.retrieve(idType, idValue, Some(fields))(fakeRequest))
+      }
+
     }
   }
 }

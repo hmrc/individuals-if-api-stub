@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ case class Payment(date: Option[String],
 
 case class Employment(employer: Option[Employer], employment: Option[EmploymentDetail], payments: Option[Seq[Payment]])
 
-case class EmploymentEntry(id: Id, employments: Seq[Employment])
+case class EmploymentEntry(id: String, employments: Seq[Employment])
 
 case class Employments(employments: Seq[Employment])
 
@@ -143,11 +143,11 @@ object Employments {
 
   val createEmploymentEntryFormat: Format[EmploymentEntry] = Format(
     (
-      (JsPath \ "id").read[Id] and
+      (JsPath \ "id").read[String] and
       (JsPath \ "employments").read[Seq[Employment]]
     )(EmploymentEntry.apply _),
     (
-      (JsPath \ "id").write[Id] and
+      (JsPath \ "id").write[String] and
       (JsPath \ "employments").write[Seq[Employment]]
     )(unlift(EmploymentEntry.unapply))
   )

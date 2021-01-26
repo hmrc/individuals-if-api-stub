@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import uk.gov.hmrc.individualsifapistub.domain.IdType.{Nino, Trn}
 import uk.gov.hmrc.individualsifapistub.domain._
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
-class IdTypeSpec extends UnitSpec with TestHelpers {
+class IdentifierTypeSpec extends UnitSpec with TestHelpers {
 
   "IdType" should {
     "parse 'nino' successfully" in {

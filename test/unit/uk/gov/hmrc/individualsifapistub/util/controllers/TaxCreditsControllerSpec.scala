@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.individualsifapistub.controllers.TaxCreditsController
 
 import uk.gov.hmrc.individualsifapistub.domain.TaxCredits._
-import uk.gov.hmrc.individualsifapistub.domain.{Application, Applications, Id}
+import uk.gov.hmrc.individualsifapistub.domain.{Application, Applications, Identifier}
 import uk.gov.hmrc.individualsifapistub.services.TaxCreditsService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
@@ -48,36 +48,72 @@ class TaxCreditsControllerSpec extends TestSupport {
 
   val idType = "nino"
   val idValue = "XH123456A"
-  val id = Id(Some(idValue), None)
+  val startDate = "2020-01-01"
+  val endDate = "2020-21-31"
+  val useCase = "TEST"
+  val fields = "some(values)"
+  val ident = Identifier(Some(idValue), None, Some(startDate), Some(endDate), Some(useCase))
 
   val request = Applications(Seq(application))
 
   "Create TaxCredits" should {
     "Successfully create a record and return created record as response" in new Setup {
-      when(mockTaxCreditsService.create(idType, idValue, request)).thenReturn(Future.successful(request))
-      val result = await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson(request))))
+
+      when(mockTaxCreditsService.create(idType, idValue, startDate, endDate, useCase, request)).thenReturn(
+        Future.successful(request)
+      )
+
+      val result = await(underTest.create(idType, idValue, startDate, endDate, useCase)(
+        fakeRequest.withBody(Json.toJson(request)))
+      )
+
       status(result) shouldBe CREATED
+
       jsonBodyOf(result) shouldBe Json.toJson(request)
+
     }
 
     "fail when a request is not provided" in new Setup {
-      when(mockTaxCreditsService.create(idType, idValue, request)).thenReturn(Future.successful(request))
-      val response = await(underTest.create(idType, idValue)(fakeRequest.withBody(Json.toJson(""))))
+
+      when(mockTaxCreditsService.create(idType, idValue, startDate, endDate, useCase, request)).thenReturn(
+        Future.successful(request)
+      )
+
+      val response = await(underTest.create(idType, idValue, startDate, endDate, useCase)(
+        fakeRequest.withBody(Json.toJson("")))
+      )
+
       status(response) shouldBe BAD_REQUEST
+
     }
   }
 
   "Retrieve tax credits" should {
+
     "Return applications when successfully retrieved from service" in new Setup {
-      when(mockTaxCreditsService.get(idType, idValue)).thenReturn(Future.successful(Some(request)))
-      val result = await(underTest.retrieve(idType, idValue)(fakeRequest))
+
+      when(mockTaxCreditsService.get(idType, idValue, startDate, endDate, Some(fields))).thenReturn(
+        Future.successful(Some(request))
+      )
+
+      val result = await(underTest.retrieve(idType, idValue, startDate, endDate, Some(fields))(fakeRequest))
+
       status(result) shouldBe OK
+
       jsonBodyOf(result) shouldBe Json.toJson[Applications](request)
+
     }
 
     "fail when it cannot get from service" in new Setup {
-      when(mockTaxCreditsService.get(idType, idValue)).thenReturn(Future.failed(new Exception))
-      assertThrows[Exception] { await(underTest.retrieve(idType, idValue)(fakeRequest)) }
+
+      when(mockTaxCreditsService.get(idType, idValue, startDate, endDate, Some(fields))).thenReturn(
+        Future.failed(new Exception)
+      )
+
+      assertThrows[Exception] {
+        await(underTest.retrieve(idType, idValue, startDate, endDate, Some(fields))(fakeRequest))
+      }
     }
+
   }
 }
