@@ -19,6 +19,7 @@ package uk.gov.hmrc.individualsifapistub.repository
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.JsObject
 import play.api.libs.json.Json.obj
+import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Text
 import reactivemongo.bson.BSONObjectID
@@ -36,7 +37,7 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
     JsonFormatters.detailsResponseFormat) {
 
   override lazy val indexes = Seq(
-    Index(key = Seq(("details.nino", Text), ("details.trn", Text)), name = Some("nino-trn"), unique = true, background = true)
+    Index(key = Seq(("details", Text)), name = Some("cache-key"), unique = true, background = true)
   )
 
   def create(idType: String,
@@ -62,16 +63,13 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
     }
 
     val tag = useCaseMap.get(useCase).getOrElse(useCase)
-    val id  = s"${ident.nino.getOrElse(ident.trn)}-$tag"
-
-    println("ACHI: in: " + id)
+    val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$tag"
 
     val detailsResponse = DetailsResponse(id, createDetailsRequest.contactDetails, createDetailsRequest.residences)
 
-    for {
-      _        <- collection.findAndRemove(obj("id" -> id)) map (_.result[DetailsResponse])
-      inserted <- insert(detailsResponse) map (_ => detailsResponse)
-    } yield inserted
+    insert(detailsResponse) map (_ => detailsResponse) recover {
+      case WriteResult.Code(11000) => throw new DuplicateException
+    }
 
   }
 
@@ -96,9 +94,7 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
     }
 
     val tag = fields.flatMap(value => fieldsMap.get(value)).getOrElse("TEST")
-    val id  = s"${ident.nino.getOrElse(ident.trn)}-$tag"
-
-    println("ACHI: out: " + id)
+    val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$tag"
 
     collection.find[JsObject, JsObject](obj("details" ->id), None).one[DetailsResponse]
 

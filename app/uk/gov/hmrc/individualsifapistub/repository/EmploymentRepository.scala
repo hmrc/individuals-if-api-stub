@@ -20,6 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import play.api.libs.json.JsObject
 import play.api.libs.json.Json.obj
+import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Text
 import reactivemongo.bson.BSONObjectID
@@ -64,12 +65,11 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
     }
 
     val tag = useCaseMap.get(useCase).getOrElse(useCase)
-    val id  = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$tag"
+    val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$tag"
 
-    for {
-      _        <- collection.findAndRemove(obj("id" -> id)) map (_.result[EmploymentEntry])
-      inserted <- insert(EmploymentEntry(id, employments.employments)) map (_ => employments)
-    } yield inserted
+    insert(EmploymentEntry(id, employments.employments)) map (_ => employments) recover {
+      case WriteResult.Code(11000) => throw new DuplicateException
+    }
 
   }
 
@@ -100,7 +100,7 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
     Logger.debug(s"fields: ${fields}")
 
     val tag = fields.flatMap(value => fieldsMap.get(value)).getOrElse("TEST")
-    val id  = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$tag"
+    val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$tag"
 
     Logger.debug(s"key: ${id}")
 

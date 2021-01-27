@@ -56,7 +56,7 @@ class DetailsServiceSpec extends TestSupport with TestHelpers {
       "Return the created details when created with a NINO" in new Setup {
 
         val ident = Identifier(Some(idValue), None, None, None, Some(useCase))
-        val id = s"${ident.nino.getOrElse(ident.trn)}-$useCase"
+        val id = s"${ident.nino.getOrElse(ident.trn.get)}-$useCase"
 
 
         val detailsResponse = DetailsResponse(id, request.contactDetails, request.residences)
@@ -87,7 +87,7 @@ class DetailsServiceSpec extends TestSupport with TestHelpers {
       "Return details when successfully retrieved from mongo" in new Setup {
 
         val ident = Identifier(Some(idValue), None, None, None, Some(useCase))
-        val id = s"${ident.nino.getOrElse(ident.trn)}-$useCase"
+        val id = s"${ident.nino.getOrElse(ident.trn.get)}-$useCase"
 
         val detailsResponse = DetailsResponse(id, request.contactDetails, request.residences)
 

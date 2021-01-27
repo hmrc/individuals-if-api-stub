@@ -38,7 +38,7 @@ class IncomeSaRepository @Inject()(mongoConnectionProvider: MongoConnectionProvi
                                                             incomeSaEntryFormat ) {
 
   override lazy val indexes = Seq(
-    Index(key = Seq(("id.nino", Text), ("id.trn", Text)), name = Some("nino-trn"), unique = true, background = true)
+    Index(key = Seq(("id", Text)), name = Some("cache-key"), unique = true, background = true)
   )
 
   def create(idType: String,
@@ -61,14 +61,13 @@ class IncomeSaRepository @Inject()(mongoConnectionProvider: MongoConnectionProvi
     }
 
     val tag = useCaseMap.get(useCase).getOrElse(useCase)
-    val id  = s"${ident.nino.getOrElse(ident.trn)}-$startYear-$endYear-$tag"
+    val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$startYear-$endYear-$tag"
 
     val incomeSaRecord = IncomeSaEntry(id, request)
 
-    for {
-      _        <- collection.findAndRemove(obj("id" -> id)) map (_.result[IncomeSaEntry])
-      inserted <- insert(incomeSaRecord) map (_ => incomeSaRecord.incomeSa)
-    } yield inserted
+    insert(incomeSaRecord) map (_ => incomeSaRecord.incomeSa) recover {
+      case WriteResult.Code(11000) => throw new DuplicateException
+    }
 
   }
 
@@ -99,7 +98,7 @@ class IncomeSaRepository @Inject()(mongoConnectionProvider: MongoConnectionProvi
     }
 
     val tag = fields.flatMap(value => fieldsMap.get(value)).getOrElse("TEST")
-    val id  = s"${ident.nino.getOrElse(ident.trn)}-$startYear-$endYear-$tag"
+    val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$startYear-$endYear-$tag"
 
     collection.find[JsObject, JsObject](obj("id" -> id), None)
       .one[IncomeSaEntry].map(value => value.map(_.incomeSa))

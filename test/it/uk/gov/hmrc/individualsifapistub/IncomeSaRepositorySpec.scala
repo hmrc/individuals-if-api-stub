@@ -45,10 +45,10 @@ class IncomeSaRepositorySpec
 
     "have a unique index on nino and trn" in {
 
-      await(repository.collection.indexesManager.list()).find({ i => {
-        i.name.contains("nino-trn") &&
-          i.key.exists(key => key._1 == "id.nino") &&
-          i.key.exists(key => key._1 == "id.trn")
+      await(repository.collection.indexesManager.list()).find({ i =>
+      {
+        i.name.contains("cache-key") &&
+          i.key.exists(key => key._1 == "details")
         i.background &&
           i.unique
       }
@@ -60,11 +60,13 @@ class IncomeSaRepositorySpec
   "create when type is nino" should {
 
     "create a self assessment" in {
-
       val result = await(repository.create("nino", nino, startYear, endYear, useCase, request))
-
       result shouldBe request
+    }
 
+    "fail to create duplicate" in {
+      await(repository.create("nino", nino, startYear, endYear, useCase, request))
+      intercept[Exception](await(repository.create("nino", nino, startYear, endYear, useCase, request)))
     }
 
   }
@@ -72,30 +74,21 @@ class IncomeSaRepositorySpec
   "create when type is trn" should {
 
     "create a self assessment" in {
-
       val result = await(repository.create("trn", trn, startYear, endYear, useCase, request))
-
       result shouldBe request
-
     }
 
   }
 
   "find by id when type is nino" should {
     "return None when there are no self assessments" in {
-
       await(repository.findByTypeAndId("nino", nino, startYear, endYear, Some(fields))) shouldBe None
-
     }
 
     "return the self assessment" in {
-
       await(repository.create("nino", nino, startYear, endYear, useCase, request))
-
       val result = await(repository.findByTypeAndId("nino", nino, startYear, endYear, Some(fields)))
-
       result shouldBe Some(request)
-
     }
   }
 
@@ -103,20 +96,13 @@ class IncomeSaRepositorySpec
   "find by id when type is trn" should {
 
     "return None when there are no self assessments" in {
-
       await(repository.findByTypeAndId("trn", trn, startYear, endYear, Some(fields))) shouldBe None
-
     }
 
     "return the self assessment" in {
-
-
       await(repository.create("trn", trn, startYear, endYear, useCase, request))
-
       val result = await(repository.findByTypeAndId("trn", trn, startYear, endYear, Some(fields)))
-
       result shouldBe Some(request)
-
     }
   }
 }
