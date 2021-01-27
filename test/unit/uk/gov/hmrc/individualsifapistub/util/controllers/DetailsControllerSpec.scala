@@ -57,7 +57,7 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
     "Successfully create a details record and return created record as response" in new Setup {
 
       val ident = Identifier(Some(idValue), None, None, None, Some(useCase))
-      val id = s"${ident.nino.getOrElse(ident.trn)}-$useCase"
+      val id = s"${ident.nino.getOrElse(ident.trn.get)}-$useCase"
       val detailsResponse = DetailsResponse(id, request.contactDetails, request.residences)
 
       when(mockDetailsService.create(idType, idValue, useCase, request)).thenReturn(

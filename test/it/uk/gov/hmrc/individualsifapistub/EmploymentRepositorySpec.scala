@@ -78,59 +78,49 @@ class EmploymentRepositorySpec extends RepositoryTestHelper {
 
     "have a unique index on nino and trn" in {
 
-      await(repository.collection.indexesManager.list()).find({ i => {
-        i.name.contains("nino-trn") &&
-          i.key.exists(key => key._1 == "id.nino") &&
-          i.key.exists(key => key._1 == "id.trn")
-          i.background &&
+      await(repository.collection.indexesManager.list()).find({ i =>
+      {
+        i.name.contains("cache-key") &&
+          i.key.exists(key => key._1 == "details")
+        i.background &&
           i.unique
       }
       }) should not be None
-
     }
   }
 
   "create" should {
 
     "create an employment with a nino" in {
-
       val result = await(repository.create("nino", nino, startDate, endDate, useCase, employments))
-
       result shouldBe employments
+    }
 
+    "fail to create duplicate" in {
+      await(repository.create("nino", nino, startDate, endDate, useCase, employments))
+      intercept[Exception](await(repository.create("nino", nino, startDate, endDate, useCase, employments)))
     }
 
     "create an employment with a trn" in {
-
       val result = await(repository.create("trn", trn, startDate, endDate, useCase, employments))
-
       result shouldBe employments
-
     }
   }
 
   "findByIdAndType" should {
 
     "return None when there are no details for a given nino" in {
-
       await(repository.findByIdAndType("nino", nino, startDate, endDate, Some(fields))) shouldBe None
-
     }
 
     "return None when there are no details for a given trn" in {
-
       await(repository.findByIdAndType("trn", trn, startDate, endDate, Some(fields))) shouldBe None
-
     }
 
     "return a single record with id" in {
-
       await(repository.create("nino", nino, startDate, endDate, useCase, employments))
-
       val result = await(repository.findByIdAndType("nino", nino, startDate, endDate, Some(fields)))
-
       result.get shouldBe employments
-
     }
   }
 }

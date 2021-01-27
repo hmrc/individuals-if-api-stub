@@ -42,9 +42,8 @@ class DetailsRepositorySpec extends RepositoryTestHelper with TestHelpers {
 
       await(repository.collection.indexesManager.list()).find({ i =>
       {
-        i.name.contains("nino-trn") &&
-          i.key.exists(key => key._1 == "id.nino") &&
-          i.key.exists(key => key._1 == "id.trn")
+        i.name.contains("cache-key") &&
+          i.key.exists(key => key._1 == "details")
           i.background &&
           i.unique
       }
@@ -58,7 +57,7 @@ class DetailsRepositorySpec extends RepositoryTestHelper with TestHelpers {
     "create a details response with a nino" in {
 
       val ident = Identifier(Some(ninoValue), None, None, None, Some(useCase))
-      val id = s"${ident.nino.getOrElse(ident.trn)}-$useCase"
+      val id = s"${ident.nino.getOrElse(ident.trn.get)}-$useCase"
 
       val detailsResponse = DetailsResponse(id, request.contactDetails, request.residences)
 
@@ -71,7 +70,7 @@ class DetailsRepositorySpec extends RepositoryTestHelper with TestHelpers {
     "create a details response with a trn" in {
 
       val ident = Identifier(None, Some(trnValue), None, None, Some(useCase))
-      val id = s"${ident.nino.getOrElse(ident.trn)}-$useCase"
+      val id = s"${ident.nino.getOrElse(ident.trn.get)}-$useCase"
 
       val detailsResponse = DetailsResponse(id, request.contactDetails, request.residences)
 
@@ -79,6 +78,11 @@ class DetailsRepositorySpec extends RepositoryTestHelper with TestHelpers {
 
       result shouldBe detailsResponse
 
+    }
+
+    "fail to create duplicate" in {
+      await(repository.create("nino", ninoValue, useCase, request))
+      intercept[Exception](await(repository.create("nino", ninoValue, useCase, request)))
     }
 
   }
@@ -104,7 +108,7 @@ class DetailsRepositorySpec extends RepositoryTestHelper with TestHelpers {
     "return details when nino found" in {
 
       val ident = Identifier(Some(ninoValue), None, None, None, Some(useCase))
-      val id = s"${ident.nino.getOrElse(ident.trn)}-$useCase"
+      val id = s"${ident.nino.getOrElse(ident.trn.get)}-$useCase"
 
       val detailsResponse = DetailsResponse(id, request.contactDetails, request.residences)
 

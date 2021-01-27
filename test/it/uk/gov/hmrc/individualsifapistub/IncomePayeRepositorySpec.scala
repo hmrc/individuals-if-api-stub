@@ -45,10 +45,10 @@ class IncomePayeRepositorySpec
 
     "have a unique index on nino and trn" in {
 
-      await(repository.collection.indexesManager.list()).find({ i => {
-        i.name.contains("nino-trn") &&
-          i.key.exists(key => key._1 == "id.nino") &&
-          i.key.exists(key => key._1 == "id.trn")
+      await(repository.collection.indexesManager.list()).find({ i =>
+      {
+        i.name.contains("cache-key") &&
+          i.key.exists(key => key._1 == "details")
         i.background &&
           i.unique
       }
@@ -60,20 +60,21 @@ class IncomePayeRepositorySpec
   "create when type is nino" should {
 
     "create a paye record" in {
-
       val result = await(repository.create("nino", nino, startDate, endDate, useCase, request))
       result shouldBe request
+    }
 
+    "fail to create duplicate" in {
+      await(repository.create("nino", nino, startDate, endDate, useCase, request))
+      intercept[Exception](await(repository.create("nino", nino, startDate, endDate, useCase, request)))
     }
   }
 
   "create when type is trn" should {
 
     "create a paye" in {
-
       val result = await(repository.create("trn", trn, startDate, endDate, useCase, request))
       result shouldBe request
-
     }
 
   }
@@ -81,39 +82,26 @@ class IncomePayeRepositorySpec
   "find by id when type is Nino" should {
 
     "return None when there are no paye records for a given utr" in {
-
       await(repository.findByTypeAndId("nino", nino, startDate, endDate, Some(fields))) shouldBe None
-
     }
 
     "return the paye response" in {
-
       await(repository.create("nino", nino, startDate, endDate, useCase, request))
-
       val result = await(repository.findByTypeAndId("nino", nino, startDate, endDate, Some(fields)))
-
       result shouldBe Some(request)
-
     }
   }
 
   "find by id when type is trn" should {
 
     "return None when there are no paye records for a given utr" in {
-
       await(repository.findByTypeAndId("trn", trn, startDate, endDate, Some(fields))) shouldBe None
-
     }
 
     "return the paye response" in {
-
-
       await(repository.create("trn", trn, startDate, endDate, useCase, request))
-
       val result = await(repository.findByTypeAndId("trn", trn, startDate, endDate, Some(fields)))
-
       result shouldBe Some(request)
-
     }
   }
 }

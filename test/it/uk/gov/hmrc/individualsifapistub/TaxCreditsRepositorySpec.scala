@@ -46,13 +46,12 @@ class TaxCreditsRepositorySpec extends RepositoryTestHelper {
     "have a unique index on nino and trn" in {
 
       await(repository.collection.indexesManager.list()).find({ i =>
-        {
-          i.name.contains("nino-trn") &&
-          i.key.exists(key => key._1 == "id.nino") &&
-          i.key.exists(key => key._1 == "id.trn")
-          i.background &&
+      {
+        i.name.contains("cache-key") &&
+          i.key.exists(key => key._1 == "details")
+        i.background &&
           i.unique
-        }
+      }
       }) should not be None
     }
 
@@ -61,19 +60,18 @@ class TaxCreditsRepositorySpec extends RepositoryTestHelper {
   "create" should {
 
     "create an application with a nino" in {
-
       val result = await(repository.create("nino", nino, startDate, endDate, useCase, applications))
-
       result shouldBe applications
+    }
 
+    "fail to create duplicate" in {
+      await(repository.create("nino", nino, startDate, endDate, useCase, applications))
+      intercept[Exception](await(repository.create("nino", nino, startDate, endDate, useCase, applications)))
     }
 
     "create an application with a trn" in {
-
       val result = await(repository.create("trn", trn, startDate, endDate, useCase, applications))
-
       result shouldBe applications
-
     }
 
   }
@@ -81,25 +79,17 @@ class TaxCreditsRepositorySpec extends RepositoryTestHelper {
   "findByIdAndType" should {
 
     "return None when there are no details for a given nino" in {
-
       await(repository.findByIdAndType("nino", nino, startDate, endDate, Some(fields))) shouldBe None
-
     }
 
     "return None when there are no details for a given trn" in {
-
       await(repository.findByIdAndType("trn", trn, startDate, endDate, Some(fields))) shouldBe None
-
     }
 
     "return a single record with id" in {
-
       await(repository.create("nino", nino, startDate, endDate, useCase, applications))
-
       val result = await(repository.findByIdAndType("nino", nino, startDate, endDate, Some(fields)))
-
       result.get shouldBe applications
-
     }
   }
 }

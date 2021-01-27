@@ -39,7 +39,7 @@ class TaxCreditsRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
                                                               ) {
 
   override lazy val indexes = Seq(
-    Index(key = Seq(("id.nino", Text), ("id.trn", Text)), name = Some("nino-trn"), unique = true, background = true)
+    Index(key = Seq(("id", Text)), name = Some("cache-key"), unique = true, background = true)
   )
 
   def create(idType: String,
@@ -68,12 +68,11 @@ class TaxCreditsRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
     }
 
     val tag = useCaseMap.get(useCase).getOrElse(useCase)
-    val id  = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$tag"
+    val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$tag"
 
-    for {
-      _        <- collection.findAndRemove(obj("id" -> id)) map (_.result[TaxCreditsEntry])
-      inserted <- insert(TaxCreditsEntry(id, applications.applications)) map (_ => applications)
-    } yield inserted
+    insert(TaxCreditsEntry(id, applications.applications)) map (_ => applications) recover {
+      case WriteResult.Code(11000) => throw new DuplicateException
+    }
 
   }
 
@@ -104,7 +103,7 @@ class TaxCreditsRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
     }
 
     val tag = fields.flatMap(value => fieldsMap.get(value)).getOrElse("TEST")
-    val id  = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$tag"
+    val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$tag"
 
     collection
       .find[JsObject, JsObject](obj("id" -> id), None)

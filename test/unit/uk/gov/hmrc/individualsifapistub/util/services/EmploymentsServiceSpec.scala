@@ -35,7 +35,7 @@ class EmploymentsServiceSpec extends TestSupport {
     val useCase = "TEST"
     val fields = "some(values)"
     val ident = Identifier(Some("XH123456A"), None, Some(startDate), Some(endDate), Some(useCase))
-    val id = s"${ident.nino.getOrElse(ident.trn)}-$startDate-$endDate-$useCase"
+    val id = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$useCase"
 
     val employment =
         Employment(
