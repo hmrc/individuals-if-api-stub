@@ -4,9 +4,9 @@
   "scopes" : [
   ],
   "api" : {
-    "name" : "Individuals IF API Test Support",
+    "name" : "Individuals Integration Framework Test Support",
     "description" : "Allows you to create employments, income, tax credits and contact details test data",
-    "context" : "individuals-if-test-support",
+    "context" : "individuals-integration-framework-test-support",
     "isTestSupport": true,
     "versions" : [
       {
