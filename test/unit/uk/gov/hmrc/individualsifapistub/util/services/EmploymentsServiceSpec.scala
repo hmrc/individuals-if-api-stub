@@ -18,6 +18,8 @@ package unit.uk.gov.hmrc.individualsifapistub.util.services
 
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.individualsifapistub.repository.EmploymentRepository
 import uk.gov.hmrc.individualsifapistub.services.EmploymentsService
@@ -77,10 +79,13 @@ class EmploymentsServiceSpec extends TestSupport {
       )
     )
 
+    implicit val hc = HeaderCarrier()
+    val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
+
     val employments = Employments(Seq(employment))
     val request = EmploymentEntry(id, Seq(employment))
     val mockEmploymentRepository = mock[EmploymentRepository]
-    val underTest = new EmploymentsService(mockEmploymentRepository)
+    val underTest = new EmploymentsService(mockEmploymentRepository, apiPlatformTestUserConnector)
 
   }
 

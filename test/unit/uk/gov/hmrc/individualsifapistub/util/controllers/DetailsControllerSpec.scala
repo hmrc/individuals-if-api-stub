@@ -22,6 +22,7 @@ import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import testUtils.TestHelpers
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualsifapistub.controllers.DetailsController
 import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
 import uk.gov.hmrc.individualsifapistub.domain._
@@ -33,6 +34,7 @@ import scala.concurrent.Future
 class DetailsControllerSpec extends TestSupport with TestHelpers {
 
   trait Setup {
+    implicit val hc = HeaderCarrier()
     val fakeRequest = FakeRequest()
     val mockDetailsService = mock[DetailsService]
     val underTest = new DetailsController(bodyParsers, controllerComponents, mockDetailsService)

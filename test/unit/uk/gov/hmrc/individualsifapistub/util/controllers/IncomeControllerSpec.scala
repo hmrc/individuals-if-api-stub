@@ -18,9 +18,10 @@ package unit.uk.gov.hmrc.individualsifapistub.util.controllers
 
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
-import play.api.http.Status.{CREATED, OK, BAD_REQUEST}
+import play.api.http.Status.{BAD_REQUEST, CREATED, OK}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualsifapistub.controllers.IncomeController
 import uk.gov.hmrc.individualsifapistub.domain.IncomePaye._
 import uk.gov.hmrc.individualsifapistub.domain.IncomeSa._
@@ -34,6 +35,7 @@ import scala.concurrent.Future
 class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomePayeHelpers {
 
   trait Setup {
+    implicit val hc = HeaderCarrier()
     val fakeRequest = FakeRequest()
     val incomeService = mock[IncomeService]
     val underTest = new IncomeController(bodyParsers, controllerComponents, incomeService)

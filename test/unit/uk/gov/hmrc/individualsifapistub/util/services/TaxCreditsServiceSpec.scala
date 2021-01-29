@@ -18,7 +18,8 @@ package unit.uk.gov.hmrc.individualsifapistub.util.services
 
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
-import uk.gov.hmrc.individualsifapistub.domain.TaxCredits._
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.domain.{Application, Applications, Identifier}
 import uk.gov.hmrc.individualsifapistub.repository.TaxCreditsRepository
 import uk.gov.hmrc.individualsifapistub.services.TaxCreditsService
@@ -46,9 +47,12 @@ class TaxCreditsServiceSpec extends TestSupport {
       None
     )
 
+    implicit val hc = HeaderCarrier()
+    val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
+
     val request = Applications(Seq(application))
     val taxCreditsRepository = mock[TaxCreditsRepository]
-    val underTest = new TaxCreditsService(taxCreditsRepository)
+    val underTest = new TaxCreditsService(taxCreditsRepository, apiPlatformTestUserConnector)
 
   }
 

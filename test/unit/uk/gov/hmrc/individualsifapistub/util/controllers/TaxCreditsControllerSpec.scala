@@ -21,8 +21,8 @@ import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.http.Status.{BAD_REQUEST, CREATED, OK}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualsifapistub.controllers.TaxCreditsController
-
 import uk.gov.hmrc.individualsifapistub.domain.TaxCredits._
 import uk.gov.hmrc.individualsifapistub.domain.{Application, Applications, Identifier}
 import uk.gov.hmrc.individualsifapistub.services.TaxCreditsService
@@ -33,6 +33,7 @@ import scala.concurrent.Future
 class TaxCreditsControllerSpec extends TestSupport {
 
   trait Setup {
+    implicit val hc = HeaderCarrier()
     val fakeRequest = FakeRequest()
     val mockTaxCreditsService = mock[TaxCreditsService]
     val underTest = new TaxCreditsController(bodyParsers, controllerComponents, mockTaxCreditsService)

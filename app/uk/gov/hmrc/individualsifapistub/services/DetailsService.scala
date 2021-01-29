@@ -17,17 +17,34 @@
 package uk.gov.hmrc.individualsifapistub.services
 
 import javax.inject.Inject
-import uk.gov.hmrc.individualsifapistub.domain.{CreateDetailsRequest, DetailsResponse}
+import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier}
+import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
+import uk.gov.hmrc.individualsifapistub.domain.{CreateDetailsRequest, DetailsResponse, IdType, Identifier, RecordNotFoundException}
 import uk.gov.hmrc.individualsifapistub.repository.DetailsRepository
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class DetailsService @Inject()(detailsRepository: DetailsRepository) {
+class DetailsService @Inject()(detailsRepository: DetailsRepository,
+                               apiPlatformTestUserConnector: ApiPlatformTestUserConnector) {
 
   def create(idType: String,
              idValue:String,
              useCase: String,
-             createDetailsRequest: CreateDetailsRequest): Future[DetailsResponse] = {
+             createDetailsRequest: CreateDetailsRequest)
+            (implicit ec: ExecutionContext,
+             hc: HeaderCarrier) : Future[DetailsResponse] = {
+
+    IdType.parse(idType) match {
+      case IdType.Nino => {
+        for {
+          individual <- apiPlatformTestUserConnector.getIndividualByNino(Nino(idValue))
+          utr = individual.saUtr.getOrElse(throw new RecordNotFoundException)
+        } yield utr
+      }
+      case _ => throw new BadRequestException("Invalid National Insurance Number")
+    }
+
     detailsRepository.create(idType, idValue, useCase, createDetailsRequest)
   }
 

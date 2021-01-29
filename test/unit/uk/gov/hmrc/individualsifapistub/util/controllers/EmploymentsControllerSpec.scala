@@ -21,6 +21,7 @@ import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.http.Status.{BAD_REQUEST, CREATED, OK}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualsifapistub.controllers.EmploymentsController
 import uk.gov.hmrc.individualsifapistub.domain.Employments._
 import uk.gov.hmrc.individualsifapistub.domain.IdType.{Nino, Trn}
@@ -33,6 +34,7 @@ import scala.concurrent.Future
 class EmploymentsControllerSpec extends TestSupport {
 
   trait Setup {
+    implicit val hc = HeaderCarrier()
     val fakeRequest = FakeRequest()
     val mockEmploymentsService = mock[EmploymentsService]
     val underTest = new EmploymentsController(bodyParsers, controllerComponents, mockEmploymentsService)

@@ -18,6 +18,8 @@ package unit.uk.gov.hmrc.individualsifapistub.util.services
 
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.domain.{IncomePaye, IncomeSa}
 import uk.gov.hmrc.individualsifapistub.repository.{IncomePayeRepository, IncomeSaRepository}
 import uk.gov.hmrc.individualsifapistub.services.IncomeService
@@ -44,9 +46,12 @@ class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePaye
     val innerPayeValue = Seq(createValidPayeEntry(), createValidPayeEntry())
     val incomePayeResponse = IncomePaye(Some(innerPayeValue))
 
+    implicit val hc = HeaderCarrier()
+    val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
+
     val mockSelfAssessmentRepository = mock[IncomeSaRepository]
     val mockPayeRepository = mock[IncomePayeRepository]
-    val underTest = new IncomeService(mockSelfAssessmentRepository, mockPayeRepository)
+    val underTest = new IncomeService(mockSelfAssessmentRepository, mockPayeRepository, apiPlatformTestUserConnector)
   }
 
   "Income Service" when {

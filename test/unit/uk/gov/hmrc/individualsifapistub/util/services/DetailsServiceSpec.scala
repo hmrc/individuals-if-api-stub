@@ -19,6 +19,8 @@ package unit.uk.gov.hmrc.individualsifapistub.util.services
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import testUtils.TestHelpers
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.domain.{ContactDetail, CreateDetailsRequest, DetailsResponse, Identifier, Residence}
 import uk.gov.hmrc.individualsifapistub.repository.DetailsRepository
 import uk.gov.hmrc.individualsifapistub.services.DetailsService
@@ -44,8 +46,11 @@ class DetailsServiceSpec extends TestSupport with TestHelpers {
         Residence(residenceType = Some("NOMINATED"), address = generateAddress(1))))
     )
 
+    implicit val hc = HeaderCarrier()
+    val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
+
     val mockDetailsRepository = mock[DetailsRepository]
-    val underTest = new DetailsService(mockDetailsRepository)
+    val underTest = new DetailsService(mockDetailsRepository, apiPlatformTestUserConnector)
 
   }
 
