@@ -19,7 +19,7 @@ package unit.uk.gov.hmrc.individualsifapistub.util.services
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import testUtils.TestHelpers
-import uk.gov.hmrc.individualsifapistub.domain.{ContactDetail, CreateDetailsRequest, DetailsResponse, Identifier, Residence}
+import uk.gov.hmrc.individualsifapistub.domain.{ContactDetail, CreateDetailsRequest, DetailsResponse, DetailsResponseNoId, Identifier, Residence}
 import uk.gov.hmrc.individualsifapistub.repository.DetailsRepository
 import uk.gov.hmrc.individualsifapistub.services.DetailsService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
@@ -60,14 +60,15 @@ class DetailsServiceSpec extends TestSupport with TestHelpers {
 
 
         val detailsResponse = DetailsResponse(id, request.contactDetails, request.residences)
+        val returnVal = DetailsResponseNoId(request.contactDetails, request.residences)
 
         when(mockDetailsRepository.create("NINO", idValue, useCase, request)).thenReturn(
-          Future.successful(detailsResponse)
+          Future.successful(returnVal)
         )
 
         val response = await(underTest.create(idType, idValue, useCase, request))
 
-        response shouldBe detailsResponse
+        response shouldBe returnVal
 
       }
 

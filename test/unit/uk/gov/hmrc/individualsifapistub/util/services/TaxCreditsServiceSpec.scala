@@ -39,7 +39,7 @@ class TaxCreditsServiceSpec extends TestSupport {
     val id = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$useCase"
 
     val application: Application = Application(
-      id = 12345,
+      id = Some(12345),
       ceasedDate = Some("2012-12-12"),
       entStartDate = Some("2012-12-12"),
       entEndDate = Some("2012-12-12"),

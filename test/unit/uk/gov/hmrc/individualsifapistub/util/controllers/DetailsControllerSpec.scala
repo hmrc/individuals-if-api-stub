@@ -59,9 +59,10 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
       val ident = Identifier(Some(idValue), None, None, None, Some(useCase))
       val id = s"${ident.nino.getOrElse(ident.trn.get)}-$useCase"
       val detailsResponse = DetailsResponse(id, request.contactDetails, request.residences)
+      val returnVal = DetailsResponseNoId(detailsResponse.contactDetails, detailsResponse.residences)
 
       when(mockDetailsService.create(idType, idValue, useCase, request)).thenReturn(
-        Future.successful(detailsResponse)
+        Future.successful(returnVal)
       )
 
       val result = await(underTest.create(idType, idValue, useCase)(
@@ -69,7 +70,7 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
       )
 
       status(result) shouldBe CREATED
-      jsonBodyOf(result) shouldBe Json.toJson(detailsResponse)
+      jsonBodyOf(result) shouldBe Json.toJson(returnVal)
 
     }
 
@@ -78,9 +79,10 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
       val details = Identifier(Some(idValue), None, None, None, Some(useCase))
       val id = s"${details.nino.getOrElse(details.trn)}-$useCase"
       val detailsResponse = DetailsResponse(id, None, None)
+      val returnVal = DetailsResponseNoId(detailsResponse.contactDetails, detailsResponse.residences)
 
       when(mockDetailsService.create(idType, idValue, useCase, request)).thenReturn(
-        Future.successful(detailsResponse)
+        Future.successful(returnVal)
       )
 
       val response = await(underTest.create(idType, idValue, useCase)(
