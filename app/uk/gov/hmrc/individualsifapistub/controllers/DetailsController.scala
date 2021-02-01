@@ -35,7 +35,6 @@ class DetailsController @Inject()(  bodyParsers: PlayBodyParsers,
              idValue: String,
              useCase: String): Action[JsValue] = Action.async(bodyParsers.json) { implicit request =>
     withJsonBodyAndValidId[CreateDetailsRequest](idType, idValue, None, None, Some(useCase)) { createRequest =>
-      println("ACHI: " + createRequest)
       detailsService.create(idType, idValue, useCase, createRequest) map (
         e => Created(Json.toJson(e)))
     } recover recovery
