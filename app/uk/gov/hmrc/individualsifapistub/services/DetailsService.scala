@@ -21,6 +21,7 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier}
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.domain.{CreateDetailsRequest, DetailsResponse, IdType, Identifier, RecordNotFoundException}
+import uk.gov.hmrc.individualsifapistub.domain.{CreateDetailsRequest, DetailsResponse, DetailsResponseNoId}
 import uk.gov.hmrc.individualsifapistub.repository.DetailsRepository
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,7 +34,7 @@ class DetailsService @Inject()(detailsRepository: DetailsRepository,
              useCase: String,
              createDetailsRequest: CreateDetailsRequest)
             (implicit ec: ExecutionContext,
-             hc: HeaderCarrier) : Future[DetailsResponse] = {
+             hc: HeaderCarrier) : Future[DetailsResponseNoId] = {
 
     IdType.parse(idType) match {
       case IdType.Nino => {

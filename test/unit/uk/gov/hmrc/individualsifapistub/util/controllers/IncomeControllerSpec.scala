@@ -16,16 +16,20 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.controllers
 
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.http.Status.{BAD_REQUEST, CREATED, OK}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
+import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.controllers.IncomeController
 import uk.gov.hmrc.individualsifapistub.domain.IncomePaye._
 import uk.gov.hmrc.individualsifapistub.domain.IncomeSa._
-import uk.gov.hmrc.individualsifapistub.domain.{IncomePaye, IncomeSa}
+import uk.gov.hmrc.individualsifapistub.domain.{IncomePaye, IncomeSa, TestIndividual}
+import uk.gov.hmrc.individualsifapistub.repository.{IncomePayeRepository, IncomeSaRepository}
 import uk.gov.hmrc.individualsifapistub.services.IncomeService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.testUtils.{IncomePayeHelpers, IncomeSaHelpers}
@@ -37,18 +41,25 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
   trait Setup {
     implicit val hc = HeaderCarrier()
     val fakeRequest = FakeRequest()
-    val incomeService = mock[IncomeService]
+    val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
+    val incomePayeRepo = mock[IncomePayeRepository]
+    val incomeSaRepo = mock[IncomeSaRepository]
+    val incomeService = new IncomeService(incomeSaRepo, incomePayeRepo, apiPlatformTestUserConnector)
     val underTest = new IncomeController(bodyParsers, controllerComponents, incomeService)
+
+    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
+      thenReturn(Future.successful(TestIndividual(Some(utr))))
   }
 
   val idType = "nino"
-  val idValue = "ANINO123"
+  val idValue = "XH123456A"
   val startDate = "2020-01-01"
   val endDate = "2020-21-31"
   val startYear = "2019"
   val endYear = "2020"
   val useCase = "TEST"
   val fields = "some(values)"
+  val utr = SaUtr("2432552635")
 
   val innerSaValue = Seq(createValidSaTaxYearEntry(), createValidSaTaxYearEntry())
   val incomeSaResponse = IncomeSa(Some(innerSaValue))

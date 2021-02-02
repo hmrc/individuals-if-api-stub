@@ -26,7 +26,7 @@ import uk.gov.hmrc.individualsifapistub.repository.EmploymentRepository
 import scala.concurrent.{ExecutionContext, Future}
 
 class EmploymentsService @Inject()(employmentsRepository: EmploymentRepository,
-                                   apiPlatformTestUserConnector: ApiPlatformTestUserConnector) {
+                                   val apiPlatformTestUserConnector: ApiPlatformTestUserConnector) {
 
   def create(idType: String,
              idValue: String,

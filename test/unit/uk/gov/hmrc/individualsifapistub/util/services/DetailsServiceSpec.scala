@@ -16,12 +16,14 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.services
 
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import testUtils.TestHelpers
+import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
-import uk.gov.hmrc.individualsifapistub.domain.{ContactDetail, CreateDetailsRequest, DetailsResponse, Identifier, Residence}
+import uk.gov.hmrc.individualsifapistub.domain.{ContactDetail, CreateDetailsRequest, DetailsResponse, DetailsResponseNoId, Identifier, Residence, TestIndividual}
 import uk.gov.hmrc.individualsifapistub.repository.DetailsRepository
 import uk.gov.hmrc.individualsifapistub.services.DetailsService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
@@ -33,11 +35,12 @@ class DetailsServiceSpec extends TestSupport with TestHelpers {
   trait Setup {
 
     val idType = "NINO"
-    val idValue = "QW1234QW"
+    val idValue = "XH123456A"
     val startDate = "2020-01-01"
     val endDate = "2020-21-31"
     val useCase = "TEST"
     val fields = "some(values)"
+    val utr = SaUtr("2432552635")
 
     val request = CreateDetailsRequest(
       Some(Seq(ContactDetail(9, "MOBILE TELEPHONE", "07123 987654"), ContactDetail(9,"MOBILE TELEPHONE", "07123 987655"))),
@@ -52,6 +55,9 @@ class DetailsServiceSpec extends TestSupport with TestHelpers {
     val mockDetailsRepository = mock[DetailsRepository]
     val underTest = new DetailsService(mockDetailsRepository, apiPlatformTestUserConnector)
 
+    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
+      thenReturn(Future.successful(TestIndividual(Some(utr))))
+
   }
 
   "Details Service" when {
@@ -65,14 +71,15 @@ class DetailsServiceSpec extends TestSupport with TestHelpers {
 
 
         val detailsResponse = DetailsResponse(id, request.contactDetails, request.residences)
+        val returnVal = DetailsResponseNoId(request.contactDetails, request.residences)
 
         when(mockDetailsRepository.create("NINO", idValue, useCase, request)).thenReturn(
-          Future.successful(detailsResponse)
+          Future.successful(returnVal)
         )
 
         val response = await(underTest.create(idType, idValue, useCase, request))
 
-        response shouldBe detailsResponse
+        response shouldBe returnVal
 
       }
 

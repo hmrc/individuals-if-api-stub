@@ -16,15 +16,19 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.controllers
 
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.http.Status.{BAD_REQUEST, CREATED, OK}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
+import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.controllers.TaxCreditsController
 import uk.gov.hmrc.individualsifapistub.domain.TaxCredits._
-import uk.gov.hmrc.individualsifapistub.domain.{Application, Applications, Identifier}
+import uk.gov.hmrc.individualsifapistub.domain.{Application, Applications, Identifier, TestIndividual}
+import uk.gov.hmrc.individualsifapistub.repository.TaxCreditsRepository
 import uk.gov.hmrc.individualsifapistub.services.TaxCreditsService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
@@ -35,12 +39,17 @@ class TaxCreditsControllerSpec extends TestSupport {
   trait Setup {
     implicit val hc = HeaderCarrier()
     val fakeRequest = FakeRequest()
-    val mockTaxCreditsService = mock[TaxCreditsService]
+    val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
+    val taxCreditsRepo = mock[TaxCreditsRepository]
+    val mockTaxCreditsService = new TaxCreditsService(taxCreditsRepo, apiPlatformTestUserConnector)
     val underTest = new TaxCreditsController(bodyParsers, controllerComponents, mockTaxCreditsService)
+
+    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
+      thenReturn(Future.successful(TestIndividual(Some(utr))))
   }
 
   val application: Application = Application(
-    id = 12345,
+    id = Some(12345),
     ceasedDate = Some("2012-12-12"),
     entStartDate = Some("2012-12-12"),
     entEndDate = Some("2012-12-12"),
@@ -53,6 +62,7 @@ class TaxCreditsControllerSpec extends TestSupport {
   val endDate = "2020-21-31"
   val useCase = "TEST"
   val fields = "some(values)"
+  val utr = SaUtr("2432552635")
   val ident = Identifier(Some(idValue), None, Some(startDate), Some(endDate), Some(useCase))
 
   val request = Applications(Seq(application))
