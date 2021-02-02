@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.libs.json.JsObject
 import play.api.libs.json.Json.obj
 import reactivemongo.api.commands.WriteResult
-import reactivemongo.api.indexes.Index
+import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.api.indexes.IndexType.Text
 import reactivemongo.bson.BSONObjectID
 import reactivemongo.play.json._
@@ -37,7 +37,7 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
     JsonFormatters.detailsResponseFormat) {
 
   override lazy val indexes = Seq(
-    Index(key = Seq(("details", Text)), name = Some("cache-key"), unique = true, background = true)
+    Index(key = List("details" -> IndexType.Ascending), name = Some("id"), unique = true, background = true)
   )
 
   def create(idType: String,

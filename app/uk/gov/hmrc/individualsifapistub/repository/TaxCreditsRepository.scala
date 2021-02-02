@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.libs.json.JsObject
 import play.api.libs.json.Json.obj
 import reactivemongo.api.commands.WriteResult
-import reactivemongo.api.indexes.Index
+import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.api.indexes.IndexType.Text
 import reactivemongo.bson.BSONObjectID
 import reactivemongo.play.json._
@@ -39,7 +39,7 @@ class TaxCreditsRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
                                                               ) {
 
   override lazy val indexes = Seq(
-    Index(key = Seq(("id", Text)), name = Some("cache-key"), unique = true, background = true)
+    Index(key = List("id" -> IndexType.Ascending), name = Some("id"), unique = true, background = true)
   )
 
   def create(idType: String,
