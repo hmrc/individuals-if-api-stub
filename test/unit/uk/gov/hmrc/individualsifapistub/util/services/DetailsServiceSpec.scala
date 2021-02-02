@@ -26,6 +26,7 @@ import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.domain.{ContactDetail, CreateDetailsRequest, DetailsResponse, DetailsResponseNoId, Identifier, Residence, TestIndividual}
 import uk.gov.hmrc.individualsifapistub.repository.DetailsRepository
 import uk.gov.hmrc.individualsifapistub.services.DetailsService
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 import scala.concurrent.Future
@@ -53,7 +54,8 @@ class DetailsServiceSpec extends TestSupport with TestHelpers {
     val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
 
     val mockDetailsRepository = mock[DetailsRepository]
-    val underTest = new DetailsService(mockDetailsRepository, apiPlatformTestUserConnector)
+    val servicesConfig = mock[ServicesConfig]
+    val underTest = new DetailsService(mockDetailsRepository, apiPlatformTestUserConnector, servicesConfig)
 
     when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
       thenReturn(Future.successful(TestIndividual(Some(utr))))

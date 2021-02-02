@@ -22,11 +22,13 @@ import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier}
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.domain.{Employments, IdType, RecordNotFoundException}
 import uk.gov.hmrc.individualsifapistub.repository.EmploymentRepository
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class EmploymentsService @Inject()(employmentsRepository: EmploymentRepository,
-                                   val apiPlatformTestUserConnector: ApiPlatformTestUserConnector) {
+                                   val apiPlatformTestUserConnector: ApiPlatformTestUserConnector,
+                                   servicesConfig: ServicesConfig) {
 
   def create(idType: String,
              idValue: String,
@@ -37,16 +39,7 @@ class EmploymentsService @Inject()(employmentsRepository: EmploymentRepository,
             (implicit ec: ExecutionContext,
              hc: HeaderCarrier): Future[Employments] = {
 
-    IdType.parse(idType) match {
-      case IdType.Nino => {
-        for {
-          individual <- apiPlatformTestUserConnector.getIndividualByNino(Nino(idValue))
-          utr = individual.saUtr.getOrElse(throw new RecordNotFoundException)
-        } yield utr
-      }
-      case _ => throw new BadRequestException("Invalid National Insurance Number")
-    }
-
+    if (servicesConfig.getConfBool("verifyNino", true)) verifyNino(idType, idValue)
     employmentsRepository.create(idType, idValue, startDate, endDate, useCase, employments)
   }
 
@@ -56,5 +49,19 @@ class EmploymentsService @Inject()(employmentsRepository: EmploymentRepository,
           endDate: String,
           fields: Option[String]): Future[Option[Employments]] = {
     employmentsRepository.findByIdAndType(idType, idValue, startDate, endDate, fields)
+  }
+
+  def verifyNino(idType: String, idValue: String)
+                (implicit ec: ExecutionContext,
+                 hc: HeaderCarrier) = {
+    IdType.parse(idType) match {
+      case IdType.Nino => {
+        for {
+          individual <- apiPlatformTestUserConnector.getIndividualByNino(Nino(idValue))
+          utr = individual.saUtr.getOrElse(throw new RecordNotFoundException)
+        } yield utr
+      }
+      case _ => throw new BadRequestException("Invalid National Insurance Number")
+    }
   }
 }

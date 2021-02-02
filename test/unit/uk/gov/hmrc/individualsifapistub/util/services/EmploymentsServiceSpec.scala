@@ -25,6 +25,7 @@ import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.individualsifapistub.repository.EmploymentRepository
 import uk.gov.hmrc.individualsifapistub.services.EmploymentsService
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 import scala.concurrent.Future
@@ -88,7 +89,8 @@ class EmploymentsServiceSpec extends TestSupport {
     val employments = Employments(Seq(employment))
     val request = EmploymentEntry(id, Seq(employment))
     val mockEmploymentRepository = mock[EmploymentRepository]
-    val underTest = new EmploymentsService(mockEmploymentRepository, apiPlatformTestUserConnector)
+    val servicesConfig = mock[ServicesConfig]
+    val underTest = new EmploymentsService(mockEmploymentRepository, apiPlatformTestUserConnector, servicesConfig)
 
     when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
       thenReturn(Future.successful(TestIndividual(Some(utr))))

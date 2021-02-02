@@ -25,6 +25,7 @@ import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.domain.{Application, Applications, Identifier, TestIndividual}
 import uk.gov.hmrc.individualsifapistub.repository.TaxCreditsRepository
 import uk.gov.hmrc.individualsifapistub.services.TaxCreditsService
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 import scala.concurrent.Future
@@ -55,7 +56,8 @@ class TaxCreditsServiceSpec extends TestSupport {
 
     val request = Applications(Seq(application))
     val taxCreditsRepository = mock[TaxCreditsRepository]
-    val underTest = new TaxCreditsService(taxCreditsRepository, apiPlatformTestUserConnector)
+    val servicesConfig = mock[ServicesConfig]
+    val underTest = new TaxCreditsService(taxCreditsRepository, apiPlatformTestUserConnector, servicesConfig)
 
     when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
       thenReturn(Future.successful(TestIndividual(Some(utr))))

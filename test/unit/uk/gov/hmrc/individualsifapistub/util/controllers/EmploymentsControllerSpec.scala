@@ -32,6 +32,7 @@ import org.mockito.ArgumentMatchers.{any, refEq}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.repository.EmploymentRepository
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.Future
 
@@ -42,7 +43,8 @@ class EmploymentsControllerSpec extends TestSupport {
     val fakeRequest = FakeRequest()
     val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
     val employmentsRepo = mock[EmploymentRepository]
-    val mockEmploymentsService = new EmploymentsService(employmentsRepo, apiPlatformTestUserConnector)
+    val servicesConfig = mock[ServicesConfig]
+    val mockEmploymentsService = new EmploymentsService(employmentsRepo, apiPlatformTestUserConnector, servicesConfig)
     val underTest = new EmploymentsController(bodyParsers, controllerComponents, mockEmploymentsService)
 
     when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
@@ -118,6 +120,23 @@ class EmploymentsControllerSpec extends TestSupport {
 
       status(result) shouldBe CREATED
       jsonBodyOf(result) shouldBe Json.toJson(employments)
+
+    }
+
+    "Fail with an invalid nino" in new Setup {
+
+      when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
+        thenReturn(Future.failed(new RecordNotFoundException))
+
+      when(mockEmploymentsService.create(idType, idValue, startDate, endDate, useCase, employments)).thenReturn(
+        Future.successful(employments)
+      )
+
+      val result = await(underTest.create(idType, idValue, startDate, endDate, useCase)(
+        fakeRequest.withBody(Json.toJson("")))
+      )
+
+      status(result) shouldBe BAD_REQUEST
 
     }
 

@@ -23,11 +23,13 @@ import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.domain.{CreateDetailsRequest, DetailsResponse, IdType, Identifier, RecordNotFoundException}
 import uk.gov.hmrc.individualsifapistub.domain.{CreateDetailsRequest, DetailsResponse, DetailsResponseNoId}
 import uk.gov.hmrc.individualsifapistub.repository.DetailsRepository
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class DetailsService @Inject()(detailsRepository: DetailsRepository,
-                               apiPlatformTestUserConnector: ApiPlatformTestUserConnector) {
+                               apiPlatformTestUserConnector: ApiPlatformTestUserConnector,
+                               servicesConfig: ServicesConfig) {
 
   def create(idType: String,
              idValue:String,
@@ -36,6 +38,19 @@ class DetailsService @Inject()(detailsRepository: DetailsRepository,
             (implicit ec: ExecutionContext,
              hc: HeaderCarrier) : Future[DetailsResponseNoId] = {
 
+    if (servicesConfig.getConfBool("verifyNino", true)) verifyNino(idType, idValue)
+    detailsRepository.create(idType, idValue, useCase, createDetailsRequest)
+  }
+
+  def get(idType: String,
+          idValue:String,
+          fields: Option[String]): Future[Option[DetailsResponse]] = {
+    detailsRepository.findByIdAndType(idType, idValue, fields)
+  }
+
+  def verifyNino(idType: String, idValue: String)
+                (implicit ec: ExecutionContext,
+                 hc: HeaderCarrier) = {
     IdType.parse(idType) match {
       case IdType.Nino => {
         for {
@@ -45,13 +60,5 @@ class DetailsService @Inject()(detailsRepository: DetailsRepository,
       }
       case _ => throw new BadRequestException("Invalid National Insurance Number")
     }
-
-    detailsRepository.create(idType, idValue, useCase, createDetailsRequest)
-  }
-
-  def get(idType: String,
-          idValue:String,
-          fields: Option[String]): Future[Option[DetailsResponse]] = {
-    detailsRepository.findByIdAndType(idType, idValue, fields)
   }
 }

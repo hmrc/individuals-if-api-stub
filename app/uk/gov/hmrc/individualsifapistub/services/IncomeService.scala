@@ -22,12 +22,14 @@ import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier}
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.domain.{IdType, IncomePaye, IncomeSa, RecordNotFoundException}
 import uk.gov.hmrc.individualsifapistub.repository.{IncomePayeRepository, IncomeSaRepository}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class IncomeService @Inject()(incomeSaRepository: IncomeSaRepository,
                               incomePayeRepository: IncomePayeRepository,
-                              apiPlatformTestUserConnector: ApiPlatformTestUserConnector) {
+                              apiPlatformTestUserConnector: ApiPlatformTestUserConnector,
+                              servicesConfig: ServicesConfig) {
 
   def createSa(idType: String,
                idValue: String,
@@ -38,16 +40,7 @@ class IncomeService @Inject()(incomeSaRepository: IncomeSaRepository,
               (implicit ec: ExecutionContext,
                hc: HeaderCarrier): Future[IncomeSa] = {
 
-    IdType.parse(idType) match {
-      case IdType.Nino => {
-        for {
-          individual <- apiPlatformTestUserConnector.getIndividualByNino(Nino(idValue))
-          utr = individual.saUtr.getOrElse(throw new RecordNotFoundException)
-        } yield utr
-      }
-      case _ => throw new BadRequestException("Invalid National Insurance Number")
-    }
-
+    if (servicesConfig.getConfBool("verifyNino", true)) verifyNino(idType, idValue)
     incomeSaRepository.create(idType, idValue, startYear, endYear, useCase, createSelfAssessmentRequest)
   }
 
@@ -69,16 +62,7 @@ class IncomeService @Inject()(incomeSaRepository: IncomeSaRepository,
                 (implicit ec: ExecutionContext,
                  hc: HeaderCarrier): Future[IncomePaye] = {
 
-    IdType.parse(idType) match {
-      case IdType.Nino => {
-        for {
-          individual <- apiPlatformTestUserConnector.getIndividualByNino(Nino(idValue))
-          utr = individual.saUtr.getOrElse(throw new RecordNotFoundException)
-        } yield utr
-      }
-      case _ => throw new BadRequestException("Invalid National Insurance Number")
-    }
-
+    if (servicesConfig.getConfBool("verifyNino", true)) verifyNino(idType, idValue)
     incomePayeRepository.create(idType, idValue, startDate, endDate, useCase, createIncomePayeRequest)
   }
 
@@ -88,5 +72,19 @@ class IncomeService @Inject()(incomeSaRepository: IncomeSaRepository,
               endDate: String,
               fields: Option[String]): Future[Option[IncomePaye]] = {
     incomePayeRepository.findByTypeAndId(idType, idValue, startDate, endDate, fields)
+  }
+
+  def verifyNino(idType: String, idValue: String)
+                (implicit ec: ExecutionContext,
+                 hc: HeaderCarrier) = {
+    IdType.parse(idType) match {
+      case IdType.Nino => {
+        for {
+          individual <- apiPlatformTestUserConnector.getIndividualByNino(Nino(idValue))
+          utr = individual.saUtr.getOrElse(throw new RecordNotFoundException)
+        } yield utr
+      }
+      case _ => throw new BadRequestException("Invalid National Insurance Number")
+    }
   }
 }

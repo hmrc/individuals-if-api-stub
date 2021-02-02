@@ -25,6 +25,7 @@ import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.domain.{IncomePaye, IncomeSa, TestIndividual}
 import uk.gov.hmrc.individualsifapistub.repository.{IncomePayeRepository, IncomeSaRepository}
 import uk.gov.hmrc.individualsifapistub.services.IncomeService
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.testUtils.{IncomePayeHelpers, IncomeSaHelpers}
 
@@ -54,7 +55,10 @@ class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePaye
 
     val mockSelfAssessmentRepository = mock[IncomeSaRepository]
     val mockPayeRepository = mock[IncomePayeRepository]
-    val underTest = new IncomeService(mockSelfAssessmentRepository, mockPayeRepository, apiPlatformTestUserConnector)
+    val servicesConfig = mock[ServicesConfig]
+    val underTest = new IncomeService(
+      mockSelfAssessmentRepository, mockPayeRepository, apiPlatformTestUserConnector, servicesConfig
+    )
 
     when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
       thenReturn(Future.successful(TestIndividual(Some(utr))))

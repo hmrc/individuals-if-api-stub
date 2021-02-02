@@ -28,9 +28,10 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.controllers.DetailsController
 import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
-import uk.gov.hmrc.individualsifapistub.domain._
+import uk.gov.hmrc.individualsifapistub.domain.{RecordNotFoundException, _}
 import uk.gov.hmrc.individualsifapistub.repository.DetailsRepository
 import uk.gov.hmrc.individualsifapistub.services.DetailsService
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 import scala.concurrent.Future
@@ -42,7 +43,8 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
     val fakeRequest = FakeRequest()
     val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
     val detailsRepo = mock[DetailsRepository]
-    val mockDetailsService = new DetailsService(detailsRepo, apiPlatformTestUserConnector)
+    val servicesConfig = mock[ServicesConfig]
+    val mockDetailsService = new DetailsService(detailsRepo, apiPlatformTestUserConnector, servicesConfig)
     val underTest = new DetailsController(bodyParsers, controllerComponents, mockDetailsService)
 
     when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
@@ -83,6 +85,28 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
 
       status(result) shouldBe CREATED
       jsonBodyOf(result) shouldBe Json.toJson(returnVal)
+
+    }
+
+    "Fail when an invalid nino is provided" in new Setup {
+
+      val ident = Identifier(Some(idValue), None, None, None, Some(useCase))
+      val id = s"${ident.nino.getOrElse(ident.trn.get)}-$useCase"
+      val detailsResponse = DetailsResponse(id, request.contactDetails, request.residences)
+      val returnVal = DetailsResponseNoId(detailsResponse.contactDetails, detailsResponse.residences)
+
+      when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
+        thenReturn(Future.failed(new RecordNotFoundException))
+
+      when(mockDetailsService.create(idType, idValue, useCase, request)).thenReturn(
+        Future.successful(returnVal)
+      )
+
+      val result = await(underTest.create(idType, idValue, useCase)(
+        fakeRequest.withBody(Json.toJson("")))
+      )
+
+      status(result) shouldBe BAD_REQUEST
 
     }
 
