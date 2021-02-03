@@ -80,5 +80,5 @@
       }
     }
   },
-  "required": "employments"
+  "required": ["employments"]
 }

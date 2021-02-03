@@ -3,24 +3,27 @@
   "description": "Addresses",
   "type": "object",
   "properties": {
-    "contactDetails" : {
-      "type": "object",
-      "description": "Telephone numbers for the individual.",
-      "properties": {
-        "code": {
-          "description": "The numeric code for the associated 'type' property below where 9 = MOBILE TELEPHONE and 8 = EVENING TELEPHONE and 7 = DAYTIME TELEPHONE",
-          "type": "integer",
-          "example": "9"
-        },
-        "type": {
-          "description": "The particular contact type. Currently supported values:\n\n```\ncode type\n 7   DAYTIME TELEPHONE\n 8   EVENING TELEPHONE\n 9   MOBILE TELEPHONE\n10   FAX\n11   PRIMARY E-MAIL\n12   SECONDARY E-MAIL\n```\nIf the backend returns an unexpected string it will be returned 'as is', i.e. untransformed, to a maximum of 35 characters.\n",
-          "type": "string",
-          "example": "MOBILE TELEPHONE"
-        },
-        "detail": {
-          "descripton": "The telephone number",
-          "type": "string",
-          "example": "0123 737654"
+    "contactDetails": {
+      "type": "array",
+      "description": "The list of the individual's contact telephone numbers.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "description": "The numeric code for the associated 'type' property below where 9 = MOBILE TELEPHONE and 8 = EVENING TELEPHONE and 7 = DAYTIME TELEPHONE",
+            "type": "integer",
+            "example": "9"
+          },
+          "detail": {
+            "description": "The telephone number",
+            "type": "string",
+            "example": "0123 737654"
+          },
+          "type": {
+            "description": "The particular contact type. Currently supported values:\n\n```\ncode type\n 7   DAYTIME TELEPHONE\n 8   EVENING TELEPHONE\n 9   MOBILE TELEPHONE\n10   FAX\n11   PRIMARY E-MAIL\n12   SECONDARY E-MAIL\n```\nIf the backend returns an unexpected string it will be returned 'as is', i.e. untransformed, to a maximum of 35 characters.\n",
+            "type": "string",
+            "example": "MOBILE TELEPHONE"
+          }
         }
       }
     },
@@ -30,36 +33,46 @@
       "items": {
         "type": "object",
         "properties": {
-          "line1": {
+          "type": {
+            "description": "Indicates the residence type BASE or NOMINATED",
             "type": "string",
-            "description": "Address line 1."
+            "example": "NOMINATED"
           },
-          "line2": {
-            "type": "string",
-            "description": "Address line 2."
-          },
-          "line3": {
-            "type": "string",
-            "description": "Address line 3."
-          },
-          "line4": {
-            "type": "string",
-            "description": "Address line 4."
-          },
-          "line5": {
-            "type": "string",
-            "description": "Address line 5."
-          },
-          "postcode": {
-            "type": "string",
-            "description": "The postcode for the address.",
-            "example": "AA1 1AA"
+          "address": {
+            "type": "object",
+            "description": "The address.",
+            "properties": {
+              "line1": {
+                "type": "string",
+                "description": "Address line 1."
+              },
+              "line2": {
+                "type": "string",
+                "description": "Address line 2."
+              },
+              "line3": {
+                "type": "string",
+                "description": "Address line 3."
+              },
+              "line4": {
+                "type": "string",
+                "description": "Address line 4."
+              },
+              "line5": {
+                "type": "string",
+                "description": "Address line 5."
+              },
+              "postcode": {
+                "type": "string",
+                "description": "The postcode for the address.",
+                "example": "AA1 1AA"
+              }
+            }
           },
           "noLongerUsed": {
             "description": "Indicates if the NOMINATED residence is no longer used (NLU) or not. Currently supported values:\n```\nValue Meaning\nY     NLU\nN     Not NLU i.e. is still in use\n```\nIf the backend returns an unexpected string it will be returned 'as is', i.e. untransformed, to a maximum of a single character.",
             "type": "string",
-            "minLength": 1,
-            "maxLength": 1
+            "example": "NLU"
           }
         }
       }

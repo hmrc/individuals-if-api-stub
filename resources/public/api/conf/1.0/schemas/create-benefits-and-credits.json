@@ -20,15 +20,15 @@
             "items": {
               "type": "object",
               "properties": {
-                "payProfCalcDate": {
-                  "type": "string",
-                  "description": "The date the Payment Profile was calculated.",
-                  "example": "1996-08-01"
-                },
                 "totalEntitlement": {
                   "type": "number",
                   "description": "The sum of all the award entitlements for an award version. The net amount that will be received.",
                   "example": "18765.23"
+                },
+                "payProfCalcDate": {
+                  "type": "string",
+                  "description": "The date the Payment Profile was calculated.",
+                  "example": "1996-08-01"
                 },
                 "workingTaxCredit": {
                   "type": "object",
@@ -118,7 +118,5 @@
       }
     }
   },
-  "required": [
-    "applications"
-  ]
+  "required": ["applications"]
 }
