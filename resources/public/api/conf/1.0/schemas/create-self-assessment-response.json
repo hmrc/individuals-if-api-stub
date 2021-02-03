@@ -1,3 +1,195 @@
 {
-  "TODO": "TODO"
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "Further details for income from Self Assessment",
+  "type": "object",
+  "properties": {
+    "sa": {
+      "type": "object",
+      "description": "Self Assessment tax return history for a requested time period.",
+      "properties": {
+        "returnList": {
+          "type": "array",
+          "description": "The list of Self Assessment tax returns in the requested time period.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "busStartDate": {
+                "description": "The start date for the business. Date in the format YYYY-MM-DD",
+                "type": "string",
+                "format": "date",
+                "example": "2019-08-18"
+              },
+              "busEndDate": {
+                "description": "The end date for the business. Date in the format YYYY-MM-DD",
+                "type": "string",
+                "example": "2020-12-01"
+              },
+              "caseStartDate": {
+                "type": "string",
+                "description": "Self Assessment registration date. Date in format YYY-MM-DD",
+                "example": "2012-01-06"
+              },
+              "receivedDate": {
+                "type": "string",
+                "description": "Self Assessment received date. Date in format YYY-MM-DD",
+                "example": "2012-02-06"
+              },
+              "address": {
+                "type": "object",
+                "properties": {
+                  "line1": {
+                    "type": "string",
+                    "description": "Address line 1."
+                  },
+                  "line2": {
+                    "type": "string",
+                    "description": "Address line 2."
+                  },
+                  "line3": {
+                    "type": "string",
+                    "description": "Address line 3."
+                  },
+                  "line4": {
+                    "type": "string",
+                    "description": "Address line 4."
+                  },
+                  "line5": {
+                    "type": "string",
+                    "description": "Address line 5."
+                  },
+                  "postcode": {
+                    "type": "string",
+                    "description": "The postcode for the address."
+                  }
+                }
+              },
+              "telephoneNumber": {
+                "type": "string",
+                "description": "The business telephone number. "
+              },
+              "income": {
+                "type": "object",
+                "description": "Self Assessment income for a requested time period.",
+                "properties": {
+                  "ukProperty": {
+                    "type": "number",
+                    "description": "The profit from UK properties",
+                    "example": "1276.67"
+                  },
+                  "trusts": {
+                    "type": "number",
+                    "description": "The amount of income from trusts",
+                    "example": "2143.32"
+                  },
+                  "selfAssessment": {
+                    "type": "number",
+                    "description": "The total income from self employment",
+                    "example": "30000"
+                  },
+                  "selfEmployment": {
+                    "type": "number",
+                    "description": "The amount of profit from self-employments.",
+                    "example": "5000"
+                  },
+                  "pensions": {
+                    "type": "number",
+                    "description": "The total income from pensions and state benefits.",
+                    "example": "52.79"
+                  },
+                  "partnerships": {
+                    "type": "number",
+                    "description": "The amount of profit from partnerships income.",
+                    "example": "324.54"
+                  },
+                  "other": {
+                    "type": "number",
+                    "description": "The amount of other income.",
+                    "example": "26.70"
+                  },
+                  "ukInterest": {
+                    "type": "number",
+                    "description": "The UK interest received before tax.",
+                    "example": "12.46"
+                  },
+                  "foreignDivs": {
+                    "type": "number",
+                    "description": "The income from foreign dividends.",
+                    "example": "25.86"
+                  },
+                  "ukDivsAndInterest": {
+                    "type": "number",
+                    "description": "The income from UK dividends.",
+                    "example": "657.89"
+                  },
+                  "foreign": {
+                    "type": "number",
+                    "description": "The individual's foreign income.",
+                    "example": "2143.32"
+                  },
+                  "allEmployments": {
+                    "type": "number",
+                    "description": "The individual's income from employments.",
+                    "example": "5000"
+                  },
+                  "lifePolicies": {
+                    "type": "number",
+                    "description": "The gains on life policies.",
+                    "example": "44.54"
+                  },
+                  "shares": {
+                    "type": "number",
+                    "description": "The income from shares options.",
+                    "example": "52.34"
+                  }
+                }
+              },
+              "totalTaxPaid": {
+                "description": "The total tax paid. Amount in the range of: -99999999999.99 to 99999999999.99",
+                "type": "number",
+                "example": "456543.99"
+              },
+              "totalNIC": {
+                "description": "Total National Insurance contributions paid. Amount in the range -99999999999.99 to 99999999999.99",
+                "type": "number",
+                "example": "456543.99"
+              },
+              "turnover": {
+                "description": "Turnover in the range -99999999999.99 to 99999999999.99",
+                "type": "number",
+                "example": "456543.99"
+              },
+              "otherBusIncome": {
+                "description": "Other business income. Amount in the range -99999999999.99 to 99999999999.99",
+                "type": "number",
+                "example": "456543.99"
+              },
+              "tradingIncomeAllowance": {
+                "description": "The trading income allowance. Amount in the range -99999999999.99 to 99999999999.99",
+                "type": "number",
+                "example": "456543.99"
+              },
+              "deducts": {
+                "type": "object",
+                "description": "Deductions",
+                "properties": {
+                  "totalBusExpenses": {
+                    "description": "The total business expenses. Amount in the range -99999999999.99 to 99999999999.99",
+                    "type": "number",
+                    "example": "456543.99"
+                  },
+                  "totalDisallowBusExp": {
+                    "description": "The total disallowed business expenses. Amount in the range -99999999999.99 to 99999999999.99",
+                    "type": "number",
+                    "example": "456543.99"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "required": "taxYear"
+    }
+  },
+  "required": "sa"
 }

@@ -1,3 +1,84 @@
 {
-  "TODO": "TODO"
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "Individual's PAYE employments",
+  "type": "object",
+  "properties": {
+    "employments": {
+      "type": "array",
+      "description": "The list of the individual’s PAYE employment data for the requested time period.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "employer": {
+            "type": "object",
+            "description": "The employer's details.",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "The name of the employer."
+              },
+              "address": {
+                "type": "object",
+                "description": "The address of the employer.",
+                "properties": {
+                  "line1": {
+                    "type": "string",
+                    "description": "Address line 1."
+                  },
+                  "line2": {
+                    "type": "string",
+                    "description": "Address line 2."
+                  },
+                  "line3": {
+                    "type": "string",
+                    "description": "Address line 3."
+                  },
+                  "line4": {
+                    "type": "string",
+                    "description": "Address line 4."
+                  },
+                  "line5": {
+                    "type": "string",
+                    "description": "Address line 5."
+                  },
+                  "postcode": {
+                    "type": "string",
+                    "description": "The postcode for the address.",
+                    "example": "123/AI45678"
+                  }
+                }
+              },
+              "districtNumber": {
+                "type": "string",
+                "description": "Employer district number",
+                "example": "247"
+              },
+              "schemeRef": {
+                "type": "string",
+                "description": "Employer scheme reference",
+                "example": "ZT6767895A"
+              }
+            }
+          },
+          "employment": {
+            "type": "object",
+            "description": "The employment details.",
+            "properties": {
+              "startDate": {
+                "type": "string",
+                "description": "The date the employment started. Date in the format: YYYY-MM-DD.",
+                "example": "2019-01-01"
+              },
+              "endDate": {
+                "type": "string",
+                "description": "The date the employment ended. Date in the format: YYYY-MM-DD.",
+                "example": "2019-03-01"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": "employments"
 }
