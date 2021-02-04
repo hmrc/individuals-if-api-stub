@@ -23,7 +23,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import uk.gov.hmrc.domain.{EmpRef, Nino, SaUtr}
-import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpClient, NotFoundException}
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -135,7 +135,7 @@ class ApiPlatformTestUserConnectorSpec
         get(urlEqualTo(s"/individuals/nino/$nino"))
           .willReturn(aResponse().withStatus(NOT_FOUND)))
 
-      intercept[RecordNotFoundException] {
+      intercept[NotFoundException] {
         await(underTest.getIndividualByNino(nino))
       }
     }

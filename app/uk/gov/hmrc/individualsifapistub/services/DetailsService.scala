@@ -36,8 +36,12 @@ class DetailsService @Inject()(detailsRepository: DetailsRepository,
             (implicit ec: ExecutionContext,
              hc: HeaderCarrier) : Future[DetailsResponseNoId] = {
 
-    if (servicesConfig.getConfBool("verifyNino", true)) verifyNino(idType, idValue)
-    detailsRepository.create(idType, idValue, useCase, createDetailsRequest)
+    if (servicesConfig.getConfBool("verifyNino", true)) {
+      verifyNino(idType, idValue) flatMap { _ =>
+        detailsRepository.create(idType, idValue, useCase, createDetailsRequest)
+      }
+    } else
+      detailsRepository.create(idType, idValue, useCase, createDetailsRequest)
   }
 
   def get(idType: String,
