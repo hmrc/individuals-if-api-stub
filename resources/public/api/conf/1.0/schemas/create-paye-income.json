@@ -9,11 +9,6 @@
       "items": {
         "type": "object",
         "properties": {
-          "employerPayeRef": {
-            "type": "string",
-            "description": "Employer PAYE Reference",
-            "example": "123/AI45678"
-          },
           "taxYear": {
             "type": "string",
             "description": "The tax year of submission, format YY-YY.",
@@ -27,17 +22,6 @@
                 "type": "boolean",
                 "description": "Will only be true if the partner object is present",
                 "example": "true"
-              }
-            }
-          },
-          "payroll": {
-            "description": "Properties relevant to the employee's payroll",
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string",
-                "description": "Identifier assigned by the employer to the individual. Pattern: ^[^ ].{0,34}$",
-                "example": "yxz8Lt5?/`/>6]5b+7%>o-y4~W5suW"
               }
             }
           },
@@ -61,11 +45,6 @@
             "format": "date",
             "description": "Payment date",
             "example": "2016-02-28"
-          },
-          "paidHoursWorked": {
-            "type": "string",
-            "description": "Tax code associated with the payment. Pattern: ^([1-9][0-9]{0,5}[LMNPTY])|(BR)|(0T)|(NT)|(D[0-8])|([K][1-9][0-9]{0,5})$",
-            "example": "35"
           },
           "taxCode": {
             "type": "string",
@@ -92,11 +71,6 @@
             "description": "Value of tax deducted or refunded from this payment in the range -999999999.99 to 999999999.99",
             "example": 159228.45
           },
-          "dednsFromNetPay": {
-            "type": "number",
-            "description": "Value of deductions from net pay in pay period in the range -999999999.99 to 999999999.99",
-            "example": 159228.45
-          },
           "employeePensionContribs": {
             "description": "A set of properties relevant to employee pension contributions",
             "type": "object",
@@ -119,6 +93,37 @@
               "notPaid": {
                 "type": "number",
                 "description": "Value of employee pension contributions that are not paid under a net pay arrangement in the range -999999999.99 to 999999999.99",
+                "example": 163068.82
+              }
+            }
+          },
+          "dednsFromNetPay": {
+            "type": "number",
+            "description": "Value of deductions from net pay in pay period in the range -999999999.99 to 999999999.99",
+            "example": 159228.45
+          },
+          "statutoryPayYTD": {
+            "description": "A set of properties relevant to statutory pay for the year to date",
+            "type": "object",
+            "properties": {
+              "maternity": {
+                "type": "number",
+                "description": "Value for maternity in the range -999999999.99 to 999999999.99",
+                "example": 163068.82
+              },
+              "paternity": {
+                "type": "number",
+                "description": "Value for paternity in the range -999999999.99 to 999999999.99",
+                "example": 163068.8
+              },
+              "adoption": {
+                "type": "number",
+                "description": "Value for adoption in the range -999999999.99 to 999999999.99",
+                "example": 163068.82
+              },
+              "parentalBereavement": {
+                "type": "number",
+                "description": "Value for parental bereavement in the range -999999999.99 to 999999999.99",
                 "example": 163068.82
               }
             }
@@ -148,6 +153,27 @@
                 "example": 163068.82
               }
             }
+          },
+          "payroll": {
+            "description": "Properties relevant to the employee's payroll",
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Identifier assigned by the employer to the individual. Pattern: ^[^ ].{0,34}$",
+                "example": "yxz8Lt5?/`/>6]5b+7%>o-y4~W5suW"
+              }
+            }
+          },
+          "employerPayeRef": {
+            "type": "string",
+            "description": "Employer PAYE Reference",
+            "example": "123/AI45678"
+          },
+          "paidHoursWorked": {
+            "type": "string",
+            "description": "Tax code associated with the payment. Pattern: ^([1-9][0-9]{0,5}[LMNPTY])|(BR)|(0T)|(NT)|(D[0-8])|([K][1-9][0-9]{0,5})$",
+            "example": "35"
           },
           "totalEmployerNICs": {
             "description": "A set of properties relevant to the totals of employer National Insurance Contributions",
