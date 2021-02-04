@@ -38,8 +38,12 @@ class EmploymentsService @Inject()(employmentsRepository: EmploymentRepository,
             (implicit ec: ExecutionContext,
              hc: HeaderCarrier): Future[Employments] = {
 
-    if (servicesConfig.getConfBool("verifyNino", true)) verifyNino(idType, idValue)
-    employmentsRepository.create(idType, idValue, startDate, endDate, useCase, employments)
+    if (servicesConfig.getConfBool("verifyNino", true)) {
+      verifyNino(idType, idValue) flatMap { _ =>
+        employmentsRepository.create(idType, idValue, startDate, endDate, useCase, employments)
+      }
+    } else
+      employmentsRepository.create(idType, idValue, startDate, endDate, useCase, employments)
   }
 
   def get(idType: String,

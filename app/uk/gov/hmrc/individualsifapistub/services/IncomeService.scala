@@ -39,8 +39,12 @@ class IncomeService @Inject()(incomeSaRepository: IncomeSaRepository,
               (implicit ec: ExecutionContext,
                hc: HeaderCarrier): Future[IncomeSa] = {
 
-    if (servicesConfig.getConfBool("verifyNino", true)) verifyNino(idType, idValue)
-    incomeSaRepository.create(idType, idValue, startYear, endYear, useCase, createSelfAssessmentRequest)
+    if (servicesConfig.getConfBool("verifyNino", true)) {
+      verifyNino(idType, idValue) flatMap { _ =>
+        incomeSaRepository.create(idType, idValue, startYear, endYear, useCase, createSelfAssessmentRequest)
+      }
+    } else
+      incomeSaRepository.create(idType, idValue, startYear, endYear, useCase, createSelfAssessmentRequest)
   }
 
   def getSa(idType: String,
@@ -61,8 +65,12 @@ class IncomeService @Inject()(incomeSaRepository: IncomeSaRepository,
                 (implicit ec: ExecutionContext,
                  hc: HeaderCarrier): Future[IncomePaye] = {
 
-    if (servicesConfig.getConfBool("verifyNino", true)) verifyNino(idType, idValue)
-    incomePayeRepository.create(idType, idValue, startDate, endDate, useCase, createIncomePayeRequest)
+    if (servicesConfig.getConfBool("verifyNino", true)) {
+      verifyNino(idType, idValue) flatMap { _ =>
+        incomePayeRepository.create(idType, idValue, startDate, endDate, useCase, createIncomePayeRequest)
+      }
+    } else
+      incomePayeRepository.create(idType, idValue, startDate, endDate, useCase, createIncomePayeRequest)
   }
 
   def getPaye(idType: String,
