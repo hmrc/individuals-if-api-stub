@@ -47,8 +47,8 @@ class IncomeSaRepositorySpec
 
       await(repository.collection.indexesManager.list()).find({ i =>
       {
-        i.name.contains("cache-key") &&
-          i.key.exists(key => key._1 == "details")
+        i.name.contains("id") &&
+          i.key.exists(key => key._1 == "id")
         i.background &&
           i.unique
       }

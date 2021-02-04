@@ -43,7 +43,7 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
   def create(idType: String,
              idValue: String,
              useCase: String,
-             createDetailsRequest: CreateDetailsRequest): Future[DetailsResponse] = {
+             createDetailsRequest: CreateDetailsRequest): Future[DetailsResponseNoId] = {
 
     val useCaseMap = Map(
       "LAA-C3-residences"        -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
@@ -65,9 +65,16 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
     val tag = useCaseMap.get(useCase).getOrElse(useCase)
     val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$tag"
 
-    val detailsResponse = DetailsResponse(id, createDetailsRequest.contactDetails, createDetailsRequest.residences)
+    val detailsResponse = useCase.contains("residences") match {
+      case true => {
+        DetailsResponse(id, None, createDetailsRequest.residences)
+      }
+      case _    => {
+        DetailsResponse(id, createDetailsRequest.contactDetails, None)
+      }
+    }
 
-    insert(detailsResponse) map (_ => detailsResponse) recover {
+    insert(detailsResponse) map (_ => DetailsResponseNoId(detailsResponse.contactDetails, detailsResponse.residences)) recover {
       case WriteResult.Code(11000) => throw new DuplicateException
     }
 

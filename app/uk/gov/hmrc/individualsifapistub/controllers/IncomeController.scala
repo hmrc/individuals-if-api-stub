@@ -26,10 +26,10 @@ import uk.gov.hmrc.individualsifapistub.domain.IncomeSa._
 
 import scala.concurrent.ExecutionContext
 
-class IncomeController @Inject()( bodyParser: PlayBodyParsers,
-                                  cc: ControllerComponents,
-                                  incomeService: IncomeService
-                                ) (implicit val ec: ExecutionContext) extends CommonController(cc) {
+class IncomeController @Inject()(bodyParser: PlayBodyParsers,
+                                 cc: ControllerComponents,
+                                 incomeService: IncomeService)
+                                (implicit val ec: ExecutionContext) extends CommonController(cc) {
 
   def createSa(idType: String,
                idValue: String,

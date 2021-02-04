@@ -50,6 +50,7 @@ case class Residence(statusCode: Option[String] = None,
                      noLongerUsed: Option[String] = None)
 
 case class DetailsResponse(details: String, contactDetails: Option[Seq[ContactDetail]], residences: Option[Seq[Residence]])
+case class DetailsResponseNoId(contactDetails: Option[Seq[ContactDetail]], residences: Option[Seq[Residence]])
 
 object DetailsResponse {
   val ninoPattern: Regex = "^((?!(BG|GB|KN|NK|NT|TN|ZZ)|(D|F|I|Q|U|V)[A-Z]|[A-Z](D|F|I|O|Q|U|V))[A-Z]{2})[0-9]{6}[A-D\\s]?$".r

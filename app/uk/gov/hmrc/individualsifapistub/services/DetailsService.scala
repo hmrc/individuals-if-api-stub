@@ -17,17 +17,26 @@
 package uk.gov.hmrc.individualsifapistub.services
 
 import javax.inject.Inject
-import uk.gov.hmrc.individualsifapistub.domain.{CreateDetailsRequest, DetailsResponse}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
+import uk.gov.hmrc.individualsifapistub.domain.{CreateDetailsRequest, DetailsResponse, DetailsResponseNoId}
 import uk.gov.hmrc.individualsifapistub.repository.DetailsRepository
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class DetailsService @Inject()(detailsRepository: DetailsRepository) {
+class DetailsService @Inject()(detailsRepository: DetailsRepository,
+                               apiPlatformTestUserConnector: ApiPlatformTestUserConnector,
+                               servicesConfig: ServicesConfig) extends ServiceBase(apiPlatformTestUserConnector) {
 
   def create(idType: String,
              idValue:String,
              useCase: String,
-             createDetailsRequest: CreateDetailsRequest): Future[DetailsResponse] = {
+             createDetailsRequest: CreateDetailsRequest)
+            (implicit ec: ExecutionContext,
+             hc: HeaderCarrier) : Future[DetailsResponseNoId] = {
+
+    if (servicesConfig.getConfBool("verifyNino", true)) verifyNino(idType, idValue)
     detailsRepository.create(idType, idValue, useCase, createDetailsRequest)
   }
 

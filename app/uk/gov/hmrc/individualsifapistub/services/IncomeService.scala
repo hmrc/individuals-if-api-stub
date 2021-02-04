@@ -17,19 +17,29 @@
 package uk.gov.hmrc.individualsifapistub.services
 
 import javax.inject.Inject
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.domain.{IncomePaye, IncomeSa}
 import uk.gov.hmrc.individualsifapistub.repository.{IncomePayeRepository, IncomeSaRepository}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeService @Inject()(incomeSaRepository: IncomeSaRepository, incomePayeRepository: IncomePayeRepository) {
+class IncomeService @Inject()(incomeSaRepository: IncomeSaRepository,
+                              incomePayeRepository: IncomePayeRepository,
+                              apiPlatformTestUserConnector: ApiPlatformTestUserConnector,
+                              servicesConfig: ServicesConfig) extends ServiceBase(apiPlatformTestUserConnector) {
 
   def createSa(idType: String,
                idValue: String,
                startYear: String,
                endYear: String,
                useCase: String,
-               createSelfAssessmentRequest: IncomeSa): Future[IncomeSa] = {
+               createSelfAssessmentRequest: IncomeSa)
+              (implicit ec: ExecutionContext,
+               hc: HeaderCarrier): Future[IncomeSa] = {
+
+    if (servicesConfig.getConfBool("verifyNino", true)) verifyNino(idType, idValue)
     incomeSaRepository.create(idType, idValue, startYear, endYear, useCase, createSelfAssessmentRequest)
   }
 
@@ -47,7 +57,11 @@ class IncomeService @Inject()(incomeSaRepository: IncomeSaRepository, incomePaye
                  startDate: String,
                  endDate: String,
                  useCase: String,
-                 createIncomePayeRequest: IncomePaye): Future[IncomePaye] = {
+                 createIncomePayeRequest: IncomePaye)
+                (implicit ec: ExecutionContext,
+                 hc: HeaderCarrier): Future[IncomePaye] = {
+
+    if (servicesConfig.getConfBool("verifyNino", true)) verifyNino(idType, idValue)
     incomePayeRepository.create(idType, idValue, startDate, endDate, useCase, createIncomePayeRequest)
   }
 

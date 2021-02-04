@@ -16,11 +16,16 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.services
 
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
+import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.individualsifapistub.repository.EmploymentRepository
 import uk.gov.hmrc.individualsifapistub.services.EmploymentsService
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 import scala.concurrent.Future
@@ -28,14 +33,15 @@ import scala.concurrent.Future
 class EmploymentsServiceSpec extends TestSupport {
   trait Setup {
 
-    val idType = "idType"
-    val idValue = "idValue"
+    val idType = "Nino"
+    val idValue = "XH123456A"
     val startDate = "2020-01-01"
     val endDate = "2020-21-31"
     val useCase = "TEST"
     val fields = "some(values)"
     val ident = Identifier(Some("XH123456A"), None, Some(startDate), Some(endDate), Some(useCase))
     val id = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$useCase"
+    val utr = SaUtr("2432552635")
 
     val employment =
         Employment(
@@ -77,10 +83,17 @@ class EmploymentsServiceSpec extends TestSupport {
       )
     )
 
+    implicit val hc = HeaderCarrier()
+    val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
+
     val employments = Employments(Seq(employment))
     val request = EmploymentEntry(id, Seq(employment))
     val mockEmploymentRepository = mock[EmploymentRepository]
-    val underTest = new EmploymentsService(mockEmploymentRepository)
+    val servicesConfig = mock[ServicesConfig]
+    val underTest = new EmploymentsService(mockEmploymentRepository, apiPlatformTestUserConnector, servicesConfig)
+
+    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
+      thenReturn(Future.successful(TestIndividual(Some(utr))))
 
   }
 

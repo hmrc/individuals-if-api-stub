@@ -28,8 +28,8 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class TaxCreditsController @Inject()(bodyParsers: PlayBodyParsers,
                                      cc: ControllerComponents,
-                                     taxCreditsService: TaxCreditsService
-                                    )(implicit val ec: ExecutionContext) extends CommonController(cc) {
+                                     taxCreditsService: TaxCreditsService)
+                                    (implicit val ec: ExecutionContext) extends CommonController(cc) {
 
   def create(idType: String,
              idValue: String,

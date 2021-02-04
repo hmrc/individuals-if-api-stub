@@ -16,12 +16,16 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.services
 
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
-import uk.gov.hmrc.individualsifapistub.domain.TaxCredits._
-import uk.gov.hmrc.individualsifapistub.domain.{Application, Applications, Identifier}
+import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
+import uk.gov.hmrc.individualsifapistub.domain.{Application, Applications, Identifier, TestIndividual}
 import uk.gov.hmrc.individualsifapistub.repository.TaxCreditsRepository
 import uk.gov.hmrc.individualsifapistub.services.TaxCreditsService
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 import scala.concurrent.Future
@@ -37,18 +41,26 @@ class TaxCreditsServiceSpec extends TestSupport {
     val fields = "some(values)"
     val ident = Identifier(Some(idValue), None, Some(startDate), Some(endDate), Some(useCase))
     val id = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$useCase"
+    val utr = SaUtr("2432552635")
 
     val application: Application = Application(
-      id = 12345,
+      id = Some(12345),
       ceasedDate = Some("2012-12-12"),
       entStartDate = Some("2012-12-12"),
       entEndDate = Some("2012-12-12"),
       None
     )
 
+    implicit val hc = HeaderCarrier()
+    val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
+
     val request = Applications(Seq(application))
     val taxCreditsRepository = mock[TaxCreditsRepository]
-    val underTest = new TaxCreditsService(taxCreditsRepository)
+    val servicesConfig = mock[ServicesConfig]
+    val underTest = new TaxCreditsService(taxCreditsRepository, apiPlatformTestUserConnector, servicesConfig)
+
+    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
+      thenReturn(Future.successful(TestIndividual(Some(utr))))
 
   }
 

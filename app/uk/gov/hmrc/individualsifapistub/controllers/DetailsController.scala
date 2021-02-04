@@ -26,10 +26,10 @@ import uk.gov.hmrc.individualsifapistub.services.DetailsService
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class DetailsController @Inject()(  bodyParsers: PlayBodyParsers,
-                                    cc: ControllerComponents,
-                                    detailsService: DetailsService
-                                 )(implicit val ec: ExecutionContext) extends CommonController(cc) {
+class DetailsController @Inject()(bodyParsers: PlayBodyParsers,
+                                  cc: ControllerComponents,
+                                  detailsService: DetailsService)
+                                 (implicit val ec: ExecutionContext) extends CommonController(cc) {
 
   def create(idType: String,
              idValue: String,
