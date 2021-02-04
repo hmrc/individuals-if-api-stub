@@ -9,11 +9,6 @@
       "items": {
         "type": "object",
         "properties": {
-          "code": {
-            "description": "The numeric code for the associated 'type' property below where 9 = MOBILE TELEPHONE and 8 = EVENING TELEPHONE and 7 = DAYTIME TELEPHONE",
-            "type": "integer",
-            "example": "9"
-          },
           "detail": {
             "description": "The telephone number",
             "type": "string",
