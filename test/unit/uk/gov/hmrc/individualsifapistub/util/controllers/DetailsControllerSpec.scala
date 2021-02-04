@@ -70,10 +70,7 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
 
     "Successfully create a details record and return created record as response" in new Setup {
 
-      val ident = Identifier(Some(idValue), None, None, None, Some(useCase))
-      val id = s"${ident.nino.getOrElse(ident.trn.get)}-$useCase"
-      val detailsResponse = DetailsResponse(id, request.contactDetails, request.residences)
-      val returnVal = DetailsResponseNoId(detailsResponse.contactDetails, detailsResponse.residences)
+      val returnVal = DetailsResponseNoId(request.contactDetails, request.residences)
 
       when(mockDetailsService.create(idType, idValue, useCase, request)).thenReturn(
         Future.successful(returnVal)
@@ -90,10 +87,7 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
 
     "Fail when an invalid nino is provided" in new Setup {
 
-      val ident = Identifier(Some(idValue), None, None, None, Some(useCase))
-      val id = s"${ident.nino.getOrElse(ident.trn.get)}-$useCase"
-      val detailsResponse = DetailsResponse(id, request.contactDetails, request.residences)
-      val returnVal = DetailsResponseNoId(detailsResponse.contactDetails, detailsResponse.residences)
+      val returnVal = DetailsResponseNoId(request.contactDetails, request.residences)
 
       when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
         thenReturn(Future.failed(new RecordNotFoundException))
@@ -112,10 +106,7 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
 
     "Fail when a request is not provided" in new Setup {
 
-      val details = Identifier(Some(idValue), None, None, None, Some(useCase))
-      val id = s"${details.nino.getOrElse(details.trn)}-$useCase"
-      val detailsResponse = DetailsResponse(id, None, None)
-      val returnVal = DetailsResponseNoId(detailsResponse.contactDetails, detailsResponse.residences)
+      val returnVal = DetailsResponseNoId(None, None)
 
       when(mockDetailsService.create(idType, idValue, useCase, request)).thenReturn(
         Future.successful(returnVal)

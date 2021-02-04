@@ -17,10 +17,9 @@
 package uk.gov.hmrc.individualsifapistub.services
 
 import javax.inject.Inject
-import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
-import uk.gov.hmrc.individualsifapistub.domain.{Employments, IdType, RecordNotFoundException}
+import uk.gov.hmrc.individualsifapistub.domain.Employments
 import uk.gov.hmrc.individualsifapistub.repository.EmploymentRepository
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
@@ -28,7 +27,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class EmploymentsService @Inject()(employmentsRepository: EmploymentRepository,
                                    val apiPlatformTestUserConnector: ApiPlatformTestUserConnector,
-                                   servicesConfig: ServicesConfig) {
+                                   servicesConfig: ServicesConfig) extends ServiceBase(apiPlatformTestUserConnector) {
 
   def create(idType: String,
              idValue: String,
@@ -49,19 +48,5 @@ class EmploymentsService @Inject()(employmentsRepository: EmploymentRepository,
           endDate: String,
           fields: Option[String]): Future[Option[Employments]] = {
     employmentsRepository.findByIdAndType(idType, idValue, startDate, endDate, fields)
-  }
-
-  def verifyNino(idType: String, idValue: String)
-                (implicit ec: ExecutionContext,
-                 hc: HeaderCarrier) = {
-    IdType.parse(idType) match {
-      case IdType.Nino => {
-        for {
-          individual <- apiPlatformTestUserConnector.getIndividualByNino(Nino(idValue))
-          utr = individual.saUtr.getOrElse(throw new RecordNotFoundException)
-        } yield utr
-      }
-      case _ => throw new BadRequestException("Invalid National Insurance Number")
-    }
   }
 }

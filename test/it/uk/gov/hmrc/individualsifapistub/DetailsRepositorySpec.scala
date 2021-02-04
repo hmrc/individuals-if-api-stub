@@ -40,7 +40,7 @@ class DetailsRepositorySpec extends RepositoryTestHelper with TestHelpers {
 
       await(repository.collection.indexesManager.list()).find({ i =>
       {
-        i.name.contains("cache-key") &&
+        i.name.contains("id") &&
           i.key.exists(key => key._1 == "details")
           i.background &&
           i.unique
@@ -56,9 +56,7 @@ class DetailsRepositorySpec extends RepositoryTestHelper with TestHelpers {
 
       val ident = Identifier(Some(ninoValue), None, None, None, Some(useCase))
       val id = s"${ident.nino.getOrElse(ident.trn.get)}-$useCase"
-
-      val detailsResponse = DetailsResponse(id, request.contactDetails, request.residences)
-      val returnVal       = DetailsResponseNoId(detailsResponse.contactDetails, detailsResponse.residences)
+      val returnVal = DetailsResponseNoId(request.contactDetails, request.residences)
 
       val result = await(repository.create("nino", ninoValue, useCase, request))
 
@@ -70,9 +68,7 @@ class DetailsRepositorySpec extends RepositoryTestHelper with TestHelpers {
 
       val ident = Identifier(None, Some(trnValue), None, None, Some(useCase))
       val id = s"${ident.nino.getOrElse(ident.trn.get)}-$useCase"
-
-      val detailsResponse = DetailsResponse(id, request.contactDetails, request.residences)
-      val returnVal       = DetailsResponseNoId(detailsResponse.contactDetails, detailsResponse.residences)
+      val returnVal = DetailsResponseNoId(request.contactDetails, request.residences)
 
       val result = await(repository.create("trn", trnValue, useCase, request))
 

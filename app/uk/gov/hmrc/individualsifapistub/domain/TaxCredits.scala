@@ -76,7 +76,7 @@ object TaxCredits {
   val maxPaymentValue = 1000000000000000.0
 
   def isMultipleOfOne(value: Double): Boolean = value % 1 == 0
-  def isMultipleOfPointZeroOne(value: Double): Boolean = (value * 100.0) % 1 == 0
+  def isMultipleOfPointZeroOne(value: Double): Boolean = (BigDecimal(value) * 100.0) % 1 == 0
 
   def isInRange(value: Double): Boolean = value >= minPaymentValue && value <= maxPaymentValue
 

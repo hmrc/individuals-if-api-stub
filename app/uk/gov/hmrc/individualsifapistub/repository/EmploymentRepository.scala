@@ -99,12 +99,8 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
       )
     }
 
-    Logger.debug(s"fields: ${fields}")
-
     val tag = fields.flatMap(value => fieldsMap.get(value)).getOrElse("TEST")
     val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$tag"
-
-    Logger.debug(s"key: ${id}")
 
     collection
       .find[JsObject, JsObject](obj("id" -> id), None)
