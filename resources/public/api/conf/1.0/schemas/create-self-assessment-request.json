@@ -9,6 +9,11 @@
       "items": {
         "type": "object",
         "properties": {
+          "taxYear": {
+            "type": "string",
+            "description": "The tax year of submission, format YY-YY.",
+            "example": "2018-19"
+          },
           "returnList": {
             "type": "array",
             "description": "The list of Self Assessment tax returns in the requested time period.",
@@ -35,6 +40,10 @@
                   "type": "string",
                   "description": "Self Assessment received date. Date in format YYY-MM-DD",
                   "example": "2012-02-06"
+                },
+                "businessDescription": {
+                  "type": "string",
+                  "description": "Business description"
                 },
                 "address": {
                   "type": "object",
@@ -73,65 +82,65 @@
                   "type": "object",
                   "description": "Self Assessment income for a requested time period.",
                   "properties": {
-                    "ukProperty": {
+                    "selfAssessment": {
                       "type": "number",
-                      "description": "The profit from UK properties",
-                      "example": "1276.67"
+                      "description": "The total income from self employment",
+                      "example": "30000"
                     },
                     "trusts": {
                       "type": "number",
                       "description": "The amount of income from trusts",
                       "example": "2143.32"
                     },
-                    "selfAssessment": {
+                    "allEmployments": {
                       "type": "number",
-                      "description": "The total income from self employment",
-                      "example": "30000"
+                      "description": "The individual's income from employments.",
+                      "example": "5000"
                     },
                     "selfEmployment": {
                       "type": "number",
                       "description": "The amount of profit from self-employments.",
                       "example": "5000"
                     },
-                    "pensions": {
-                      "type": "number",
-                      "description": "The total income from pensions and state benefits.",
-                      "example": "52.79"
-                    },
                     "partnerships": {
                       "type": "number",
                       "description": "The amount of profit from partnerships income.",
                       "example": "324.54"
                     },
-                    "other": {
+                    "ukProperty": {
                       "type": "number",
-                      "description": "The amount of other income.",
-                      "example": "26.70"
-                    },
-                    "ukInterest": {
-                      "type": "number",
-                      "description": "The UK interest received before tax.",
-                      "example": "12.46"
-                    },
-                    "foreignDivs": {
-                      "type": "number",
-                      "description": "The income from foreign dividends.",
-                      "example": "25.86"
-                    },
-                    "ukDivsAndInterest": {
-                      "type": "number",
-                      "description": "The income from UK dividends.",
-                      "example": "657.89"
+                      "description": "The profit from UK properties",
+                      "example": "1276.67"
                     },
                     "foreign": {
                       "type": "number",
                       "description": "The individual's foreign income.",
                       "example": "2143.32"
                     },
-                    "allEmployments": {
+                    "foreignDivs": {
                       "type": "number",
-                      "description": "The individual's income from employments.",
-                      "example": "5000"
+                      "description": "The income from foreign dividends.",
+                      "example": "25.86"
+                    },
+                    "ukInterest": {
+                      "type": "number",
+                      "description": "The UK interest received before tax.",
+                      "example": "12.46"
+                    },
+                    "ukDivsAndInterest": {
+                      "type": "number",
+                      "description": "The income from UK dividends.",
+                      "example": "657.89"
+                    },
+                    "pensions": {
+                      "type": "number",
+                      "description": "The total income from pensions and state benefits.",
+                      "example": "52.79"
+                    },
+                    "other": {
+                      "type": "number",
+                      "description": "The amount of other income.",
+                      "example": "26.70"
                     },
                     "lifePolicies": {
                       "type": "number",
