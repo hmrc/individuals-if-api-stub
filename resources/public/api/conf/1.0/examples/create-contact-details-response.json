@@ -1,14 +1,17 @@
 {
   "contactDetails": [
     {
+      "code": 9,
       "detail": "07123 987654",
       "type": "MOBILE TELEPHONE"
     },
     {
+      "code": 8,
       "detail": "07124 987655",
       "type": "EVENING TELEPHONE"
     },
     {
+      "code": 7,
       "detail": "07124 987656",
       "type": "DAYTIME TELEPHONE"
     }
