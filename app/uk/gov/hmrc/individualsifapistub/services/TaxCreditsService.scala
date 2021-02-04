@@ -38,8 +38,12 @@ class TaxCreditsService @Inject()(repository: TaxCreditsRepository,
             (implicit ec: ExecutionContext,
              hc: HeaderCarrier): Future[Applications] = {
 
-    if (servicesConfig.getConfBool("verifyNino", true)) verifyNino(idType, idValue)
-    repository.create(idType, idValue, startDate, endDate, useCase, applications)
+    if (servicesConfig.getConfBool("verifyNino", true)) {
+      verifyNino(idType, idValue) flatMap { _ =>
+        repository.create(idType, idValue, startDate, endDate, useCase, applications)
+      }
+    } else
+      repository.create(idType, idValue, startDate, endDate, useCase, applications)
   }
 
   def get(idType: String,
