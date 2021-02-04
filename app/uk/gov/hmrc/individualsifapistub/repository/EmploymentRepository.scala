@@ -67,8 +67,6 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
     val tag = useCaseMap.get(useCase).getOrElse(useCase)
     val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$tag"
 
-    Logger.debug(s"emp: ${EmploymentEntry(id, employments.employments)}")
-
     insert(EmploymentEntry(id, employments.employments)) map (_ => employments) recover {
       case WriteResult.Code(11000) => throw new DuplicateException
     }
