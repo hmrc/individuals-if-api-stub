@@ -21,6 +21,7 @@ import play.api.libs.functional.syntax.{unlift, _}
 import play.api.libs.json.JodaWrites._
 import play.api.libs.json.Reads.{maxLength, minLength}
 import play.api.libs.json._
+import uk.gov.hmrc.individualsifapistub.domain.DetailsResponse._
 
 import scala.util.{Failure, Try}
 
@@ -31,7 +32,7 @@ object JsonFormatters {
     override def writes(o: DateTime): JsValue = JodaDateTimeNumberWrites.writes(o)
   }
 
-  implicit val contactDetailFormat = Json.format[ContactDetail]
+  implicit val responseNoId = Json.format[DetailsResponseNoId]
   implicit val addressFormat = Json.format[Address]
   implicit val residenceFormat = Json.format[Residence]
   implicit val detailsResponseFormat = Json.format[DetailsResponse]

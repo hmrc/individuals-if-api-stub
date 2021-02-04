@@ -25,7 +25,7 @@ class TaxCreditsRepositorySpec extends RepositoryTestHelper {
   val repository = fakeApplication.injector.instanceOf[TaxCreditsRepository]
 
   val application: Application = Application(
-    id = 12345,
+    id = Some(12345),
     ceasedDate = Some("2012-12-12"),
     entStartDate = Some("2012-12-12"),
     entEndDate = Some("2012-12-12"),
@@ -47,8 +47,8 @@ class TaxCreditsRepositorySpec extends RepositoryTestHelper {
 
       await(repository.collection.indexesManager.list()).find({ i =>
       {
-        i.name.contains("cache-key") &&
-          i.key.exists(key => key._1 == "details")
+        i.name.contains("id") &&
+          i.key.exists(key => key._1 == "id")
         i.background &&
           i.unique
       }

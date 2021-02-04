@@ -63,11 +63,11 @@ class TaxCreditsSpec extends UnitSpec with TestHelpers {
     workTaxCredit = Some(validWorkTaxCredit),
     childTaxCredit = Some(validChildTaxCredit),
     grossTaxYearAmount = Some(12345),
-    payments = Some(validPayments)
+    payments = Some(Seq(validPayments))
   )
 
   val validApplication: Application = Application(
-    id = idValue,
+    id = Some(idValue),
     ceasedDate = Some("2012-12-12"),
     entStartDate = Some("2012-12-12"),
     entEndDate = Some("2012-12-12"),
@@ -231,7 +231,7 @@ class TaxCreditsSpec extends UnitSpec with TestHelpers {
           |  "startDate" : "2012-12-12",
           |  "endDate" : "2012-12-12",
           |  "totalEntitlement" : 12345,
-          |  "workTaxCredit" : {
+          |  "workingTaxCredit" : {
           |    "amount" : 12345,
           |    "entitlementYTD" : 12345,
           |    "paidYTD" : 12345
@@ -245,7 +245,7 @@ class TaxCreditsSpec extends UnitSpec with TestHelpers {
           |    "paidYTD" : 12345
           |  },
           |  "grossYearTaxAmount" : 12345,
-          |  "payments" : {
+          |  "payments" : [{
           |    "periodStartDate" : "2012-12-12",
           |    "periodEndDate" : "2012-12-12",
           |    "startDate" : "2012-12-12",
@@ -257,7 +257,7 @@ class TaxCreditsSpec extends UnitSpec with TestHelpers {
           |    "tcType" : "ETC",
           |    "amount" : 1234134123,
           |    "method" : "R"
-          |  }
+          |  }]
           |}
           |""".stripMargin
 
@@ -288,7 +288,7 @@ class TaxCreditsSpec extends UnitSpec with TestHelpers {
           |    "startDate" : "2012-12-12",
           |    "endDate" : "2012-12-12",
           |    "totalEntitlement" : 12345,
-          |    "workTaxCredit" : {
+          |    "workingTaxCredit" : {
           |      "amount" : 12345,
           |      "entitlementYTD" : 12345,
           |      "paidYTD" : 12345
@@ -302,7 +302,7 @@ class TaxCreditsSpec extends UnitSpec with TestHelpers {
           |      "paidYTD" : 12345
           |    },
           |    "grossYearTaxAmount" : 12345,
-          |    "payments" : {
+          |    "payments" : [{
           |      "periodStartDate" : "2012-12-12",
           |      "periodEndDate" : "2012-12-12",
           |      "startDate" : "2012-12-12",
@@ -314,7 +314,7 @@ class TaxCreditsSpec extends UnitSpec with TestHelpers {
           |      "tcType" : "ETC",
           |      "amount" : 1234134123,
           |      "method" : "R"
-          |    }
+          |    }]
           |  } ]
           |}
           |""".stripMargin

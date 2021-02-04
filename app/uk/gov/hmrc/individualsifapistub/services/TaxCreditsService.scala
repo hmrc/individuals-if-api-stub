@@ -17,19 +17,28 @@
 package uk.gov.hmrc.individualsifapistub.services
 
 import javax.inject.Inject
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.domain.Applications
 import uk.gov.hmrc.individualsifapistub.repository.TaxCreditsRepository
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class TaxCreditsService @Inject()(repository: TaxCreditsRepository) {
+class TaxCreditsService @Inject()(repository: TaxCreditsRepository,
+                                  apiPlatformTestUserConnector: ApiPlatformTestUserConnector,
+                                  servicesConfig: ServicesConfig) extends ServiceBase(apiPlatformTestUserConnector) {
 
   def create(idType: String,
              idValue: String,
              startDate: String,
              endDate: String,
              useCase: String,
-             applications: Applications): Future[Applications] = {
+             applications: Applications)
+            (implicit ec: ExecutionContext,
+             hc: HeaderCarrier): Future[Applications] = {
+
+    if (servicesConfig.getConfBool("verifyNino", true)) verifyNino(idType, idValue)
     repository.create(idType, idValue, startDate, endDate, useCase, applications)
   }
 

@@ -17,19 +17,28 @@
 package uk.gov.hmrc.individualsifapistub.services
 
 import javax.inject.Inject
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.domain.Employments
 import uk.gov.hmrc.individualsifapistub.repository.EmploymentRepository
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class EmploymentsService @Inject()(employmentsRepository: EmploymentRepository) {
+class EmploymentsService @Inject()(employmentsRepository: EmploymentRepository,
+                                   val apiPlatformTestUserConnector: ApiPlatformTestUserConnector,
+                                   servicesConfig: ServicesConfig) extends ServiceBase(apiPlatformTestUserConnector) {
 
   def create(idType: String,
              idValue: String,
              startDate: String,
              endDate: String,
              useCase: String,
-             employments: Employments): Future[Employments] = {
+             employments: Employments)
+            (implicit ec: ExecutionContext,
+             hc: HeaderCarrier): Future[Employments] = {
+
+    if (servicesConfig.getConfBool("verifyNino", true)) verifyNino(idType, idValue)
     employmentsRepository.create(idType, idValue, startDate, endDate, useCase, employments)
   }
 

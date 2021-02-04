@@ -16,16 +16,22 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.controllers
 
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import testUtils.TestHelpers
+import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.controllers.DetailsController
 import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
-import uk.gov.hmrc.individualsifapistub.domain._
+import uk.gov.hmrc.individualsifapistub.domain.{RecordNotFoundException, _}
+import uk.gov.hmrc.individualsifapistub.repository.DetailsRepository
 import uk.gov.hmrc.individualsifapistub.services.DetailsService
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 import scala.concurrent.Future
@@ -33,9 +39,16 @@ import scala.concurrent.Future
 class DetailsControllerSpec extends TestSupport with TestHelpers {
 
   trait Setup {
+    implicit val hc = HeaderCarrier()
     val fakeRequest = FakeRequest()
-    val mockDetailsService = mock[DetailsService]
+    val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
+    val detailsRepo = mock[DetailsRepository]
+    val servicesConfig = mock[ServicesConfig]
+    val mockDetailsService = new DetailsService(detailsRepo, apiPlatformTestUserConnector, servicesConfig)
     val underTest = new DetailsController(bodyParsers, controllerComponents, mockDetailsService)
+
+    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
+      thenReturn(Future.successful(TestIndividual(Some(utr))))
   }
 
   val idType = "nino"
@@ -44,6 +57,7 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
   val endDate = "2020-21-31"
   val useCase = "TEST"
   val fields = "some(values)"
+  val utr = SaUtr("2432552635")
 
   val request = CreateDetailsRequest(
     Some(Seq(ContactDetail(9, "MOBILE TELEPHONE", "07123 987654"), ContactDetail(9,"MOBILE TELEPHONE", "07123 987655"))),
@@ -56,12 +70,10 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
 
     "Successfully create a details record and return created record as response" in new Setup {
 
-      val ident = Identifier(Some(idValue), None, None, None, Some(useCase))
-      val id = s"${ident.nino.getOrElse(ident.trn.get)}-$useCase"
-      val detailsResponse = DetailsResponse(id, request.contactDetails, request.residences)
+      val returnVal = DetailsResponseNoId(request.contactDetails, request.residences)
 
       when(mockDetailsService.create(idType, idValue, useCase, request)).thenReturn(
-        Future.successful(detailsResponse)
+        Future.successful(returnVal)
       )
 
       val result = await(underTest.create(idType, idValue, useCase)(
@@ -69,18 +81,35 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
       )
 
       status(result) shouldBe CREATED
-      jsonBodyOf(result) shouldBe Json.toJson(detailsResponse)
+      jsonBodyOf(result) shouldBe Json.toJson(returnVal)
+
+    }
+
+    "Fail when an invalid nino is provided" in new Setup {
+
+      val returnVal = DetailsResponseNoId(request.contactDetails, request.residences)
+
+      when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
+        thenReturn(Future.failed(new RecordNotFoundException))
+
+      when(mockDetailsService.create(idType, idValue, useCase, request)).thenReturn(
+        Future.successful(returnVal)
+      )
+
+      val result = await(underTest.create(idType, idValue, useCase)(
+        fakeRequest.withBody(Json.toJson("")))
+      )
+
+      status(result) shouldBe BAD_REQUEST
 
     }
 
     "Fail when a request is not provided" in new Setup {
 
-      val details = Identifier(Some(idValue), None, None, None, Some(useCase))
-      val id = s"${details.nino.getOrElse(details.trn)}-$useCase"
-      val detailsResponse = DetailsResponse(id, None, None)
+      val returnVal = DetailsResponseNoId(None, None)
 
       when(mockDetailsService.create(idType, idValue, useCase, request)).thenReturn(
-        Future.successful(detailsResponse)
+        Future.successful(returnVal)
       )
 
       val response = await(underTest.create(idType, idValue, useCase)(

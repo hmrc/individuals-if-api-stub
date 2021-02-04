@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.libs.json.JsObject
 import play.api.libs.json.Json.obj
 import reactivemongo.api.commands.WriteResult
-import reactivemongo.api.indexes.Index
+import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.api.indexes.IndexType.Text
 import reactivemongo.bson.BSONObjectID
 import reactivemongo.play.json._
@@ -37,13 +37,13 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
     JsonFormatters.detailsResponseFormat) {
 
   override lazy val indexes = Seq(
-    Index(key = Seq(("details", Text)), name = Some("cache-key"), unique = true, background = true)
+    Index(key = List("details" -> IndexType.Ascending), name = Some("id"), unique = true, background = true)
   )
 
   def create(idType: String,
              idValue: String,
              useCase: String,
-             createDetailsRequest: CreateDetailsRequest): Future[DetailsResponse] = {
+             createDetailsRequest: CreateDetailsRequest): Future[DetailsResponseNoId] = {
 
     val useCaseMap = Map(
       "LAA-C3-residences"        -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
@@ -65,9 +65,16 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
     val tag = useCaseMap.get(useCase).getOrElse(useCase)
     val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$tag"
 
-    val detailsResponse = DetailsResponse(id, createDetailsRequest.contactDetails, createDetailsRequest.residences)
+    val detailsResponse = useCase.contains("residences") match {
+      case true => {
+        DetailsResponse(id, None, createDetailsRequest.residences)
+      }
+      case _    => {
+        DetailsResponse(id, createDetailsRequest.contactDetails, None)
+      }
+    }
 
-    insert(detailsResponse) map (_ => detailsResponse) recover {
+    insert(detailsResponse) map (_ => DetailsResponseNoId(detailsResponse.contactDetails, detailsResponse.residences)) recover {
       case WriteResult.Code(11000) => throw new DuplicateException
     }
 

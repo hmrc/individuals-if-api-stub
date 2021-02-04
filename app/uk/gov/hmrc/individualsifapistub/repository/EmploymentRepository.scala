@@ -21,7 +21,7 @@ import play.api.Logger
 import play.api.libs.json.JsObject
 import play.api.libs.json.Json.obj
 import reactivemongo.api.commands.WriteResult
-import reactivemongo.api.indexes.Index
+import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.api.indexes.IndexType.Text
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.individualsifapistub.domain.Employments._
@@ -39,7 +39,7 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
                                                         createEmploymentEntryFormat) {
 
   override lazy val indexes = Seq(
-    Index(key = Seq(("id", Text)), name = Some("cache-key"), unique = true, background = true)
+    Index(key = List("id" -> IndexType.Ascending), name = Some("id"), unique = true, background = true)
   )
 
   def create(idType: String,
@@ -97,12 +97,8 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
       )
     }
 
-    Logger.debug(s"fields: ${fields}")
-
     val tag = fields.flatMap(value => fieldsMap.get(value)).getOrElse("TEST")
     val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$tag"
-
-    Logger.debug(s"key: ${id}")
 
     collection
       .find[JsObject, JsObject](obj("id" -> id), None)
