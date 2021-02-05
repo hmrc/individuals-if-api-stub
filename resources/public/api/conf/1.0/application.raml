@@ -82,12 +82,12 @@ uses:
                   value:
                     code: INVALID_REQUEST
 
-  /individuals/income/sa/utr/{utr}:
+  /individuals/income/sa/nino/{nino}:
     uriParameters:
-      utr:
-        description: The self-assessment unique tax reference
+      nino:
+        description: The employee National Insurance number
         type: string
-        example: '2234567890'
+        example: AA123456D
 
     post:
       displayName: Create a self assessment payload
