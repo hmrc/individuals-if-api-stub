@@ -54,22 +54,22 @@
           "taxablePayToDate": {
             "type": "number",
             "description": "Taxable pay in this pay period including payrolled benefits in kind to date in the range -999999999.99 to 999999999.99",
-            "example": 163068.82
+            "example": "163068.82"
           },
           "taxablePay": {
             "type": "number",
             "description": "Taxable pay in this pay period including payrolled benefits in kind in the range -999999999.99 to 999999999.99",
-            "example": 163068.82
+            "example": "163068.82"
           },
           "totalTaxToDate": {
             "type": "number",
             "description": "Total tax to date in this employment in the range -999999999.99 to 999999999.99",
-            "example": 163068.82
+            "example": "163068.82"
           },
           "taxDeductedOrRefunded": {
             "type": "number",
             "description": "Value of tax deducted or refunded from this payment in the range -999999999.99 to 999999999.99",
-            "example": 159228.45
+            "example": "159228.45"
           },
           "employeePensionContribs": {
             "description": "A set of properties relevant to employee pension contributions",
@@ -78,29 +78,29 @@
               "paidYTD": {
                 "type": "number",
                 "description": "Value of employee pension contributions to date in the range -999999999.99 to 999999999.99",
-                "example": 163068.82
+                "example": "163068.82"
               },
               "notPaidYTD": {
                 "type": "number",
                 "description": "Value of employee pension contributions that are not paid under a net pay arrangement in the range -999999999.99 to 999999999.99",
-                "example": 163068.82
+                "example": "163068.82"
               },
               "paid": {
                 "type": "number",
                 "description": "Value of employee pension contributions paid under net pay arrangements in pay period in the range -999999999.99 to 999999999.99",
-                "example": 163068.82
+                "example": "163068.82"
               },
               "notPaid": {
                 "type": "number",
                 "description": "Value of employee pension contributions that are not paid under a net pay arrangement in the range -999999999.99 to 999999999.99",
-                "example": 163068.82
+                "example": "163068.82"
               }
             }
           },
           "dednsFromNetPay": {
             "type": "number",
             "description": "Value of deductions from net pay in pay period in the range -999999999.99 to 999999999.99",
-            "example": 159228.45
+            "example": "159228.45"
           },
           "statutoryPayYTD": {
             "description": "A set of properties relevant to statutory pay for the year to date",
@@ -109,22 +109,22 @@
               "maternity": {
                 "type": "number",
                 "description": "Value for maternity in the range -999999999.99 to 999999999.99",
-                "example": 163068.82
+                "example": "163068.82"
               },
               "paternity": {
                 "type": "number",
                 "description": "Value for paternity in the range -999999999.99 to 999999999.99",
-                "example": 163068.8
+                "example": "163068.8"
               },
               "adoption": {
                 "type": "number",
                 "description": "Value for adoption in the range -999999999.99 to 999999999.99",
-                "example": 163068.82
+                "example": "163068.82"
               },
               "parentalBereavement": {
                 "type": "number",
                 "description": "Value for parental bereavement in the range -999999999.99 to 999999999.99",
-                "example": 163068.82
+                "example": "163068.82"
               }
             }
           },
@@ -135,22 +135,22 @@
               "inPayPeriod1": {
                 "type": "number",
                 "description": "Value in pay period one in the range -999999999.99 to 999999999.99",
-                "example": 163068.82
+                "example": "163068.82"
               },
               "inPayPeriod2": {
                 "type": "number",
                 "description": "Value in pay period two in the range -999999999.99 to 999999999.99",
-                "example": 163068.8
+                "example": "163068.8"
               },
               "inPayPeriod3": {
                 "type": "number",
                 "description": "Value in pay period three in the range -999999999.99 to 999999999.99",
-                "example": 163068.82
+                "example": "163068.82"
               },
               "inPayPeriod4": {
                 "type": "number",
                 "description": "Value in pay period four in the range -999999999.99 to 999999999.99",
-                "example": 163068.82
+                "example": "163068.82"
               }
             }
           },
@@ -182,42 +182,42 @@
               "inPayPeriod1": {
                 "type": "number",
                 "description": "Value in pay period one in the range -999999999.99 to 999999999.99",
-                "example": 163068.82
+                "example": "163068.82"
               },
               "inPayPeriod2": {
                 "type": "number",
                 "description": "Value in pay period two in the range -999999999.99 to 999999999.99",
-                "example": 163068.82
+                "example": "163068.82"
               },
               "inPayPeriod3": {
                 "type": "number",
                 "description": "Value in pay period three in the range -999999999.99 to 999999999.99",
-                "example": 163068.82
+                "example": "163068.82"
               },
               "inPayPeriod4": {
                 "type": "number",
                 "description": "Value in pay period four in the range -999999999.99 to 999999999.99",
-                "example": 163068.82
+                "example": "163068.82"
               },
               "ytd1": {
                 "type": "number",
                 "description": "Value year to date one in the range -999999999.99 to 999999999.99",
-                "example": 163068.82
+                "example": "163068.82"
               },
               "ytd2": {
                 "type": "number",
                 "description": "Value year to date two in the range -999999999.99 to 999999999.99",
-                "example": 163068.82
+                "example": "163068.82"
               },
               "ytd3": {
                 "type": "number",
                 "description": "Value year to date three in the range -999999999.99 to 999999999.99",
-                "example": 163068.82
+                "example": "163068.82"
               },
               "ytd4": {
                 "type": "number",
                 "description": "Value year to date four in the range -999999999.99 to 999999999.99",
-                "example": 163068.82
+                "example": "163068.82"
               }
             }
           },
@@ -228,42 +228,42 @@
               "inPayPeriod1": {
                 "type": "number",
                 "description": "Value in pay period one in the range -999999999.99 to 999999999.99",
-                "example": 163068.82
+                "example": "163068.82"
               },
               "inPayPeriod2": {
                 "type": "number",
                 "description": "Value in pay period two in the range -999999999.99 to 999999999.99",
-                "example": 163068.82
+                "example": "163068.82"
               },
               "inPayPeriod3": {
                 "type": "number",
                 "description": "Value in pay period three in the range -999999999.99 to 999999999.99",
-                "example": 163068.82
+                "example": "163068.82"
               },
               "inPayPeriod4": {
                 "type": "number",
                 "description": "Value in pay period four in the range -999999999.99 to 999999999.99",
-                "example": 163068.82
+                "example": "163068.82"
               },
               "ytd1": {
                 "type": "number",
                 "description": "Value year to date one in the range -999999999.99 to 999999999.99",
-                "example": 163068.82
+                "example": "163068.82"
               },
               "ytd2": {
                 "type": "number",
                 "description": "Value year to date two in the range -999999999.99 to 999999999.99",
-                "example": 163068.82
+                "example": "163068.82"
               },
               "ytd3": {
                 "type": "number",
                 "description": "Value year to date three in the range -999999999.99 to 999999999.99",
-                "example": 163068.82
+                "example": "163068.82"
               },
               "ytd4": {
                 "type": "number",
                 "description": "Value year to date four in the range -999999999.99 to 999999999.99",
-                "example": 163068.82
+                "example": "163068.82"
               }
             }
           }
