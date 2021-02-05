@@ -52,7 +52,7 @@ class IncomeSaRepository @Inject()(mongoConnectionProvider: MongoConnectionProvi
       "HMCTS-C2" -> "HMCTS-C2_HMCTS-C3",
       "HMCTS-C2" -> "HMCTS-C2_HMCTS-C2",
       "LSANI-C1" -> "LSANI-C1_LSANI-C2",
-      "LSANI-C2" -> "LSANI-C1_LSANI-C2"
+      "LSANI-C3" -> "LSANI-C1_LSANI-C3"
     )
 
     val ident = IdType.parse(idType) match {
@@ -84,7 +84,7 @@ class IncomeSaRepository @Inject()(mongoConnectionProvider: MongoConnectionProvi
       "sa(returnList(addressLine1,addressLine2,addressLine3,addressLine4,businessDescription,postcode,telephoneNumber),taxYear)" -> "LAA-C4",
       "sa(returnList(caseStartDate,income(foreign,foreignDivs,selfAssessment,selfEmployment,ukDivsAndInterest,ukInterest,ukProperty)),taxYear)" -> "HMCTS-C2_HMCTS-C3",
       "sa(returnList(addressLine1,addressLine2,addressLine3,addressLine4,businessDescription,caseStartDate,postcode,telephoneNumber),taxYear)" -> "HMCTS-C4",
-      "sa(returnList(busEndDate,busStartDate,deducts(totalBusExpenses),income(allEmployments,foreign,foreignDivs,lifePolicies,other,partnerships,pensions,selfAssessment,selfEmployment,shares,trusts,ukDivsAndInterest,ukInterest,ukProperty),receivedDate,totalNIC,totalTaxPaid),taxYear)" -> "LSANI-C1_LSANI-C2",
+      "sa(returnList(busEndDate,busStartDate,deducts(totalBusExpenses),income(allEmployments,foreign,foreignDivs,lifePolicies,other,partnerships,pensions,selfAssessment,selfEmployment,shares,trusts,ukDivsAndInterest,ukInterest,ukProperty),receivedDate,totalNIC,totalTaxPaid),taxYear)" -> "LSANI-C1_LSANI-C3",
       "sa(returnList(addressLine1,addressLine2,addressLine3,addressLine4,businessDescription,caseStartDate,income(allEmployments,foreignDivs,lifePolicies,other,partnerships,pensions,selfAssessment,selfEmployment,shares,trusts,ukDivsAndInterest,ukInterest,ukProperty),postcode,receivedDate,telephoneNumber),taxYear)" -> "NICTSEJO-C4"
     )
 
