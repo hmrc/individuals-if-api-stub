@@ -50,8 +50,8 @@ class IncomeSaRepository @Inject()(mongoConnectionProvider: MongoConnectionProvi
 
     val useCaseMap = Map(
       "HMCTS-C2" -> "HMCTS-C2_HMCTS-C3",
-      "HMCTS-C2" -> "HMCTS-C2_HMCTS-C2",
-      "LSANI-C1" -> "LSANI-C1_LSANI-C2",
+      "HMCTS-C3" -> "HMCTS-C2_HMCTS-C3",
+      "LSANI-C1" -> "LSANI-C1_LSANI-C3",
       "LSANI-C3" -> "LSANI-C1_LSANI-C3"
     )
 
