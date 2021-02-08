@@ -40,7 +40,7 @@ class PayeEntrySpec extends UnitSpec {
     Some(createValidEmployeeNics()),
     Some(createValidEmployeePensionContribs()),
     Some(createValidBenefits()),
-    Some(39708.7),
+    Some(createValidStatutoryPayToDate()),
     Some(createValidStudentLoan()),
     Some(createValidPostGradLoan()),
     Some(createValodIFGrossEarningsForNics()),
@@ -65,7 +65,7 @@ class PayeEntrySpec extends UnitSpec {
     Some(createValidEmployeeNics()),
     Some(createValidEmployeePensionContribs()),
     Some(createValidBenefits()),
-    Some(39708.7),
+    Some(createValidStatutoryPayToDate()),
     Some(createValidStudentLoan()),
     Some(createValidPostGradLoan()),
     Some(createValodIFGrossEarningsForNics()),
@@ -112,7 +112,10 @@ class PayeEntrySpec extends UnitSpec {
           |    "taxedViaPayrollYTD": 246594.83
           |  },
           |  "statutoryPayYTD": {
-          |    "parentalBereavement": 39708.7
+          |    "maternity":15797.45,
+          |    "paternity":13170.69,
+          |    "adoption":16193.76,
+          |    "parentalBereavement":30846.56
           |  },
           |  "studentLoan": {
           |    "planType": "02",
@@ -202,5 +205,13 @@ class PayeEntrySpec extends UnitSpec {
       Some(15579.18),
       Some(110849.27),
       Some(162081.23)
+    )
+
+  def createValidStatutoryPayToDate() =
+    StatutoryPayYTD(
+      Some(15797.45),
+      Some(13170.69),
+      Some(16193.76),
+      Some(30846.56)
     )
 }

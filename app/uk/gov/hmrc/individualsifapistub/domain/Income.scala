@@ -75,6 +75,13 @@ case class EmployeeNics(
                          ytd4: Option[Double]
                        )
 
+case class StatutoryPayYTD(
+                              maternity: Option[Double],
+                              paternity: Option[Double],
+                              adoption: Option[Double],
+                              parentalBereavement: Option[Double]
+                            )
+
 case class PayeEntry(
                       taxCode: Option[String],
                       paidHoursWorked: Option[String],
@@ -92,7 +99,7 @@ case class PayeEntry(
                       employeeNics: Option[EmployeeNics],
                       employeePensionContribs: Option[EmployeePensionContribs],
                       benefits: Option[Benefits],
-                      parentalBereavement: Option[Double],
+                      statutoryPayYTD: Option[StatutoryPayYTD],
                       studentLoan: Option[StudentLoan],
                       postGradLoan: Option[PostGradLoan],
                       grossEarningsForNics: Option[GrossEarningsForNics],
@@ -370,6 +377,21 @@ object IncomePaye {
       ) (unlift(PostGradLoan.unapply))
   )
 
+  implicit val statutoryPayYTDFormat: Format[StatutoryPayYTD] = Format(
+    (
+      (JsPath \ "maternity").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "paternity").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "adoption").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "parentalBereavement").readNullable[Double](verifying(paymentAmountValidator))
+      )(StatutoryPayYTD.apply _),
+    (
+      (JsPath \ "maternity").writeNullable[Double] and
+        (JsPath \ "paternity").writeNullable[Double] and
+        (JsPath \ "adoption").writeNullable[Double] and
+        (JsPath \ "parentalBereavement").writeNullable[Double]
+      )(unlift(StatutoryPayYTD.unapply))
+  )
+
   implicit val studentLoanFormat: Format[StudentLoan] = Format(
     (
       (JsPath \ "planType").readNullable[String]
@@ -511,7 +533,7 @@ object IncomePaye {
         (JsPath \ "employeeNICs").readNullable[EmployeeNics] and
         (JsPath \ "employeePensionContribs").readNullable[EmployeePensionContribs] and
         (JsPath \ "benefits").readNullable[Benefits] and
-        (JsPath \ "statutoryPayYTD" \ "parentalBereavement").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "statutoryPayYTD") .readNullable[StatutoryPayYTD] and
         (JsPath \ "studentLoan").readNullable[StudentLoan] and
         (JsPath \ "postGradLoan").readNullable[PostGradLoan] and
         (JsPath \ "grossEarningsForNICs").readNullable[GrossEarningsForNics] and
@@ -535,7 +557,7 @@ object IncomePaye {
         (JsPath \ "employeeNICs").writeNullable[EmployeeNics] and
         (JsPath \ "employeePensionContribs").writeNullable[EmployeePensionContribs] and
         (JsPath \ "benefits").writeNullable[Benefits] and
-        (JsPath \ "statutoryPayYTD" \ "parentalBereavement").writeNullable[Double] and
+        (JsPath \ "statutoryPayYTD").writeNullable[StatutoryPayYTD] and
         (JsPath \ "studentLoan").writeNullable[StudentLoan] and
         (JsPath \ "postGradLoan").writeNullable[PostGradLoan] and
         (JsPath \ "grossEarningsForNICs").writeNullable[GrossEarningsForNics] and
