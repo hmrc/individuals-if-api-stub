@@ -145,12 +145,12 @@ uses:
   /individuals/income/paye/nino/{nino}:
     uriParameters:
       nino:
-        description: The employee National Insurance number
+        description: The employee's National Insurance number.
         type: string
         example: AA123456D
 
     post:
-      displayName: Create a paye income payload
+      displayName: Create a PAYE income payload
       description: !include docs/create-paye-income-description.md
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
@@ -172,12 +172,12 @@ uses:
           required: true
           example: 01-01-2019
         endDate:
-          description: The date that paye income data is requested to.
+          description: The date that PAYE income data is requested to.
           type: string
           required: true
           example: 01-01-2020
         useCase:
-          description: The use case to which the paye income data relates.
+          description: The use case that the PAYE income data relates to.
           type: string
           required: true
           example: LAA-C1 or LAA-C2 or LAA-C3 or LAA-C4 or LSANI-C1 or LSANI-C3 or HMCTS-C2 or HMCTS-C3 or HMCTS-C4 or NICTSEJO-C4
