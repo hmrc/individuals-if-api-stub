@@ -16,7 +16,7 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.testUtils
 
-import uk.gov.hmrc.individualsifapistub.domain.{Address, SaIncome, SaReturnType, SaTaxYearEntry}
+import uk.gov.hmrc.individualsifapistub.domain.{Address, Deducts, SaIncome, SaReturnType, SaTaxYearEntry}
 
 trait IncomeSaHelpers {
   def createValidSaTaxYearEntry() = {
@@ -56,7 +56,13 @@ trait IncomeSaHelpers {
       Some(100.01),
       Some(100.01),
       Some(Address(Some("line1"), Some("line2"), Some("line3"), Some("line4"), None, Some("QW123QW"))),
-      Some(validSaIncome)
+      Some(validSaIncome),
+      Some(validDeducts)
     )
   }
+
+  val validDeducts = Deducts(
+    Some(200.0),
+    Some(200.0)
+  )
 }
