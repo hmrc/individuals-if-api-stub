@@ -26,11 +26,11 @@ uses:
   /individuals/employment/nino/{nino}:
     uriParameters:
       nino:
-        description: The employee National Insurance number
+        description: The employee's National Insurance number.
         type: string
         example: AA123456D
     post:
-      displayName: Create an employment payload
+      displayName: Create an employments payload
       description: !include docs/create-employment-description.md
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
@@ -57,7 +57,7 @@ uses:
           required: true
           example: 01-01-2020
         useCase:
-          description: The use case to which the employments data relates.
+          description: The use case that the employments data relates to.
           type: string
           required: true
           example: LAA-C1 or LAA-C2 or LAA-C3 or LAA-C4 or LSANI-C1 or LSANI-C3 or HMCTS-C2 or HMCTS-C3 or HMCTS-C4 or NICTSEJO-C4
@@ -85,12 +85,12 @@ uses:
   /individuals/income/sa/nino/{nino}:
     uriParameters:
       nino:
-        description: The employee National Insurance number
+        description: The employee's National Insurance number.
         type: string
         example: AA123456D
 
     post:
-      displayName: Create a self assessment payload
+      displayName: Create a Self Assessment payload
       description: !include docs/create-self-assessment-description.md
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
@@ -117,7 +117,7 @@ uses:
           required: true
           example: '2019'
         useCase:
-          description: The use case to which the dataset relates.
+          description: The use case that the Self Assessment income data relates to.
           type: string
           required: true
           example: LAA-C1 or LAA-C2 or LAA-C3 or LAA-C4 or LSANI-C1 or LSANI-C3 or HMCTS-C2 or HMCTS-C3 or HMCTS-C4 or NICTSEJO-C4
@@ -145,12 +145,12 @@ uses:
   /individuals/income/paye/nino/{nino}:
     uriParameters:
       nino:
-        description: The employee National Insurance number
+        description: The employee's National Insurance number.
         type: string
         example: AA123456D
 
     post:
-      displayName: Create a paye income payload
+      displayName: Create a PAYE income payload
       description: !include docs/create-paye-income-description.md
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
@@ -167,17 +167,17 @@ uses:
           example: application/json
       queryParameters:
         startDate:
-          description: The date that paye income data is requested from.
+          description: The date that PAYE income data is requested from.
           type: string
           required: true
           example: 01-01-2019
         endDate:
-          description: The date that paye income data is requested to.
+          description: The date that PAYE income data is requested to.
           type: string
           required: true
           example: 01-01-2020
         useCase:
-          description: The use case to which the paye income data relates.
+          description: The use case that the PAYE income data relates to.
           type: string
           required: true
           example: LAA-C1 or LAA-C2 or LAA-C3 or LAA-C4 or LSANI-C1 or LSANI-C3 or HMCTS-C2 or HMCTS-C3 or HMCTS-C4 or NICTSEJO-C4
@@ -205,7 +205,7 @@ uses:
   /individuals/tax-credits/nino/{nino}:
     uriParameters:
       nino:
-        description: The employee National Insurance number
+        description: The employee's National Insurance number
         type: string
         example: AA123456D
     post:
@@ -236,7 +236,7 @@ uses:
           required: true
           example: 01-01-2020
         useCase:
-          description: The use case to which the benefits and credits data relates.
+          description: The use case that the benefits and credits data relates to.
           type: string
           required: true
           example:  LAA-C1-working-tax-credit or LAA-C2-working-tax-credit or LAA-C3-working-tax-credit or LAA-C1-child-tax-credit
@@ -266,11 +266,11 @@ uses:
   /individuals/contact/details/nino/{nino}:
     uriParameters:
       nino:
-        description: The employee National Insurance number
+        description: The employee's National Insurance number
         type: string
         example: AA123456D
     post:
-      displayName: Create a contact details payload
+      displayName: Create a details payload
       description: !include docs/create-contact-details-description.md
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
@@ -287,7 +287,7 @@ uses:
           example: application/json
       queryParameters:
         useCase:
-          description: The use case to which the contact details data relates.
+          description: The use case that the details relate to.
           type: string
           required: true
           example: LAA-C3-residences or LAA-C4-residences or HMCTS-C3-residences or HMCTS-C4-residences or
