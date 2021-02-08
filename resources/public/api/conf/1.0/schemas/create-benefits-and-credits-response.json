@@ -105,7 +105,7 @@
                       },
                       "amount": {
                         "type": "number",
-                        "description": "The amount to be paid to recipient.",
+                        "description": "The amount to be paid to the recipient.",
                         "example": "76.34"
                       }
                     }

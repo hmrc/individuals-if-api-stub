@@ -5,7 +5,7 @@
   "properties": {
     "sa": {
       "type": "array",
-      "description": "Self Assessment tax return history for a requested time period.",
+      "description": "Self Assessment tax return history for the requested time period.",
       "items": {
         "type": "object",
         "properties": {
@@ -33,12 +33,12 @@
                 },
                 "caseStartDate": {
                   "type": "string",
-                  "description": "The start date for the case. Date in format YYY-MM-DD",
+                  "description": "The start date for the case. Date in the format YYYY-MM-DD",
                   "example": "2012-01-06"
                 },
                 "receivedDate": {
                   "type": "string",
-                  "description": "The received date. Date in format YYY-MM-DD",
+                  "description": "The received date. Date in the format YYYY-MM-DD",
                   "example": "2012-02-06"
                 },
                 "businessDescription": {

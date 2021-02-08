@@ -15,7 +15,7 @@
             "example": "9"
           },
           "detail": {
-            "description": "The telephone number",
+            "description": "The telephone number.",
             "type": "string",
             "example": "0123 737654"
           },
