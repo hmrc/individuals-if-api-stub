@@ -50,13 +50,13 @@
               },
               "districtNumber": {
                 "type": "string",
-                "description": "Employer district number",
-                "example": "247"
+                "description": "The employer's district number.",
+                "example": "For example: 247"
               },
               "schemeRef": {
                 "type": "string",
-                "description": "Employer scheme reference",
-                "example": "ZT6767895A"
+                "description": "The employer's scheme reference",
+                "example": "For example: ZT6767895A"
               }
             }
           },
