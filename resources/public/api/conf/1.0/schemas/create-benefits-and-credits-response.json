@@ -52,7 +52,7 @@
                   "properties": {
                     "childCareAmount": {
                       "type": "number",
-                      "description": "The amount for childcare",
+                      "description": "The amount for childcare.",
                       "example": "930.98"
                     },
                     "ctcChildAmount": {
@@ -95,7 +95,7 @@
                       },
                       "frequency": {
                         "type": "integer",
-                        "description": "The number of days between payments. Currently supported values are 1, 7, 14, and 28",
+                        "description": "The number of days between payments. Currently supported values are 1, 7, 14, and 28.",
                         "example": "7"
                       },
                       "tcType": {
@@ -105,7 +105,7 @@
                       },
                       "amount": {
                         "type": "number",
-                        "description": "The amount to be paid to recipient",
+                        "description": "The amount to be paid to recipient.",
                         "example": "76.34"
                       }
                     }
@@ -118,7 +118,5 @@
       }
     }
   },
-  "required": [
-    "applications"
-  ]
+  "required": ["applications"]
 }

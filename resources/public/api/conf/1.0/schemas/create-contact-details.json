@@ -10,7 +10,7 @@
         "type": "object",
         "properties": {
           "code": {
-            "description": "The numeric code for the associated 'type' property below where 9 = MOBILE TELEPHONE and 8 = EVENING TELEPHONE and 7 = DAYTIME TELEPHONE",
+            "description": "The numeric code for the associated 'type' property below where 9 = MOBILE TELEPHONE and 8 = EVENING TELEPHONE and 7 = DAYTIME TELEPHONE.",
             "type": "integer",
             "example": "9"
           },
@@ -40,7 +40,7 @@
           },
           "address": {
             "type": "object",
-            "description": "The address.",
+            "description": "The individual's address.",
             "properties": {
               "line1": {
                 "type": "string",
@@ -70,7 +70,7 @@
             }
           },
           "noLongerUsed": {
-            "description": "Indicates if the NOMINATED residence is no longer used (NLU) or not. Currently supported values:\n```\nValue Meaning\nY     NLU\nN     Not NLU i.e. is still in use\n```\nIf the backend returns an unexpected string it will be returned 'as is', i.e. untransformed, to a maximum of a single character.",
+            "description": "Indicates if the NOMINATED residence is no longer used (NLU). If the value is Y, the address is NLU. If the vale is N, the address is still in use.",
             "type": "string",
             "example": "NLU"
           }

@@ -205,7 +205,7 @@ uses:
   /individuals/tax-credits/nino/{nino}:
     uriParameters:
       nino:
-        description: The employee National Insurance number
+        description: The employee's National Insurance number
         type: string
         example: AA123456D
     post:
@@ -236,7 +236,7 @@ uses:
           required: true
           example: 01-01-2020
         useCase:
-          description: The use case to which the benefits and credits data relates.
+          description: The use case that the benefits and credits data relates to.
           type: string
           required: true
           example:  LAA-C1-working-tax-credit or LAA-C2-working-tax-credit or LAA-C3-working-tax-credit or LAA-C1-child-tax-credit
@@ -266,11 +266,11 @@ uses:
   /individuals/contact/details/nino/{nino}:
     uriParameters:
       nino:
-        description: The employee National Insurance number
+        description: The employee's National Insurance number
         type: string
         example: AA123456D
     post:
-      displayName: Create a contact details payload
+      displayName: Create a details payload
       description: !include docs/create-contact-details-description.md
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
@@ -287,7 +287,7 @@ uses:
           example: application/json
       queryParameters:
         useCase:
-          description: The use case to which the contact details data relates.
+          description: The use case that the details relate to.
           type: string
           required: true
           example: LAA-C3-residences or LAA-C4-residences or HMCTS-C3-residences or HMCTS-C4-residences or
