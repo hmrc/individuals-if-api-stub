@@ -16,7 +16,7 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.testUtils
 
-import uk.gov.hmrc.individualsifapistub.domain.{Benefits, EmployeeNics, EmployeePensionContribs, PayeEntry, PostGradLoan, StudentLoan}
+import uk.gov.hmrc.individualsifapistub.domain.{AdditionalFields, Benefits, EmployeeNics, EmployeePensionContribs, GrossEarningsForNics, PayeEntry, PostGradLoan, StudentLoan, TotalEmployerNics}
 
 trait IncomePayeHelpers {
   def createValidPayeEntry() = {
@@ -39,7 +39,10 @@ trait IncomePayeHelpers {
       Some(createValidBenefits()),
       Some(39708.7),
       Some(createValidStudentLoan()),
-      Some(createValidPostGradLoan())
+      Some(createValidPostGradLoan()),
+      Some(createValodIFGrossEarningsForNics()),
+      Some(createValidTotalEmployerNics()),
+      Some(createValidAdditionalFields())
     )
   }
 
@@ -63,4 +66,22 @@ trait IncomePayeHelpers {
   private def createValidStudentLoan() = StudentLoan(Some("02"), Some(88478), Some(545))
 
   private def createValidPostGradLoan() = PostGradLoan(Some(15636), Some(46849))
+
+  def createValodIFGrossEarningsForNics() =
+    GrossEarningsForNics(Some(169731.51), Some(173987.07), Some(822317.49), Some(818841.65))
+
+  private def createValidAdditionalFields() =
+    AdditionalFields(Some(false), Some("yxz8Lt5?/`/>6]5b+7%>o-y4~W5suW"))
+
+  def createValidTotalEmployerNics() =
+    TotalEmployerNics(
+      Some(15797.45),
+      Some(13170.69),
+      Some(16193.76),
+      Some(30846.56),
+      Some(10633.5),
+      Some(15579.18),
+      Some(110849.27),
+      Some(162081.23)
+    )
 }

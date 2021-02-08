@@ -42,7 +42,10 @@ class PayeEntrySpec extends UnitSpec {
     Some(createValidBenefits()),
     Some(39708.7),
     Some(createValidStudentLoan()),
-    Some(createValidPostGradLoan())
+    Some(createValidPostGradLoan()),
+    Some(createValodIFGrossEarningsForNics()),
+    Some(createValidTotalEmployerNics()),
+    Some(createValidAdditionalFields())
   )
 
   val invalidPayeEntry = PayeEntry(
@@ -64,7 +67,10 @@ class PayeEntrySpec extends UnitSpec {
     Some(createValidBenefits()),
     Some(39708.7),
     Some(createValidStudentLoan()),
-    Some(createValidPostGradLoan())
+    Some(createValidPostGradLoan()),
+    Some(createValodIFGrossEarningsForNics()),
+    Some(createValidTotalEmployerNics()),
+    Some(createValidAdditionalFields())
   )
 
   "PayeEntry" should {
@@ -72,51 +78,73 @@ class PayeEntrySpec extends UnitSpec {
       val expectedJson = Json.parse(
         """
           |{
-          |    "taxCode": "K971",
-          |    "paidHoursWorked": "36",
-          |    "taxablePayToDate": 19157.5,
-          |    "totalTaxToDate": 3095.89,
-          |    "taxDeductedOrRefunded": 159228.49,
-          |    "employerPayeRef": "345/34678",
-          |    "paymentDate": "2006-02-27",
-          |    "taxablePay": 16533.95,
-          |    "taxYear": "18-19",
-          |    "monthlyPeriodNumber": "3",
-          |    "weeklyPeriodNumber": "2",
-          |    "payFrequency": "W4",
-          |    "dednsFromNetPay": 198035.8,
-          |    "employeeNICs": {
-          |        "inPayPeriod1": 15797.45,
-          |        "inPayPeriod2": 13170.69,
-          |        "inPayPeriod3": 16193.76,
-          |        "inPayPeriod4": 30846.56,
-          |        "ytd1": 10633.5,
-          |        "ytd2": 15579.18,
-          |        "ytd3": 110849.27,
-          |        "ytd4": 162081.23
-          |    },
-          |    "employeePensionContribs": {
-          |        "paidYTD": 169731.51,
-          |        "notPaidYTD": 173987.07,
-          |        "paid": 822317.49,
-          |        "notPaid": 818841.65
-          |    },
-          |    "benefits": {
-          |        "taxedViaPayroll": 506328.1,
-          |        "taxedViaPayrollYTD": 246594.83
-          |    },
-          |    "statutoryPayYTD": {
-          |        "parentalBereavement": 39708.7
-          |    },
-          |    "studentLoan": {
-          |        "planType": "02",
-          |        "repaymentsInPayPeriod": 88478,
-          |        "repaymentsYTD": 545
-          |    },
-          |    "postGradLoan": {
-          |        "repaymentsInPayPeriod": 15636,
-          |        "repaymentsYTD": 46849
-          |    }
+          |  "taxCode": "K971",
+          |  "paidHoursWorked": "36",
+          |  "taxablePayToDate": 19157.5,
+          |  "totalTaxToDate": 3095.89,
+          |  "taxDeductedOrRefunded": 159228.49,
+          |  "employerPayeRef": "345/34678",
+          |  "paymentDate": "2006-02-27",
+          |  "taxablePay": 16533.95,
+          |  "taxYear": "18-19",
+          |  "monthlyPeriodNumber": "3",
+          |  "weeklyPeriodNumber": "2",
+          |  "payFrequency": "W4",
+          |  "dednsFromNetPay": 198035.8,
+          |  "employeeNICs": {
+          |    "inPayPeriod1": 15797.45,
+          |    "inPayPeriod2": 13170.69,
+          |    "inPayPeriod3": 16193.76,
+          |    "inPayPeriod4": 30846.56,
+          |    "ytd1": 10633.5,
+          |    "ytd2": 15579.18,
+          |    "ytd3": 110849.27,
+          |    "ytd4": 162081.23
+          |  },
+          |  "employeePensionContribs": {
+          |    "paidYTD": 169731.51,
+          |    "notPaidYTD": 173987.07,
+          |    "paid": 822317.49,
+          |    "notPaid": 818841.65
+          |  },
+          |  "benefits": {
+          |    "taxedViaPayroll": 506328.1,
+          |    "taxedViaPayrollYTD": 246594.83
+          |  },
+          |  "statutoryPayYTD": {
+          |    "parentalBereavement": 39708.7
+          |  },
+          |  "studentLoan": {
+          |    "planType": "02",
+          |    "repaymentsInPayPeriod": 88478,
+          |    "repaymentsYTD": 545
+          |  },
+          |  "postGradLoan": {
+          |    "repaymentsInPayPeriod": 15636,
+          |    "repaymentsYTD": 46849
+          |  },
+          |  "grossEarningsForNICs": {
+          |    "inPayPeriod1": 169731.51,
+          |    "inPayPeriod2": 173987.07,
+          |    "inPayPeriod3": 822317.49,
+          |    "inPayPeriod4": 818841.65
+          |  },
+          |  "totalEmployerNICs": {
+          |    "inPayPeriod1": 15797.45,
+          |    "inPayPeriod2": 13170.69,
+          |    "inPayPeriod3": 16193.76,
+          |    "inPayPeriod4": 30846.56,
+          |    "ytd1": 10633.5,
+          |    "ytd2": 15579.18,
+          |    "ytd3": 110849.27,
+          |    "ytd4": 162081.23
+          |  },
+          |  "payroll": {
+          |    "id": "yxz8Lt5?/`/>6]5b+7%>o-y4~W5suW"
+          |  },
+          |  "employee": {
+          |    "hasPartner": false
+          |  }
           |}
           |""".stripMargin
       )
@@ -157,4 +185,22 @@ class PayeEntrySpec extends UnitSpec {
   private def createValidStudentLoan() = StudentLoan(Some("02"), Some(88478), Some(545))
 
   private def createValidPostGradLoan() = PostGradLoan(Some(15636), Some(46849))
+
+  def createValodIFGrossEarningsForNics() =
+    GrossEarningsForNics(Some(169731.51), Some(173987.07), Some(822317.49), Some(818841.65))
+
+  private def createValidAdditionalFields() =
+    AdditionalFields(Some(false), Some("yxz8Lt5?/`/>6]5b+7%>o-y4~W5suW"))
+
+  def createValidTotalEmployerNics() =
+    TotalEmployerNics(
+      Some(15797.45),
+      Some(13170.69),
+      Some(16193.76),
+      Some(30846.56),
+      Some(10633.5),
+      Some(15579.18),
+      Some(110849.27),
+      Some(162081.23)
+    )
 }
