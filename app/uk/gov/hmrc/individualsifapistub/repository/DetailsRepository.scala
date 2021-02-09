@@ -101,6 +101,8 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
     val tag = fields.flatMap(value => fieldsMap.get(value)).getOrElse("TEST")
     val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$tag"
 
+    println("ACHI: " + id)
+
     collection.find[JsObject, JsObject](obj("details" ->id), None).one[DetailsResponse]
 
   }
