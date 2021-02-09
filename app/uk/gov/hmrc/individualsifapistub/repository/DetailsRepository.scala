@@ -85,10 +85,8 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
                       fields: Option[String]): Future[Option[DetailsResponse]] = {
 
     def fieldsMap = Map(
-      "residences(address(line1,line2,line3,line4,line5,postcode),noLongerUsed,type)&filter=contains(residences/noLongerUsed,'N')" ->
-        "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
-      "contactDetails(code,detail,type)&filter=contains(contactDetails/type,'TELEPHONE')" ->
-        "LAA-C4_HMCTS-C4-contact-details"
+      "residences(address(line1,line2,line3,line4,line5,postcode),noLongerUsed,type)" -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
+      "contactDetails(code,detail,type)" -> "LAA-C4_HMCTS-C4-contact-details"
     )
 
     val ident = IdType.parse(idType) match {
