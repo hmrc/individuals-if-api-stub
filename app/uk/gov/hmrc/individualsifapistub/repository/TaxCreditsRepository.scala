@@ -59,7 +59,11 @@ class TaxCreditsRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
       "HMCTS-C2-working-tax-credit" -> "HMCTS-C2_HMCTS-C3_LSANI-C1_LSANI-C3_working-tax-credit",
       "HMCTS-C3-working-tax-credit" -> "HMCTS-C2_HMCTS-C3_LSANI-C1_LSANI-C3_working-tax-credit",
       "LSANI-C1-working-tax-credit" -> "HMCTS-C2_HMCTS-C3_LSANI-C1_LSANI-C3_working-tax-credit",
-      "LSANI-C3-working-tax-credit" -> "HMCTS-C2_HMCTS-C3_LSANI-C1_LSANI-C3_working-tax-credit"
+      "LSANI-C3-working-tax-credit" -> "HMCTS-C2_HMCTS-C3_LSANI-C1_LSANI-C3_working-tax-credit",
+      "HMCTS-C2-child-tax-credit" -> "HMCTS-C2_HMCTS-C3_LSANI-C1_LSANI-C3_child-tax-credit",
+      "HMCTS-C3-child-tax-credit" -> "HMCTS-C2_HMCTS-C3_LSANI-C1_LSANI-C3_child-tax-credit",
+      "LSANI-C1-child-tax-credit" -> "HMCTS-C2_HMCTS-C3_LSANI-C1_LSANI-C3_child-tax-credit",
+      "LSANI-C3-child-tax-credit" -> "HMCTS-C2_HMCTS-C3_LSANI-C1_LSANI-C3_child-tax-credit"
     )
 
     val ident = IdType.parse(idType) match {
