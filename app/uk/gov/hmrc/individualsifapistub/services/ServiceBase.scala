@@ -30,13 +30,8 @@ class ServiceBase @Inject()(apiPlatformTestUserConnector: ApiPlatformTestUserCon
                 (implicit ec: ExecutionContext,
                  hc: HeaderCarrier) = {
     IdType.parse(idType) match {
-      case IdType.Nino => {
-        for {
-          individual <- apiPlatformTestUserConnector.getIndividualByNino(Nino(idValue))
-          utr = individual.saUtr.getOrElse(throw new RecordNotFoundException)
-        } yield utr
-      }
-      case _ => throw new BadRequestException("Invalid National Insurance Number")
+      case IdType.Nino => apiPlatformTestUserConnector.getIndividualByNino(Nino(idValue))
+      case _           => throw new BadRequestException("Invalid National Insurance Number")
     }
   }
 
