@@ -51,7 +51,11 @@ class TaxCreditsController @Inject()(bodyParsers: PlayBodyParsers,
                fields: Option[String]): Action[AnyContent] = Action.async { implicit request =>
     taxCreditsService.get(idType, idValue, startDate, endDate, fields) map {
       case Some(value) => Ok(Json.toJson(value))
-      case None => NotFound
+      case None => {
+        Ok(Json.parse("""{
+                        |"applications": []
+                        |}""".stripMargin))
+      }
     } recover recovery
   }
 }

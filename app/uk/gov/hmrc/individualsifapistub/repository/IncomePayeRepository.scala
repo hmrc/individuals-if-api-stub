@@ -17,6 +17,7 @@
 package uk.gov.hmrc.individualsifapistub.repository
 
 import javax.inject.{Inject, Singleton}
+import play.api.Logger
 import play.api.libs.json.JsObject
 import play.api.libs.json.Json.obj
 import reactivemongo.api.commands.WriteResult
@@ -65,6 +66,8 @@ class IncomePayeRepository  @Inject()(mongoConnectionProvider: MongoConnectionPr
 
     val incomePayeEntry = IncomePayeEntry(id, request)
 
+    Logger.info(s"Insert for cache key: $id - Income paye: $incomePayeEntry")
+
     insert(incomePayeEntry) map (_ => incomePayeEntry.incomePaye) recover {
       case WriteResult.Code(11000) => throw new DuplicateException
     }
@@ -99,6 +102,8 @@ class IncomePayeRepository  @Inject()(mongoConnectionProvider: MongoConnectionPr
 
     val tag = fields.flatMap(value => fieldsMap.get(value)).getOrElse("TEST")
     val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$tag"
+
+    Logger.info(s"Fetch income paye for cache key: $id")
 
     collection.find[JsObject, JsObject](obj("id" -> id), None)
       .one[IncomePayeEntry].map(value => value.map(_.incomePaye))

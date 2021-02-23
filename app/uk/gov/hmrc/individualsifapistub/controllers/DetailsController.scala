@@ -45,7 +45,13 @@ class DetailsController @Inject()(bodyParsers: PlayBodyParsers,
                fields: Option[String]): Action[AnyContent] = Action.async { implicit request =>
     detailsService.get(idType, idValue, fields) map {
       case Some(value) => Ok(Json.toJson(value))
-      case None => NotFound
+      case None => {
+        Ok(Json.parse(
+          """{
+            |"residences": [],
+            |"contactDetails": []
+            |}""".stripMargin))
+      }
     } recover recovery
   }
 }
