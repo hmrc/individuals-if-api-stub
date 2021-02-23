@@ -17,6 +17,7 @@
 package uk.gov.hmrc.individualsifapistub.repository
 
 import javax.inject.{Inject, Singleton}
+import play.api.Logger
 import play.api.libs.json.JsObject
 import play.api.libs.json.Json.obj
 import reactivemongo.api.commands.WriteResult
@@ -74,6 +75,8 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
       }
     }
 
+    Logger.info(s"Insert for cache key: $id - Details: $detailsResponse")
+
     insert(detailsResponse) map (_ => DetailsResponseNoId(detailsResponse.contactDetails, detailsResponse.residences)) recover {
       case WriteResult.Code(11000) => throw new DuplicateException
     }
@@ -100,6 +103,8 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
 
     val tag = fields.flatMap(value => fieldsMap.get(value)).getOrElse("TEST")
     val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$tag"
+
+    Logger.info(s"Fetch details for cache key: $id")
 
     collection.find[JsObject, JsObject](obj("details" ->id), None).one[DetailsResponse]
 

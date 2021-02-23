@@ -50,7 +50,11 @@ class IncomeController @Inject()(bodyParser: PlayBodyParsers,
                  fields: Option[String]): Action[AnyContent] = Action.async { implicit request =>
     incomeService.getSa(idType, idValue, startYear, endYear, fields) map {
       case Some(value) => Ok(Json.toJson(value))
-      case None => NotFound
+      case None => {
+        Ok(Json.parse("""{
+                        |"sa": []
+                        |}""".stripMargin))
+      }
     } recover recovery
   }
 
@@ -73,7 +77,11 @@ class IncomeController @Inject()(bodyParser: PlayBodyParsers,
                    fields: Option[String]): Action[AnyContent] = Action.async { implicit request =>
     incomeService.getPaye(idType, idValue, startDate, endDate, fields) map {
       case Some(value) => Ok(Json.toJson(value))
-      case None => NotFound
+      case None => {
+        Ok(Json.parse("""{
+                        |"paye": []
+                        |}""".stripMargin))
+      }
     } recover recovery
   }
 
