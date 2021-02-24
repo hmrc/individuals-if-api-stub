@@ -5,7 +5,7 @@
       "awards": [
         {
           "totalEntitlement": 18765.23,
-          "payProfCalcDate" : "2020-08-18",
+          "payProfCalcDate": "2020-08-18",
           "workingTaxCredit": {
             "amount": 930.98,
             "paidYTD": 8976.34
