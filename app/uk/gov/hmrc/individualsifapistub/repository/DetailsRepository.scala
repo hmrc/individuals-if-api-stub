@@ -18,7 +18,7 @@ package uk.gov.hmrc.individualsifapistub.repository
 
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
-import play.api.libs.json.JsObject
+import play.api.libs.json.{JsObject, Json}
 import play.api.libs.json.Json.obj
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes.{Index, IndexType}
@@ -75,7 +75,7 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
       }
     }
 
-    Logger.info(s"Insert for cache key: $id - Details: $detailsResponse")
+    Logger.info(s"Insert for cache key: $id - Details: ${Json.toJson(detailsResponse)}")
 
     insert(detailsResponse) map (_ => DetailsResponseNoId(detailsResponse.contactDetails, detailsResponse.residences)) recover {
       case WriteResult.Code(11000) => throw new DuplicateException

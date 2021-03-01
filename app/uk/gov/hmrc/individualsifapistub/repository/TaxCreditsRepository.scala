@@ -18,7 +18,7 @@ package uk.gov.hmrc.individualsifapistub.repository
 
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
-import play.api.libs.json.JsObject
+import play.api.libs.json.{JsObject, Json}
 import play.api.libs.json.Json.obj
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes.{Index, IndexType}
@@ -76,7 +76,7 @@ class TaxCreditsRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
     val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$tag"
     val entry = TaxCreditsEntry(id, applications.applications)
 
-    Logger.info(s"Insert for cache key: $id - Tax Credits: $entry")
+    Logger.info(s"Insert for cache key: $id - Tax Credits: ${Json.toJson(entry)}")
 
     insert(entry) map (_ => applications) recover {
       case WriteResult.Code(11000) => throw new DuplicateException

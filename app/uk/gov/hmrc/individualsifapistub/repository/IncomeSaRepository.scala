@@ -18,7 +18,7 @@ package uk.gov.hmrc.individualsifapistub.repository
 
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
-import play.api.libs.json.JsObject
+import play.api.libs.json.{JsObject, Json}
 import play.api.libs.json.Json.obj
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes.{Index, IndexType}
@@ -66,7 +66,7 @@ class IncomeSaRepository @Inject()(mongoConnectionProvider: MongoConnectionProvi
 
     val incomeSaRecord = IncomeSaEntry(id, request)
 
-    Logger.info(s"Insert for cache key: $id - Income sa: $incomeSaRecord")
+    Logger.info(s"Insert for cache key: $id - Income sa: ${Json.toJson(incomeSaRecord)}")
 
     insert(incomeSaRecord) map (_ => incomeSaRecord.incomeSa) recover {
       case WriteResult.Code(11000) => throw new DuplicateException
@@ -79,6 +79,8 @@ class IncomeSaRepository @Inject()(mongoConnectionProvider: MongoConnectionProvi
                       startYear: String,
                       endYear: String,
                       fields: Option[String]): Future[Option[IncomeSa]] = {
+
+    Logger.info(s"IncomeSaRepository - findByTypeAndId: fields: $fields")
 
     val fieldsMap = Map(
       "sa(returnList(address(line1,line2,line3,line4,postcode),busEndDate,busStartDate,caseStartDate,deducts(totalBusExpenses,totalDisallowBusExp),income(allEmployments,foreign,foreignDivs,lifePolicies,other,partnerships,pensions,selfAssessment,shares,trusts,ukDivsAndInterest,ukInterest,ukProperty),otherBusIncome,totalNIC,totalTaxPaid,tradingIncomeAllowance,turnover),taxYear)" -> "LAA-C1",

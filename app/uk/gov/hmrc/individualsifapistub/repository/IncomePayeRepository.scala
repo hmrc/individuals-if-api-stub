@@ -18,7 +18,7 @@ package uk.gov.hmrc.individualsifapistub.repository
 
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
-import play.api.libs.json.JsObject
+import play.api.libs.json.{JsObject, Json}
 import play.api.libs.json.Json.obj
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes.{Index, IndexType}
@@ -66,7 +66,7 @@ class IncomePayeRepository  @Inject()(mongoConnectionProvider: MongoConnectionPr
 
     val incomePayeEntry = IncomePayeEntry(id, request)
 
-    Logger.info(s"Insert for cache key: $id - Income paye: $incomePayeEntry")
+    Logger.info(s"Insert for cache key: $id - Income paye: ${Json.toJson(incomePayeEntry)}")
 
     insert(incomePayeEntry) map (_ => incomePayeEntry.incomePaye) recover {
       case WriteResult.Code(11000) => throw new DuplicateException

@@ -18,7 +18,7 @@ package uk.gov.hmrc.individualsifapistub.repository
 
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
-import play.api.libs.json.JsObject
+import play.api.libs.json.{JsObject, Json}
 import play.api.libs.json.Json.obj
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes.{Index, IndexType}
@@ -67,7 +67,7 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
     val tag = useCaseMap.get(useCase).getOrElse(useCase)
     val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$tag"
 
-    Logger.info(s"Insert for cache key: $id - Employments: ${employments.employments}")
+    Logger.info(s"Insert for cache key: $id - Employments: ${Json.toJson(employments.employments)}")
 
     insert(EmploymentEntry(id, employments.employments)) map (_ => employments) recover {
       case WriteResult.Code(11000) => throw new DuplicateException
