@@ -41,7 +41,7 @@
                     },
                     "paidYTD": {
                       "type": "number",
-                      "description": "The actual payment amount both direct and payment via employer (PVE) from the start of the tax credit period up to the calculated date of the payment profile.",
+                      "description": "The actual payment amount, both direct and payment via employer (PVE). This is from the start of the tax credit period up to the calculated date of the payment profile.",
                       "example": "8976.34"
                     }
                   }
