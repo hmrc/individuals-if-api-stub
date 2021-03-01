@@ -41,11 +41,12 @@
                 "receivedDate": {
                   "type": "string",
                   "id": "full-date",
-                  "description": "A description of the main business activity relating to the Self Assessment tax return."
+                  "description": "The received date.",
+                  "example": "2012-02-06"
                 },
                 "address": {
                   "type": "object",
-                  "description": "The address",
+                  "description": "The address.",
                   "properties": {
                     "line1": {
                       "type": "string",

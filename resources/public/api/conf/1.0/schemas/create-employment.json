@@ -61,7 +61,7 @@
               },
               "schemeRef": {
                 "type": "string",
-                "description": "The employer's scheme reference",
+                "description": "The employer's scheme reference.",
                 "example": "ZT6767895A"
               }
             }

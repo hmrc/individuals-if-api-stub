@@ -39,7 +39,7 @@
         "type": "object",
         "properties": {
           "type": {
-            "description": "Indicates the residence type BASE or NOMINATED.",
+            "description": "Indicates the residence type Base or Nominated.",
             "type": "string",
             "example": "NOMINATED"
           },

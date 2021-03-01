@@ -50,7 +50,7 @@
                 },
                 "address": {
                   "type": "object",
-                  "description": "The address",
+                  "description": "The address.",
                   "properties": {
                     "line1": {
                       "type": "string",
