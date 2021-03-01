@@ -57,7 +57,7 @@
               "districtNumber": {
                 "type": "string",
                 "description": "The employer's district number.",
-                "example": "For example: 247"
+                "example": "247"
               },
               "schemeRef": {
                 "type": "string",
