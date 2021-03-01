@@ -22,7 +22,6 @@
           "type": {
             "description": "The particular contact type. If the backend returns an unexpected string it will be returned 'as is', i.e. untransformed, to a maximum of 35 characters.",
             "type": "string",
-            "example": "MOBILE TELEPHONE",
             "enum": [
               "DAYTIME TELEPHONE",
               "EVENING TELEPHONE",
