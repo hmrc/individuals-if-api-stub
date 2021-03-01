@@ -83,6 +83,7 @@
             "description": "Indicates if the nominated residence is no longer used (NLU). If the value is Y, the address is NLU. If the value is N, the address is still in use.",
             "type": "string",
             "example": "N"
+          }
         }
       }
     }
