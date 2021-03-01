@@ -16,7 +16,7 @@
           },
           "returnList": {
             "type": "array",
-            "description": "List of information returned",
+            "description": "List of information returned.",
             "items": {
               "type": "object",
               "properties": {
@@ -24,7 +24,6 @@
                   "type": "string",
                   "id": "full-date",
                   "description": "The start date for the business.",
-                  "format": "date",
                   "example": "2019-08-18"
                 },
                 "busEndDate": {
@@ -54,46 +53,34 @@
                   "description": "The address",
                   "properties": {
                     "line1": {
-                      "item": {
-                        "type": "string",
-                        "description": "Address line 1.",
-                        "example": "Line one"
-                      }
+                      "type": "string",
+                      "description": "Address line 1.",
+                      "example": "Line one"
                     },
                     "line2": {
-                      "item": {
-                        "type": "string",
-                        "description": "Address line 2.",
-                        "example": "Line two"
-                      }
+                      "type": "string",
+                      "description": "Address line 2.",
+                      "example": "Line two"
                     },
                     "line3": {
-                      "item": {
-                        "type": "string",
-                        "description": "Address line 3.",
-                        "example": "Line three"
-                      }
+                      "type": "string",
+                      "description": "Address line 3.",
+                      "example": "Line three"
                     },
                     "line4": {
-                      "item": {
-                        "type": "string",
-                        "description": "Address line 4.",
-                        "example": "Line four"
-                      }
+                      "type": "string",
+                      "description": "Address line 4.",
+                      "example": "Line four"
                     },
                     "line5": {
-                      "item": {
-                        "type": "string",
-                        "description": "Address line 5.",
-                        "example": "Line five"
-                      }
+                      "type": "string",
+                      "description": "Address line 5.",
+                      "example": "Line five"
                     },
                     "postcode": {
-                      "item": {
-                        "type": "string",
-                        "description": "The postcode for the address.",
-                        "example": "NE65 0UH"
-                      }
+                      "type": "string",
+                      "description": "The postcode for the address.",
+                      "example": "NE65 0UH"
                     }
                   }
                 },
