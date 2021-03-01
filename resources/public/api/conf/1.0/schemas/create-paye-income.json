@@ -11,7 +11,7 @@
         "properties": {
           "taxYear": {
             "type": "string",
-            "description": "The tax year of submission. Year in the format format YYYY.",
+            "description": "The tax year of submission. Year in the format YYYY.",
             "example": "2019"
           },
           "employee": {
@@ -42,13 +42,14 @@
           },
           "paymentDate": {
             "type": "string",
-            "format": "date",
-            "description": "The payment date. Date in the format YYYY-MM-DD",
+            "id": "full-date",
+            "description": "The payment date.",
             "example": "2016-02-28"
           },
           "taxCode": {
             "type": "string",
-            "description": "The tax code associated with the payment. Must conform to the regular expression ^([1-9][0-9]{0,5}[LMNPTY])|(BR)|(0T)|(NT)|(D[0-8])|([K][1-9][0-9]{0,5})$",
+            "description": "The tax code associated with the payment.",
+            "pattern": "^([1-9][0-9]{0,5}[LMNPTY])|(BR)|(0T)|(NT)|(D[0-8])|([K][1-9][0-9]{0,5})$",
             "example": "K971"
           },
           "taxablePayToDate": {
@@ -160,7 +161,8 @@
             "properties": {
               "id": {
                 "type": "string",
-                "description": "An identifier assigned by the employer to the individual. Must conform to the regular expression ^[^ ].{0,34}$",
+                "description": "An identifier assigned by the employer to the individual.",
+                "pattern": "^[^ ].{0,34}$",
                 "example": "yxz8Lt5?/`/>6]5b+7%>o-y4~W5suW"
               }
             }
@@ -172,7 +174,8 @@
           },
           "paidHoursWorked": {
             "type": "string",
-            "description": "The number of normal hours worked. Must conform to the regular expression ^[^ ].{0,34}$",
+            "description": "The number of normal hours worked.",
+            "pattern": "^[^ ].{0,34}$",
             "example": "35"
           },
           "totalEmployerNICs": {
