@@ -15,7 +15,8 @@
             "properties": {
               "name": {
                 "type": "string",
-                "description": "The name of the employer."
+                "description": "The name of the employer.",
+                "example": "ACME Industries Limited"
               },
               "address": {
                 "type": "object",
@@ -23,28 +24,33 @@
                 "properties": {
                   "line1": {
                     "type": "string",
-                    "description": "Address line 1."
+                    "description": "Address line 1.",
+                    "example": "Unit 23"
                   },
                   "line2": {
                     "type": "string",
-                    "description": "Address line 2."
+                    "description": "Address line 2.",
+                    "example": "Utilitarian Industrial Park"
                   },
                   "line3": {
                     "type": "string",
-                    "description": "Address line 3."
+                    "description": "Address line 3.",
+                    "example": "Utilitown"
                   },
                   "line4": {
                     "type": "string",
-                    "description": "Address line 4."
+                    "description": "Address line 4.",
+                    "example": "County Durham"
                   },
                   "line5": {
                     "type": "string",
-                    "description": "Address line 5."
+                    "description": "Address line 5.",
+                    "example": "UK"
                   },
                   "postcode": {
                     "type": "string",
                     "description": "The postcode for the address.",
-                    "example": "123/AI45678"
+                    "example": "DH4 4YY"
                   }
                 }
               },
@@ -56,7 +62,7 @@
               "schemeRef": {
                 "type": "string",
                 "description": "The employer's scheme reference",
-                "example": "For example: ZT6767895A"
+                "example": "ZT6767895A"
               }
             }
           },

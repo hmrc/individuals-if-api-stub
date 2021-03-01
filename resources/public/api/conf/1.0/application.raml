@@ -47,12 +47,12 @@ uses:
           example: application/json
       queryParameters:
         startDate:
-          description: The date that employments data is requested from.
+          description: !include docs/create-employment-data-date-from.md
           type: string
           required: true
           example: 2019-01-01
         endDate:
-          description: The date that employments data is requested to.
+          description: !include docs/create-employment-data-date-to.md
           type: string
           required: true
           example: 2020-01-01
