@@ -107,12 +107,12 @@ uses:
           example: application/json
       queryParameters:
         startYear:
-          description: The first tax year to be included in the dataset requested.
+          description: !include docs/create-self-assessment-first-tax-description.md
           type: string
           required: true
           example: '2018'
         endYear:
-          description: The last tax year to be included in the dataset requested.
+          description: !include docs/create-self-assessment-last-tax-description.md
           type: string
           required: true
           example: '2019'
