@@ -167,12 +167,12 @@ uses:
           example: application/json
       queryParameters:
         startDate:
-          description: The date that PAYE income data is requested from.
+          description: !include docs/create-paye-date-from.md
           type: string
           required: true
           example: 2019-01-01
         endDate:
-          description: The date that PAYE income data is requested to.
+          description: !include docs/create-paye-date-to.md
           type: string
           required: true
           example: 2020-01-01
