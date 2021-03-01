@@ -85,12 +85,14 @@
                     "properties": {
                       "startDate": {
                         "type": "string",
-                        "description": "The start date of the payment. Date in the format YYYY-MM-DD",
+                        "id": "full-date",
+                        "description": "The start date of the payment.",
                         "example": "1996-08-01"
                       },
                       "endDate": {
                         "type": "string",
-                        "description": "The end date of the payment. Date in the format YYYY-MM-DD",
+                        "id": "full-date",
+                        "description": "The end date of the payment.",
                         "example": "1996-08-07"
                       },
                       "frequency": {

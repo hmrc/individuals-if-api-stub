@@ -10,7 +10,7 @@
         "type": "object",
         "properties": {
           "code": {
-            "description": "The numeric code for the associated 'type' property below where 9 = MOBILE TELEPHONE and 8 = EVENING TELEPHONE and 7 = DAYTIME TELEPHONE.",
+            "description": "The numeric code for the associated 'type' property below where 7 = DAYTIME TELEPHONE, 8 = EVENING TELEPHONE, and 9 = MOBILE TELEPHONE.",
             "type": "integer",
             "example": "9"
           },
@@ -20,8 +20,13 @@
             "example": "0123 737654"
           },
           "type": {
-            "description": "The particular contact type. Currently supported values:\n\n```\ncode type\n 7   DAYTIME TELEPHONE\n 8   EVENING TELEPHONE\n 9   MOBILE TELEPHONE\n10   FAX\n11   PRIMARY E-MAIL\n12   SECONDARY E-MAIL\n```\nIf the backend returns an unexpected string it will be returned 'as is', i.e. untransformed, to a maximum of 35 characters.\n",
+            "description": "The particular contact type. If the backend returns an unexpected string it will be returned 'as is', i.e. untransformed, to a maximum of 35 characters.",
             "type": "string",
+            "enum": [
+              "DAYTIME TELEPHONE",
+              "EVENING TELEPHONE",
+              "MOBILE TELEPHONE"
+            ],
             "example": "MOBILE TELEPHONE"
           }
         }
@@ -34,7 +39,7 @@
         "type": "object",
         "properties": {
           "type": {
-            "description": "Indicates the residence type BASE or NOMINATED",
+            "description": "Indicates the residence type BASE or NOMINATED.",
             "type": "string",
             "example": "NOMINATED"
           },
@@ -44,35 +49,40 @@
             "properties": {
               "line1": {
                 "type": "string",
-                "description": "Address line 1."
+                "description": "Address line 1.",
+                "example": "24 Trinity Street"
               },
               "line2": {
                 "type": "string",
-                "description": "Address line 2."
+                "description": "Address line 2.",
+                "example": "Dawley Bank"
               },
               "line3": {
                 "type": "string",
-                "description": "Address line 3."
+                "description": "Address line 3.",
+                "example": "Telford"
               },
               "line4": {
                 "type": "string",
-                "description": "Address line 4."
+                "description": "Address line 4.",
+                "example": "Shropshire"
               },
               "line5": {
                 "type": "string",
-                "description": "Address line 5."
+                "description": "Address line 5.",
+                "example": "UK"
               },
               "postcode": {
                 "type": "string",
                 "description": "The postcode for the address.",
-                "example": "AA1 1AA"
+                "example": "TF3 4ER"
               }
             }
           },
           "noLongerUsed": {
-            "description": "Indicates if the NOMINATED residence is no longer used (NLU). If the value is Y, the address is NLU. If the vale is N, the address is still in use.",
+            "description": "Indicates if the nominated residence is no longer used (NLU). If the value is Y, the address is NLU. If the value is N, the address is still in use.",
             "type": "string",
-            "example": "NLU"
+            "example": "N"
           }
         }
       }
