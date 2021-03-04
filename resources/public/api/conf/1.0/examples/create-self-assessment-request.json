@@ -10,10 +10,10 @@
           "receivedDate": "2018-02-20",
           "businessDescription": "Dogs body",
           "address": {
-            "line1": "ap",
-            "line2": "ao",
-            "line3": "ai",
-            "line4": "au",
+            "line1": "Line 1",
+            "line2": "Line 2",
+            "line3": "Line 3",
+            "line4": "Line 4",
             "postcode": "NE65 0UH"
           },
           "telephoneNumber": "0191111222",

@@ -47,12 +47,12 @@ uses:
           example: application/json
       queryParameters:
         startDate:
-          description: The date that employments data is requested from.
+          description: !include docs/create-employment-data-date-from.md
           type: string
           required: true
           example: 2019-01-01
         endDate:
-          description: The date that employments data is requested to.
+          description: !include docs/create-employment-data-date-to.md
           type: string
           required: true
           example: 2020-01-01
@@ -107,12 +107,12 @@ uses:
           example: application/json
       queryParameters:
         startYear:
-          description: The first tax year to be included in the dataset requested.
+          description: !include docs/create-self-assessment-first-tax-description.md
           type: string
           required: true
           example: '2018'
         endYear:
-          description: The last tax year to be included in the dataset requested.
+          description: !include docs/create-self-assessment-last-tax-description.md
           type: string
           required: true
           example: '2019'
@@ -167,12 +167,12 @@ uses:
           example: application/json
       queryParameters:
         startDate:
-          description: The date that PAYE income data is requested from.
+          description: !include docs/create-paye-data-date-from.md
           type: string
           required: true
           example: 2019-01-01
         endDate:
-          description: The date that PAYE income data is requested to.
+          description: !include docs/create-paye-data-date-to.md
           type: string
           required: true
           example: 2020-01-01
@@ -226,12 +226,12 @@ uses:
           example: application/json
       queryParameters:
         startDate:
-          description: The date that benefits and credits data is requested from.
+          description: !include docs/create-benefits-and-credits-data-date-from.md
           type: string
           required: true
           example: 2019-01-01
         endDate:
-          description: The date that benefits and credits data is requested to.
+          description: !include docs/create-benefits-and-credits-data-date-to.md
           type: string
           required: true
           example: 2020-01-01
