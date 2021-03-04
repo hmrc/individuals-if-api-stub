@@ -12,7 +12,7 @@
           "taxYear": {
             "type": "string",
             "description": "The tax year of submission in the format YY-YY.",
-            "example": "2019"
+            "example": "18-19"
           },
           "employee": {
             "description": "Details about the employee.",
