@@ -11,7 +11,7 @@
         "properties": {
           "taxYear": {
             "type": "string",
-            "description": "The tax year in the format YYYY.",
+            "description": "The tax year in the format YY-YY.",
             "example": "2019"
           },
           "returnList": {
