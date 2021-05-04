@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "Organisations return details",
+  "type": "object",
+  "required": [
+    "utr",
+    "taxpayerDetails"
+  ],
+  "properties": {
+    "utr": {
+      "type": "string",
+      "example": "1234567890",
+      "description": "A Unique Tax Reference"
+    },
+    "taxpayerType": {
+      "type": "string",
+      "example": "Individual",
+      "description": "Taxpayer Type"
+    },
+    "taxpayerDetails": {
+      "type": "array",
+      "items": {
+        "description": "Taxpayer Details",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "John Smith II",
+            "description": "Taxpayers Name"
+          },
+          "addressType": {
+            "type": "string",
+            "example": "Registered",
+            "description": "Type of address"
+          },
+          "address": {
+            "type": "object",
+            "description": "Address",
+            "properties": {
+              "line1": {
+                "type": "string",
+                "example": "Alfie House",
+                "description": "Address Line 1"
+              },
+              "line2": {
+                "type": "string",
+                "example": "Main Street",
+                "description": "Address Line 2"
+              },
+              "line3": {
+                "type": "string",
+                "example": "Birmingham",
+                "description": "Address Line 3"
+              },
+              "line4": {
+                "type": "string",
+                "example": "West midlands",
+                "description": "Address Line 4"
+              },
+              "postcode": {
+                "type": "string",
+                "example": "B14 6JH",
+                "description": "Postcode"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
