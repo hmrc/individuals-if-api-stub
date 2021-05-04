@@ -6,6 +6,7 @@
   "properties": {
     "utr": {
       "type": "string",
+      "pattern": "^[0-9]{10}$",
       "example": "1234567890",
       "description": "A Unique Tax Reference"
     },
@@ -16,11 +17,13 @@
     },
     "taxSolvencyStatus": {
       "type": "string",
+      "enum": ["A", "V", "S", "I"],
       "example": "V",
-      "description": "The tax solvency status."
+      "description": "A - Administrative Order, V - Voluntary Arrangement, S - Solvent, I - Insolvent"
     },
     "accountingPeriods": {
       "type": "array",
+      "description": "Mandatory. An array of accounting periods. It will have at least 1 accounting period",
       "items": {
         "type": "object",
         "required": ["turnover"],
@@ -36,7 +39,7 @@
           "turnover": {
             "type": "integer",
             "example": "38390",
-            "description": "Turnover."
+            "description": "Turnover is recorded in thousands of pounds (rounded to the nearest £1000 up or down)."
           }
         }
       }
