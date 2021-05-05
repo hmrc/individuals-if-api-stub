@@ -1,0 +1,41 @@
+{
+  "startDate": "2019-10-01",
+  "endDate": "2020-04-05",
+  "references": [
+    {
+      "districtNumber": "456",
+      "payeReference": "RT882d",
+      "counts": []
+    },
+    {
+      "districtNumber": "123",
+      "payeReference": "AB888666",
+      "counts": [
+        {
+          "dateTaken": "2019-10",
+          "employeeCount": 554
+        },
+        {
+          "dateTaken": "2019-11",
+          "employeeCount": 567
+        },
+        {
+          "dateTaken": "2019-12",
+          "employeeCount": 599
+        },
+        {
+          "dateTaken": "2020-01",
+          "employeeCount": 571
+        },
+        {
+          "dateTaken": "2020-02",
+          "employeeCount": 566
+        },
+        {
+          "dateTaken": "2020-03",
+          "employeeCount": 555
+        }
+      ]
+    }
+  ]
+}

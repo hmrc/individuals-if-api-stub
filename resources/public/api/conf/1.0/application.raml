@@ -516,4 +516,45 @@ uses:
                   description: Invalid request
                   value:
                     code: INVALID_REQUEST
-
+  /organisations/employers/employee/counts:
+    uriParameters:
+      utr:
+        description: "A Unique Tax Reference"
+        type: string
+        required: true
+        example: "1234567890"
+    post:
+      displayName: "Create a employee count payload"
+      is: [headers.acceptHeader]
+      securedBy: [ sec.x-application ]
+      headers:
+        Authorization:
+          description: "OAuth 2.0 Bearer Token or server token."
+          type: string
+          required: true
+          example: Bearer <BEARER_TOKEN>
+        Content-Type:
+          description: "Specifies the content-type of the body."
+          type: string
+          required: true
+          example: application/json
+      body:
+        application/json:
+          schema: !include schemas/organisations/create-employee-counts.json
+          example: !include examples/organisations/create-employee-counts.json
+      responses:
+        201:
+          description: The created corporation-tex details
+          body:
+            application/json:
+              type: !include schemas/organisations/create-employee-counts.json
+              example: !include examples/organisations/create-employee-counts.json
+        400:
+          body:
+            application/json:
+              type: types.errorResponse
+              examples:
+                BadRequest:
+                  description: Invalid request
+                  value:
+                    code: INVALID_REQUEST
