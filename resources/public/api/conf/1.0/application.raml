@@ -321,7 +321,7 @@ uses:
         required: true
         example: "1234567890"
     post:
-      displayName: "Create a self-assessment organisations payload"
+      displayName: "Create a self-assessment return details payload"
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
       headers:
@@ -335,17 +335,6 @@ uses:
           type: string
           required: true
           example: application/json
-      queryParameters:
-        startYear:
-          description: "Starting year of repsonse"
-          type: integer
-          required: true
-          example: 2016
-        endYear:
-          description: "Ending year of response"
-          type: integer
-          required: true
-          example: 2019
       body:
         application/json:
           schema: !include schemas/organisations/create-organisations-return-detail.json
@@ -389,17 +378,6 @@ uses:
           type: string
           required: true
           example: application/json
-      queryParameters:
-        startYear:
-          description: "Starting Year of response"
-          type: integer
-          required: true
-          example: 2016
-        endYear:
-          description: "Ending year of response"
-          type: integer
-          required: true
-          example: 2019
       body:
         application/json:
           schema: !include schemas/organisations/create-organisations-taxpayer-detail.json
@@ -443,24 +421,13 @@ uses:
           type: string
           required: true
           example: application/json
-      queryParameters:
-        startYear:
-          description: "Starting Year of response"
-          type: integer
-          required: true
-          example: 2016
-        endYear:
-          description: "Ending year of response"
-          type: integer
-          required: true
-          example: 2019
       body:
         application/json:
           schema: !include schemas/organisations/create-corporation-tax-detail.json
           example: !include examples/organisations/create-corporation-tax-detail.json
       responses:
         201:
-          description: The created corporation-tex details
+          description: The created corporation-tax return details
           body:
             application/json:
               type: !include schemas/organisations/create-corporation-tax-detail.json
@@ -502,7 +469,7 @@ uses:
           example: !include examples/organisations/create-corporation-tax-company-detail.json
       responses:
         201:
-          description: The created corporation-tex details
+          description: The created corporation-tax company details
           body:
             application/json:
               type: !include schemas/organisations/create-corporation-tax-company-detail.json
@@ -524,7 +491,7 @@ uses:
         required: true
         example: "1234567890"
     post:
-      displayName: "Create a employee count payload"
+      displayName: "Create an employee counts payload"
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
       headers:
@@ -544,7 +511,7 @@ uses:
           example: !include examples/organisations/create-employee-counts.json
       responses:
         201:
-          description: The created corporation-tex details
+          description: The created employee counts
           body:
             application/json:
               type: !include schemas/organisations/create-employee-counts.json
