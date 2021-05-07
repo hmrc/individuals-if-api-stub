@@ -1,0 +1,37 @@
+{
+  "utr": "1234567890",
+  "taxpayerType": "Individual",
+  "taxpayerDetails": [
+    {
+      "name": "John Smith II",
+      "addressType": "Registered",
+      "address": {
+        "line1": "Alfie House",
+        "line2": "Main Street",
+        "line3": "Birmingham",
+        "line4": "West midlands",
+        "postcode": "B14 6JH"
+      }
+    },
+    {
+      "name": "Joanne Smith",
+      "addressType": "Communication",
+      "address": {
+        "line1": "Alice House",
+        "line2": "Main Street",
+        "line3": "Manchester",
+        "postcode": "MC1 4AA"
+      }
+    },
+    {
+      "name": "Daffy Duck",
+      "addressType": "Other",
+      "address": {
+        "line1": "1 Main Street",
+        "line2": "Disneyland",
+        "line3": "Liverpool",
+        "postcode": "MC1 4AA"
+      }
+    }
+  ]
+}

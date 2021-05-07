@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "Organisations return details",
+  "type": "object",
+  "required": [
+    "utr",
+    "taxyears"
+  ],
+  "properties": {
+    "utr": {
+      "type": "string",
+      "description": "A Unique Tax Reference Number",
+      "pattern": "^[0-9]{10}$",
+      "example": "1234567890"
+    },
+    "taxpayerType": {
+      "type": "string",
+      "description": "Taxpayer Type",
+      "pattern": "^[A-Z][a-zA-Z]{3,24}$",
+      "example" : "Individual"
+    },
+    "taxSolvencyStatus": {
+      "type": "string",
+      "enum": ["S", "I"],
+      "description": "The Tax Solvency Status. Should be 1 character",
+      "example": "S"
+    },
+    "taxyears": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "taxyear": {
+            "type": "integer",
+            "example": "2020",
+            "pattern": "^20[0-9]{2}$",
+            "description": "The tax year"
+          },
+          "businessSalesTurnover": {
+            "type": "number",
+            "example": "20177.77",
+            "description": "The business sales turnover"
+          }
+        }
+      }
+    }
+  }
+}

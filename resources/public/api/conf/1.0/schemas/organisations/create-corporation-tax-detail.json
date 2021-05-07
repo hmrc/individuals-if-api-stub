@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "Organisations corporation-tax details",
+  "type": "object",
+  "required": ["utr", "accountingPeriods"],
+  "properties": {
+    "utr": {
+      "type": "string",
+      "pattern": "^[0-9]{10}$",
+      "example": "1234567890",
+      "description": "A Unique Tax Reference"
+    },
+    "taxpayerStartDate": {
+      "id": "full-date",
+      "example": "2015-04-21",
+      "description": "The taxpayer start date."
+    },
+    "taxSolvencyStatus": {
+      "type": "string",
+      "enum": ["A", "V", "S", "I"],
+      "example": "V",
+      "description": "A - Administrative Order, V - Voluntary Arrangement, S - Solvent, I - Insolvent"
+    },
+    "accountingPeriods": {
+      "type": "array",
+      "description": "Mandatory. An array of accounting periods. It will have at least 1 accounting period",
+      "items": {
+        "type": "object",
+        "required": ["turnover"],
+        "properties": {
+          "apStartDate" : {
+            "id": "full-date",
+            "example": "2018-04-06"
+          },
+          "apEndDate" : {
+            "id": "full-date",
+            "example": "2018-10-05"
+          },
+          "turnover": {
+            "type": "integer",
+            "example": "38390",
+            "description": "Turnover is recorded in thousands of pounds (rounded to the nearest £1000 up or down)."
+          }
+        }
+      }
+    }
+  }
+}

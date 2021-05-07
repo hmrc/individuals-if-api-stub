@@ -1,0 +1,30 @@
+{
+  "utr": "1234567890",
+  "crn": "12345678",
+  "registeredDetails": {
+    "name": {
+      "name1": "Waitrose",
+      "name2": "And Partners"
+    },
+    "address": {
+      "line1": "Alfie House",
+      "line2": "Main Street",
+      "line3": "Manchester",
+      "line4": "Londonberry",
+      "postcode": "LN1 1AG"
+    }
+  },
+  "communicationDetails": {
+    "name": {
+      "name1": "Waitrose",
+      "name2": "And Partners"
+    },
+    "address": {
+      "line1": "Orange House",
+      "line2": "Corporation Street",
+      "line3": "London",
+      "line4": "Londonberry",
+      "postcode": "LN1 1AG"
+    }
+  }
+}

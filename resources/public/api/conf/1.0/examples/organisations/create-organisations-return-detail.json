@@ -1,0 +1,36 @@
+{
+  "utr": "1234567890",
+  "taxpayerType": "Individual",
+  "startDate": "2015-04-21",
+  "taxSolvencyStatus": "S",
+  "taxyears": [
+    {
+      "taxYear": "2020",
+      "businessSalesTurnover": 38390.76
+    },
+    {
+      "taxYear": "2019",
+      "businessSalesTurnover": 12343.12
+    },
+    {
+      "taxYear": "2018",
+      "businessSalesTurnover": 20182.22
+    },
+    {
+      "taxYear": "2017",
+      "businessSalesTurnover": 20177.77
+    },
+    {
+      "taxYear": "2016",
+      "businessSalesTurnover": 20166.66
+    },
+    {
+      "taxYear": "2015",
+      "businessSalesTurnover": 20155.55
+    },
+    {
+      "taxYear": "2014",
+      "businessSalesTurnover": 20144.50
+    }
+  ]
+}

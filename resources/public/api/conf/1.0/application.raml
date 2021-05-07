@@ -1,7 +1,7 @@
 #%RAML 1.0
 ---
 
-title: Individuals Integration Framework Test Support
+title: Integration Framework Test Support
 version: 1.0
 protocols: [ HTTPS ]
 baseUri: https://api.service.hmrc.gov.uk/
@@ -22,7 +22,7 @@ uses:
   annotations: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/annotations.raml
   types: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/types.raml
 
-/individuals/integration-framework-test-support:
+/integration-framework-test-support:
   /individuals/employment/nino/{nino}:
     uriParameters:
       nino:
@@ -31,7 +31,7 @@ uses:
         example: AA123456D
     post:
       displayName: Create an employments payload
-      description: !include docs/create-employment-description.md
+      description: !include docs/individuals/create-employment-description.md
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
       headers:
@@ -47,12 +47,12 @@ uses:
           example: application/json
       queryParameters:
         startDate:
-          description: !include docs/create-employment-data-date-from.md
+          description: !include docs/individuals/create-employment-data-date-from.md
           type: string
           required: true
           example: 2019-01-01
         endDate:
-          description: !include docs/create-employment-data-date-to.md
+          description: !include docs/individuals/create-employment-data-date-to.md
           type: string
           required: true
           example: 2020-01-01
@@ -63,15 +63,15 @@ uses:
           example: LAA-C1 or LAA-C2 or LAA-C3 or LAA-C4 or LSANI-C1 or LSANI-C3 or HMCTS-C2 or HMCTS-C3 or HMCTS-C4 or NICTSEJO-C4
       body:
         application/json:
-          schema: !include schemas/create-employment.json
-          example: !include examples/create-employment.json
+          schema: !include schemas/individuals/create-employment.json
+          example: !include examples/individuals/create-employment.json
       responses:
         201:
           description: The created employment
           body:
             application/json:
-              example: !include examples/create-employment-response.json
-              type: !include schemas/create-employment-response.json
+              example: !include examples/individuals/create-employment-response.json
+              type: !include schemas/individuals/create-employment-response.json
         400:
           body:
             application/json:
@@ -91,7 +91,7 @@ uses:
 
     post:
       displayName: Create a Self Assessment payload
-      description: !include docs/create-self-assessment-description.md
+      description: !include docs/individuals/create-self-assessment-description.md
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
       headers:
@@ -107,12 +107,12 @@ uses:
           example: application/json
       queryParameters:
         startYear:
-          description: !include docs/create-self-assessment-first-tax-description.md
+          description: !include docs/individuals/create-self-assessment-first-tax-description.md
           type: string
           required: true
           example: '2018'
         endYear:
-          description: !include docs/create-self-assessment-last-tax-description.md
+          description: !include docs/individuals/create-self-assessment-last-tax-description.md
           type: string
           required: true
           example: '2019'
@@ -123,15 +123,15 @@ uses:
           example: LAA-C1 or LAA-C2 or LAA-C3 or LAA-C4 or LSANI-C1 or LSANI-C3 or HMCTS-C2 or HMCTS-C3 or HMCTS-C4 or NICTSEJO-C4
       body:
         application/json:
-          schema: !include schemas/create-self-assessment-request.json
-          example: !include examples/create-self-assessment-request.json
+          schema: !include schemas/individuals/create-self-assessment-request.json
+          example: !include examples/individuals/create-self-assessment-request.json
       responses:
         201:
           description: The created self assessment
           body:
             application/json:
-              example: !include examples/create-self-assessment-response.json
-              type: !include schemas/create-self-assessment-response.json
+              example: !include examples/individuals/create-self-assessment-response.json
+              type: !include schemas/individuals/create-self-assessment-response.json
         400:
           body:
             application/json:
@@ -151,7 +151,7 @@ uses:
 
     post:
       displayName: Create a PAYE income payload
-      description: !include docs/create-paye-income-description.md
+      description: !include docs/individuals/create-paye-income-description.md
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
       headers:
@@ -167,12 +167,12 @@ uses:
           example: application/json
       queryParameters:
         startDate:
-          description: !include docs/create-paye-data-date-from.md
+          description: !include docs/individuals/create-paye-data-date-from.md
           type: string
           required: true
           example: 2019-01-01
         endDate:
-          description: !include docs/create-paye-data-date-to.md
+          description: !include docs/individuals/create-paye-data-date-to.md
           type: string
           required: true
           example: 2020-01-01
@@ -183,15 +183,15 @@ uses:
           example: LAA-C1 or LAA-C2 or LAA-C3 or LAA-C4 or LSANI-C1 or LSANI-C3 or HMCTS-C2 or HMCTS-C3 or HMCTS-C4 or NICTSEJO-C4
       body:
         application/json:
-          schema: !include schemas/create-paye-income.json
-          example: !include examples/create-paye-income.json
+          schema: !include schemas/individuals/create-paye-income.json
+          example: !include examples/individuals/create-paye-income.json
       responses:
         201:
           description: The created paye income
           body:
             application/json:
-              example: !include examples/create-paye-income-response.json
-              type: !include schemas/create-paye-income-response.json
+              example: !include examples/individuals/create-paye-income-response.json
+              type: !include schemas/individuals/create-paye-income-response.json
         400:
           body:
             application/json:
@@ -210,7 +210,7 @@ uses:
         example: AA123456D
     post:
       displayName: Create a benefits and credits payload
-      description: !include docs/create-benefits-and-credits-description.md
+      description: !include docs/individuals/create-benefits-and-credits-description.md
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
       headers:
@@ -226,12 +226,12 @@ uses:
           example: application/json
       queryParameters:
         startDate:
-          description: !include docs/create-benefits-and-credits-data-date-from.md
+          description: !include docs/individuals/create-benefits-and-credits-data-date-from.md
           type: string
           required: true
           example: 2019-01-01
         endDate:
-          description: !include docs/create-benefits-and-credits-data-date-to.md
+          description: !include docs/individuals/create-benefits-and-credits-data-date-to.md
           type: string
           required: true
           example: 2020-01-01
@@ -244,15 +244,15 @@ uses:
                     or LSANI-C1-working-tax-credit or LSANI-C3-working-tax-credit
       body:
         application/json:
-          schema: !include schemas/create-benefits-and-credits.json
-          example: !include examples/create-benefits-and-credits.json
+          schema: !include schemas/individuals/create-benefits-and-credits.json
+          example: !include examples/individuals/create-benefits-and-credits.json
       responses:
         201:
           description: The created employment
           body:
             application/json:
-              example: !include examples/create-benefits-and-credits-response.json
-              type: !include schemas/create-benefits-and-credits-response.json
+              example: !include examples/individuals/create-benefits-and-credits-response.json
+              type: !include schemas/individuals/create-benefits-and-credits-response.json
         400:
           body:
             application/json:
@@ -271,7 +271,7 @@ uses:
         example: AA123456D
     post:
       displayName: Create a details payload
-      description: !include docs/create-contact-details-description.md
+      description: !include docs/individuals/create-contact-details-description.md
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
       headers:
@@ -294,15 +294,228 @@ uses:
                    LSANI-C1-residences or LSANI-C4-residences or NICTSEJO-C4-residences or LAA-C4-contact-details or HMCTS-C4-contact-details
       body:
         application/json:
-          schema: !include schemas/create-contact-details.json
-          example: !include examples/create-contact-details.json
+          schema: !include schemas/individuals/create-contact-details.json
+          example: !include examples/individuals/create-contact-details.json
       responses:
         201:
           description: The created contact details
           body:
             application/json:
-              example: !include examples/create-contact-details-response.json
-              type: !include schemas/create-contact-details-response.json
+              example: !include examples/individuals/create-contact-details-response.json
+              type: !include schemas/individuals/create-contact-details-response.json
+        400:
+          body:
+            application/json:
+              type: types.errorResponse
+              examples:
+                BadRequest:
+                  description: Invalid request
+                  value:
+                    code: INVALID_REQUEST
+
+  /organisations/self-assessment/{utr}/return/details:
+    uriParameters:
+      utr:
+        description: "A Unique Tax Reference"
+        type: string
+        required: true
+        example: "1234567890"
+    post:
+      displayName: "Create a self-assessment return details payload"
+      is: [headers.acceptHeader]
+      securedBy: [ sec.x-application ]
+      headers:
+        Authorization:
+          description: "OAuth 2.0 Bearer Token or server token."
+          type: string
+          required: true
+          example: Bearer <BEARER_TOKEN>
+        Content-Type:
+          description: "Specifies the content-type of the body."
+          type: string
+          required: true
+          example: application/json
+      body:
+        application/json:
+          schema: !include schemas/organisations/create-organisations-return-detail.json
+          example: !include examples/organisations/create-organisations-return-detail.json
+      responses:
+        201:
+          description: The created contact details
+          body:
+            application/json:
+              type: !include schemas/organisations/create-organisations-return-detail.json
+              example: !include examples/organisations/create-organisations-return-detail.json
+        400:
+          body:
+            application/json:
+              type: types.errorResponse
+              examples:
+                BadRequest:
+                  description: Invalid request
+                  value:
+                    code: INVALID_REQUEST
+
+  /organisations/self-assessment/{utr}/taxpayer/details:
+    uriParameters:
+      utr:
+        description: "A Unique Tax Reference"
+        type: string
+        required: true
+        example: "1234567890"
+    post:
+      displayName: "Create a self-assessment organisations taxpayer payload"
+      is: [headers.acceptHeader]
+      securedBy: [ sec.x-application ]
+      headers:
+        Authorization:
+          description: "OAuth 2.0 Bearer Token or server token."
+          type: string
+          required: true
+          example: Bearer <BEARER_TOKEN>
+        Content-Type:
+          description: "Specifies the content-type of the body."
+          type: string
+          required: true
+          example: application/json
+      body:
+        application/json:
+          schema: !include schemas/organisations/create-organisations-taxpayer-detail.json
+          example: !include examples/organisations/create-organisations-taxpayer-detail.json
+      responses:
+        201:
+          description: The created taxpayer details
+          body:
+            application/json:
+              type: !include schemas/organisations/create-organisations-taxpayer-detail.json
+              example: !include examples/organisations/create-organisations-taxpayer-detail.json
+        400:
+          body:
+            application/json:
+              type: types.errorResponse
+              examples:
+                BadRequest:
+                  description: Invalid request
+                  value:
+                    code: INVALID_REQUEST
+
+  /organisations/corporation-tax/{utr}/return/details:
+    uriParameters:
+      utr:
+        description: "A Unique Tax Reference"
+        type: string
+        required: true
+        example: "1234567890"
+    post:
+      displayName: "Create a corporation-tax payload"
+      is: [headers.acceptHeader]
+      securedBy: [ sec.x-application ]
+      headers:
+        Authorization:
+          description: "OAuth 2.0 Bearer Token or server token."
+          type: string
+          required: true
+          example: Bearer <BEARER_TOKEN>
+        Content-Type:
+          description: "Specifies the content-type of the body."
+          type: string
+          required: true
+          example: application/json
+      body:
+        application/json:
+          schema: !include schemas/organisations/create-corporation-tax-detail.json
+          example: !include examples/organisations/create-corporation-tax-detail.json
+      responses:
+        201:
+          description: The created corporation-tax return details
+          body:
+            application/json:
+              type: !include schemas/organisations/create-corporation-tax-detail.json
+              example: !include examples/organisations/create-corporation-tax-detail.json
+        400:
+          body:
+            application/json:
+              type: types.errorResponse
+              examples:
+                BadRequest:
+                  description: Invalid request
+                  value:
+                    code: INVALID_REQUEST
+  /organisations/corporation-tax/{crn}/company/details:
+    uriParameters:
+      utr:
+        description: "A Unique Tax Reference"
+        type: string
+        required: true
+        example: "1234567890"
+    post:
+      displayName: "Create a corporation-tax company payload"
+      is: [headers.acceptHeader]
+      securedBy: [ sec.x-application ]
+      headers:
+        Authorization:
+          description: "OAuth 2.0 Bearer Token or server token."
+          type: string
+          required: true
+          example: Bearer <BEARER_TOKEN>
+        Content-Type:
+          description: "Specifies the content-type of the body."
+          type: string
+          required: true
+          example: application/json
+      body:
+        application/json:
+          schema: !include schemas/organisations/create-corporation-tax-company-detail.json
+          example: !include examples/organisations/create-corporation-tax-company-detail.json
+      responses:
+        201:
+          description: The created corporation-tax company details
+          body:
+            application/json:
+              type: !include schemas/organisations/create-corporation-tax-company-detail.json
+              example: !include examples/organisations/create-corporation-tax-company-detail.json
+        400:
+          body:
+            application/json:
+              type: types.errorResponse
+              examples:
+                BadRequest:
+                  description: Invalid request
+                  value:
+                    code: INVALID_REQUEST
+  /organisations/employers/employee/counts:
+    uriParameters:
+      utr:
+        description: "A Unique Tax Reference"
+        type: string
+        required: true
+        example: "1234567890"
+    post:
+      displayName: "Create an employee counts payload"
+      is: [headers.acceptHeader]
+      securedBy: [ sec.x-application ]
+      headers:
+        Authorization:
+          description: "OAuth 2.0 Bearer Token or server token."
+          type: string
+          required: true
+          example: Bearer <BEARER_TOKEN>
+        Content-Type:
+          description: "Specifies the content-type of the body."
+          type: string
+          required: true
+          example: application/json
+      body:
+        application/json:
+          schema: !include schemas/organisations/create-employee-counts.json
+          example: !include examples/organisations/create-employee-counts.json
+      responses:
+        201:
+          description: The created employee counts
+          body:
+            application/json:
+              type: !include schemas/organisations/create-employee-counts.json
+              example: !include examples/organisations/create-employee-counts.json
         400:
           body:
             application/json:
