@@ -4,6 +4,7 @@ The Integration Framework Test Support API allows you to create test data for th
 - Individuals Income
 - Individuals Benefits and Credits
 - Individuals Details
+- Organisations Matching
 - Organisations Details
 
 This API does not accept duplicate entries. You must create a unique user using the Create a
