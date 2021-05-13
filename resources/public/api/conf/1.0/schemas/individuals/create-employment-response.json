@@ -12,7 +12,7 @@
           "employerRef": {
             "type": "string",
             "example": "247/ZT6767895A",
-            "description": "Employer Reference",
+            "description": "Employer Reference - Made from \"districtNumber/schemeRef\"",
             "pattern": "^[0-9]{3}[\/][a-zA-Z0-9]{1,10}$"
           },
           "payments": {

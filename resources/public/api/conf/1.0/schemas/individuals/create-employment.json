@@ -28,12 +28,6 @@
               }
             }
           },
-          "employerRef": {
-            "type": "string",
-            "example": "247/ZT6767895A",
-            "description": "Employer Reference",
-            "pattern": "^[0-9]{3}[\/][a-zA-Z0-9]{1,10}$"
-          },
           "employer": {
             "type": "object",
             "description": "The employer's details.",
