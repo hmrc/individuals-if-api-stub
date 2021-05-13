@@ -4,6 +4,7 @@
       "taxYear": "2019",
       "returnList": [
         {
+          "utr": "3287654321",
           "busStartDate": "2018-02-21",
           "busEndDate": "2018-02-22",
           "caseStartDate": "2018-02-20",

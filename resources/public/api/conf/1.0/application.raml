@@ -60,7 +60,7 @@ uses:
           description: The use case that the employments data relates to.
           type: string
           required: true
-          example: LAA-C1 or LAA-C2 or LAA-C3 or LAA-C4 or LSANI-C1 or LSANI-C3 or HMCTS-C2 or HMCTS-C3 or HMCTS-C4 or NICTSEJO-C4
+          example: !include docs/individuals/employments-use-case-example.md
       body:
         application/json:
           schema: !include schemas/individuals/create-employment.json
