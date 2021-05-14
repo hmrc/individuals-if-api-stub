@@ -10,7 +10,7 @@ One of the following:
 * HMCTS-C3
 * HMCTS-C4
 * NICTSEJO-C4
-* HO-RP2-App
-* HO-RP2-Comp
-* HO-ECP-App
-* HO-ECP-Comp
+* HO-RP2-APP
+* HO-RP2-COMP
+* HO-ECP-APP
+* HO-ECP-COMP

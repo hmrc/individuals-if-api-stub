@@ -60,7 +60,7 @@ uses:
           description: The use case that the employments data relates to.
           type: string
           required: true
-          example: !include docs/individuals/employments-use-case-example.md
+          example: !include docs/individuals/use-case-examples/employments-use-case-example.md
       body:
         application/json:
           schema: !include schemas/individuals/create-employment.json
@@ -120,7 +120,7 @@ uses:
           description: The use case that the Self Assessment income data relates to.
           type: string
           required: true
-          example: LAA-C1 or LAA-C2 or LAA-C3 or LAA-C4 or LSANI-C1 or LSANI-C3 or HMCTS-C2 or HMCTS-C3 or HMCTS-C4 or NICTSEJO-C4
+          example: !include docs/individuals/use-case-examples/self-assessment-use-case-example.md
       body:
         application/json:
           schema: !include schemas/individuals/create-self-assessment-request.json
@@ -180,7 +180,7 @@ uses:
           description: The use case that the PAYE income data relates to.
           type: string
           required: true
-          example: LAA-C1 or LAA-C2 or LAA-C3 or LAA-C4 or LSANI-C1 or LSANI-C3 or HMCTS-C2 or HMCTS-C3 or HMCTS-C4 or NICTSEJO-C4
+          example: !include docs/individuals/use-case-examples/paye-use-case-example.md
       body:
         application/json:
           schema: !include schemas/individuals/create-paye-income.json
@@ -239,9 +239,7 @@ uses:
           description: The use case that the benefits and credits data relates to.
           type: string
           required: true
-          example:  LAA-C1-working-tax-credit or LAA-C2-working-tax-credit or LAA-C3-working-tax-credit or LAA-C1-child-tax-credit
-                    or LAA-C2-child-tax-credit or LAA-C3-child-tax-credit or HMCTS-C2-working-tax-credit or HMCTS-C3-working-tax-credit
-                    or LSANI-C1-working-tax-credit or LSANI-C3-working-tax-credit
+          example: !include docs/individuals/use-case-examples/tax-credits-use-case-example.md
       body:
         application/json:
           schema: !include schemas/individuals/create-benefits-and-credits.json
@@ -290,8 +288,7 @@ uses:
           description: The use case that the details relate to.
           type: string
           required: true
-          example: LAA-C3-residences or LAA-C4-residences or HMCTS-C3-residences or HMCTS-C4-residences or
-                   LSANI-C1-residences or LSANI-C4-residences or NICTSEJO-C4-residences or LAA-C4-contact-details or HMCTS-C4-contact-details
+          example: !include docs/individuals/use-case-examples/details-use-case-example.md
       body:
         application/json:
           schema: !include schemas/individuals/create-contact-details.json
