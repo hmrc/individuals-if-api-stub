@@ -1,0 +1,16 @@
+One of the following:
+
+* LAA-C1 
+* LAA-C2
+* LAA-C3
+* LAA-C4
+* LSANI-C1
+* LSANI-C3
+* HMCTS-C2
+* HMCTS-C3
+* HMCTS-C4
+* NICTSEJO-C4
+* HO-RP2-APP
+* HO-RP2-COMP
+* HO-ECP-APP
+* HO-ECP-COMP

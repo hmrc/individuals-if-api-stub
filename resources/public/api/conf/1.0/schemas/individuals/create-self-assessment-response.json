@@ -20,6 +20,12 @@
             "items": {
               "type": "object",
               "properties": {
+                "utr": {
+                  "type": "string",
+                  "example": "3287654321",
+                  "pattern": "^[0-9]{10}$",
+                  "description": "The individual's UTR"
+                },
                 "busStartDate": {
                   "type": "string",
                   "id": "full-date",
