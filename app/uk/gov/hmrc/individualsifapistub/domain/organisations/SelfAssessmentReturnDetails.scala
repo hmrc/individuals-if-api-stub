@@ -23,9 +23,9 @@ import play.api.libs.json._
 import scala.util.matching.Regex
 
 case class TaxYear(taxYear: String, businessSalesTurnover: Double)
-case class CreateSelfAssessmentRequest(utr: String, startDate: String, taxPayerType: String, taxSolvencyStatus: String, taxYears: Seq[TaxYear])
+case class CreateSelfAssessmentReturnDetailRequest(utr: String, startDate: String, taxPayerType: String, taxSolvencyStatus: String, taxYears: Seq[TaxYear])
 
-object SelfAssessment {
+object SelfAssessmentReturnDetail {
 
   val taxYearPattern: Regex = "^20[0-9]{2}$".r
   val utrPattern: Regex = "^[0-9]{10}$".r
@@ -46,20 +46,20 @@ object SelfAssessment {
   )
 
 
-  implicit val createSelfAssessmentRequestFormat: Format[CreateSelfAssessmentRequest] = Format(
+  implicit val createSelfAssessmentRequestFormat: Format[CreateSelfAssessmentReturnDetailRequest] = Format(
     (
       (JsPath \ "utr").read[String](pattern(utrPattern, "UTR pattern is incorrect")) and
         (JsPath \ "startDate").read[String](pattern(datePattern, "Date pattern is incorrect")) and
         (JsPath \ "taxpayerType").read[String](pattern(taxPayerTypePattern, "Invalid taxpayer type")) and
         (JsPath \ "taxSolvencyStatus").read[String](verifying(taxSolvencyStatusValidator)) and
         (JsPath \ "taxyears").read[Seq[TaxYear]]
-      )(CreateSelfAssessmentRequest.apply _),
+      )(CreateSelfAssessmentReturnDetailRequest.apply _),
     (
       (JsPath \ "utr").write[String] and
         (JsPath \ "startDate").write[String] and
         (JsPath \ "taxpayerType").write[String] and
         (JsPath \ "taxSolvencyStatus").write[String] and
         (JsPath \ "taxyears").write[Seq[TaxYear]]
-      )(unlift(CreateSelfAssessmentRequest.unapply))
+      )(unlift(CreateSelfAssessmentReturnDetailRequest.unapply))
   )
 }

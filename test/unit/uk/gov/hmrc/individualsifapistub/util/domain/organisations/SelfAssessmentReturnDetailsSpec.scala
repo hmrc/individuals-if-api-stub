@@ -17,11 +17,11 @@
 package unit.uk.gov.hmrc.individualsifapistub.util.domain.organisations
 
 import play.api.libs.json.Json
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{CreateSelfAssessmentRequest, TaxYear}
-import uk.gov.hmrc.individualsifapistub.domain.organisations.SelfAssessment._
+import uk.gov.hmrc.individualsifapistub.domain.organisations.{CreateSelfAssessmentReturnDetailRequest, TaxYear}
+import uk.gov.hmrc.individualsifapistub.domain.organisations.SelfAssessmentReturnDetail._
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
-class SelfAssessmentSpec extends UnitSpec {
+class SelfAssessmentReturnDetailsSpec extends UnitSpec {
 
   "TaxYear read from JSON successfully" in {
     val json =
@@ -54,7 +54,7 @@ class SelfAssessmentSpec extends UnitSpec {
     result.isSuccess shouldBe false
   }
 
-  "CreateSelfAssessmentRequest read from JSON successfully" in {
+  "CreateSelfAssessmentReturnDetailRequest read from JSON successfully" in {
     val json =
       """
         |{
@@ -65,15 +65,15 @@ class SelfAssessmentSpec extends UnitSpec {
         |  "taxyears": []
         |}""".stripMargin
 
-    val expectedResult = CreateSelfAssessmentRequest("1234567890", "2015-04-21", "Individual", "S", Seq.empty)
+    val expectedResult = CreateSelfAssessmentReturnDetailRequest("1234567890", "2015-04-21", "Individual", "S", Seq.empty)
 
-    val result = Json.parse(json).validate[CreateSelfAssessmentRequest]
+    val result = Json.parse(json).validate[CreateSelfAssessmentReturnDetailRequest]
 
     result.isSuccess shouldBe true
     result.get shouldBe expectedResult
   }
 
-  "CreateSelfAssessmentRequest read from JSON unsuccessfully if tax solvency status is not S or I" in {
+  "CreateSelfAssessmentReturnDetailRequest read from JSON unsuccessfully if tax solvency status is not S or I" in {
     val json =
       """
         |{
@@ -84,12 +84,12 @@ class SelfAssessmentSpec extends UnitSpec {
         |  "taxyears": []
         |}""".stripMargin
 
-    val result = Json.parse(json).validate[CreateSelfAssessmentRequest]
+    val result = Json.parse(json).validate[CreateSelfAssessmentReturnDetailRequest]
 
     result.isSuccess shouldBe false
   }
 
-  "CreateSelfAssessmentRequest read from JSON unsuccessfully if given an invalid start date" in {
+  "CreateSelfAssessmentReturnDetailRequest read from JSON unsuccessfully if given an invalid start date" in {
     val json =
       """
         |{
@@ -100,12 +100,12 @@ class SelfAssessmentSpec extends UnitSpec {
         |  "taxyears": []
         |}""".stripMargin
 
-    val result = Json.parse(json).validate[CreateSelfAssessmentRequest]
+    val result = Json.parse(json).validate[CreateSelfAssessmentReturnDetailRequest]
 
     result.isSuccess shouldBe false
   }
 
-  "CreateSelfAssessmentRequest read from JSON unsuccessfully if given an invalid utr" in {
+  "CreateSelfAssessmentReturnDetailRequest read from JSON unsuccessfully if given an invalid utr" in {
     val json =
       """
         |{
@@ -116,12 +116,12 @@ class SelfAssessmentSpec extends UnitSpec {
         |  "taxyears": []
         |}""".stripMargin
 
-    val result = Json.parse(json).validate[CreateSelfAssessmentRequest]
+    val result = Json.parse(json).validate[CreateSelfAssessmentReturnDetailRequest]
 
     result.isSuccess shouldBe false
   }
 
-  "CreateSelfAssessmentRequest read from JSON unsuccessfully if given an invalid taxPayerType" in {
+  "CreateSelfAssessmentReturnDetailRequest read from JSON unsuccessfully if given an invalid taxPayerType" in {
     val json =
       """
         |{
@@ -132,7 +132,7 @@ class SelfAssessmentSpec extends UnitSpec {
         |  "taxyears": []
         |}""".stripMargin
 
-    val result = Json.parse(json).validate[CreateSelfAssessmentRequest]
+    val result = Json.parse(json).validate[CreateSelfAssessmentReturnDetailRequest]
 
     result.isSuccess shouldBe false
   }
