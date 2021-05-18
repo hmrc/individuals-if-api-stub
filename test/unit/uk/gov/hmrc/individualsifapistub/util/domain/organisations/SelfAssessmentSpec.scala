@@ -59,18 +59,83 @@ class SelfAssessmentSpec extends UnitSpec {
       """
         |{
         |  "utr": "1234567890",
+        |  "startDate": "2015-04-21",
         |  "taxpayerType": "Individual",
         |  "taxSolvencyStatus": "S",
         |  "taxyears": []
         |}""".stripMargin
 
-    val expectedResult = CreateSelfAssessmentRequest("1234567890", "Individual", "S", Seq.empty)
+    val expectedResult = CreateSelfAssessmentRequest("1234567890", "2015-04-21", "Individual", "S", Seq.empty)
 
     val result = Json.parse(json).validate[CreateSelfAssessmentRequest]
 
-    println(result)
     result.isSuccess shouldBe true
     result.get shouldBe expectedResult
   }
+
+  "CreateSelfAssessmentRequest read from JSON unsuccessfully if tax solvency status is not S or I" in {
+    val json =
+      """
+        |{
+        |  "utr": "1234567890",
+        |  "startDate": "2015-04-21",
+        |  "taxpayerType": "Individual",
+        |  "taxSolvencyStatus": "M",
+        |  "taxyears": []
+        |}""".stripMargin
+
+    val result = Json.parse(json).validate[CreateSelfAssessmentRequest]
+
+    result.isSuccess shouldBe false
+  }
+
+  "CreateSelfAssessmentRequest read from JSON unsuccessfully if given an invalid start date" in {
+    val json =
+      """
+        |{
+        |  "utr": "1234567890",
+        |  "startDate": "20111-04-21",
+        |  "taxpayerType": "Individual",
+        |  "taxSolvencyStatus": "S",
+        |  "taxyears": []
+        |}""".stripMargin
+
+    val result = Json.parse(json).validate[CreateSelfAssessmentRequest]
+
+    result.isSuccess shouldBe false
+  }
+
+  "CreateSelfAssessmentRequest read from JSON unsuccessfully if given an invalid utr" in {
+    val json =
+      """
+        |{
+        |  "utr": "12345678901",
+        |  "startDate": "2015-04-21",
+        |  "taxpayerType": "Individual",
+        |  "taxSolvencyStatus": "S",
+        |  "taxyears": []
+        |}""".stripMargin
+
+    val result = Json.parse(json).validate[CreateSelfAssessmentRequest]
+
+    result.isSuccess shouldBe false
+  }
+
+  "CreateSelfAssessmentRequest read from JSON unsuccessfully if given an invalid taxPayerType" in {
+    val json =
+      """
+        |{
+        |  "utr": "1234567890",
+        |  "startDate": "2015-04-21",
+        |  "taxpayerType": "2Individual",
+        |  "taxSolvencyStatus": "S",
+        |  "taxyears": []
+        |}""".stripMargin
+
+    val result = Json.parse(json).validate[CreateSelfAssessmentRequest]
+
+    result.isSuccess shouldBe false
+  }
+
 
 }
