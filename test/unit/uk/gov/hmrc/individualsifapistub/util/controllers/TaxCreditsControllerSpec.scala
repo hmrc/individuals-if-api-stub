@@ -26,8 +26,9 @@ import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.controllers.TaxCreditsController
-import uk.gov.hmrc.individualsifapistub.domain.TaxCredits._
-import uk.gov.hmrc.individualsifapistub.domain.{Application, Applications, Identifier, RecordNotFoundException, TestIndividual}
+import uk.gov.hmrc.individualsifapistub.domain.individuals.{Application, Applications, Identifier}
+import uk.gov.hmrc.individualsifapistub.domain.individuals.TaxCredits._
+import uk.gov.hmrc.individualsifapistub.domain.{RecordNotFoundException, TestIndividual}
 import uk.gov.hmrc.individualsifapistub.repository.TaxCreditsRepository
 import uk.gov.hmrc.individualsifapistub.services.TaxCreditsService
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig

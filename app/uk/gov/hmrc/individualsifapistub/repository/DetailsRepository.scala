@@ -25,8 +25,9 @@ import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.api.indexes.IndexType.Text
 import reactivemongo.bson.BSONObjectID
 import reactivemongo.play.json._
-import uk.gov.hmrc.individualsifapistub.domain.IdType.{Nino, Trn}
+import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{Nino, Trn}
 import uk.gov.hmrc.individualsifapistub.domain._
+import uk.gov.hmrc.individualsifapistub.domain.individuals.{CreateDetailsRequest, DetailsResponse, DetailsResponseNoId, IdType, Identifier, JsonFormatters}
 import uk.gov.hmrc.mongo.ReactiveRepository
 
 import scala.concurrent.{ExecutionContext, Future}

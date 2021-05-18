@@ -22,7 +22,8 @@ import org.scalatestplus.mockito.MockitoSugar.mock
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
-import uk.gov.hmrc.individualsifapistub.domain.{IncomePaye, IncomeSa, TestIndividual}
+import uk.gov.hmrc.individualsifapistub.domain.individuals.{IncomePaye, IncomeSa}
+import uk.gov.hmrc.individualsifapistub.domain.TestIndividual
 import uk.gov.hmrc.individualsifapistub.repository.{IncomePayeRepository, IncomeSaRepository}
 import uk.gov.hmrc.individualsifapistub.services.IncomeService
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig

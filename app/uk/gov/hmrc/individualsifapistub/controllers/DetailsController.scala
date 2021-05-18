@@ -19,8 +19,8 @@ package uk.gov.hmrc.individualsifapistub.controllers
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
-import uk.gov.hmrc.individualsifapistub.domain.CreateDetailsRequest
-import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
+import uk.gov.hmrc.individualsifapistub.domain.individuals.JsonFormatters._
+import uk.gov.hmrc.individualsifapistub.domain.individuals.CreateDetailsRequest
 import uk.gov.hmrc.individualsifapistub.services.DetailsService
 
 import scala.concurrent.ExecutionContext

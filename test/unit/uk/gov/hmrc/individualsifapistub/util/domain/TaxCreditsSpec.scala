@@ -18,8 +18,8 @@ package unit.uk.gov.hmrc.individualsifapistub.util.domain
 
 import play.api.libs.json.Json
 import testUtils.TestHelpers
-import uk.gov.hmrc.individualsifapistub.domain.TaxCredits._
-import uk.gov.hmrc.individualsifapistub.domain.{Application, Awards, ChildTaxCredit, Employer, Payments, TaxCredits, WorkTaxCredit}
+import uk.gov.hmrc.individualsifapistub.domain.individuals.{Application, Awards, ChildTaxCredit, Payments, TaxCredits, WorkTaxCredit}
+import uk.gov.hmrc.individualsifapistub.domain.individuals.TaxCredits._
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class TaxCreditsSpec extends UnitSpec with TestHelpers {

@@ -18,7 +18,7 @@ package it.uk.gov.hmrc.individualsifapistub
 
 import play.api.Configuration
 import testUtils.RepositoryTestHelper
-import uk.gov.hmrc.individualsifapistub.domain.{DuplicateException, IncomePaye}
+import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomePaye
 import uk.gov.hmrc.individualsifapistub.repository.IncomePayeRepository
 import unit.uk.gov.hmrc.individualsifapistub.util.testUtils.IncomePayeHelpers
 

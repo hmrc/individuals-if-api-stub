@@ -18,8 +18,8 @@ package unit.uk.gov.hmrc.individualsifapistub.util.domain
 
 import play.api.libs.json.{JsNumber, Json}
 import testUtils.TestHelpers
-import uk.gov.hmrc.individualsifapistub.domain.{Address, Employer, Employment, EmploymentDetail, Employments, Identifier, Payment}
-import uk.gov.hmrc.individualsifapistub.domain.Employments._
+import uk.gov.hmrc.individualsifapistub.domain.individuals.{Address, Employer, Employment, EmploymentDetail, Employments, Identifier, Payment}
+import uk.gov.hmrc.individualsifapistub.domain.individuals.Employments._
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class EmploymentsSpec extends UnitSpec with TestHelpers {

@@ -23,6 +23,7 @@ import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.domain._
+import uk.gov.hmrc.individualsifapistub.domain.individuals.{Address, Employer, Employment, EmploymentDetail, EmploymentEntry, Employments, Identifier, Payment}
 import uk.gov.hmrc.individualsifapistub.repository.EmploymentRepository
 import uk.gov.hmrc.individualsifapistub.services.EmploymentsService
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig

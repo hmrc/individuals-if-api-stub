@@ -22,8 +22,8 @@ import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpClient, NotFoundException}
 import uk.gov.hmrc.individualsifapistub.config.ConfigSupport
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
-import uk.gov.hmrc.individualsifapistub.domain.{RecordNotFoundException, TestIndividual, TestOrganisation}
+import uk.gov.hmrc.individualsifapistub.domain.individuals.JsonFormatters._
+import uk.gov.hmrc.individualsifapistub.domain.{TestIndividual, TestOrganisation}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

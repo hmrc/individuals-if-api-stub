@@ -27,8 +27,9 @@ import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.controllers.DetailsController
-import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
-import uk.gov.hmrc.individualsifapistub.domain.{RecordNotFoundException, _}
+import uk.gov.hmrc.individualsifapistub.domain.individuals.JsonFormatters._
+import uk.gov.hmrc.individualsifapistub.domain.individuals.{ContactDetail, CreateDetailsRequest, DetailsResponse, DetailsResponseNoId, Identifier, Residence}
+import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.individualsifapistub.repository.DetailsRepository
 import uk.gov.hmrc.individualsifapistub.services.DetailsService
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig

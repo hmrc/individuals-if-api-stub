@@ -19,7 +19,7 @@ package uk.gov.hmrc.individualsifapistub.services
 import javax.inject.Inject
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
-import uk.gov.hmrc.individualsifapistub.domain.Applications
+import uk.gov.hmrc.individualsifapistub.domain.individuals.Applications
 import uk.gov.hmrc.individualsifapistub.repository.TaxCreditsRepository
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 

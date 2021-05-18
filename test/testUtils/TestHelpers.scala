@@ -16,7 +16,7 @@
 
 package testUtils
 
-import uk.gov.hmrc.individualsifapistub.domain.Address
+import uk.gov.hmrc.individualsifapistub.domain.individuals.Address
 
 import scala.util.Random
 

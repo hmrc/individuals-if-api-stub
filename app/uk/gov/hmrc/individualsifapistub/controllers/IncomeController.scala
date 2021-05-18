@@ -19,10 +19,11 @@ package uk.gov.hmrc.individualsifapistub.controllers
 import javax.inject.Inject
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
-import uk.gov.hmrc.individualsifapistub.domain.{IncomePaye, IncomeSa}
+import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomePaye
 import uk.gov.hmrc.individualsifapistub.services.IncomeService
-import uk.gov.hmrc.individualsifapistub.domain.IncomePaye._
-import uk.gov.hmrc.individualsifapistub.domain.IncomeSa._
+import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomePaye._
+import uk.gov.hmrc.individualsifapistub.domain.individuals.{IncomePaye, IncomeSa}
+import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomeSa._
 
 import scala.concurrent.ExecutionContext
 

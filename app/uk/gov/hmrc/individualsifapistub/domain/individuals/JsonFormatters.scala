@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.individualsifapistub.domain
+package uk.gov.hmrc.individualsifapistub.domain.individuals
 
 import org.joda.time.DateTime
-import play.api.libs.functional.syntax.{unlift, _}
 import play.api.libs.json.JodaWrites._
-import play.api.libs.json.Reads.{maxLength, minLength}
 import play.api.libs.json._
-import uk.gov.hmrc.individualsifapistub.domain.DetailsResponse._
+import uk.gov.hmrc.individualsifapistub.domain.{ErrorInvalidRequest, ErrorResponse, TestAddress, TestIndividual, TestOrganisation, TestOrganisationDetails}
+import uk.gov.hmrc.individualsifapistub.domain.individuals.DetailsResponse.contactDetailsFormat
+import uk.gov.hmrc.individualsifapistub.domain.individuals.DetailsResponse.residencesFormat
 
 import scala.util.{Failure, Try}
 

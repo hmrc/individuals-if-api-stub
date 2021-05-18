@@ -23,7 +23,8 @@ import testUtils.TestHelpers
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
-import uk.gov.hmrc.individualsifapistub.domain.{ContactDetail, CreateDetailsRequest, DetailsResponse, DetailsResponseNoId, Identifier, Residence, TestIndividual}
+import uk.gov.hmrc.individualsifapistub.domain.individuals.{ContactDetail, CreateDetailsRequest, DetailsResponse, DetailsResponseNoId, Identifier, Residence}
+import uk.gov.hmrc.individualsifapistub.domain.TestIndividual
 import uk.gov.hmrc.individualsifapistub.repository.DetailsRepository
 import uk.gov.hmrc.individualsifapistub.services.DetailsService
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig

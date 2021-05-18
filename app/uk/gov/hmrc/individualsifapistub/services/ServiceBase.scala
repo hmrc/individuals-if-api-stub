@@ -20,7 +20,8 @@ import javax.inject.Inject
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier}
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
-import uk.gov.hmrc.individualsifapistub.domain.{IdType, RecordNotFoundException}
+import uk.gov.hmrc.individualsifapistub.domain.RecordNotFoundException
+import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType
 
 import scala.concurrent.ExecutionContext
 

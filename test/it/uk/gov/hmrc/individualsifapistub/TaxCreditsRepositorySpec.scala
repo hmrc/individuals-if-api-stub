@@ -17,7 +17,7 @@
 package it.uk.gov.hmrc.individualsifapistub
 
 import testUtils.RepositoryTestHelper
-import uk.gov.hmrc.individualsifapistub.domain.{Application, Applications}
+import uk.gov.hmrc.individualsifapistub.domain.individuals.{Application, Applications}
 import uk.gov.hmrc.individualsifapistub.repository.TaxCreditsRepository
 
 class TaxCreditsRepositorySpec extends RepositoryTestHelper {

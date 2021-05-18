@@ -18,6 +18,7 @@ package it.uk.gov.hmrc.individualsifapistub
 
 import testUtils.RepositoryTestHelper
 import uk.gov.hmrc.individualsifapistub.domain._
+import uk.gov.hmrc.individualsifapistub.domain.individuals.{Address, Employer, Employment, EmploymentDetail, Employments, Payment}
 import uk.gov.hmrc.individualsifapistub.repository.EmploymentRepository
 
 class EmploymentRepositorySpec extends RepositoryTestHelper {

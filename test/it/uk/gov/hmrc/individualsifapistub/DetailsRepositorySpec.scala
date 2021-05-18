@@ -18,6 +18,7 @@ package it.uk.gov.hmrc.individualsifapistub
 
 import testUtils.{RepositoryTestHelper, TestHelpers}
 import uk.gov.hmrc.individualsifapistub.domain._
+import uk.gov.hmrc.individualsifapistub.domain.individuals.{ContactDetail, CreateDetailsRequest, DetailsResponse, DetailsResponseNoId, Identifier}
 import uk.gov.hmrc.individualsifapistub.repository.DetailsRepository
 
 class DetailsRepositorySpec extends RepositoryTestHelper with TestHelpers {

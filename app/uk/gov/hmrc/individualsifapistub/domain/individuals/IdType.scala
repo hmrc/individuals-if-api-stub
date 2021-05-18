@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.individualsifapistub.domain
+package uk.gov.hmrc.individualsifapistub.domain.individuals
 
 object IdType {
 

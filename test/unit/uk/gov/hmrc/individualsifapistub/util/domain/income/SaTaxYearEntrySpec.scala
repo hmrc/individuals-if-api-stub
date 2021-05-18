@@ -17,9 +17,10 @@
 package unit.uk.gov.hmrc.individualsifapistub.util.domain.income
 
 import play.api.libs.json.Json
-import uk.gov.hmrc.individualsifapistub.domain.{Address, Deducts, SaIncome, SaReturnType, SaTaxYearEntry}
+import uk.gov.hmrc.individualsifapistub.domain.individuals.{Deducts, SaReturnType, SaTaxYearEntry}
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
-import uk.gov.hmrc.individualsifapistub.domain.IncomeSa._
+import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomeSa._
+import uk.gov.hmrc.individualsifapistub.domain.individuals.{Address, Deducts, SaIncome, SaReturnType, SaTaxYearEntry}
 
 class SaTaxYearEntrySpec extends UnitSpec {
 

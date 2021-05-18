@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.individualsifapistub.domain
+package uk.gov.hmrc.individualsifapistub.domain.individuals
 
 import play.api.libs.functional.syntax._
-import play.api.libs.json._
 import play.api.libs.json.Reads._
-import uk.gov.hmrc.individualsifapistub.domain.IncomeSa._
+import play.api.libs.json._
+import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomeSa._
 
 case class StudentLoan(
                         planType: Option[String],

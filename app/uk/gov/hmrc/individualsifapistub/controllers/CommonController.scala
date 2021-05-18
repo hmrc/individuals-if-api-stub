@@ -24,9 +24,10 @@ import play.api.http.Status.{BAD_REQUEST, NOT_FOUND}
 import play.api.libs.json._
 import play.api.mvc.Results.{BadRequest, NotFound, Status}
 import play.api.mvc.{ControllerComponents, Request, RequestHeader, Result}
-import uk.gov.hmrc.individualsifapistub.domain.Identifier._
-import uk.gov.hmrc.individualsifapistub.domain.IdType.{Nino, Trn}
+import uk.gov.hmrc.individualsifapistub.domain.individuals.Identifier._
+import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{Nino, Trn}
 import uk.gov.hmrc.individualsifapistub.domain._
+import uk.gov.hmrc.individualsifapistub.domain.individuals.{IdType, Identifier}
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
