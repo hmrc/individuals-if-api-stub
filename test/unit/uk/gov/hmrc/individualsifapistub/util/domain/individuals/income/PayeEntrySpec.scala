@@ -17,10 +17,9 @@
 package unit.uk.gov.hmrc.individualsifapistub.util.domain.individuals.income
 
 import play.api.libs.json.Json
-import uk.gov.hmrc.individualsifapistub.domain._
-import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomePaye._
-import uk.gov.hmrc.individualsifapistub.domain.individuals.{AdditionalFields, Benefits, EmployeeNics, EmployeePensionContribs, GrossEarningsForNics, PayeEntry, PostGradLoan, StatutoryPayYTD, StudentLoan, TotalEmployerNics}
+import uk.gov.hmrc.individualsifapistub.domain.individuals._
+import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class PayeEntrySpec extends UnitSpec {
 
