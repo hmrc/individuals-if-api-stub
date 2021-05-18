@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package unit.uk.gov.hmrc.individualsifapistub.util.domain
-
+package unit.uk.gov.hmrc.individualsifapistub.util.domain.individuals
 
 import play.api.libs.json.Json
 import testUtils.TestHelpers
-import uk.gov.hmrc.individualsifapistub.domain.individuals.{ContactDetail, DetailsResponse, Identifier, Residence}
 import uk.gov.hmrc.individualsifapistub.domain.individuals.DetailsResponse._
+import uk.gov.hmrc.individualsifapistub.domain.individuals.{ContactDetail, DetailsResponse, Identifier, Residence}
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class DetailsResponseSpec extends UnitSpec with TestHelpers {

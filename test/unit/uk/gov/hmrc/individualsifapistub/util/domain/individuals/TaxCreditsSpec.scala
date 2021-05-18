@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package unit.uk.gov.hmrc.individualsifapistub.util.domain
+package unit.uk.gov.hmrc.individualsifapistub.util.domain.individuals
 
 import play.api.libs.json.Json
 import testUtils.TestHelpers
-import uk.gov.hmrc.individualsifapistub.domain.individuals.{Application, Awards, ChildTaxCredit, Payments, TaxCredits, WorkTaxCredit}
 import uk.gov.hmrc.individualsifapistub.domain.individuals.TaxCredits._
+import uk.gov.hmrc.individualsifapistub.domain.individuals._
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class TaxCreditsSpec extends UnitSpec with TestHelpers {

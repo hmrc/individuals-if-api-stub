@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package unit.uk.gov.hmrc.individualsifapistub.util.domain
+package unit.uk.gov.hmrc.individualsifapistub.util.domain.individuals
 
 import testUtils.TestHelpers
-import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{Nino, Trn}
-import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType
+import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{Nino, Trn}
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class IdentifierTypeSpec extends UnitSpec with TestHelpers {

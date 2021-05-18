@@ -14,41 +14,41 @@
  * limitations under the License.
  */
 
-package unit.uk.gov.hmrc.individualsifapistub.util.domain.income
+package unit.uk.gov.hmrc.individualsifapistub.util.domain.individuals.income
 
 import play.api.libs.json.Json
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomePaye._
-import uk.gov.hmrc.individualsifapistub.domain.individuals.StudentLoan
+import uk.gov.hmrc.individualsifapistub.domain.individuals.PostGradLoan
 
-class StudentLoanSpec extends UnitSpec {
-  val validStudentLoan = StudentLoan(Some("01"),Some(100), Some(100))
-  val invalidStudentLoan = StudentLoan(Some("NotValid"),Some(99999 + 1), Some(-1))
+class PostGradLoanSpec extends UnitSpec {
 
-  "Student Loan" should {
-    "WriteToJson" in {
+  val validPostGradLoan = PostGradLoan(Some(15884), Some(22177))
+  val invalidPostGradLoan = PostGradLoan(Some(99999 + 1), Some(-1))
+
+  "PostGradLoan" should {
+    "Write to json" in {
       val expectedJson = Json.parse(
         """
           |{
-          |  "planType" : "01",
-          |  "repaymentsInPayPeriod" : 100,
-          |  "repaymentsYTD" : 100
+          |  "repaymentsInPayPeriod": 15884,
+          |  "repaymentsYTD": 22177
           |}
           |""".stripMargin
       )
 
-      val result = Json.toJson(validStudentLoan)
+      val result = Json.toJson(validPostGradLoan)
 
-      result shouldBe(expectedJson)
+      result shouldBe expectedJson
     }
 
-    "Validate successfully when given a valid Student Loan" in {
-      val result = Json.toJson(validStudentLoan).validate[StudentLoan]
+    "Validate successfully with valid PostGradLoan" in {
+      val result = Json.toJson(validPostGradLoan).validate[PostGradLoan]
       result.isSuccess shouldBe true
     }
 
-    "Validate unsuccessfully when given an invalid Student Loan" in {
-      val result = Json.toJson(invalidStudentLoan).validate[StudentLoan]
+    "Validate unsuccessfully with invalid PostGradLoan" in {
+      val result = Json.toJson(invalidPostGradLoan).validate[PostGradLoan]
       result.isError shouldBe true
     }
   }

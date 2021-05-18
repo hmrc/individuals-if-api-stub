@@ -14,54 +14,54 @@
  * limitations under the License.
  */
 
-package unit.uk.gov.hmrc.individualsifapistub.util.domain.income
+package unit.uk.gov.hmrc.individualsifapistub.util.domain.individuals.income
 
 import play.api.libs.json.Json
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomePaye._
-import uk.gov.hmrc.individualsifapistub.domain.individuals.EmployeePensionContribs
+import uk.gov.hmrc.individualsifapistub.domain.individuals.GrossEarningsForNics
 
-class EmployeePensionContribsSpec extends UnitSpec {
+class GrossEarningsForNicsSpec extends UnitSpec {
 
-  val validEmployeePensionContribs = EmployeePensionContribs(
-    Some(169731.51),
-    Some(173987.07),
-    Some(822317.49),
-    Some(818841.65)
+  val validGrossEarningsForNics = GrossEarningsForNics(
+    Some(995979.04),
+    Some(606456.38),
+    Some(797877.34),
+    Some(166334.69)
   )
 
-  val invalidEmployeePensionContribs = EmployeePensionContribs(
+  val invalidGrossEarningsForNics = GrossEarningsForNics(
     Some(9999999999.99 + 1),
     Some(9999999999.99 + 1),
     Some(9999999999.99 + 1),
     Some(9999999999.99 + 1)
   )
 
-  "EmployeePensionContribs" should {
-    "WriteToJson" in {
+  "GrossEarningsForNics" should {
+    "Write to Json" in {
       val expectedJson = Json.parse(
         """
           |{
-          |    "paidYTD": 169731.51,
-          |    "notPaidYTD": 173987.07,
-          |    "paid": 822317.49,
-          |    "notPaid": 818841.65
+          |  "inPayPeriod1": 995979.04,
+          |  "inPayPeriod2": 606456.38,
+          |  "inPayPeriod3": 797877.34,
+          |  "inPayPeriod4": 166334.69
           |}
           |""".stripMargin
       )
 
-      val result = Json.toJson(validEmployeePensionContribs)
+      val result = Json.toJson(validGrossEarningsForNics)
 
       result shouldBe expectedJson
     }
 
-    "Validate successfully when given valid EmployeePensionContribs" in {
-      val result = Json.toJson(validEmployeePensionContribs).validate[EmployeePensionContribs]
+    "Validates successfully when given a valid GrossEarningsForNics" in {
+      val result = Json.toJson(validGrossEarningsForNics).validate[GrossEarningsForNics]
       result.isSuccess shouldBe true
     }
 
-    "Validate unsuccessfully when given invalid EmployeePensionContribs" in {
-      val result = Json.toJson(invalidEmployeePensionContribs).validate[EmployeePensionContribs]
+    "Validates unsuccessfully when given an invalid GrossEarningsForNics" in {
+      val result = Json.toJson(invalidGrossEarningsForNics).validate[GrossEarningsForNics]
       result.isError shouldBe true
     }
   }

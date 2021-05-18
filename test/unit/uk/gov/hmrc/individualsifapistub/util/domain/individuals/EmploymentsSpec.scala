@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package unit.uk.gov.hmrc.individualsifapistub.util.domain
+package unit.uk.gov.hmrc.individualsifapistub.util.domain.individuals
 
 import play.api.libs.json.{JsNumber, Json}
 import testUtils.TestHelpers
-import uk.gov.hmrc.individualsifapistub.domain.individuals.{Address, Employer, Employment, EmploymentDetail, Employments, Identifier, Payment}
 import uk.gov.hmrc.individualsifapistub.domain.individuals.Employments._
+import uk.gov.hmrc.individualsifapistub.domain.individuals._
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class EmploymentsSpec extends UnitSpec with TestHelpers {
