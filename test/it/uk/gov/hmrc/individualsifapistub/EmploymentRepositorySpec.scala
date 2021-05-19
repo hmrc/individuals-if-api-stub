@@ -99,11 +99,20 @@ class EmploymentRepositorySpec extends RepositoryTestHelper {
     "fail to create duplicate" in {
       await(repository.create("nino", nino, startDate, endDate, useCase, employments))
       intercept[Exception](await(repository.create("nino", nino, startDate, endDate, useCase, employments)))
+
     }
 
     "create an employment with a trn" in {
       val result = await(repository.create("trn", trn, startDate, endDate, useCase, employments))
       result shouldBe employments
+    }
+
+    "successfully create records for multiple use cases" in {
+      await(repository.create("nino", nino, startDate, endDate, "LAA-C3", employments))
+      val exception = Option(intercept[Exception]( await(repository.create("nino", nino, startDate, endDate, "LSANI-C1", employments)) ))
+      exception  match  {
+        case Some(e:DuplicateException) => fail("Records should have been created for LAA-C3 and LSANI-C1")
+      }
     }
   }
 
