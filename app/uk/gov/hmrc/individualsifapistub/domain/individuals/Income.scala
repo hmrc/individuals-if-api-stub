@@ -346,7 +346,7 @@ object IncomePaye {
 
   val payFrequencyValues = Seq("W1", "W2", "W4", "M1", "M3", "M6", "MA", "IO", "IR")
 
-  def isInPayFrequency(implicit rds: Reads[String]) : Reads[String] = {
+  def isInPayFrequency: Reads[String] = {
     verifying(value => payFrequencyValues.contains(value))
   }
 

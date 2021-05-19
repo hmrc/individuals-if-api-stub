@@ -17,7 +17,7 @@
 package unit.uk.gov.hmrc.individualsifapistub.util.domain.organisations
 
 import play.api.libs.json.Json
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{CreateNumberOfEmployeesRequest, NumberOfEmployeeCounts, NumberOfEmployeeReferences}
+import uk.gov.hmrc.individualsifapistub.domain.organisations.{CreateNumberOfEmployeesRequest, NumberOfEmployeeCounts, NumberOfEmployeeReferences, NumberOfEmployeesResponse}
 import uk.gov.hmrc.individualsifapistub.domain.organisations.NumberOfEmployees._
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
@@ -145,6 +145,56 @@ class NumberOfEmployeesSpec extends UnitSpec {
         |""".stripMargin
 
     val result = Json.parse(json).validate[CreateNumberOfEmployeesRequest]
+
+    result.isSuccess shouldBe false
+  }
+
+  /// --------------------
+
+  "NumberOfEmployeesResponse reads from JSON successfully" in {
+    val json =
+      """
+        |{
+        |  "startDate": "2019-10-01",
+        |  "endDate": "2020-04-05",
+        |  "references": []
+        |}
+        |""".stripMargin
+
+    val expectedResult = NumberOfEmployeesResponse("2019-10-01", "2020-04-05", Seq.empty)
+
+    val result = Json.parse(json).validate[NumberOfEmployeesResponse]
+
+    result.isSuccess shouldBe true
+    result.get shouldBe expectedResult
+  }
+
+  "NumberOfEmployeesResponse reads from JSON unsuccessfully when startDate is incorrect" in {
+    val json =
+      """
+        |{
+        |  "startDate": "20111-10-01",
+        |  "endDate": "2020-04-05",
+        |  "references": []
+        |}
+        |""".stripMargin
+
+    val result = Json.parse(json).validate[NumberOfEmployeesResponse]
+
+    result.isSuccess shouldBe false
+  }
+
+  "NumberOfEmployeesResponse reads from JSON unsuccessfully when endDate is incorrect" in {
+    val json =
+      """
+        |{
+        |  "startDate": "2019-10-01",
+        |  "endDate": "20222-04-05",
+        |  "references": []
+        |}
+        |""".stripMargin
+
+    val result = Json.parse(json).validate[NumberOfEmployeesResponse]
 
     result.isSuccess shouldBe false
   }

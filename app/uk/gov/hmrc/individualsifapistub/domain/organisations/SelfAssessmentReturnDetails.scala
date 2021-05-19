@@ -24,6 +24,7 @@ import scala.util.matching.Regex
 
 case class TaxYear(taxYear: String, businessSalesTurnover: Double)
 case class CreateSelfAssessmentReturnDetailRequest(utr: String, startDate: String, taxPayerType: String, taxSolvencyStatus: String, taxYears: Seq[TaxYear])
+case class SelfAssessmentReturnDetailResponse(utr: String, startDate: String, taxPayerType: String, taxSolvencyStatus: String, taxYears: Seq[TaxYear])
 
 object SelfAssessmentReturnDetail {
 
@@ -61,5 +62,22 @@ object SelfAssessmentReturnDetail {
         (JsPath \ "taxSolvencyStatus").write[String] and
         (JsPath \ "taxyears").write[Seq[TaxYear]]
       )(unlift(CreateSelfAssessmentReturnDetailRequest.unapply))
+  )
+
+  implicit val selfAssessmentResponseFormat: Format[SelfAssessmentReturnDetailResponse] = Format(
+    (
+      (JsPath \ "utr").read[String](pattern(utrPattern, "UTR pattern is incorrect")) and
+        (JsPath \ "startDate").read[String](pattern(datePattern, "Date pattern is incorrect")) and
+        (JsPath \ "taxpayerType").read[String](pattern(taxPayerTypePattern, "Invalid taxpayer type")) and
+        (JsPath \ "taxSolvencyStatus").read[String](verifying(taxSolvencyStatusValidator)) and
+        (JsPath \ "taxyears").read[Seq[TaxYear]]
+      )(SelfAssessmentReturnDetailResponse.apply _),
+    (
+      (JsPath \ "utr").write[String] and
+        (JsPath \ "startDate").write[String] and
+        (JsPath \ "taxpayerType").write[String] and
+        (JsPath \ "taxSolvencyStatus").write[String] and
+        (JsPath \ "taxyears").write[Seq[TaxYear]]
+      )(unlift(SelfAssessmentReturnDetailResponse.unapply))
   )
 }

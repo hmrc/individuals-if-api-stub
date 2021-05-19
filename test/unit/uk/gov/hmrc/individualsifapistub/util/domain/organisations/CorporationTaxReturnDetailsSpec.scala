@@ -17,7 +17,7 @@
 package unit.uk.gov.hmrc.individualsifapistub.util.domain.organisations
 
 import play.api.libs.json.Json
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{AccountingPeriod, CreateCorporationTaxReturnDetailsRequest}
+import uk.gov.hmrc.individualsifapistub.domain.organisations.{AccountingPeriod, CorporationTaxReturnDetailsResponse, CreateCorporationTaxReturnDetailsRequest}
 import uk.gov.hmrc.individualsifapistub.domain.organisations.CorporationTaxReturnDetails._
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
@@ -133,6 +133,73 @@ class CorporationTaxReturnDetailsSpec extends UnitSpec {
         |""".stripMargin
 
     val result = Json.parse(json).validate[CreateCorporationTaxReturnDetailsRequest]
+
+    result.isSuccess shouldBe false
+  }
+
+  "CorporationTaxReturnDetailsResponse reads from JSON successfully" in {
+    val json =
+      """
+        |{
+        |  "utr": "1234567890",
+        |  "taxpayerStartDate": "2015-04-21",
+        |  "taxSolvencyStatus": "V",
+        |  "accountingPeriods": []
+        |}
+        |""".stripMargin
+
+    val expectedResult = CorporationTaxReturnDetailsResponse("1234567890", "2015-04-21", "V", Seq.empty)
+
+    val result = Json.parse(json).validate[CorporationTaxReturnDetailsResponse]
+
+    result.isSuccess shouldBe true
+    result.get shouldBe expectedResult
+  }
+
+  "CorporationTaxReturnDetailsResponse reads from JSON unsuccessfully when utr is incorrect" in {
+    val json =
+      """
+        |{
+        |  "utr": "123456789A",
+        |  "taxpayerStartDate": "2015-04-21",
+        |  "taxSolvencyStatus": "V",
+        |  "accountingPeriods": []
+        |}
+        |""".stripMargin
+
+    val result = Json.parse(json).validate[CorporationTaxReturnDetailsResponse]
+
+    result.isSuccess shouldBe false
+  }
+
+  "CorporationTaxReturnDetailsResponse reads from JSON unsuccessfully when taxpayerStartDate is incorrect" in {
+    val json =
+      """
+        |{
+        |  "utr": "1234567890",
+        |  "taxpayerStartDate": "20111-04-21",
+        |  "taxSolvencyStatus": "V",
+        |  "accountingPeriods": []
+        |}
+        |""".stripMargin
+
+    val result = Json.parse(json).validate[CorporationTaxReturnDetailsResponse]
+
+    result.isSuccess shouldBe false
+  }
+
+  "CorporationTaxReturnDetailsResponse reads from JSON unsuccessfully when tax solvency status is not one of V, S, I, A" in {
+    val json =
+      """
+        |{
+        |  "utr": "123456789A",
+        |  "taxpayerStartDate": "2015-04-21",
+        |  "taxSolvencyStatus": "X",
+        |  "accountingPeriods": []
+        |}
+        |""".stripMargin
+
+    val result = Json.parse(json).validate[CorporationTaxReturnDetailsResponse]
 
     result.isSuccess shouldBe false
   }

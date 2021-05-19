@@ -22,8 +22,6 @@ import play.api.libs.json._
 
 import scala.util.matching.Regex
 
-case class TaxPayerDetails(name: String, addressType: String, address: Address)
-case class CreateSelfAssessmentTaxPayerRequest(utr: String, taxPayerType: String, taxPayerDetails: Seq[TaxPayerDetails])
 case class Address(
                     line1: Option[String],
                     line2: Option[String],
@@ -31,6 +29,9 @@ case class Address(
                     line4: Option[String],
                     postcode: Option[String]
                   )
+case class TaxPayerDetails(name: String, addressType: String, address: Address)
+case class CreateSelfAssessmentTaxPayerRequest(utr: String, taxPayerType: String, taxPayerDetails: Seq[TaxPayerDetails])
+case class SelfAssessmentTaxPayerResponse(utr: String, taxPayerType: String, taxPayerDetails: Seq[TaxPayerDetails])
 
 object SelfAssessmentTaxPayer {
 
@@ -82,5 +83,18 @@ object SelfAssessmentTaxPayer {
         (JsPath \ "taxpayerType").write[String] and
         (JsPath \ "taxPayerDetails").write[Seq[TaxPayerDetails]]
       )(unlift(CreateSelfAssessmentTaxPayerRequest.unapply))
+  )
+
+  implicit val selfAssessmentResponseFormat: Format[SelfAssessmentTaxPayerResponse] = Format(
+    (
+      (JsPath \ "utr").read[String](pattern(utrPattern, "UTR pattern is incorrect")) and
+        (JsPath \ "taxPayerType").read[String](pattern(taxPayerTypePattern, "Invalid taxpayer type")) and
+        (JsPath \ "taxPayerDetails").read[Seq[TaxPayerDetails]]
+      )(SelfAssessmentTaxPayerResponse.apply _),
+    (
+      (JsPath \ "utr").write[String] and
+        (JsPath \ "taxpayerType").write[String] and
+        (JsPath \ "taxPayerDetails").write[Seq[TaxPayerDetails]]
+      )(unlift(SelfAssessmentTaxPayerResponse.unapply))
   )
 }

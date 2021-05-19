@@ -18,10 +18,12 @@ package uk.gov.hmrc.individualsifapistub.domain.organisations
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
-import play.api.libs.json.{Format, JsPath}
+import play.api.libs.json.{Format, JsPath, Json}
 
 case class AccountingPeriod(apStartDate: String, apEndDate: String, turnover: Int)
 case class CreateCorporationTaxReturnDetailsRequest(utr: String, taxpayerStartDate: String, taxSolvencyStatus: String, accountingPeriods: Seq[AccountingPeriod])
+
+case class CorporationTaxReturnDetailsResponse(utr: String, taxpayerStartDate: String, taxSolvencyStatus: String, accountingPeriods: Seq[AccountingPeriod])
 
 object CorporationTaxReturnDetails {
 
@@ -57,4 +59,23 @@ object CorporationTaxReturnDetails {
         (JsPath \ "accountingPeriods").write[Seq[AccountingPeriod]]
       )(unlift(CreateCorporationTaxReturnDetailsRequest.unapply))
   )
+
+  implicit val corporationTaxReturnDetailsResponseFormat = Format[CorporationTaxReturnDetailsResponse](
+    (
+      (JsPath \ "utr").read[String](pattern(utrPattern, "Invalid UTR format")) and
+        (JsPath \ "taxpayerStartDate").read[String](pattern(taxpayerStartDatePattern, "Inavlid taxpayer start date")) and
+        (JsPath \ "taxSolvencyStatus").read[String](verifying(validTaxSolvencyStatus)) and
+        (JsPath \ "accountingPeriods").read[Seq[AccountingPeriod]]
+      )(CorporationTaxReturnDetailsResponse.apply _),
+    (
+      (JsPath \ "utr").write[String] and
+        (JsPath \ "taxpayerStartDate").write[String] and
+        (JsPath \ "taxSolvencyStatus").write[String] and
+        (JsPath \ "accountingPeriods").write[Seq[AccountingPeriod]]
+      )(unlift(CorporationTaxReturnDetailsResponse.unapply))
+  )
 }
+
+
+case class CTReturnDetailsEntry(id: String, response :CorporationTaxReturnDetailsResponse)
+object CTReturnDetailsEntry { implicit val ctReturnDetailsEntryFormat = Json.format[CTReturnDetailsEntry] }

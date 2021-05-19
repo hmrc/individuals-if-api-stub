@@ -23,6 +23,7 @@ import play.api.libs.json.{Format, JsPath}
 case class NumberOfEmployeeCounts(dateTaken: String, employeeCount: Int)
 case class NumberOfEmployeeReferences(districtNumber: String, payeReference: String, counts: Seq[NumberOfEmployeeCounts])
 case class CreateNumberOfEmployeesRequest(startDate: String, endDate: String, references: Seq[NumberOfEmployeeReferences])
+case class NumberOfEmployeesResponse(startDate: String, endDate: String, references: Seq[NumberOfEmployeeReferences])
 
 object NumberOfEmployees {
 
@@ -66,5 +67,18 @@ object NumberOfEmployees {
         (JsPath \ "endDate").write[String] and
         (JsPath \ "references").write[Seq[NumberOfEmployeeReferences]]
       )(unlift(CreateNumberOfEmployeesRequest.unapply))
+  )
+
+  implicit val numberOfEmployeesResponseFormat = Format(
+    (
+      (JsPath \ "startDate").read[String](pattern(datePattern, "startDate is invalid")) and
+        (JsPath \ "endDate").read[String](pattern(datePattern, "endDate is invalid")) and
+        (JsPath \ "references").read[Seq[NumberOfEmployeeReferences]]
+      )(NumberOfEmployeesResponse.apply _),
+    (
+      (JsPath \ "startDate").write[String] and
+        (JsPath \ "endDate").write[String] and
+        (JsPath \ "references").write[Seq[NumberOfEmployeeReferences]]
+      )(unlift(NumberOfEmployeesResponse.unapply))
   )
 }
