@@ -1,17 +1,21 @@
-# Income
+#Individuals Income
 GET     /individuals/income/sa/:idType/:idValue                         uk.gov.hmrc.individualsifapistub.controllers.individuals.IncomeController.retrieveSa(idType, idValue, startYear, endYear, fields: Option[String] ?= None)
 GET     /individuals/income/paye/:idType/:idValue                       uk.gov.hmrc.individualsifapistub.controllers.individuals.IncomeController.retrievePaye(idType, idValue, startDate, endDate, fields: Option[String] ?= None)
 POST    /individuals/income/sa/:idType/:idValue                         uk.gov.hmrc.individualsifapistub.controllers.individuals.IncomeController.createSa(idType, idValue, startYear, endYear, useCase)
 POST    /individuals/income/paye/:idType/:idValue                       uk.gov.hmrc.individualsifapistub.controllers.individuals.IncomeController.createPaye(idType, idValue, startDate, endDate, useCase)
 
-# Benefits and Credits
+#Indiivudals Benefits and Credits
 GET     /individuals/tax-credits/:idType/:idValue                       uk.gov.hmrc.individualsifapistub.controllers.individuals.TaxCreditsController.retrieve(idType, idValue, startDate, endDate, fields: Option[String] ?= None)
 POST    /individuals/tax-credits/:idType/:idValue                       uk.gov.hmrc.individualsifapistub.controllers.individuals.TaxCreditsController.create(idType, idValue, startDate, endDate, useCase)
 
-# Employments
+#Individuals Employments
 GET     /individuals/employment/:idType/:idValue                       uk.gov.hmrc.individualsifapistub.controllers.individuals.EmploymentsController.retrieve(idType, idValue, startDate, endDate, fields: Option[String] ?= None)
 POST    /individuals/employment/:idType/:idValue                       uk.gov.hmrc.individualsifapistub.controllers.individuals.EmploymentsController.create(idType, idValue, startDate, endDate, useCase)
 
-# Details
+#Individuals Details
 GET     /individuals/details/contact/:idType/:idValue                   uk.gov.hmrc.individualsifapistub.controllers.individuals.DetailsController.retrieve(idType, idValue, fields: Option[String] ?= None)
 POST    /individuals/details/contact/:idType/:idValue                   uk.gov.hmrc.individualsifapistub.controllers.individuals.DetailsController.create(idType, idValue, useCase)
+
+#Organisations Corporation Tax Return Details
+GET     /organisations/corporation-tax/:utr/return/details              uk.gov.hmrc.individualsifapistub.controllers.organisations.CorporationTaxReturnDetailsController.retrieve(utr)
+POST    /organisations/corporation-tax/:utr/return/details              uk.gov.hmrc.individualsifapistub.controllers.organisations.CorporationTaxReturnDetailsController.create(utr)

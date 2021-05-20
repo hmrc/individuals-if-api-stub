@@ -67,7 +67,6 @@ class DetailsRepositorySpec extends RepositoryTestHelper with TestHelpers {
     "create a details response with a trn" in {
 
       val ident = Identifier(None, Some(trnValue), None, None, Some(useCase))
-      val id = s"${ident.nino.getOrElse(ident.trn.get)}-$useCase"
       val returnVal = DetailsResponseNoId(request.contactDetails, request.residences)
 
       val result = await(repository.create("trn", trnValue, useCase, request))

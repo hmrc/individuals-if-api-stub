@@ -78,4 +78,7 @@ object CorporationTaxReturnDetails {
 
 
 case class CTReturnDetailsEntry(id: String, response :CorporationTaxReturnDetailsResponse)
-object CTReturnDetailsEntry { implicit val ctReturnDetailsEntryFormat = Json.format[CTReturnDetailsEntry] }
+object CTReturnDetailsEntry {
+  import CorporationTaxReturnDetails._
+  implicit val ctReturnDetailsEntryFormat = Json.format[CTReturnDetailsEntry]
+}
