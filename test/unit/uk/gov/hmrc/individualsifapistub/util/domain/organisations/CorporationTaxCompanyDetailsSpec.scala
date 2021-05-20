@@ -26,22 +26,31 @@ class CorporationTaxCompanyDetailsSpec extends UnitSpec {
   "RegisteredDetails reads from JSON successfully" in {
     val json =
       """
-        |    {
-        |      "name": {
-        |         "name1": "Matty",
-        |         "name2": "Harris",
-        |        },
-        |       "address": {
-        |         "line1": "test1",
-        |         "line2": "test2",
-        |         "line3": "test3",
-        |         "line4": "test4",
-        |         "postcode": "testPost"
-        |        }
+        |{
+        |    "name": {
+        |      "name1": "Waitrose",
+        |      "name2": "And Partners"
+        |    },
+        |    "address": {
+        |      "line1": "Alfie House",
+        |      "line2": "Main Street",
+        |      "line3": "Manchester",
+        |      "line4": "Londonberry",
+        |      "postcode": "LN1 1AG"
         |    }
+        |}
         |""".stripMargin
 
-    val expectedResult = RegisteredDetails(Name("Matty", "Harris"), Address(Some("test1"), Some("test2"), Some("test3"), Some("test4"), Some("testPost")))
+    val expectedResult = RegisteredDetails(
+      Name("Waitrose", "And Partners"),
+      Address(
+        Some("Alfie House"),
+        Some("Main Street"),
+        Some("Manchester"),
+        Some("Londonberry"),
+        Some("LN1 1AG")
+      )
+    )
 
     val result = Json.parse(json).validate[RegisteredDetails]
 
@@ -52,22 +61,31 @@ class CorporationTaxCompanyDetailsSpec extends UnitSpec {
   "CommunicationDetails reads from JSON successfully" in {
     val json =
       """
-        |    {
-        |      "name": {
-        |         "name1": "Matty",
-        |         "name2": "Harris",
-        |        },
-        |       "address": {
-        |         "line1": "test1",
-        |         "line2": "test2",
-        |         "line3": "test3",
-        |         "line4": "test4",
-        |         "postcode": "testPost"
-        |        }
+        |{
+        |    "name": {
+        |      "name1": "Waitrose",
+        |      "name2": "And Partners"
+        |    },
+        |    "address": {
+        |      "line1": "Alfie House",
+        |      "line2": "Main Street",
+        |      "line3": "Manchester",
+        |      "line4": "Londonberry",
+        |      "postcode": "LN1 1AG"
         |    }
+        |}
         |""".stripMargin
 
-    val expectedResult = CommunicationDetails(Name("Matty", "Harris"), Address(Some("test1"), Some("test2"), Some("test3"), Some("test4"), Some("testPost")))
+    val expectedResult = CommunicationDetails(
+      Name("Waitrose", "And Partners"),
+      Address(
+        Some("Alfie House"),
+        Some("Main Street"),
+        Some("Manchester"),
+        Some("Londonberry"),
+        Some("LN1 1AG")
+      )
+    )
 
     val result = Json.parse(json).validate[CommunicationDetails]
 
@@ -81,15 +99,14 @@ class CorporationTaxCompanyDetailsSpec extends UnitSpec {
         |    {
         |      "name": {
         |         "name1": "Matty",
-        |         "name2": "Harris",
+        |         "name2": "Harris"
         |        },
         |       "address": {
         |         "line1": "test1",
         |         "line2": "test2",
         |         "line3": "test3",
         |         "line4": "test4",
-        |         "line5": "test5",
-        |         "postcode": "testPost"
+        |         "postcode": "01234567890"
         |        }
         |    }
         |""".stripMargin
@@ -105,7 +122,7 @@ class CorporationTaxCompanyDetailsSpec extends UnitSpec {
         |    {
         |      "name1231": {
         |         "name1": "Matty",
-        |         "name2": "Harris",
+        |         "name2": "Harris"
         |        },
         |       "address": {
         |         "line1": "test1",
@@ -128,7 +145,7 @@ class CorporationTaxCompanyDetailsSpec extends UnitSpec {
         |    {
         |      "name": {
         |         "name1": "Matty",
-        |         "name2": "Harris",
+        |         "name2": "Harris"
         |        },
         |       "address": {
         |         "line1": "test1",

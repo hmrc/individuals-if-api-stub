@@ -71,7 +71,7 @@ object CorporationTaxCompanyDetails {
       )(unlift(RegisteredDetails.unapply))
   )
 
-  implicit val communicationDetails: Format[CommunicationDetails] = Format(
+  implicit val communicationDetailsFormat: Format[CommunicationDetails] = Format(
     (
       (JsPath \ "name").read[Name] and
         (JsPath \ "address").read[Address]
