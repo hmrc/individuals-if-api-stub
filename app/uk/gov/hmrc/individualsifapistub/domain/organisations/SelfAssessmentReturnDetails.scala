@@ -42,7 +42,7 @@ object SelfAssessmentReturnDetail {
       )(TaxYear.apply _),
     (
       (JsPath \ "taxYear").write[String] and
-        (JsPath \ "businessSaleTurnover").write[Double]
+        (JsPath \ "businessSalesTurnover").write[Double]
       )(unlift(TaxYear.unapply))
   )
 
@@ -80,4 +80,10 @@ object SelfAssessmentReturnDetail {
         (JsPath \ "taxyears").write[Seq[TaxYear]]
       )(unlift(SelfAssessmentReturnDetailResponse.unapply))
   )
+}
+
+case class SelfAssessmentReturnDetailEntry(id: String, response: SelfAssessmentReturnDetailResponse)
+object SelfAssessmentReturnDetailEntry {
+  import SelfAssessmentReturnDetail._
+  implicit val format = Json.format[SelfAssessmentReturnDetailEntry]
 }
