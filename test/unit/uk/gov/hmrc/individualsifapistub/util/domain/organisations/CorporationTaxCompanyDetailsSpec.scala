@@ -120,8 +120,8 @@ class CorporationTaxCompanyDetailsSpec extends UnitSpec {
     val json =
       """
         |    {
-        |      "name1231": {
-        |         "name1": "Matty",
+        |      "name": {
+        |         "name1": "|~",
         |         "name2": "Harris"
         |        },
         |       "address": {
@@ -148,11 +148,10 @@ class CorporationTaxCompanyDetailsSpec extends UnitSpec {
         |         "name2": "Harris"
         |        },
         |       "address": {
-        |         "line1": "test1",
+        |         "line1": 1,
         |         "line2": "test2",
         |         "line3": "test3",
         |         "line4": "test4",
-        |         "line5": "test5",
         |         "postcode": "testPost"
         |        }
         |    }
@@ -167,12 +166,12 @@ class CorporationTaxCompanyDetailsSpec extends UnitSpec {
     val json =
       """
         |    {
-        |      "utr": "123456789",
+        |      "utr": "1234567890",
         |      "crn": "12345678"
         |    }
         |""".stripMargin
 
-    val expectedResult = CreateCorporationTaxCompanyDetailsRequest("123456789", "12345678", None, None)
+    val expectedResult = CreateCorporationTaxCompanyDetailsRequest("1234567890", "12345678", None, None)
 
     val result = Json.parse(json).validate[CreateCorporationTaxCompanyDetailsRequest]
 
@@ -189,21 +188,22 @@ class CorporationTaxCompanyDetailsSpec extends UnitSpec {
         |    }
         |""".stripMargin
 
-    val result = Json.parse(json).validate[CommunicationDetails]
+    val result = Json.parse(json).validate[CreateCorporationTaxCompanyDetailsRequest]
 
-    result.isSuccess shouldBe true
+    result.isSuccess shouldBe false
   }
 
   "CorporationTaxCompanyDetails reads from JSON unsuccessfully when utr is incorrect" in {
     val json =
       """
         |    {
-        |      "utr": "\~",
+        |      "utr": "|~",
         |      "crn": "12345679"
+        |    }
         |""".stripMargin
 
-    val result = Json.parse(json).validate[CommunicationDetails]
+    val result = Json.parse(json).validate[CreateCorporationTaxCompanyDetailsRequest]
 
-    result.isSuccess shouldBe true
+    result.isSuccess shouldBe false
   }
 }
