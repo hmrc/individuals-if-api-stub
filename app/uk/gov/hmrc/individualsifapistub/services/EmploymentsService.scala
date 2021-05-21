@@ -50,7 +50,8 @@ class EmploymentsService @Inject()(employmentsRepository: EmploymentRepository,
           idValue: String,
           startDate: String,
           endDate: String,
-          fields: Option[String]): Future[Option[Employments]] = {
-    employmentsRepository.findByIdAndType(idType, idValue, startDate, endDate, fields)
+          fields: Option[String],
+          filter: Option[String]): Future[Option[Employments]] = {
+    employmentsRepository.findByIdAndType(idType, idValue, startDate, endDate, fields, filter)
   }
 }

@@ -55,8 +55,7 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
       "LAA-C3"   -> "LAA-C3_LSANI-C1_LSANI-C3",
       "LSANI-C1" -> "LAA-C3_LSANI-C1_LSANI-C3",
       "LSANI-C3" -> "LAA-C3_LSANI-C1_LSANI-C3",
-      "HMCTS-C2" -> "HMCTS-C2_HMCTS-C3",
-      "HMCTS-C3" -> "HMCTS-C2_HMCTS-C3"
+      "HMCTS-C2" -> "HMCTS-C2_HMCTS-C3"
     )
 
     val ident = IdType.parse(idType) match {
@@ -79,7 +78,8 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
                       idValue: String,
                       startDate: String,
                       endDate: String,
-                      fields: Option[String]): Future[Option[Employments]] = {
+                      fields: Option[String],
+                      filter: Option[String]): Future[Option[Employments]] = {
 
     val fieldsMap = Map(
       "employments(employment(endDate,startDate))" -> "LAA-C1_LAA-C2",
@@ -87,20 +87,23 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
       "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employment(endDate,startDate))" -> "LAA-C4",
       "employments(employment(endDate))" -> "HMCTS-C2_HMCTS-C3",
       "employments(employer(address(line1,line2,line3,line4,line5,postcode),districtNumber,name,schemeRef),employment(endDate,startDate))" -> "HMCTS-C4",
-      "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employment(startDate))" -> "NICTSEJO-C4"
+      "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employment(startDate))" -> "NICTSEJO-C4",
+      "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employerRef,employment(endDate,startDate),payments(date,paidTaxablePay))" -> "ECP",
+      "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employerRef,employment(endDate,startDate),payments(date,paidTaxablePay))_filtered" -> "RP2"
     )
+
+    val useCase:Option[String] = fields.flatMap(value => fieldsMap.get(value + (if (filter.isDefined) "_filtered" else "")))
 
     val ident = IdType.parse(idType) match {
       case Nino => Identifier(
-        Some(idValue), None, Some(startDate), Some(endDate), fields.flatMap(value => fieldsMap.get(value))
+        Some(idValue), None, Some(startDate), Some(endDate), useCase
       )
       case Trn => Identifier(
-        None, Some(idValue), Some(startDate), Some(endDate), fields.flatMap(value => fieldsMap.get(value))
+        None, Some(idValue), Some(startDate), Some(endDate), useCase
       )
     }
 
-    val tag = fields.flatMap(value => fieldsMap.get(value)).getOrElse("TEST")
-    val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$tag"
+    val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-${useCase.getOrElse("TEST")}"
 
     Logger.info(s"Fetch employments for cache key: $id")
 

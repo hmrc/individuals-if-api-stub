@@ -76,6 +76,7 @@ class EmploymentsControllerSpec extends TestSupport {
           districtNumber = Some("ABC"),
           schemeRef = Some("ABC")
         )),
+        employerRef = Some("247/ZT6767895A"),
         employment = Some(EmploymentDetail(
           startDate = Some("2001-12-31"),
           endDate = Some("2002-05-12"),
@@ -202,11 +203,11 @@ class EmploymentsControllerSpec extends TestSupport {
 
     "Return employments when successfully retrieved from service" in new Setup {
 
-      when(mockEmploymentsService.get(idType, idValue, startDate, endDate, Some(fields))).thenReturn(
+      when(mockEmploymentsService.get(idType, idValue, startDate, endDate, Some(fields), None)).thenReturn(
         Future.successful(Some(employments))
       )
 
-      val result = await(underTest.retrieve(idType, idValue, startDate, endDate, Some(fields))(fakeRequest))
+      val result = await(underTest.retrieve(idType, idValue, startDate, endDate, Some(fields), None)(fakeRequest))
 
       status(result) shouldBe OK
 
@@ -216,12 +217,12 @@ class EmploymentsControllerSpec extends TestSupport {
 
     "fail when it cannot get from service" in new Setup {
 
-      when(mockEmploymentsService.get(idType, idValue, startDate, endDate, Some(fields))).thenReturn(
+      when(mockEmploymentsService.get(idType, idValue, startDate, endDate, Some(fields), None)).thenReturn(
         Future.failed(new Exception)
       )
 
       assertThrows[Exception] {
-        await(underTest.retrieve(idType, idValue, startDate, endDate, Some(fields))(fakeRequest))
+        await(underTest.retrieve(idType, idValue, startDate, endDate, Some(fields), None)(fakeRequest))
       }
 
     }
