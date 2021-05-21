@@ -110,6 +110,9 @@ class SelfAssessmentTaxPayerSpec extends UnitSpec {
 
     val result = Json.parse(json).validate[CreateSelfAssessmentTaxPayerRequest]
 
+    println(result)
+    println(expectedResult)
+    println(result.isSuccess)
     result.isSuccess shouldBe true
     result.get shouldBe expectedResult
   }
