@@ -16,6 +16,9 @@ POST    /individuals/employment/:idType/:idValue                       uk.gov.hm
 GET     /individuals/details/contact/:idType/:idValue                   uk.gov.hmrc.individualsifapistub.controllers.individuals.DetailsController.retrieve(idType, idValue, fields: Option[String] ?= None)
 POST    /individuals/details/contact/:idType/:idValue                   uk.gov.hmrc.individualsifapistub.controllers.individuals.DetailsController.create(idType, idValue, useCase)
 
+#Organisations Corporation Tax Company Details
+GET     /organisations/corporation-tax/:crn/company/details
+
 #Organisations Corporation Tax Return Details
 GET     /organisations/corporation-tax/:utr/return/details              uk.gov.hmrc.individualsifapistub.controllers.organisations.CorporationTaxReturnDetailsController.retrieve(utr)
 POST    /organisations/corporation-tax/:utr/return/details              uk.gov.hmrc.individualsifapistub.controllers.organisations.CorporationTaxReturnDetailsController.create(utr)
