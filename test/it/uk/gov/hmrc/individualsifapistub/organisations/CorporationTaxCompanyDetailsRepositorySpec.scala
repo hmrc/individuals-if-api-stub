@@ -41,6 +41,7 @@ class CorporationTaxCompanyDetailsRepositorySpec extends RepositoryTestHelper  {
   val response = CorporationTaxCompanyDetailsResponse("1234567890", "12345678", Some(registeredDetails), Some(communicationDetails))
 
   "collection" should {
+    IS THE ID IN THIS CASE UTR OR CRN???
     "have a unique index on a request's utr" in {
       await(repository.collection.indexesManager.list()).find({ i =>
       {
