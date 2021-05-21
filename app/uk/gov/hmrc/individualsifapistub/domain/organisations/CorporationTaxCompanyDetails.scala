@@ -112,3 +112,9 @@ object CorporationTaxCompanyDetails {
       )(unlift(CorporationTaxCompanyDetailsResponse.unapply))
   )
 }
+
+case class CTCompanyDetailsEntry(id: String, response :CorporationTaxCompanyDetailsResponse)
+object CTCompanyDetailsEntry {
+  import CorporationTaxCompanyDetails._
+  implicit val ctCompanyDetailsEntryFormat = Json.format[CTCompanyDetailsEntry]
+}
