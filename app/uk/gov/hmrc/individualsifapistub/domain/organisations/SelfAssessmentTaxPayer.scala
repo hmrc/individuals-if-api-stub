@@ -98,3 +98,9 @@ object SelfAssessmentTaxPayer {
       )(unlift(SelfAssessmentTaxPayerResponse.unapply))
   )
 }
+
+case class SATaxPayerEntry(id: String, response :SelfAssessmentTaxPayerResponse)
+object SATaxPayerEntry {
+  import CorporationTaxReturnDetails._
+  implicit val saTaxPayerEntryFormat = Json.format[SATaxPayerEntry]
+}
