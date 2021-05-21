@@ -18,11 +18,12 @@ package uk.gov.hmrc.individualsifapistub.domain.organisations
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
-import play.api.libs.json.{Format, JsPath}
+import play.api.libs.json.{Format, JsPath, Json}
 
 case class NumberOfEmployeeCounts(dateTaken: String, employeeCount: Int)
 case class NumberOfEmployeeReferences(districtNumber: String, payeReference: String, counts: Seq[NumberOfEmployeeCounts])
-case class CreateNumberOfEmployeesRequest(startDate: String, endDate: String, references: Seq[NumberOfEmployeeReferences])
+case class NumberOfEmployeeReferencesRequest(districtNumber: String, payeReference: String)
+case class NumberOfEmployeesRequest(startDate: String, endDate: String, references: Seq[NumberOfEmployeeReferencesRequest])
 case class NumberOfEmployeesResponse(startDate: String, endDate: String, references: Seq[NumberOfEmployeeReferences])
 
 object NumberOfEmployees {
@@ -56,17 +57,28 @@ object NumberOfEmployees {
       )(unlift(NumberOfEmployeeReferences.unapply))
   )
 
+  implicit val numberOfEmployeeReferencesRequestFormat = Format(
+    (
+      (JsPath \ "districtNumber").read[String](pattern(districtNumberPattern, "District number is invalid")) and
+        (JsPath \ "payeReference").read[String](pattern(payeRefPattern, "payeReference is invalid"))
+      )(NumberOfEmployeeReferencesRequest.apply _),
+    (
+      (JsPath \ "districtNumber").write[String] and
+        (JsPath \ "payeReference").write[String]
+      )(unlift(NumberOfEmployeeReferencesRequest.unapply))
+  )
+
   implicit val createNumberOfEmployeesRequestFormat = Format(
     (
       (JsPath \ "startDate").read[String](pattern(datePattern, "startDate is invalid")) and
         (JsPath \ "endDate").read[String](pattern(datePattern, "endDate is invalid")) and
-        (JsPath \ "references").read[Seq[NumberOfEmployeeReferences]]
-      )(CreateNumberOfEmployeesRequest.apply _),
+        (JsPath \ "references").read[Seq[NumberOfEmployeeReferencesRequest]]
+      )(NumberOfEmployeesRequest.apply _),
     (
       (JsPath \ "startDate").write[String] and
         (JsPath \ "endDate").write[String] and
-        (JsPath \ "references").write[Seq[NumberOfEmployeeReferences]]
-      )(unlift(CreateNumberOfEmployeesRequest.unapply))
+        (JsPath \ "references").write[Seq[NumberOfEmployeeReferencesRequest]]
+      )(unlift(NumberOfEmployeesRequest.unapply))
   )
 
   implicit val numberOfEmployeesResponseFormat = Format(
@@ -81,4 +93,10 @@ object NumberOfEmployees {
         (JsPath \ "references").write[Seq[NumberOfEmployeeReferences]]
       )(unlift(NumberOfEmployeesResponse.unapply))
   )
+}
+
+case class NumberOfEmployeesEntry(id: String, response: NumberOfEmployeesResponse)
+object NumberOfEmployeesEntry{
+  import NumberOfEmployees._
+  implicit val numberOfEmployeesFormat = Json.format[NumberOfEmployeesEntry]
 }

@@ -17,7 +17,7 @@
 package unit.uk.gov.hmrc.individualsifapistub.util.domain.organisations
 
 import play.api.libs.json.Json
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{CreateNumberOfEmployeesRequest, NumberOfEmployeeCounts, NumberOfEmployeeReferences, NumberOfEmployeesResponse}
+import uk.gov.hmrc.individualsifapistub.domain.organisations.{NumberOfEmployeesRequest, NumberOfEmployeeCounts, NumberOfEmployeeReferences, NumberOfEmployeesResponse}
 import uk.gov.hmrc.individualsifapistub.domain.organisations.NumberOfEmployees._
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
@@ -111,9 +111,9 @@ class NumberOfEmployeesSpec extends UnitSpec {
         |}
         |""".stripMargin
 
-    val expectedResult = CreateNumberOfEmployeesRequest("2019-10-01", "2020-04-05", Seq.empty)
+    val expectedResult = NumberOfEmployeesRequest("2019-10-01", "2020-04-05", Seq.empty)
 
-    val result = Json.parse(json).validate[CreateNumberOfEmployeesRequest]
+    val result = Json.parse(json).validate[NumberOfEmployeesRequest]
 
     result.isSuccess shouldBe true
     result.get shouldBe expectedResult
@@ -129,7 +129,7 @@ class NumberOfEmployeesSpec extends UnitSpec {
         |}
         |""".stripMargin
 
-    val result = Json.parse(json).validate[CreateNumberOfEmployeesRequest]
+    val result = Json.parse(json).validate[NumberOfEmployeesRequest]
 
     result.isSuccess shouldBe false
   }
@@ -144,7 +144,7 @@ class NumberOfEmployeesSpec extends UnitSpec {
         |}
         |""".stripMargin
 
-    val result = Json.parse(json).validate[CreateNumberOfEmployeesRequest]
+    val result = Json.parse(json).validate[NumberOfEmployeesRequest]
 
     result.isSuccess shouldBe false
   }

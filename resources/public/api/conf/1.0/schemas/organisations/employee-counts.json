@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "description": "Create Employee Counts",
+  "description": "Employee Counts",
   "type": "object",
   "properties": {
     "startDate": {
@@ -27,22 +27,6 @@
             "type": "string",
             "example": "RT882d",
             "pattern": "^[a-zA-Z0-9]{1,10}$"
-          },
-          "counts": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "dateTaken": {
-                  "id": "tax-year",
-                  "example": "2019-10"
-                },
-                "employeeCount":{
-                  "type": "integer",
-                  "example": "554"
-                }
-              }
-            }
           }
         }
       }
