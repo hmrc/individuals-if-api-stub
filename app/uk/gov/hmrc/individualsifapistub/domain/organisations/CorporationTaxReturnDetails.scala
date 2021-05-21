@@ -48,7 +48,7 @@ object CorporationTaxReturnDetails {
   implicit val createCorporationTaxReturnDetailsRequestFormat = Format[CreateCorporationTaxReturnDetailsRequest](
     (
       (JsPath \ "utr").read[String](pattern(utrPattern, "Invalid UTR format")) and
-        (JsPath \ "taxpayerStartDate").read[String](pattern(taxpayerStartDatePattern, "Inavlid taxpayer start date")) and
+        (JsPath \ "taxpayerStartDate").read[String](pattern(taxpayerStartDatePattern, "Invalid taxpayer start date")) and
         (JsPath \ "taxSolvencyStatus").read[String](verifying(validTaxSolvencyStatus)) and
         (JsPath \ "accountingPeriods").read[Seq[AccountingPeriod]]
       )(CreateCorporationTaxReturnDetailsRequest.apply _),
@@ -63,7 +63,7 @@ object CorporationTaxReturnDetails {
   implicit val corporationTaxReturnDetailsResponseFormat = Format[CorporationTaxReturnDetailsResponse](
     (
       (JsPath \ "utr").read[String](pattern(utrPattern, "Invalid UTR format")) and
-        (JsPath \ "taxpayerStartDate").read[String](pattern(taxpayerStartDatePattern, "Inavlid taxpayer start date")) and
+        (JsPath \ "taxpayerStartDate").read[String](pattern(taxpayerStartDatePattern, "Invalid taxpayer start date")) and
         (JsPath \ "taxSolvencyStatus").read[String](verifying(validTaxSolvencyStatus)) and
         (JsPath \ "accountingPeriods").read[Seq[AccountingPeriod]]
       )(CorporationTaxReturnDetailsResponse.apply _),
