@@ -102,8 +102,8 @@ class SelfAssessmentTaxPayerSpec extends UnitSpec {
       """
         |{
         |  "utr": "1234567890",
-        |  "taxPayerType": "Individual",
-        |  "taxPayerDetails": []
+        |  "taxpayerType": "Individual",
+        |  "taxpayerDetails": []
         |}""".stripMargin
 
     val expectedResult = CreateSelfAssessmentTaxPayerRequest("1234567890", "Individual", Seq.empty)
