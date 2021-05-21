@@ -4,7 +4,7 @@ GET     /individuals/income/paye/:idType/:idValue                       uk.gov.h
 POST    /individuals/income/sa/:idType/:idValue                         uk.gov.hmrc.individualsifapistub.controllers.individuals.IncomeController.createSa(idType, idValue, startYear, endYear, useCase)
 POST    /individuals/income/paye/:idType/:idValue                       uk.gov.hmrc.individualsifapistub.controllers.individuals.IncomeController.createPaye(idType, idValue, startDate, endDate, useCase)
 
-#Indiivudals Benefits and Credits
+#Individuals Benefits and Credits
 GET     /individuals/tax-credits/:idType/:idValue                       uk.gov.hmrc.individualsifapistub.controllers.individuals.TaxCreditsController.retrieve(idType, idValue, startDate, endDate, fields: Option[String] ?= None)
 POST    /individuals/tax-credits/:idType/:idValue                       uk.gov.hmrc.individualsifapistub.controllers.individuals.TaxCreditsController.create(idType, idValue, startDate, endDate, useCase)
 
@@ -23,3 +23,7 @@ POST    /organisations/corporation-tax/:utr/return/details              uk.gov.h
 #Organisations Self Assessment Return Details
 GET     /organisations/self-assessment/:utr/return/details              uk.gov.hmrc.individualsifapistub.controllers.organisations.SelfAssessmentReturnDetailController.retrieve(utr)
 POST    /organisations/self-assessment/:utr/return/details              uk.gov.hmrc.individualsifapistub.controllers.organisations.SelfAssessmentReturnDetailController.create(utr)
+
+#Organisations Self Assessment Tax Payer
+GET     /organisations/self-assessment/:utr/taxpayer/details            uk.gov.hmrc.individualsifapistub.controllers.organisations.SelfAssessmentTaxPayerController.retrieve(utr)
+POST    /organisations/self-assessment/:utr/taxpayer/details            uk.gov.hmrc.individualsifapistub.controllers.organisations.SelfAssessmentTaxPayerController.create(utr)

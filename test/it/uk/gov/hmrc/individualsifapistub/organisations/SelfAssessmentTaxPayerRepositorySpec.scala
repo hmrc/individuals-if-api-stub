@@ -17,7 +17,8 @@
 package it.uk.gov.hmrc.individualsifapistub.organisations
 
 import testUtils.RepositoryTestHelper
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{AccountingPeriod, Address, CorporationTaxReturnDetailsResponse, CreateCorporationTaxReturnDetailsRequest, CreateSelfAssessmentTaxPayerRequest, SelfAssessmentTaxPayerResponse, TaxPayerDetails}
+import uk.gov.hmrc.individualsifapistub.domain.DuplicateException
+import uk.gov.hmrc.individualsifapistub.domain.organisations.{Address, CreateSelfAssessmentTaxPayerRequest, SelfAssessmentTaxPayerResponse, TaxPayerDetails}
 import uk.gov.hmrc.individualsifapistub.repository.organisations.SelfAssessmentTaxPayerRepository
 
 class SelfAssessmentTaxPayerRepositorySpec extends RepositoryTestHelper  {
@@ -54,7 +55,9 @@ class SelfAssessmentTaxPayerRepositorySpec extends RepositoryTestHelper  {
 
       "fail to create a duplicate" in {
         await(repository.create(request))
-        intercept[Exception](await(repository.create(request)))
+        assertThrows[DuplicateException] {
+          await(repository.create(request))
+        }
       }
     }
 

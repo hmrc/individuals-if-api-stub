@@ -76,26 +76,26 @@ object SelfAssessmentTaxPayer {
   implicit val createSelfAssessmentRequestFormat: Format[CreateSelfAssessmentTaxPayerRequest] = Format(
     (
       (JsPath \ "utr").read[String](pattern(utrPattern, "UTR pattern is incorrect")) and
-        (JsPath \ "taxPayerType").read[String](pattern(taxPayerTypePattern, "Invalid taxpayer type")) and
-        (JsPath \ "taxPayerDetails").read[Seq[TaxPayerDetails]]
+        (JsPath \ "taxpayerType").read[String](pattern(taxPayerTypePattern, "Invalid taxpayer type")) and
+        (JsPath \ "taxpayerDetails").read[Seq[TaxPayerDetails]]
       )(CreateSelfAssessmentTaxPayerRequest.apply _),
     (
       (JsPath \ "utr").write[String] and
         (JsPath \ "taxpayerType").write[String] and
-        (JsPath \ "taxPayerDetails").write[Seq[TaxPayerDetails]]
+        (JsPath \ "taxpayerDetails").write[Seq[TaxPayerDetails]]
       )(unlift(CreateSelfAssessmentTaxPayerRequest.unapply))
   )
 
   implicit val selfAssessmentResponseFormat: Format[SelfAssessmentTaxPayerResponse] = Format(
     (
       (JsPath \ "utr").read[String](pattern(utrPattern, "UTR pattern is incorrect")) and
-        (JsPath \ "taxPayerType").read[String](pattern(taxPayerTypePattern, "Invalid taxpayer type")) and
-        (JsPath \ "taxPayerDetails").read[Seq[TaxPayerDetails]]
+        (JsPath \ "taxpayerType").read[String](pattern(taxPayerTypePattern, "Invalid taxpayer type")) and
+        (JsPath \ "taxpayerDetails").read[Seq[TaxPayerDetails]]
       )(SelfAssessmentTaxPayerResponse.apply _),
     (
       (JsPath \ "utr").write[String] and
         (JsPath \ "taxpayerType").write[String] and
-        (JsPath \ "taxPayerDetails").write[Seq[TaxPayerDetails]]
+        (JsPath \ "taxpayerDetails").write[Seq[TaxPayerDetails]]
       )(unlift(SelfAssessmentTaxPayerResponse.unapply))
   )
 }
