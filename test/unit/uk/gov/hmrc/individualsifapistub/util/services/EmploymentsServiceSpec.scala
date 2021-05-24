@@ -58,6 +58,7 @@ class EmploymentsServiceSpec extends TestSupport {
             districtNumber = Some("ABC"),
             schemeRef = Some("ABC")
           )),
+          employerRef = Some("247/ZT6767895A"),
           employment = Some(EmploymentDetail(
             startDate = Some("2001-12-31"),
             endDate = Some("2002-05-12"),
@@ -130,22 +131,22 @@ class EmploymentsServiceSpec extends TestSupport {
 
       "Return employment when successfully retrieved from mongo" in new Setup {
 
-        when(mockEmploymentRepository.findByIdAndType(idType, idValue, startDate, endDate, Some(fields))).thenReturn(
+        when(mockEmploymentRepository.findByIdAndType(idType, idValue, startDate, endDate, Some(fields), None)).thenReturn(
           Future.successful(Some(employments))
         )
 
-        val response = await(underTest.get(idType, idValue, startDate, endDate, Some(fields)))
+        val response = await(underTest.get(idType, idValue, startDate, endDate, Some(fields), None))
 
         response shouldBe Some(employments)
 
       }
 
       "Return none if cannot be found in mongo" in new Setup {
-        when(mockEmploymentRepository.findByIdAndType(idType, idValue, startDate, endDate, Some(fields))).thenReturn(
+        when(mockEmploymentRepository.findByIdAndType(idType, idValue, startDate, endDate, Some(fields), None)).thenReturn(
           Future.successful(None)
         )
 
-        val response = await(underTest.get(idType, idValue, startDate, endDate, Some(fields)))
+        val response = await(underTest.get(idType, idValue, startDate, endDate, Some(fields), None))
 
         response shouldBe None
 

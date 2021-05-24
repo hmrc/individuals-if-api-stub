@@ -55,8 +55,9 @@ class EmploymentsController @Inject()(bodyParser: PlayBodyParsers,
                idValue: String,
                startDate: String,
                endDate: String,
-               fields: Option[String]): Action[AnyContent] = Action.async { implicit request =>
-    employmentsService.get(idType, idValue, startDate, endDate, fields) map {
+               fields: Option[String],
+               filter: Option[String]): Action[AnyContent] = Action.async { implicit request =>
+    employmentsService.get(idType, idValue, startDate, endDate, fields, filter) map {
       case Some(value) => Ok(Json.toJson(value))
       case None => {
         Ok(Json.parse("""{

@@ -33,7 +33,7 @@ case class Payment(date: Option[String],
                    week: Option[Int],
                    month: Option[Int])
 
-case class Employment(employer: Option[Employer], employment: Option[EmploymentDetail], payments: Option[Seq[Payment]])
+case class Employment(employer: Option[Employer], employerRef: Option[String], employment: Option[EmploymentDetail], payments: Option[Seq[Payment]])
 
 case class EmploymentEntry(id: String, employments: Seq[Employment])
 
@@ -131,11 +131,13 @@ object Employments {
   implicit val employmentFormat: Format[Employment] = Format(
     (
       (JsPath \ "employer").readNullable[Employer] and
+      (JsPath \ "employerRef").readNullable[String](minLength[String](1) keepAnd maxLength[String](14)) and
       (JsPath \ "employment").readNullable[EmploymentDetail] and
       (JsPath \ "payments").readNullable[Seq[Payment]]
     )(Employment.apply _),
     (
       (JsPath \ "employer").writeNullable[Employer] and
+      (JsPath \ "employerRef").writeNullable[String] and
       (JsPath \ "employment").writeNullable[EmploymentDetail] and
       (JsPath \ "payments").writeNullable[Seq[Payment]]
     )(unlift(Employment.unapply))

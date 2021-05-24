@@ -66,6 +66,7 @@ class EmploymentsSpec extends UnitSpec with TestHelpers {
 
   val employment = Employment(
     employer = Some(employer),
+    employerRef = Some("247/ZT6767895A"),
     employment = Some(employmentDetail),
     payments = Some(Seq(payment))
   )
@@ -339,6 +340,7 @@ class EmploymentsSpec extends UnitSpec with TestHelpers {
           |      "districtNumber" : "ABC",
           |      "schemeRef" : "ABC"
           |    },
+          |    "employerRef" : "247/ZT6767895A",
           |    "employment" : {
           |      "startDate" : "2001-12-31",
           |      "endDate" : "2002-05-12",
