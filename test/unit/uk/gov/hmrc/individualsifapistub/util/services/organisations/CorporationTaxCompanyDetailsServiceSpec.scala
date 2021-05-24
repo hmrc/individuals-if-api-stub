@@ -61,14 +61,14 @@ class CorporationTaxCompanyDetailsServiceSpec extends AsyncWordSpec with Matcher
 
   "get" should {
     "return found item if it exists" in {
-      when(mockRepository.find(request.utr)).thenReturn(Future.successful(Some(response)))
-      val result = service.get(request.utr);
+      when(mockRepository.find(request.crn)).thenReturn(Future.successful(Some(response)))
+      val result = service.get(request.crn);
       result.map(x => x shouldBe Some(response))
     }
 
     "return None if item does not exists" in {
-      when(mockRepository.find(request.utr)).thenReturn(Future.successful(None))
-      val result = service.get(request.utr);
+      when(mockRepository.find(request.crn)).thenReturn(Future.successful(None))
+      val result = service.get(request.crn);
       result.map(x => x shouldBe None)
     }
   }

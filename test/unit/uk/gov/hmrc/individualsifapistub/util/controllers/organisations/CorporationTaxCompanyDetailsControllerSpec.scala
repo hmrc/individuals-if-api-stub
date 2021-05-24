@@ -60,7 +60,7 @@ class CorporationTaxCompanyDetailsControllerSpec extends TestSupport {
           .withMethod("Post")
           .withBody(Json.toJson(request))
 
-      val result = controller.create(response.utr)(httpRequest)
+      val result = controller.create(response.crn)(httpRequest)
 
       result.map(x => {
         x.header.status shouldBe CREATED
@@ -76,7 +76,7 @@ class CorporationTaxCompanyDetailsControllerSpec extends TestSupport {
           .withMethod("POST")
           .withBody(Json.parse("{}"))
 
-      val result = controller.create(response.utr)(httpRequest)
+      val result = controller.create(response.crn)(httpRequest)
 
       result.map(x => {
         x.header.status shouldBe BAD_REQUEST
@@ -86,13 +86,13 @@ class CorporationTaxCompanyDetailsControllerSpec extends TestSupport {
 
   "retrieve" should {
     "return response when entry found by service" in {
-      when(mockService.get(request.utr)).thenReturn(Future.successful(Some(response)))
+      when(mockService.get(request.crn)).thenReturn(Future.successful(Some(response)))
 
       val httpRequest =
         FakeRequest()
           .withMethod("GET")
 
-      val result = controller.retrieve(request.utr)(httpRequest)
+      val result = controller.retrieve(request.crn)(httpRequest)
 
       result.map(x => {
         x.header.status shouldBe OK
@@ -101,13 +101,13 @@ class CorporationTaxCompanyDetailsControllerSpec extends TestSupport {
     }
 
     "fails when an entry cannot be found" in {
-      when(mockService.get(request.utr)).thenReturn(Future.failed(new Exception))
+      when(mockService.get(request.crn)).thenReturn(Future.failed(new Exception))
 
       val httpRequest =
         FakeRequest()
           .withMethod("GET")
 
-      assertThrows[Exception] { await(controller.retrieve(request.utr)(httpRequest)) }
+      assertThrows[Exception] { await(controller.retrieve(request.crn)(httpRequest)) }
     }
   }
 }

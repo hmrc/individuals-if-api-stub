@@ -53,7 +53,7 @@ class CorporationTaxCompanyDetailsRepositorySpec extends RepositoryTestHelper  {
     }
 
     "create" should {
-      "create a CT Company Details response with a valid utr" in {
+      "create a CT Company Details response with a valid crn" in {
         val result = await(repository.create(request))
         result shouldBe response
       }
@@ -68,12 +68,12 @@ class CorporationTaxCompanyDetailsRepositorySpec extends RepositoryTestHelper  {
 
     "find" should {
       "return None when no ids match" in {
-        await(repository.find(request.utr)) shouldBe None
+        await(repository.find(request.crn)) shouldBe None
       }
 
       "return Some when match by id is found" in {
         await(repository.create(request))
-        await(repository.find(request.utr)) shouldBe Some(response)
+        await(repository.find(request.crn)) shouldBe Some(response)
       }
     }
 

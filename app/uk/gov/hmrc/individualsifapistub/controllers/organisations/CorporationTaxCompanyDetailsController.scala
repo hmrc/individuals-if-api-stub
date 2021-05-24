@@ -35,7 +35,7 @@ class CorporationTaxCompanyDetailsController @Inject()(
 
   val emptyResponse = CorporationTaxCompanyDetailsResponse("", "" ,None , None)
 
-  def create(utr: String): Action[JsValue] = {
+  def create(crn: String): Action[JsValue] = {
     Action.async(bodyParsers.json) { implicit request =>
       withJsonBody[CreateCorporationTaxCompanyDetailsRequest] { body =>
         corporationTaxCompanyDetailsService.create(body).map(
@@ -45,8 +45,8 @@ class CorporationTaxCompanyDetailsController @Inject()(
     }
   }
 
-  def retrieve(utr: String): Action[AnyContent] = Action.async { implicit request =>
-    corporationTaxCompanyDetailsService.get(utr).map {
+  def retrieve(crn: String): Action[AnyContent] = Action.async { implicit request =>
+    corporationTaxCompanyDetailsService.get(crn).map {
       case Some(response) => Ok(Json.toJson(response))
       case None => Ok(Json.toJson(emptyResponse))
     } recover recovery

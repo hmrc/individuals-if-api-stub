@@ -26,5 +26,5 @@ class CorporationTaxCompanyDetailsService @Inject()(repository: CorporationTaxCo
 
   def create(request: CreateCorporationTaxCompanyDetailsRequest): Future[CorporationTaxCompanyDetailsResponse] = repository.create(request)
 
-  def get(utr: String): Future[Option[CorporationTaxCompanyDetailsResponse]] = repository.find(utr)
+  def get(crn: String): Future[Option[CorporationTaxCompanyDetailsResponse]] = repository.find(crn)
 }

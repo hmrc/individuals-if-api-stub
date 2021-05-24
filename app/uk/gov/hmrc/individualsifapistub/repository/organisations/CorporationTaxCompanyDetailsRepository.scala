@@ -39,16 +39,16 @@ class CorporationTaxCompanyDetailsRepository @Inject()(mongoConnectionProvider: 
 
     def create(request: CreateCorporationTaxCompanyDetailsRequest) = {
         val response = CorporationTaxCompanyDetailsResponse(request.utr, request.crn, request.registeredDetails, request.communicationDetails)
-        val entry = CTCompanyDetailsEntry(request.utr, response)
+        val entry = CTCompanyDetailsEntry(request.crn, response)
 
         insert(entry) map (_ => response) recover {
             case WriteResult.Code(11000) => throw new DuplicateException
         }
     }
 
-    def find(utr: String) = {
+    def find(crn: String) = {
         collection
-          .find[JsObject, JsObject](obj("id" -> utr), None)
+          .find[JsObject, JsObject](obj("id" -> crn), None)
           .one[CTCompanyDetailsEntry]
           .map(x => x.map(_.response))
     }
