@@ -44,6 +44,7 @@ class EmploymentRepositorySpec extends RepositoryTestHelper {
           districtNumber = Some("ABC"),
           schemeRef = Some("ABC")
         )),
+        employerRef = Some("247/ZT6767895A"),
         employment = Some(EmploymentDetail(
           startDate = Some("2001-12-31"),
           endDate = Some("2002-05-12"),
@@ -110,16 +111,16 @@ class EmploymentRepositorySpec extends RepositoryTestHelper {
   "findByIdAndType" should {
 
     "return None when there are no details for a given nino" in {
-      await(repository.findByIdAndType("nino", nino, startDate, endDate, Some(fields))) shouldBe None
+      await(repository.findByIdAndType("nino", nino, startDate, endDate, Some(fields), None)) shouldBe None
     }
 
     "return None when there are no details for a given trn" in {
-      await(repository.findByIdAndType("trn", trn, startDate, endDate, Some(fields))) shouldBe None
+      await(repository.findByIdAndType("trn", trn, startDate, endDate, Some(fields), None)) shouldBe None
     }
 
     "return a single record with id" in {
       await(repository.create("nino", nino, startDate, endDate, useCase, employments))
-      val result = await(repository.findByIdAndType("nino", nino, startDate, endDate, Some(fields)))
+      val result = await(repository.findByIdAndType("nino", nino, startDate, endDate, Some(fields), None))
       result.get shouldBe employments
     }
   }
