@@ -16,19 +16,17 @@
 
 package uk.gov.hmrc.individualsifapistub.services
 
-import javax.inject.Inject
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier}
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
-import uk.gov.hmrc.individualsifapistub.domain.{IdType, RecordNotFoundException}
+import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType
 
-import scala.concurrent.ExecutionContext
+import javax.inject.Inject
 
 class ServiceBase @Inject()(apiPlatformTestUserConnector: ApiPlatformTestUserConnector) {
 
   def verifyNino(idType: String, idValue: String)
-                (implicit ec: ExecutionContext,
-                 hc: HeaderCarrier) = {
+                (implicit hc: HeaderCarrier) = {
     IdType.parse(idType) match {
       case IdType.Nino => apiPlatformTestUserConnector.getIndividualByNino(Nino(idValue))
       case _           => throw new BadRequestException("Invalid National Insurance Number")

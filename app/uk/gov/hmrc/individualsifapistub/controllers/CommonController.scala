@@ -16,23 +16,21 @@
 
 package uk.gov.hmrc.individualsifapistub.controllers
 
-import java.util.UUID
-
-import javax.inject.Inject
 import play.api.Configuration
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND}
 import play.api.libs.json._
 import play.api.mvc.Results.{BadRequest, NotFound, Status}
 import play.api.mvc.{ControllerComponents, Request, RequestHeader, Result}
-import uk.gov.hmrc.individualsifapistub.domain.Identifier._
-import uk.gov.hmrc.individualsifapistub.domain.IdType.{Nino, Trn}
 import uk.gov.hmrc.individualsifapistub.domain._
-import uk.gov.hmrc.play.HeaderCarrierConverter
+import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{Nino, Trn}
+import uk.gov.hmrc.individualsifapistub.domain.individuals.Identifier._
+import uk.gov.hmrc.individualsifapistub.domain.individuals.{IdType, Identifier}
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import uk.gov.hmrc.play.bootstrap.backend.http.{ErrorResponse, JsonErrorHandler}
 import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
@@ -51,11 +49,8 @@ class CustomErrorHandler @Inject()( configuration: Configuration,
       Json.parse(message).\\("message").mkString(",").replaceAll("\"", "")
     } match {
       case Success(value) => value
-      case Failure(e)     => "Invalid Request"
+      case Failure(_)     => "Invalid Request"
     }
-
-    implicit val headerCarrier = HeaderCarrierConverter
-      .fromHeadersAndSessionAndRequest(request.headers, request = Some(request))
 
     statusCode match {
       case NOT_FOUND =>

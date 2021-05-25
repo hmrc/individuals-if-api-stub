@@ -16,7 +16,7 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.testUtils
 
-import uk.gov.hmrc.individualsifapistub.domain.{AdditionalFields, Benefits, EmployeeNics, EmployeePensionContribs, GrossEarningsForNics, PayeEntry, PostGradLoan, StatutoryPayYTD, StudentLoan, TotalEmployerNics}
+import uk.gov.hmrc.individualsifapistub.domain.individuals.{AdditionalFields, Benefits, EmployeeNics, EmployeePensionContribs, GrossEarningsForNics, PayeEntry, PostGradLoan, StatutoryPayYTD, StudentLoan, TotalEmployerNics}
 
 trait IncomePayeHelpers {
   def createValidPayeEntry() = {

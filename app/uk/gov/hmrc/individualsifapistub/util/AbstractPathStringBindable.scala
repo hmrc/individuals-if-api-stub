@@ -19,7 +19,7 @@ package uk.gov.hmrc.individualsifapistub.util
 import play.api.libs.json.Json
 import play.api.mvc.PathBindable
 import uk.gov.hmrc.individualsifapistub.domain.ErrorInvalidRequest
-import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters.errorInvalidRequestFormat
+import uk.gov.hmrc.individualsifapistub.domain.individuals.JsonFormatters.errorInvalidRequestFormat
 
 import scala.util.Try
 

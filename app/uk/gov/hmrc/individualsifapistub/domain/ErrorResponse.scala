@@ -19,7 +19,7 @@ package uk.gov.hmrc.individualsifapistub.domain
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.mvc.{Result, Results}
-import uk.gov.hmrc.individualsifapistub.domain.JsonFormatters._
+import uk.gov.hmrc.individualsifapistub.domain.individuals.JsonFormatters._
 
 sealed abstract class ErrorResponse(
                                      val httpStatusCode: Int,
