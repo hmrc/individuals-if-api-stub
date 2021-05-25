@@ -440,11 +440,11 @@ uses:
                     code: INVALID_REQUEST
   /organisations/corporation-tax/{crn}/company/details:
     uriParameters:
-      utr:
-        description: "A Unique Tax Reference"
+      crn:
+        description: "A Company Registration Number"
         type: string
         required: true
-        example: "1234567890"
+        example: "12345678"
     post:
       displayName: "Create a corporation-tax company payload"
       is: [headers.acceptHeader]
