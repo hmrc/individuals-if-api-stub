@@ -17,19 +17,19 @@ POST    /individuals/details/contact/:idType/:idValue                   uk.gov.h
 
 #Organisations Corporation Tax Company Details
 GET     /organisations/corporation-tax/:crn/company/details             uk.gov.hmrc.individualsifapistub.controllers.organisations.CorporationTaxCompanyDetailsController.retrieve(crn)
-POST     /organisations/corporation-tax/:crn/company/details             uk.gov.hmrc.individualsifapistub.controllers.organisations.CorporationTaxCompanyDetailsController.create(crn)
+POST    /organisations/corporation-tax/company/details/:crn             uk.gov.hmrc.individualsifapistub.controllers.organisations.CorporationTaxCompanyDetailsController.create(crn)
 
 #Organisations Corporation Tax Return Details
 GET     /organisations/corporation-tax/:utr/return/details              uk.gov.hmrc.individualsifapistub.controllers.organisations.CorporationTaxReturnDetailsController.retrieve(utr)
-POST    /organisations/corporation-tax/:utr/return/details              uk.gov.hmrc.individualsifapistub.controllers.organisations.CorporationTaxReturnDetailsController.create(utr)
+POST    /organisations/corporation-tax/return/details/:utr              uk.gov.hmrc.individualsifapistub.controllers.organisations.CorporationTaxReturnDetailsController.create(utr)
 
 #Organisations Self Assessment Return Details
 GET     /organisations/self-assessment/:utr/return/details              uk.gov.hmrc.individualsifapistub.controllers.organisations.SelfAssessmentReturnDetailController.retrieve(utr)
-POST    /organisations/self-assessment/:utr/return/details              uk.gov.hmrc.individualsifapistub.controllers.organisations.SelfAssessmentReturnDetailController.create(utr)
+POST    /organisations/self-assessment/return/details/:utr              uk.gov.hmrc.individualsifapistub.controllers.organisations.SelfAssessmentReturnDetailController.create(utr)
 
 #Organisations Self Assessment Tax Payer
 GET     /organisations/self-assessment/:utr/taxpayer/details            uk.gov.hmrc.individualsifapistub.controllers.organisations.SelfAssessmentTaxPayerController.retrieve(utr)
-POST    /organisations/self-assessment/:utr/taxpayer/details            uk.gov.hmrc.individualsifapistub.controllers.organisations.SelfAssessmentTaxPayerController.create(utr)
+POST    /organisations/self-assessment/taxpayer/details/:utr            uk.gov.hmrc.individualsifapistub.controllers.organisations.SelfAssessmentTaxPayerController.create(utr)
 
 #Organisations Get Employee Counts
 POST    /organisations/employers/employee/counts                        uk.gov.hmrc.individualsifapistub.controllers.organisations.NumberOfEmployeesController.retrieve()
