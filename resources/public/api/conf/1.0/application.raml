@@ -310,7 +310,7 @@ uses:
                   value:
                     code: INVALID_REQUEST
 
-  /organisations/self-assessment/{utr}/return/details:
+  /organisations/self-assessment/return/details/{utr}:
     uriParameters:
       utr:
         description: "A Unique Tax Reference"
@@ -353,7 +353,7 @@ uses:
                   value:
                     code: INVALID_REQUEST
 
-  /organisations/self-assessment/{utr}/taxpayer/details:
+  /organisations/self-assessment/taxpayer/details/{utr}:
     uriParameters:
       utr:
         description: "A Unique Tax Reference"
@@ -396,7 +396,7 @@ uses:
                   value:
                     code: INVALID_REQUEST
 
-  /organisations/corporation-tax/{utr}/return/details:
+  /organisations/corporation-tax/return/details/{utr}:
     uriParameters:
       utr:
         description: "A Unique Tax Reference"
@@ -438,7 +438,8 @@ uses:
                   description: Invalid request
                   value:
                     code: INVALID_REQUEST
-  /organisations/corporation-tax/{crn}/company/details:
+
+  /organisations/corporation-tax/company/details/{crn}:
     uriParameters:
       crn:
         description: "A Company Registration Number"
@@ -480,6 +481,7 @@ uses:
                   description: Invalid request
                   value:
                     code: INVALID_REQUEST
+
   /organisations/employers/employee/counts/createpayload:
     uriParameters:
       utr:
