@@ -11,7 +11,7 @@ External Test is a non-integrated environment. This API allows you to stub IF JS
 
 The endpoints in the IF Test Support API mirror the endpoints in IF that the Individuals and Organisations APIs get their data from.
 
-Before calling the endpoints, you will need to create a test user using the [Create Test User API](https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/api-platform-test-user/1.0#_create-a-test-user-which-is-an-individual_post_accordion).
+Before calling the endpoints, you will need to create a test user using the [Create Test User API](https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/api-platform-test-user/1.0).
 
 The test user will either be an individual or an organisation. You will need to create the relevant type of test user for the endpoint you want to post data to.
 
