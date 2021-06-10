@@ -10,7 +10,7 @@
         "type": "object",
         "properties": {
           "code": {
-            "description": "The numeric code for the associated 'type' property below where 7 = DAYTIME TELEPHONE, 8 = EVENING TELEPHONE, and 9 = MOBILE TELEPHONE.",
+            "description": "The numeric code for the associated type of telephone number. 7 = DAYTIME TELEPHONE, 8 = EVENING TELEPHONE, and 9 = MOBILE TELEPHONE.",
             "type": "integer",
             "example": "9"
           },
@@ -20,7 +20,7 @@
             "example": "0123 737654"
           },
           "type": {
-            "description": "The particular contact type. If the backend returns an unexpected string it will be returned 'as is', i.e. untransformed, to a maximum of 35 characters.",
+            "description": "The type of contact telephone number. If the backend returns an unexpected string it will be returned 'as is', i.e. untransformed, to a maximum of 35 characters.",
             "type": "string",
             "enum": [
               "DAYTIME TELEPHONE",
@@ -38,7 +38,7 @@
         "type": "object",
         "properties": {
           "type": {
-            "description": "Indicates the residence type Base or Nominated.",
+            "description": "States the type of residence, either BASE or NOMINATED.",
             "type": "string",
             "example": "NOMINATED"
           },
