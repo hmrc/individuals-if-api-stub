@@ -30,7 +30,7 @@ uses:
         type: string
         example: AA123456D
     post:
-      displayName: Create an employments payload
+      displayName: Create employments test data for an individual
       description: !include docs/individuals/create-employment-description.md
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
@@ -90,7 +90,7 @@ uses:
         example: AA123456D
 
     post:
-      displayName: Create a Self Assessment payload
+      displayName: Create Self Assessment income test data for an individual
       description: !include docs/individuals/create-self-assessment-description.md
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
@@ -150,7 +150,7 @@ uses:
         example: AA123456D
 
     post:
-      displayName: Create a PAYE income payload
+      displayName: Create PAYE income test data for an individual
       description: !include docs/individuals/create-paye-income-description.md
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
@@ -209,7 +209,7 @@ uses:
         type: string
         example: AA123456D
     post:
-      displayName: Create a benefits and credits payload
+      displayName: Create benefits and credits test data for an individual
       description: !include docs/individuals/create-benefits-and-credits-description.md
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
@@ -268,7 +268,7 @@ uses:
         type: string
         example: AA123456D
     post:
-      displayName: Create a details payload
+      displayName: Create details test data for an individual
       description: !include docs/individuals/create-contact-details-description.md
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
@@ -318,7 +318,7 @@ uses:
         required: true
         example: "1234567890"
     post:
-      displayName: "Create a self-assessment return details payload"
+      displayName: "Create Self Assessment details test data for an organisation"
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
       headers:
@@ -361,7 +361,7 @@ uses:
         required: true
         example: "1234567890"
     post:
-      displayName: "Create a self-assessment organisations taxpayer payload"
+      displayName: "Create Self Assessment matching test data for an organisation"
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
       headers:
@@ -404,7 +404,7 @@ uses:
         required: true
         example: "1234567890"
     post:
-      displayName: "Create a corporation-tax payload"
+      displayName: "Create Corporation Tax details test data for an organisation"
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
       headers:
@@ -447,7 +447,7 @@ uses:
         required: true
         example: "12345678"
     post:
-      displayName: "Create a corporation-tax company payload"
+      displayName: "Create Corporation Tax matching test data for an organisation"
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
       headers:
@@ -490,7 +490,7 @@ uses:
         required: true
         example: "1234567890"
     post:
-      displayName: "Create an employee counts payload"
+      displayName: "Create number of employees test data for an organisation"
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
       headers:
