@@ -13,9 +13,9 @@
             "description": "The numeric code for the associated type of telephone number. 7 = DAYTIME TELEPHONE, 8 = EVENING TELEPHONE, and 9 = MOBILE TELEPHONE.",
             "type": "integer",
             "enum": [
-              "7",
-              "8",
-              "9"
+              7,
+              8,
+              9
             ]
           },
           "detail": {
