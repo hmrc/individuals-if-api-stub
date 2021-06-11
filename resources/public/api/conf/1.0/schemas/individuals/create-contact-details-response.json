@@ -12,7 +12,11 @@
           "code": {
             "description": "The numeric code for the associated type of telephone number. 7 = DAYTIME TELEPHONE, 8 = EVENING TELEPHONE, and 9 = MOBILE TELEPHONE.",
             "type": "integer",
-            "example": "9"
+            "enum": [
+              "7",
+              "8",
+              "9"
+            ]
           },
           "detail": {
             "description": "The telephone number.",
@@ -38,9 +42,12 @@
         "type": "object",
         "properties": {
           "type": {
-            "description": "States the type of residence, either BASE or NOMINATED.",
+            "description": "States the type of residence.",
             "type": "string",
-            "example": "NOMINATED"
+            "enum": [
+              "BASE",
+              "NOMINATED"
+            ]
           },
           "address": {
             "type": "object",
