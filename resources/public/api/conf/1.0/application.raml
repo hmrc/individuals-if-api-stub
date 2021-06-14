@@ -30,7 +30,7 @@ uses:
         type: string
         example: AA123456D
     post:
-      displayName: Create an employments payload
+      displayName: Create employments test data for an individual
       description: !include docs/individuals/create-employment-description.md
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
@@ -57,10 +57,10 @@ uses:
           required: true
           example: 2020-01-01
         useCase:
-          description: The use case that the employments data relates to.
+          description: !include docs/individuals/use-case-examples/employment-description.md
           type: string
           required: true
-          example: !include docs/individuals/use-case-examples/employments-use-case-example.md
+          example: LAA-C1
       body:
         application/json:
           schema: !include schemas/individuals/create-employment.json
@@ -90,7 +90,7 @@ uses:
         example: AA123456D
 
     post:
-      displayName: Create a Self Assessment payload
+      displayName: Create Self Assessment income test data for an individual
       description: !include docs/individuals/create-self-assessment-description.md
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
@@ -117,10 +117,10 @@ uses:
           required: true
           example: '2019'
         useCase:
-          description: The use case that the Self Assessment income data relates to.
+          description: !include docs/individuals/use-case-examples/income-sa-description.md
           type: string
           required: true
-          example: !include docs/individuals/use-case-examples/self-assessment-use-case-example.md
+          example: LAA-C1
       body:
         application/json:
           schema: !include schemas/individuals/create-self-assessment-request.json
@@ -150,7 +150,7 @@ uses:
         example: AA123456D
 
     post:
-      displayName: Create a PAYE income payload
+      displayName: Create PAYE income test data for an individual
       description: !include docs/individuals/create-paye-income-description.md
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
@@ -177,10 +177,10 @@ uses:
           required: true
           example: 2020-01-01
         useCase:
-          description: The use case that the PAYE income data relates to.
+          description: !include docs/individuals/use-case-examples/income-paye-description.md
           type: string
           required: true
-          example: !include docs/individuals/use-case-examples/paye-use-case-example.md
+          example: LAA-C1
       body:
         application/json:
           schema: !include schemas/individuals/create-paye-income.json
@@ -205,11 +205,11 @@ uses:
   /individuals/tax-credits/nino/{nino}:
     uriParameters:
       nino:
-        description: The employee's National Insurance number
+        description: The employee's National Insurance number.
         type: string
         example: AA123456D
     post:
-      displayName: Create a benefits and credits payload
+      displayName: Create benefits and credits test data for an individual
       description: !include docs/individuals/create-benefits-and-credits-description.md
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
@@ -236,10 +236,10 @@ uses:
           required: true
           example: 2020-01-01
         useCase:
-          description: The use case that the benefits and credits data relates to.
+          description: !include docs/individuals/use-case-examples/tax-credits-description.md
           type: string
           required: true
-          example: !include docs/individuals/use-case-examples/tax-credits-use-case-example.md
+          example: LAA-C1-working-tax-credit
       body:
         application/json:
           schema: !include schemas/individuals/create-benefits-and-credits.json
@@ -264,11 +264,11 @@ uses:
   /individuals/details/contact/nino/{nino}:
     uriParameters:
       nino:
-        description: The employee's National Insurance number
+        description: The employee's National Insurance number.
         type: string
         example: AA123456D
     post:
-      displayName: Create a details payload
+      displayName: Create details test data for an individual
       description: !include docs/individuals/create-contact-details-description.md
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
@@ -285,10 +285,10 @@ uses:
           example: application/json
       queryParameters:
         useCase:
-          description: The use case that the details relate to.
+          description: !include docs/individuals/use-case-examples/details-description.md
           type: string
           required: true
-          example: !include docs/individuals/use-case-examples/details-use-case-example.md
+          example: LAA-C3-residences
       body:
         application/json:
           schema: !include schemas/individuals/create-contact-details.json
@@ -318,7 +318,7 @@ uses:
         required: true
         example: "1234567890"
     post:
-      displayName: "Create a self-assessment return details payload"
+      displayName: "Create Self Assessment details test data for an organisation"
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
       headers:
@@ -361,7 +361,7 @@ uses:
         required: true
         example: "1234567890"
     post:
-      displayName: "Create a self-assessment organisations taxpayer payload"
+      displayName: "Create Self Assessment matching test data for an organisation"
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
       headers:
@@ -404,7 +404,7 @@ uses:
         required: true
         example: "1234567890"
     post:
-      displayName: "Create a corporation-tax payload"
+      displayName: "Create Corporation Tax details test data for an organisation"
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
       headers:
@@ -447,7 +447,7 @@ uses:
         required: true
         example: "12345678"
     post:
-      displayName: "Create a corporation-tax company payload"
+      displayName: "Create Corporation Tax matching test data for an organisation"
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
       headers:
@@ -490,7 +490,7 @@ uses:
         required: true
         example: "1234567890"
     post:
-      displayName: "Create an employee counts payload"
+      displayName: "Create number of employees test data for an organisation"
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
       headers:

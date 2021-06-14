@@ -12,23 +12,23 @@
           "employerRef": {
             "type": "string",
             "example": "247/ZT6767895A",
-            "description": "Employer Reference - Made from \"districtNumber/schemeRef\"",
+            "description": "The employer reference is made up of the employer's district number and scheme reference.",
             "pattern": "^[0-9]{3}[\/][a-zA-Z0-9]{1,10}$"
           },
           "payments": {
-            "description": "Payments made during the employment",
+            "description": "Payments made during the employment.",
             "type": "array",
             "items": {
               "type": "object",
               "properties": {
                 "date": {
-                  "description": "The date of the payment",
+                  "description": "The date of the payment.",
                   "id": "full-date",
                   "example": "2019-01-31"
                 },
                 "paidTaxablePay": {
                   "type": "number",
-                  "description": "The amount of the payment",
+                  "description": "The amount of the payment.",
                   "example": "4765.32"
                 }
               }

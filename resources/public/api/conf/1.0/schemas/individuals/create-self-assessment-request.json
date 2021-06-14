@@ -5,7 +5,7 @@
   "properties": {
     "sa": {
       "type": "array",
-      "description": "Self Assessment tax return history for the requested time period.",
+      "description": "Self Assessment tax return details for an individual for the requested time period.",
       "items": {
         "type": "object",
         "properties": {
@@ -24,7 +24,7 @@
                   "type": "string",
                   "example": "3287654321",
                   "pattern": "^[0-9]{10}$",
-                  "description": "The individual's UTR"
+                  "description": "The individual's Unique Taxpayer Reference (UTR)."
                 },
                 "busStartDate": {
                   "type": "string",

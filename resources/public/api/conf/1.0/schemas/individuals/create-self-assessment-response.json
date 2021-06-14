@@ -24,7 +24,7 @@
                   "type": "string",
                   "example": "3287654321",
                   "pattern": "^[0-9]{10}$",
-                  "description": "The individual's UTR"
+                  "description": "The individual's Unique Taxpayer Reference (UTR)."
                 },
                 "busStartDate": {
                   "type": "string",

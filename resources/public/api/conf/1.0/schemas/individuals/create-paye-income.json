@@ -5,7 +5,7 @@
   "properties": {
     "paye": {
       "type": "array",
-      "description": "PAYE income details per employment for an individual for the requested time period.",
+      "description": "PAYE income details for an individual for the requested time period.",
       "items": {
         "type": "object",
         "properties": {
