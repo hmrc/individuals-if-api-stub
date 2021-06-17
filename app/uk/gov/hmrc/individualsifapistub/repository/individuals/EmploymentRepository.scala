@@ -106,6 +106,9 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
 
     val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-${useCase.getOrElse("TEST")}"
 
+    Logger.info(s"Fields: ${fields.getOrElse("")}")
+    Logger.info(s"Filter: ${filter.getOrElse("")}")
+
     Logger.info(s"Fetch employments for cache key: $id")
 
     collection
