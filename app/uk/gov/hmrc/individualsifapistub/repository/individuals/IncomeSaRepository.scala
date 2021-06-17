@@ -55,8 +55,8 @@ class IncomeSaRepository @Inject()(mongoConnectionProvider: MongoConnectionProvi
       "HMCTS-C3" -> "HMCTS-C2_HMCTS-C3",
       "LSANI-C1" -> "LSANI-C1_LSANI-C3",
       "LSANI-C3" -> "LSANI-C1_LSANI-C3",
-      "RP2" -> "RP2_ECP",
-      "ECP" -> "RP2_ECP"
+      "HO-ECP-APP" -> "HO-ECP",
+      "HO-ECP-COMP" -> "HO-ECP"
     )
 
     val ident = IdType.parse(idType) match {
@@ -94,7 +94,7 @@ class IncomeSaRepository @Inject()(mongoConnectionProvider: MongoConnectionProvi
       "sa(returnList(address(line1,line2,line3,line4,postcode),businessDescription,caseStartDate,telephoneNumber),taxYear)" -> "HMCTS-C4",
       "sa(returnList(busEndDate,busStartDate,deducts(totalBusExpenses),income(allEmployments,foreign,foreignDivs,lifePolicies,other,partnerships,pensions,selfAssessment,selfEmployment,shares,trusts,ukDivsAndInterest,ukInterest,ukProperty),receivedDate,totalNIC,totalTaxPaid),taxYear)" -> "LSANI-C1_LSANI-C3",
       "sa(returnList(address(line1,line2,line3,line4,postcode),businessDescription,caseStartDate,income(allEmployments,foreignDivs,lifePolicies,other,partnerships,pensions,selfAssessment,selfEmployment,shares,trusts,ukDivsAndInterest,ukInterest,ukProperty),receivedDate,telephoneNumber),taxYear)" -> "NICTSEJO-C4",
-      "sa(returnList(income(allEmployments,other,selfAssessment,selfEmployment),receivedDate,utr),taxYear)" -> "RP2_ECP"
+      "sa(returnList(income(allEmployments,other,selfAssessment,selfEmployment),receivedDate,utr),taxYear)" -> "HO-ECP"
     )
 
     val ident = IdType.parse(idType) match {
