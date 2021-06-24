@@ -51,15 +51,16 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
              employments: Employments): Future[Employments] = {
 
     val useCaseMap = Map(
-      "LAA-C1"   -> "LAA-C1_LAA-C2",
-      "LAA-C2"   -> "LAA-C1_LAA-C2",
-      "LAA-C3"   -> "LAA-C3_LSANI-C1_LSANI-C3",
-      "LSANI-C1" -> "LAA-C3_LSANI-C1_LSANI-C3",
-      "LSANI-C3" -> "LAA-C3_LSANI-C1_LSANI-C3",
-      "HMCTS-C2" -> "HMCTS-C2_HMCTS-C3",
-      "HO-RP2-APP" -> "HO-RP2",
+      "LAA-C1"      -> "LAA-C1_LAA-C2",
+      "LAA-C2"      -> "LAA-C1_LAA-C2",
+      "LAA-C3"      -> "LAA-C3_LSANI-C1_LSANI-C3",
+      "LSANI-C1"    -> "LAA-C3_LSANI-C1_LSANI-C3",
+      "LSANI-C3"    -> "LAA-C3_LSANI-C1_LSANI-C3",
+      "HMCTS-C2"    -> "HMCTS-C2_HMCTS-C3",
+      "HMCTS-C3"    -> "HMCTS-C2_HMCTS-C3",
+      "HO-RP2-APP"  -> "HO-RP2",
       "HO-RP2-COMP" -> "HO-RP2",
-      "HO-ECP-APP" -> "HO-ECP",
+      "HO-ECP-APP"  -> "HO-ECP",
       "HO-ECP-COMP" -> "HO-ECP"
     )
 
@@ -91,7 +92,7 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
       "employments(employer(name),employment(endDate,startDate))" -> "LAA-C3_LSANI-C1_LSANI-C3",
       "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employment(endDate,startDate))" -> "LAA-C4",
       "employments(employment(endDate))" -> "HMCTS-C2_HMCTS-C3",
-      "employments(employer(address(line1,line2,line3,line4,line5,postcode),districtNumber,name,schemeRef),employment(endDate,startDate))" -> "HMCTS-C4",
+      "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employerRef,employment(endDate,startDate))" -> "HMCTS-C4",
       "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employment(startDate))" -> "NICTSEJO-C4",
       "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employerRef,employment(endDate,payFrequency,startDate),payments(date,paidTaxablePay))" -> "HO-ECP",
       "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employerRef,employment(endDate,payFrequency,startDate),payments(date,paidTaxablePay))_filtered" -> "HO-RP2"
