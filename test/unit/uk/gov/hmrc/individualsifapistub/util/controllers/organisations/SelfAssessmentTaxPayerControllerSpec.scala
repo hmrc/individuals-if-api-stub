@@ -32,7 +32,7 @@ import scala.concurrent.Future
 class SelfAssessmentTaxPayerControllerSpec extends TestSupport {
 
   val mockService = mock[SelfAssessmentTaxPayerService]
-  val controller = new SelfAssessmentTaxPayerController(bodyParsers, controllerComponents, mockService)
+  val controller = new SelfAssessmentTaxPayerController(controllerComponents, mockService)
 
   val exampleAddress = Address(Some("Alfie House"),
     Some("Main Street"),
