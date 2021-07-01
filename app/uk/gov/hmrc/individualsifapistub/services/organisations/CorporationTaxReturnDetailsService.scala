@@ -16,13 +16,15 @@
 
 package uk.gov.hmrc.individualsifapistub.services.organisations
 
-import uk.gov.hmrc.individualsifapistub.domain.organisations.CorporationTaxReturnDetailsResponse
+import uk.gov.hmrc.individualsifapistub.domain.organisations.{CorporationTaxReturnDetailsResponse, CreateCorporationTaxReturnDetailsRequest}
 import uk.gov.hmrc.individualsifapistub.repository.organisations.CorporationTaxReturnDetailsRepository
 
 import javax.inject.Inject
 import scala.concurrent.Future
 
 class CorporationTaxReturnDetailsService @Inject()(repository: CorporationTaxReturnDetailsRepository) {
+
+  def create(request: CreateCorporationTaxReturnDetailsRequest): Future[CorporationTaxReturnDetailsResponse] = repository.create(request)
 
   def get(utr: String): Future[Option[CorporationTaxReturnDetailsResponse]] = repository.find(utr)
 }

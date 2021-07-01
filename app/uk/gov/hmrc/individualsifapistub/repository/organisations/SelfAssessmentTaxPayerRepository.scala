@@ -18,9 +18,12 @@ package uk.gov.hmrc.individualsifapistub.repository.organisations
 
 import play.api.libs.json.JsObject
 import play.api.libs.json.Json.obj
+import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.bson.BSONObjectID
-import uk.gov.hmrc.individualsifapistub.domain.organisations.SATaxPayerEntry
+import uk.gov.hmrc.individualsifapistub.domain.DuplicateException
+import uk.gov.hmrc.individualsifapistub.domain.individuals.Applications
+import uk.gov.hmrc.individualsifapistub.domain.organisations.{CreateSelfAssessmentTaxPayerRequest, SATaxPayerEntry, SelfAssessmentTaxPayerResponse}
 import uk.gov.hmrc.individualsifapistub.repository.MongoConnectionProvider
 import uk.gov.hmrc.mongo.ReactiveRepository
 
@@ -34,6 +37,15 @@ class SelfAssessmentTaxPayerRepository @Inject()(mongoConnectionProvider: MongoC
   override lazy val indexes = Seq(
     Index(key = List("id" -> IndexType.Ascending), name = Some("id"), unique = true, background = true)
   )
+
+  def create(request: CreateSelfAssessmentTaxPayerRequest) = {
+    val response = SelfAssessmentTaxPayerResponse(request.utr, request.taxPayerType, request.taxPayerDetails)
+    val entry = SATaxPayerEntry(request.utr, response)
+
+    insert(entry) map (_ => response) recover {
+      case WriteResult.Code(11000) => throw new DuplicateException
+    }
+  }
 
   def find(utr: String) = {
     collection

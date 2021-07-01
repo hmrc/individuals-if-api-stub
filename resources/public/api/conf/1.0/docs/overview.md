@@ -4,6 +4,7 @@ The Integration Framework (IF) Test Support API allows you to use custom data to
 - Individuals Income (V2)
 - Individuals Benefits and Credits (V1)
 - Individuals Details (V1)
+- Organisations Matching (V1)
 - Organisations Details (V1)
 
 External Test is a non-integrated environment. This API allows you to stub IF JSON response objects.

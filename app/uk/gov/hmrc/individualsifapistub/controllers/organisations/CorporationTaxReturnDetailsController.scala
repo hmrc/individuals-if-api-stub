@@ -16,23 +16,34 @@
 
 package uk.gov.hmrc.individualsifapistub.controllers.organisations
 
-import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import play.api.libs.json.{JsValue, Json}
+import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
 import uk.gov.hmrc.individualsifapistub.controllers.CommonController
 import uk.gov.hmrc.individualsifapistub.domain.organisations.CorporationTaxReturnDetails._
-import uk.gov.hmrc.individualsifapistub.domain.organisations.CorporationTaxReturnDetailsResponse
+import uk.gov.hmrc.individualsifapistub.domain.organisations.{CorporationTaxReturnDetailsResponse, CreateCorporationTaxReturnDetailsRequest}
 import uk.gov.hmrc.individualsifapistub.services.organisations.CorporationTaxReturnDetailsService
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class CorporationTaxReturnDetailsController @Inject()(
+                                                       bodyParsers: PlayBodyParsers,
                                                        cc: ControllerComponents,
                                                        corporationTaxReturnDetailsService: CorporationTaxReturnDetailsService)
                                                      (implicit val ec: ExecutionContext)
   extends CommonController(cc) {
 
   val emptyResponse = CorporationTaxReturnDetailsResponse("", "" ,"" , Seq.empty)
+
+  def create(utr: String): Action[JsValue] = {
+    Action.async(bodyParsers.json) { implicit request =>
+      withJsonBody[CreateCorporationTaxReturnDetailsRequest] { body =>
+        corporationTaxReturnDetailsService.create(body).map(
+          x => Created(Json.toJson(x))
+        ) recover recovery
+      }
+    }
+  }
 
   def retrieve(utr: String): Action[AnyContent] = Action.async { implicit request =>
     corporationTaxReturnDetailsService.get(utr).map {

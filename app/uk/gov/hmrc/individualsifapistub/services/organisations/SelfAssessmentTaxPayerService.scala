@@ -16,13 +16,15 @@
 
 package uk.gov.hmrc.individualsifapistub.services.organisations
 
-import uk.gov.hmrc.individualsifapistub.domain.organisations.SelfAssessmentTaxPayerResponse
+import uk.gov.hmrc.individualsifapistub.domain.organisations.{CreateSelfAssessmentTaxPayerRequest, SelfAssessmentTaxPayerResponse}
 import uk.gov.hmrc.individualsifapistub.repository.organisations.SelfAssessmentTaxPayerRepository
 
 import javax.inject.Inject
 import scala.concurrent.Future
 
 class SelfAssessmentTaxPayerService @Inject()(repository: SelfAssessmentTaxPayerRepository) {
+
+  def create(request: CreateSelfAssessmentTaxPayerRequest): Future[SelfAssessmentTaxPayerResponse] = repository.create(request)
 
   def get(utr: String): Future[Option[SelfAssessmentTaxPayerResponse]] = repository.find(utr)
 }
