@@ -353,48 +353,48 @@ uses:
                   value:
                     code: INVALID_REQUEST
 
-  /organisations/corporation-tax/company/details/{crn}:
-    uriParameters:
-      crn:
-        description: "A Company Registration Number"
+/organisations/corporation-tax/return/details/{utr}:
+  uriParameters:
+    utr:
+      description: "A Unique Tax Reference"
+      type: string
+      required: true
+      example: "1234567890"
+  post:
+    displayName: "Create Corporation Tax details test data for an organisation"
+    is: [headers.acceptHeader]
+    securedBy: [ sec.x-application ]
+    headers:
+      Authorization:
+        description: "OAuth 2.0 Bearer Token or server token."
         type: string
         required: true
-        example: "12345678"
-    post:
-      displayName: "Create Corporation Tax matching test data for an organisation"
-      is: [headers.acceptHeader]
-      securedBy: [ sec.x-application ]
-      headers:
-        Authorization:
-          description: "OAuth 2.0 Bearer Token or server token."
-          type: string
-          required: true
-          example: Bearer <BEARER_TOKEN>
-        Content-Type:
-          description: "Specifies the content-type of the body."
-          type: string
-          required: true
-          example: application/json
-      body:
-        application/json:
-          schema: !include schemas/organisations/create-corporation-tax-company-detail.json
-          example: !include examples/organisations/create-corporation-tax-company-detail.json
-      responses:
-        201:
-          description: The created corporation-tax company details
-          body:
-            application/json:
-              type: !include schemas/organisations/create-corporation-tax-company-detail.json
-              example: !include examples/organisations/create-corporation-tax-company-detail.json
-        400:
-          body:
-            application/json:
-              type: types.errorResponse
-              examples:
-                BadRequest:
-                  description: Invalid request
-                  value:
-                    code: INVALID_REQUEST
+        example: Bearer <BEARER_TOKEN>
+      Content-Type:
+        description: "Specifies the content-type of the body."
+        type: string
+        required: true
+        example: application/json
+    body:
+      application/json:
+        schema: !include schemas/organisations/create-corporation-tax-detail.json
+        example: !include examples/organisations/create-corporation-tax-detail.json
+    responses:
+      201:
+        description: The created corporation-tax return details
+        body:
+          application/json:
+            type: !include schemas/organisations/create-corporation-tax-detail.json
+            example: !include examples/organisations/create-corporation-tax-detail.json
+      400:
+        body:
+          application/json:
+            type: types.errorResponse
+            examples:
+              BadRequest:
+                description: Invalid request
+                value:
+                  code: INVALID_REQUEST
 
   /organisations/employers/employee/counts/createpayload:
     uriParameters:
