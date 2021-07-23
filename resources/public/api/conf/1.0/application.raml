@@ -357,12 +357,13 @@ uses:
   /organisations/corporation-tax/return/details/{utr}:
     uriParameters:
       utr:
-        description: "A Unique Tax Reference"
+        description: "A Unique Tax Reference.As "
         type: string
         required: true
         example: "1234567890"
     post:
       displayName: "Create Corporation Tax details test data for an organisation"
+      description: !include docs/organisations/create-cotax-return-details-description.md
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
       headers:
@@ -400,12 +401,13 @@ uses:
   /organisations/employers/employee/counts/createpayload:
     uriParameters:
       utr:
-        description: "A Unique Tax Reference"
+        description: "A Unique Tax Reference."
         type: string
         required: true
         example: "1234567890"
     post:
       displayName: "Create number of employees test data for an organisation"
+      description: !include docs/organisations/create-number-of-employees-description.md
       is: [headers.acceptHeader]
       securedBy: [ sec.x-application ]
       headers:

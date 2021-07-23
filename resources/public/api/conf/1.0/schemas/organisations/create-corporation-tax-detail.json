@@ -8,38 +8,40 @@
       "type": "string",
       "pattern": "^[0-9]{10}$",
       "example": "1234567890",
-      "description": "A Unique Tax Reference"
+      "description": "A Unique Tax Reference."
     },
     "taxpayerStartDate": {
       "id": "full-date",
       "example": "2015-04-21",
-      "description": "The taxpayer start date."
+      "description": "The date of registration with HMRC."
     },
     "taxSolvencyStatus": {
       "type": "string",
       "enum": ["A", "V", "S", "I"],
       "example": "V",
-      "description": "A - Administrative Order, V - Voluntary Arrangement, S - Solvent, I - Insolvent"
+      "description": "The tax solvency status for the organisation. A - Administrative Order, V - Voluntary Arrangement, S - Solvent, I - Insolvent."
     },
     "accountingPeriods": {
       "type": "array",
-      "description": "Mandatory. An array of accounting periods. It will have at least 1 accounting period",
+      "description": "The accounting periods. There will be at least one accounting period.",
       "items": {
         "type": "object",
         "required": ["turnover"],
         "properties": {
           "apStartDate" : {
+            "description": "The start date of the accounting period.",
             "id": "full-date",
             "example": "2018-04-06"
           },
           "apEndDate" : {
+            "description": "The end date of the accounting period.",
             "id": "full-date",
             "example": "2018-10-05"
           },
           "turnover": {
             "type": "integer",
             "example": "38390",
-            "description": "Turnover is recorded in thousands of pounds (rounded to the nearest £1000 up or down)."
+            "description": "The amount of money taken by an organisation in the accounting period. Turnover is recorded in thousands of pounds (rounded to the nearest £1,000 up or down). Turnover is in the range of -1 to 99999999999."
           }
         }
       }
