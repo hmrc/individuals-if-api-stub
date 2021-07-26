@@ -12,30 +12,31 @@
   "properties": {
     "utr": {
       "type": "string",
-      "description": "A Unique Tax Reference Number",
+      "description": "A Unique Tax Reference.",
       "pattern": "^[0-9]{10}$",
       "example": "1234567890"
     },
     "startDate": {
       "type": "string",
-      "description": "Start date",
-      "pattern": "^(((19|20)([2468][048]|[13579][26]|0[48])|2000)[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)[-](0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-](0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}[-]02[-](0[1-9]|1[0-9]|2[0-8])))$",
+      "description": "The start date for Self Assessment data.",
+      "id": "full-date",
       "example" : "2015-04-21"
     },
     "taxpayerType": {
       "type": "string",
-      "description": "Taxpayer Type",
+      "description": "The type of taxpayer the organisation is.",
       "pattern": "^[A-Z][a-zA-Z]{3,24}$",
       "example" : "Individual"
     },
     "taxSolvencyStatus": {
       "type": "string",
-      "enum": ["S", "I"],
-      "description": "The Tax Solvency Status. Should be 1 character",
+      "enum": ["I", "S"],
+      "description": "The tax solvency status for the organisation. I - Insolvent, S - Solvent.",
       "example": "S"
     },
     "taxyears": {
       "type": "array",
+      "description": "The tax year or years that data is included for.",
       "items": {
         "type": "object",
         "properties": {
@@ -43,12 +44,12 @@
             "type": "integer",
             "example": "2020",
             "pattern": "^20[0-9]{2}$",
-            "description": "The tax year"
+            "description": "The tax year."
           },
           "businessSalesTurnover": {
             "type": "number",
             "example": "20177.77",
-            "description": "The business sales turnover"
+            "description": "The total business sales turnover in the range -99999999999.99 to 99999999999.99."
           }
         }
       }
