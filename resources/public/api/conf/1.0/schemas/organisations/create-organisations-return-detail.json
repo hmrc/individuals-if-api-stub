@@ -36,7 +36,7 @@
     },
     "taxyears": {
       "type": "array",
-      "description": "The tax year or years that data is included for.",
+      "description": "Self Assessment tax returns.",
       "items": {
         "type": "object",
         "properties": {
