@@ -12,7 +12,7 @@
   "properties": {
     "utr": {
       "type": "string",
-      "description": "A Unique Tax Reference.",
+      "description": "A Unique Taxpayer Reference.",
       "pattern": "^[0-9]{10}$",
       "example": "1234567890"
     },
