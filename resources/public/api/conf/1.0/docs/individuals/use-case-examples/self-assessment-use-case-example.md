@@ -9,5 +9,4 @@ One of the following :
 * HMCTS-C3
 * HMCTS-C4
 * NICTSEJO-C4
-* HO-ECP-APP
-* HO-ECP-COMP
+* HO-ECP
