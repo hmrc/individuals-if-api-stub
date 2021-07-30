@@ -11,6 +11,5 @@
 <li>HMCTS-C3</li>
 <li>HMCTS-C4</li>
 <li>NICTSEJO-C4</li>
-<li>HO-ECP-APP</li>
-<li>HO-ECP-COMP</li>
+<li>HO-ECP</li>
 </ul>

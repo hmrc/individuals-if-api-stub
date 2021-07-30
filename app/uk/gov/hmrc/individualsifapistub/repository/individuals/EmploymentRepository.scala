@@ -58,10 +58,8 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
       "LSANI-C3"    -> "LAA-C3_LSANI-C1_LSANI-C3",
       "HMCTS-C2"    -> "HMCTS-C2_HMCTS-C3",
       "HMCTS-C3"    -> "HMCTS-C2_HMCTS-C3",
-      "HO-RP2-APP"  -> "HO-RP2",
-      "HO-RP2-COMP" -> "HO-RP2",
-      "HO-ECP-APP"  -> "HO-ECP",
-      "HO-ECP-COMP" -> "HO-ECP"
+      "HO-RP2" -> "HO-RP2",
+      "HO-ECP" -> "HO-ECP"
     )
 
     val ident = IdType.parse(idType) match {
