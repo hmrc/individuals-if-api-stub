@@ -110,15 +110,16 @@ class CorporationTaxCompanyDetailsControllerSpec extends TestSupport {
       })
     }
 
-    "fails when an entry cannot be found" in {
-      when(mockConnector.getOrganisationByCrn(any())(any())).thenReturn(Future.failed(new NotFoundException("NOT_FOUND")))
-      when(mockService.get(ctCompanyDetails.crn)).thenReturn(Future.failed(new Exception))
+    "fails when an exception is thrown" in {
+      when(mockConnector.getOrganisationByCrn(any())(any())).thenReturn(Future.failed(new Exception))
 
       val httpRequest =
         FakeRequest()
           .withMethod("GET")
 
-      assertThrows[Exception] { await(controller.retrieve(ctCompanyDetails.crn)(httpRequest)) }
+
+      val result = await(controller.retrieve(ctCompanyDetails.crn)(httpRequest))
+       status(result) shouldBe INTERNAL_SERVER_ERROR
     }
   }
 

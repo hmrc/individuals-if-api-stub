@@ -111,15 +111,16 @@ class SelfAssessmentTaxPayerControllerSpec extends TestSupport {
       })
     }
 
-    "fails when an entry cannot be found" in {
+    "fails when an exception is thrown" in {
 
-      when(mockConnector.getOrganisationBySaUtr(any())(any())).thenReturn(Future.failed(new NotFoundException("NOT_FOUND")))
+      when(mockConnector.getOrganisationBySaUtr(any())(any())).thenReturn(Future.failed(new Exception))
 
       val httpRequest =
         FakeRequest()
           .withMethod("GET")
 
-      assertThrows[Exception] { await(controller.retrieve(selfAssessmentTaxPayer.utr)(httpRequest)) }
+      val result = await(controller.retrieve(selfAssessmentTaxPayer.utr)(httpRequest))
+      status(result) shouldBe INTERNAL_SERVER_ERROR
     }
   }
 }
