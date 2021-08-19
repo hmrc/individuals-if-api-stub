@@ -25,7 +25,7 @@ import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import uk.gov.hmrc.domain.{EmpRef, Nino, SaUtr}
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpClient, NotFoundException}
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
-import uk.gov.hmrc.individualsifapistub.domain.{TestIndividual, _}
+import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 class ApiPlatformTestUserConnectorSpec

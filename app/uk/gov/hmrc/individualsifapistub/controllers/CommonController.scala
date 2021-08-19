@@ -30,7 +30,6 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import uk.gov.hmrc.play.bootstrap.backend.http.{ErrorResponse, JsonErrorHandler}
 import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
 import javax.inject.Inject
-import uk.gov.hmrc.http.NotFoundException
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
@@ -76,7 +75,7 @@ class CustomErrorHandler @Inject()( configuration: Configuration,
 abstract class CommonController(controllerComponents: ControllerComponents)
     extends BackendController(controllerComponents) {
 
-  protected val logger: Logger = play.api.Logger(this.getClass)
+  protected val logger: Logger = play.api.Logger(getClass)
 
   override protected def withJsonBody[T](f: (T) => Future[Result])(
       implicit request: Request[JsValue],
