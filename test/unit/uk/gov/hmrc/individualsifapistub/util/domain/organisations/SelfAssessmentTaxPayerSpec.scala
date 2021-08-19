@@ -17,8 +17,10 @@
 package unit.uk.gov.hmrc.individualsifapistub.util.domain.organisations
 
 import play.api.libs.json.Json
+import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.individualsifapistub.domain.{TestAddress, TestIndividual, TestOrganisationDetails}
 import uk.gov.hmrc.individualsifapistub.domain.organisations.SelfAssessmentTaxPayer._
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{Address, CreateSelfAssessmentTaxPayerRequest, TaxPayerDetails}
+import uk.gov.hmrc.individualsifapistub.domain.organisations.{Address, SelfAssessmentTaxPayer, TaxPayerDetails}
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class SelfAssessmentTaxPayerSpec extends UnitSpec {
@@ -47,7 +49,7 @@ class SelfAssessmentTaxPayerSpec extends UnitSpec {
         |}
         |""".stripMargin
 
-    val expectedResult = TaxPayerDetails("John Smith", "Individual", address)
+    val expectedResult = TaxPayerDetails("John Smith", Some("Individual"), address)
 
     val result = Json.parse(json).validate[TaxPayerDetails]
 
@@ -106,9 +108,9 @@ class SelfAssessmentTaxPayerSpec extends UnitSpec {
         |  "taxpayerDetails": []
         |}""".stripMargin
 
-    val expectedResult = CreateSelfAssessmentTaxPayerRequest("1234567890", "Individual", Seq.empty)
+    val expectedResult = SelfAssessmentTaxPayer("1234567890", "Individual", Seq.empty)
 
-    val result = Json.parse(json).validate[CreateSelfAssessmentTaxPayerRequest]
+    val result = Json.parse(json).validate[SelfAssessmentTaxPayer]
 
     result.isSuccess shouldBe true
     result.get shouldBe expectedResult
@@ -123,7 +125,7 @@ class SelfAssessmentTaxPayerSpec extends UnitSpec {
         |  "taxPayerDetails": []
         |}""".stripMargin
 
-    val result = Json.parse(json).validate[CreateSelfAssessmentTaxPayerRequest]
+    val result = Json.parse(json).validate[SelfAssessmentTaxPayer]
 
     result.isSuccess shouldBe false
   }
@@ -137,8 +139,42 @@ class SelfAssessmentTaxPayerSpec extends UnitSpec {
         |  "taxPayerDetails": []
         |}""".stripMargin
 
-    val result = Json.parse(json).validate[CreateSelfAssessmentTaxPayerRequest]
+    val result = Json.parse(json).validate[SelfAssessmentTaxPayer]
 
     result.isSuccess shouldBe false
   }
+
+  "Convert TaxPayerDetails from TestIndividual successfully" in {
+
+    val utr = SaUtr("2432552635")
+
+    val testIndividual = TestIndividual(
+      saUtr = Some(utr),
+      taxpayerType = Some("Individual"),
+      organisationDetails = TestOrganisationDetails(
+        name = "Barry Barryson",
+        address = TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")
+      )
+    )
+
+    val expectedResult = SelfAssessmentTaxPayer(
+      utr.utr,
+      "Individual",
+      Seq(TaxPayerDetails(
+        "Barry Barryson",
+        None,
+        Address(
+          Some("Capital Tower"),
+          Some("Aberdeen"),
+          None,
+          None,
+          Some("SW1 4DQ")
+      )))
+    )
+
+    val result = SelfAssessmentTaxPayer.fromApiPlatformTestUser(testIndividual)
+
+    result shouldBe expectedResult
+  }
+
 }

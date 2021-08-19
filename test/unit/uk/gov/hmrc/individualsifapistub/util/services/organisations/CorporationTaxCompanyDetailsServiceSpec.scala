@@ -19,7 +19,7 @@ package unit.uk.gov.hmrc.individualsifapistub.util.services.organisations
 import org.mockito.Mockito.when
 import org.scalatest.{AsyncWordSpec, Matchers}
 import org.scalatestplus.mockito.MockitoSugar
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{Address, CommunicationDetails, CorporationTaxCompanyDetailsResponse, CreateCorporationTaxCompanyDetailsRequest, Name, RegisteredDetails}
+import uk.gov.hmrc.individualsifapistub.domain.organisations.{Address, CorporationTaxCompanyDetails, Name, NameAddressDetails}
 import uk.gov.hmrc.individualsifapistub.repository.organisations.CorporationTaxCompanyDetailsRepository
 import uk.gov.hmrc.individualsifapistub.services.organisations.CorporationTaxCompanyDetailsService
 
@@ -39,11 +39,11 @@ class CorporationTaxCompanyDetailsServiceSpec extends AsyncWordSpec with Matcher
 
   val name = Name("Waitrose", "And Partners")
 
-  val registeredDetails = RegisteredDetails(name, address)
-  val communicationDetails = CommunicationDetails(name, address)
+  val registeredDetails = NameAddressDetails(name, address)
+  val communicationDetails = NameAddressDetails(name, address)
 
-  val request = CreateCorporationTaxCompanyDetailsRequest("1234567890", "12345678", Some(registeredDetails), Some(communicationDetails))
-  val response = CorporationTaxCompanyDetailsResponse("1234567890", "12345678", Some(registeredDetails), Some(communicationDetails))
+  val request = CorporationTaxCompanyDetails("1234567890", "12345678", Some(registeredDetails), Some(communicationDetails))
+  val response = CorporationTaxCompanyDetails("1234567890", "12345678", Some(registeredDetails), Some(communicationDetails))
 
 
   "create" should {

@@ -20,24 +20,26 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
 import uk.gov.hmrc.individualsifapistub.controllers.CommonController
 import uk.gov.hmrc.individualsifapistub.domain.organisations.SelfAssessmentTaxPayer._
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{CreateSelfAssessmentTaxPayerRequest, SelfAssessmentTaxPayerResponse}
+import uk.gov.hmrc.individualsifapistub.domain.organisations.SelfAssessmentTaxPayer
 import uk.gov.hmrc.individualsifapistub.services.organisations.SelfAssessmentTaxPayerService
-
 import javax.inject.Inject
+import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
+
 import scala.concurrent.ExecutionContext
 
 class SelfAssessmentTaxPayerController @Inject()(
                                                        bodyParsers: PlayBodyParsers,
                                                        cc: ControllerComponents,
-                                                       selfAssessmentTaxPayerService: SelfAssessmentTaxPayerService)
+                                                       selfAssessmentTaxPayerService: SelfAssessmentTaxPayerService,
+                                                       testUserConnector: ApiPlatformTestUserConnector)
                                                      (implicit val ec: ExecutionContext)
   extends CommonController(cc) {
 
-  val emptyResponse = SelfAssessmentTaxPayerResponse("", "" , Seq.empty)
+  val emptyResponse = SelfAssessmentTaxPayer("", "" , Seq.empty)
 
   def create(utr: String): Action[JsValue] = {
     Action.async(bodyParsers.json) { implicit request =>
-      withJsonBody[CreateSelfAssessmentTaxPayerRequest] { body =>
+      withJsonBody[SelfAssessmentTaxPayer] { body =>
         selfAssessmentTaxPayerService.create(body).map(
           x => Created(Json.toJson(x))
         ) recover recovery
@@ -46,9 +48,9 @@ class SelfAssessmentTaxPayerController @Inject()(
   }
 
   def retrieve(utr: String): Action[AnyContent] = Action.async { implicit request =>
-    selfAssessmentTaxPayerService.get(utr).map {
-      case Some(response) => Ok(Json.toJson(response))
+    testUserConnector.getOrganisationBySaUtr(utr).map {
+      case Some(response) => Ok(Json.toJson(SelfAssessmentTaxPayer.fromApiPlatformTestUser(response)))
       case None => Ok(Json.toJson(emptyResponse))
-    } recover recovery
+    } recover retrievalRecovery
   }
 }

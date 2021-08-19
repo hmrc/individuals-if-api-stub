@@ -26,10 +26,10 @@ import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.controllers.individuals.IncomeController
+import uk.gov.hmrc.individualsifapistub.domain.{RecordNotFoundException, TestAddress, TestIndividual, TestOrganisationDetails}
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomePaye._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomeSa._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.{IncomePaye, IncomeSa}
-import uk.gov.hmrc.individualsifapistub.domain.{RecordNotFoundException, TestIndividual}
 import uk.gov.hmrc.individualsifapistub.repository.individuals.{IncomePayeRepository, IncomeSaRepository}
 import uk.gov.hmrc.individualsifapistub.services.individuals.IncomeService
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -50,8 +50,19 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
     val incomeService = new IncomeService(incomeSaRepo, incomePayeRepo, apiPlatformTestUserConnector, servicesConfig)
     val underTest = new IncomeController(bodyParsers, controllerComponents, incomeService)
 
+    val utr = SaUtr("2432552635")
+
+    val testIndividual = TestIndividual(
+      saUtr = Some(utr),
+      taxpayerType = Some("Individual"),
+      organisationDetails = TestOrganisationDetails(
+        name = "Barry Barryson",
+        address = TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")
+      )
+    )
+
     when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
-      thenReturn(Future.successful(TestIndividual(Some(utr))))
+      thenReturn(Future.successful(testIndividual))
   }
 
   val idType = "nino"
@@ -62,7 +73,7 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
   val endYear = "2020"
   val useCase = "TEST"
   val fields = "some(values)"
-  val utr = SaUtr("2432552635")
+
 
   val innerSaValue = Seq(createValidSaTaxYearEntry(), createValidSaTaxYearEntry())
   val incomeSaResponse = IncomeSa(Some(innerSaValue))

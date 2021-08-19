@@ -23,7 +23,7 @@ import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.individualsifapistub.domain.DuplicateException
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{CTCompanyDetailsEntry, CorporationTaxCompanyDetailsResponse, CreateCorporationTaxCompanyDetailsRequest}
+import uk.gov.hmrc.individualsifapistub.domain.organisations.{CTCompanyDetailsEntry, CorporationTaxCompanyDetails}
 import uk.gov.hmrc.individualsifapistub.repository.MongoConnectionProvider
 import uk.gov.hmrc.mongo.ReactiveRepository
 
@@ -37,8 +37,8 @@ class CorporationTaxCompanyDetailsRepository @Inject()(mongoConnectionProvider: 
         Index(key = List("id" -> IndexType.Ascending), name = Some("id"), unique = true, background = true)
     )
 
-    def create(request: CreateCorporationTaxCompanyDetailsRequest) = {
-        val response = CorporationTaxCompanyDetailsResponse(request.utr, request.crn, request.registeredDetails, request.communicationDetails)
+    def create(request: CorporationTaxCompanyDetails) = {
+        val response = CorporationTaxCompanyDetails(request.utr, request.crn, request.registeredDetails, request.communicationDetails)
         val entry = CTCompanyDetailsEntry(request.crn, response)
 
         insert(entry) map (_ => response) recover {

@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.individualsifapistub.controllers
 
-import play.api.Configuration
+import play.api.{Configuration, Logger}
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND}
 import play.api.libs.json._
 import play.api.mvc.Results.{BadRequest, NotFound, Status}
@@ -29,8 +29,8 @@ import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import uk.gov.hmrc.play.bootstrap.backend.http.{ErrorResponse, JsonErrorHandler}
 import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
-
 import javax.inject.Inject
+
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
@@ -40,6 +40,7 @@ class CustomErrorHandler @Inject()( configuration: Configuration,
                                   ( implicit ec: ExecutionContext ) extends JsonErrorHandler( auditConnector,
                                                                                               httpAuditEvent,
                                                                                               configuration ) {
+
 
   override def onClientError( request: RequestHeader,
                               statusCode: Int,
@@ -73,6 +74,8 @@ class CustomErrorHandler @Inject()( configuration: Configuration,
 
 abstract class CommonController(controllerComponents: ControllerComponents)
     extends BackendController(controllerComponents) {
+
+  protected val logger: Logger = play.api.Logger(this.getClass)
 
   override protected def withJsonBody[T](f: (T) => Future[Result])(
       implicit request: Request[JsValue],
@@ -129,4 +132,11 @@ abstract class CommonController(controllerComponents: ControllerComponents)
       ErrorDuplicate.toHttpResponse
   }
 
+  private[controllers] def retrievalRecovery: PartialFunction[Throwable, Result] = {
+    case e: IllegalArgumentException =>
+      ErrorInvalidRequest(e.getMessage).toHttpResponse
+    case e: Exception =>
+      logger.error(s"Something went wrong: ${e.getMessage}")
+      ErrorInternalServer.toHttpResponse
+  }
 }

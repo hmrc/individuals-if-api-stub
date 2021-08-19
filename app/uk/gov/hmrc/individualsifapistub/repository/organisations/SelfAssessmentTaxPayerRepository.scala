@@ -22,8 +22,7 @@ import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.individualsifapistub.domain.DuplicateException
-import uk.gov.hmrc.individualsifapistub.domain.individuals.Applications
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{CreateSelfAssessmentTaxPayerRequest, SATaxPayerEntry, SelfAssessmentTaxPayerResponse}
+import uk.gov.hmrc.individualsifapistub.domain.organisations.{SATaxPayerEntry, SelfAssessmentTaxPayer}
 import uk.gov.hmrc.individualsifapistub.repository.MongoConnectionProvider
 import uk.gov.hmrc.mongo.ReactiveRepository
 
@@ -38,8 +37,8 @@ class SelfAssessmentTaxPayerRepository @Inject()(mongoConnectionProvider: MongoC
     Index(key = List("id" -> IndexType.Ascending), name = Some("id"), unique = true, background = true)
   )
 
-  def create(request: CreateSelfAssessmentTaxPayerRequest) = {
-    val response = SelfAssessmentTaxPayerResponse(request.utr, request.taxPayerType, request.taxPayerDetails)
+  def create(request: SelfAssessmentTaxPayer) = {
+    val response = SelfAssessmentTaxPayer(request.utr, request.taxPayerType, request.taxPayerDetails)
     val entry = SATaxPayerEntry(request.utr, response)
 
     insert(entry) map (_ => response) recover {

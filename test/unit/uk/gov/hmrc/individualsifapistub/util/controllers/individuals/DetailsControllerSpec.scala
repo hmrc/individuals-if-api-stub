@@ -48,17 +48,28 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
     val mockDetailsService = new DetailsService(detailsRepo, apiPlatformTestUserConnector, servicesConfig)
     val underTest = new DetailsController(bodyParsers, controllerComponents, mockDetailsService)
 
+
+    val idType = "nino"
+    val idValue = "XH123456A"
+    val startDate = "2020-01-01"
+    val endDate = "2020-21-31"
+    val useCase = "TEST"
+    val fields = "some(values)"
+    val utr = SaUtr("2432552635")
+
+    val testIndividual = TestIndividual(
+      saUtr = Some(utr),
+      taxpayerType = Some("Individual"),
+      organisationDetails = TestOrganisationDetails(
+        name = "Barry Barryson",
+        address = TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")
+      )
+    )
+
     when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
-      thenReturn(Future.successful(TestIndividual(Some(utr))))
+      thenReturn(Future.successful(testIndividual))
   }
 
-  val idType = "nino"
-  val idValue = "XH123456A"
-  val startDate = "2020-01-01"
-  val endDate = "2020-21-31"
-  val useCase = "TEST"
-  val fields = "some(values)"
-  val utr = SaUtr("2432552635")
 
   val request = CreateDetailsRequest(
     Some(Seq(ContactDetail(9, "MOBILE TELEPHONE", "07123 987654"), ContactDetail(9,"MOBILE TELEPHONE", "07123 987655"))),

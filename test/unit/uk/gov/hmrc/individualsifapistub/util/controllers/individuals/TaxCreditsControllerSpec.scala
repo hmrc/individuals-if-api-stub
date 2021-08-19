@@ -26,9 +26,9 @@ import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.controllers.individuals.TaxCreditsController
+import uk.gov.hmrc.individualsifapistub.domain.{RecordNotFoundException, TestAddress, TestIndividual, TestOrganisationDetails}
 import uk.gov.hmrc.individualsifapistub.domain.individuals.TaxCredits._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.{Application, Applications, Identifier}
-import uk.gov.hmrc.individualsifapistub.domain.{RecordNotFoundException, TestIndividual}
 import uk.gov.hmrc.individualsifapistub.repository.individuals.TaxCreditsRepository
 import uk.gov.hmrc.individualsifapistub.services.individuals.TaxCreditsService
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -48,7 +48,7 @@ class TaxCreditsControllerSpec extends TestSupport {
     val underTest = new TaxCreditsController(bodyParsers, controllerComponents, mockTaxCreditsService)
 
     when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
-      thenReturn(Future.successful(TestIndividual(Some(utr))))
+      thenReturn(Future.successful(testIndividual))
   }
 
   val application: Application = Application(
@@ -66,6 +66,15 @@ class TaxCreditsControllerSpec extends TestSupport {
   val useCase = "TEST"
   val fields = "some(values)"
   val utr = SaUtr("2432552635")
+
+  val testIndividual = TestIndividual(
+    saUtr = Some(utr),
+    taxpayerType = Some("Individual"),
+    organisationDetails = TestOrganisationDetails(
+      name = "Barry Barryson",
+      address = TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")
+    )
+  )
   val ident = Identifier(Some(idValue), None, Some(startDate), Some(endDate), Some(useCase))
 
   val request = Applications(Seq(application))

@@ -48,8 +48,19 @@ class EmploymentsControllerSpec extends TestSupport {
     val mockEmploymentsService = new EmploymentsService(employmentsRepo, apiPlatformTestUserConnector, servicesConfig)
     val underTest = new EmploymentsController(bodyParsers, controllerComponents, mockEmploymentsService)
 
+    val testIndividual = TestIndividual(
+      saUtr = Some(utr),
+      taxpayerType = Some("Individual"),
+      organisationDetails = TestOrganisationDetails(
+        name = "Barry Barryson",
+        address = TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")
+      )
+    )
+
+    val utr = SaUtr("2432552635")
+
     when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
-      thenReturn(Future.successful(TestIndividual(Some(utr))))
+      thenReturn(Future.successful(testIndividual))
   }
 
   val idType = Nino.toString
@@ -58,7 +69,6 @@ class EmploymentsControllerSpec extends TestSupport {
   val endDate = "2020-21-31"
   val useCase = "TEST"
   val fields = "some(values)"
-  val utr = SaUtr("2432552635")
 
   implicit val cerFormat = Employments.createEmploymentEntryFormat
 

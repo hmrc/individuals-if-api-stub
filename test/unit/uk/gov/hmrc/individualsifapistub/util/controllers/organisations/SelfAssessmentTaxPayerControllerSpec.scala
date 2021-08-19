@@ -17,13 +17,19 @@
 package unit.uk.gov.hmrc.individualsifapistub.util.controllers.organisations
 
 import controllers.Assets._
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
+import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.http.NotFoundException
+import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.controllers.organisations.SelfAssessmentTaxPayerController
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{Address, CreateSelfAssessmentTaxPayerRequest, SelfAssessmentTaxPayerResponse, TaxPayerDetails}
+import uk.gov.hmrc.individualsifapistub.domain.{TestAddress, TestIndividual, TestOrganisationDetails}
+import uk.gov.hmrc.individualsifapistub.domain.organisations.{Address, SelfAssessmentTaxPayer, TaxPayerDetails}
 import uk.gov.hmrc.individualsifapistub.domain.organisations.SelfAssessmentTaxPayer._
+import uk.gov.hmrc.individualsifapistub.domain.individuals.JsonFormatters._
 import uk.gov.hmrc.individualsifapistub.services.organisations.SelfAssessmentTaxPayerService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
@@ -32,7 +38,9 @@ import scala.concurrent.Future
 class SelfAssessmentTaxPayerControllerSpec extends TestSupport {
 
   val mockService = mock[SelfAssessmentTaxPayerService]
-  val controller = new SelfAssessmentTaxPayerController(bodyParsers, controllerComponents, mockService)
+  val mockConnector = mock[ApiPlatformTestUserConnector]
+
+  val controller = new SelfAssessmentTaxPayerController(bodyParsers, controllerComponents, mockService, mockConnector)
 
   val exampleAddress = Address(Some("Alfie House"),
     Some("Main Street"),
@@ -40,36 +48,45 @@ class SelfAssessmentTaxPayerControllerSpec extends TestSupport {
     Some("West midlands"),
     Some("B14 6JH"))
 
-  val taxPayerDetails = Seq(TaxPayerDetails("John Smith II", "Registered", exampleAddress))
-  val request = CreateSelfAssessmentTaxPayerRequest("1234567890", "Individual", taxPayerDetails)
-  val response = SelfAssessmentTaxPayerResponse("1234567890", "Individual", taxPayerDetails)
+  val utr = SaUtr("2432552635")
+
+  val taxPayerDetails = Seq(TaxPayerDetails("John Smith II", Some("Registered"), exampleAddress))
+  val selfAssessmentTaxPayer = SelfAssessmentTaxPayer(utr.utr, "Individual", taxPayerDetails)
+  val testIndividual = TestIndividual(
+    saUtr = Some(utr),
+    taxpayerType = Some("Individual"),
+    organisationDetails = TestOrganisationDetails(
+      name = "Barry Barryson",
+      address = TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")
+    )
+  )
 
   "create" should {
     "return response with created status when successful" in {
-      when(mockService.create(request)).thenReturn(Future.successful(response))
+      when(mockService.create(selfAssessmentTaxPayer)).thenReturn(Future.successful(selfAssessmentTaxPayer))
 
       val httpRequest =
         FakeRequest()
           .withMethod("Post")
-          .withBody(Json.toJson(request))
+          .withBody(Json.toJson(selfAssessmentTaxPayer))
 
-      val result = controller.create(response.utr)(httpRequest)
+      val result = controller.create(utr.utr)(httpRequest)
 
       result.map(x => {
         x.header.status shouldBe CREATED
-        jsonBodyOf(x) shouldBe Json.toJson(response)
+        jsonBodyOf(x) shouldBe Json.toJson(testIndividual)
       })
     }
 
     "fail when invalid request provided" in {
-      when(mockService.create(request)).thenReturn(Future.successful(response))
+      when(mockService.create(selfAssessmentTaxPayer)).thenReturn(Future.successful(selfAssessmentTaxPayer))
 
       val httpRequest =
         FakeRequest()
           .withMethod("POST")
           .withBody(Json.parse("{}"))
 
-      val result = controller.create(response.utr)(httpRequest)
+      val result = controller.create(utr.utr)(httpRequest)
 
       result.map(x => {
         x.header.status shouldBe BAD_REQUEST
@@ -79,28 +96,30 @@ class SelfAssessmentTaxPayerControllerSpec extends TestSupport {
 
   "retrieve" should {
     "return response when entry found by service" in {
-      when(mockService.get(request.utr)).thenReturn(Future.successful(Some(response)))
+
+      when(mockConnector.getOrganisationBySaUtr(any())(any())).thenReturn(Future.successful(Some(testIndividual)))
 
       val httpRequest =
         FakeRequest()
           .withMethod("GET")
 
-      val result = controller.retrieve(request.utr)(httpRequest)
+      val result = controller.retrieve(selfAssessmentTaxPayer.utr)(httpRequest)
 
       result.map(x => {
         x.header.status shouldBe OK
-        jsonBodyOf(x) shouldBe Json.toJson(response)
+        jsonBodyOf(x) shouldBe Json.toJson(testIndividual)
       })
     }
 
     "fails when an entry cannot be found" in {
-      when(mockService.get(request.utr)).thenReturn(Future.failed(new Exception))
+
+      when(mockConnector.getOrganisationBySaUtr(any())(any())).thenReturn(Future.failed(new NotFoundException("NOT_FOUND")))
 
       val httpRequest =
         FakeRequest()
           .withMethod("GET")
 
-      assertThrows[Exception] { await(controller.retrieve(request.utr)(httpRequest)) }
+      assertThrows[Exception] { await(controller.retrieve(selfAssessmentTaxPayer.utr)(httpRequest)) }
     }
   }
 }

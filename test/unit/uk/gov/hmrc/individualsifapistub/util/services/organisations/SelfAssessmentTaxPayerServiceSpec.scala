@@ -19,9 +19,9 @@ package unit.uk.gov.hmrc.individualsifapistub.util.services.organisations
 import org.mockito.Mockito.when
 import org.scalatest.{AsyncWordSpec, Matchers}
 import org.scalatestplus.mockito.MockitoSugar
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{Address, CreateSelfAssessmentReturnDetailRequest, CreateSelfAssessmentTaxPayerRequest, SelfAssessmentReturnDetailResponse, SelfAssessmentTaxPayerResponse, TaxPayerDetails, TaxYear}
-import uk.gov.hmrc.individualsifapistub.repository.organisations.{SelfAssessmentReturnDetailRepository, SelfAssessmentTaxPayerRepository}
-import uk.gov.hmrc.individualsifapistub.services.organisations.{SelfAssessmentReturnDetailService, SelfAssessmentTaxPayerService}
+import uk.gov.hmrc.individualsifapistub.domain.organisations.{Address, SelfAssessmentTaxPayer, TaxPayerDetails}
+import uk.gov.hmrc.individualsifapistub.repository.organisations.SelfAssessmentTaxPayerRepository
+import uk.gov.hmrc.individualsifapistub.services.organisations.SelfAssessmentTaxPayerService
 
 import scala.concurrent.Future
 
@@ -36,9 +36,9 @@ class SelfAssessmentTaxPayerServiceSpec extends AsyncWordSpec with Matchers with
     Some("West midlands"),
     Some("B14 6JH"))
 
-  val taxPayerDetails = Seq(TaxPayerDetails("John Smith II", "Registered", exampleAddress))
-  val request = CreateSelfAssessmentTaxPayerRequest("1234567890", "Individual", taxPayerDetails)
-  val response = SelfAssessmentTaxPayerResponse("1234567890", "Individual", taxPayerDetails)
+  val taxPayerDetails = Seq(TaxPayerDetails("John Smith II", Some("Registered"), exampleAddress))
+  val request = SelfAssessmentTaxPayer("1234567890", "Individual", taxPayerDetails)
+  val response = SelfAssessmentTaxPayer("1234567890", "Individual", taxPayerDetails)
 
   "create" should {
     "return response when creating" in {

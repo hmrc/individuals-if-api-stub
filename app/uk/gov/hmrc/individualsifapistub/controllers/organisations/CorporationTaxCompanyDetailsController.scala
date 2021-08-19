@@ -19,9 +19,10 @@ package uk.gov.hmrc.individualsifapistub.controllers.organisations
 import javax.inject.Inject
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
+import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.controllers.CommonController
 import uk.gov.hmrc.individualsifapistub.domain.organisations.CorporationTaxCompanyDetails._
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{CorporationTaxCompanyDetailsResponse, CreateCorporationTaxCompanyDetailsRequest}
+import uk.gov.hmrc.individualsifapistub.domain.organisations.CorporationTaxCompanyDetails
 import uk.gov.hmrc.individualsifapistub.services.organisations.CorporationTaxCompanyDetailsService
 
 import scala.concurrent.ExecutionContext
@@ -29,15 +30,16 @@ import scala.concurrent.ExecutionContext
 class CorporationTaxCompanyDetailsController @Inject()(
                                                        bodyParsers: PlayBodyParsers,
                                                        cc: ControllerComponents,
-                                                       corporationTaxCompanyDetailsService: CorporationTaxCompanyDetailsService)
+                                                       corporationTaxCompanyDetailsService: CorporationTaxCompanyDetailsService,
+                                                       testUserConnector: ApiPlatformTestUserConnector)
                                                       (implicit val ec: ExecutionContext)
   extends CommonController(cc) {
 
-  val emptyResponse = CorporationTaxCompanyDetailsResponse("", "" ,None , None)
+  val emptyResponse = CorporationTaxCompanyDetails("", "" ,None , None)
 
   def create(crn: String): Action[JsValue] = {
     Action.async(bodyParsers.json) { implicit request =>
-      withJsonBody[CreateCorporationTaxCompanyDetailsRequest] { body =>
+      withJsonBody[CorporationTaxCompanyDetails] { body =>
         corporationTaxCompanyDetailsService.create(body).map(
           x => Created(Json.toJson(x))
         ) recover recovery
@@ -46,9 +48,9 @@ class CorporationTaxCompanyDetailsController @Inject()(
   }
 
   def retrieve(crn: String): Action[AnyContent] = Action.async { implicit request =>
-    corporationTaxCompanyDetailsService.get(crn).map {
-      case Some(response) => Ok(Json.toJson(response))
+    testUserConnector.getOrganisationByCrn(crn).map {
+      case Some(response) => Ok(Json.toJson(CorporationTaxCompanyDetails.fromApiPlatformTestUser(response)))
       case None => Ok(Json.toJson(emptyResponse))
-    } recover recovery
+    } recover retrievalRecovery
   }
 }

@@ -18,7 +18,7 @@ package it.uk.gov.hmrc.individualsifapistub.organisations
 
 import testUtils.RepositoryTestHelper
 import uk.gov.hmrc.individualsifapistub.domain.DuplicateException
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{Address, CreateSelfAssessmentTaxPayerRequest, SelfAssessmentTaxPayerResponse, TaxPayerDetails}
+import uk.gov.hmrc.individualsifapistub.domain.organisations.{Address, SelfAssessmentTaxPayer, TaxPayerDetails}
 import uk.gov.hmrc.individualsifapistub.repository.organisations.SelfAssessmentTaxPayerRepository
 
 class SelfAssessmentTaxPayerRepositorySpec extends RepositoryTestHelper  {
@@ -31,9 +31,9 @@ class SelfAssessmentTaxPayerRepositorySpec extends RepositoryTestHelper  {
                         Some("West midlands"),
                         Some("B14 6JH"))
 
-  val taxPayerDetails = Seq(TaxPayerDetails("John Smith II", "Registered", exampleAddress))
-  val request = CreateSelfAssessmentTaxPayerRequest("1234567890", "Individual", taxPayerDetails)
-  val response = SelfAssessmentTaxPayerResponse("1234567890", "Individual", taxPayerDetails)
+  val taxPayerDetails = Seq(TaxPayerDetails("John Smith II", Some("Registered"), exampleAddress))
+  val request = SelfAssessmentTaxPayer("1234567890", "Individual", taxPayerDetails)
+  val response = SelfAssessmentTaxPayer("1234567890", "Individual", taxPayerDetails)
 
   "collection" should {
     "have a unique index on a requests utr" in {

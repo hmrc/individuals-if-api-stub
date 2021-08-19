@@ -44,6 +44,15 @@ class EmploymentsServiceSpec extends TestSupport {
     val id = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$useCase"
     val utr = SaUtr("2432552635")
 
+    val testIndividual = TestIndividual(
+      saUtr = Some(utr),
+      taxpayerType = Some("Individual"),
+      organisationDetails = TestOrganisationDetails(
+        name = "Barry Barryson",
+        address = TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")
+      )
+    )
+
     val employment =
         Employment(
           employer = Some(Employer(
@@ -95,8 +104,7 @@ class EmploymentsServiceSpec extends TestSupport {
     val underTest = new EmploymentsService(mockEmploymentRepository, apiPlatformTestUserConnector, servicesConfig)
 
     when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
-      thenReturn(Future.successful(TestIndividual(Some(utr))))
-
+      thenReturn(Future.successful(testIndividual))
   }
 
   "Employments Service" when {

@@ -40,6 +40,22 @@ class ApiPlatformTestUserConnector @Inject()(http : HttpClient, servicesConfig: 
       None
   }
 
+  def getOrganisationByCrn(crn: String)(implicit hc: HeaderCarrier): Future[Option[TestOrganisation]] = {
+    http.GET[TestOrganisation](s"$serviceUrl/organisations/crn/$crn") map (Some(_))
+  } recover {
+    case e: NotFoundException =>
+      Logger.warn(s"unable to retrieve employer with crn: $crn. ${e.getMessage}")
+      None
+  }
+
+  def getOrganisationBySaUtr(utr: String)(implicit hc: HeaderCarrier): Future[Option[TestIndividual]] = {
+    http.GET[TestIndividual](s"$serviceUrl/organisations/sautr/$utr") map (Some(_))
+  } recover {
+    case e: NotFoundException =>
+      Logger.warn(s"unable to retrieve individual with utr: $utr. ${e.getMessage}")
+      None
+  }
+
   def getIndividualByNino(nino: Nino)(implicit hc: HeaderCarrier): Future[TestIndividual] = {
     http.GET[TestIndividual](s"$serviceUrl/individuals/nino/${nino.value}")
   } recover {

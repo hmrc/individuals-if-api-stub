@@ -17,14 +17,14 @@
 package uk.gov.hmrc.individualsifapistub.services.organisations
 
 import javax.inject.Inject
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{CorporationTaxCompanyDetailsResponse, CreateCorporationTaxCompanyDetailsRequest}
+import uk.gov.hmrc.individualsifapistub.domain.organisations.CorporationTaxCompanyDetails
 import uk.gov.hmrc.individualsifapistub.repository.organisations.CorporationTaxCompanyDetailsRepository
 
 import scala.concurrent.Future
 
 class CorporationTaxCompanyDetailsService @Inject()(repository: CorporationTaxCompanyDetailsRepository) {
 
-  def create(request: CreateCorporationTaxCompanyDetailsRequest): Future[CorporationTaxCompanyDetailsResponse] = repository.create(request)
+  def create(request: CorporationTaxCompanyDetails): Future[CorporationTaxCompanyDetails] = repository.create(request)
 
-  def get(crn: String): Future[Option[CorporationTaxCompanyDetailsResponse]] = repository.find(crn)
+  def get(crn: String): Future[Option[CorporationTaxCompanyDetails]] = repository.find(crn)
 }
