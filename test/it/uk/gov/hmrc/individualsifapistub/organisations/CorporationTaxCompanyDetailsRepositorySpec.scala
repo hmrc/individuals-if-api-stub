@@ -18,8 +18,8 @@ package it.uk.gov.hmrc.individualsifapistub.organisations
 
 import testUtils.RepositoryTestHelper
 import uk.gov.hmrc.individualsifapistub.domain.DuplicateException
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{AccountingPeriod, Address, CommunicationDetails, CorporationTaxCompanyDetailsResponse, CorporationTaxReturnDetailsResponse, CreateCorporationTaxCompanyDetailsRequest, CreateCorporationTaxReturnDetailsRequest, Name, RegisteredDetails}
-import uk.gov.hmrc.individualsifapistub.repository.organisations.{CorporationTaxCompanyDetailsRepository, CorporationTaxReturnDetailsRepository}
+import uk.gov.hmrc.individualsifapistub.domain.organisations.{Address, CorporationTaxCompanyDetails, Name, NameAddressDetails}
+import uk.gov.hmrc.individualsifapistub.repository.organisations.CorporationTaxCompanyDetailsRepository
 
 class CorporationTaxCompanyDetailsRepositorySpec extends RepositoryTestHelper  {
 
@@ -34,11 +34,11 @@ class CorporationTaxCompanyDetailsRepositorySpec extends RepositoryTestHelper  {
 
   val name = Name("Waitrose", "And Partners")
 
-  val registeredDetails = RegisteredDetails(name, address)
-  val communicationDetails = CommunicationDetails(name, address)
+  val registeredDetails = NameAddressDetails(name, address)
+  val communicationDetails = NameAddressDetails(name, address)
 
-  val request = CreateCorporationTaxCompanyDetailsRequest("1234567890", "12345678", Some(registeredDetails), Some(communicationDetails))
-  val response = CorporationTaxCompanyDetailsResponse("1234567890", "12345678", Some(registeredDetails), Some(communicationDetails))
+  val request = CorporationTaxCompanyDetails("1234567890", "12345678", Some(registeredDetails), Some(communicationDetails))
+  val response = CorporationTaxCompanyDetails("1234567890", "12345678", Some(registeredDetails), Some(communicationDetails))
 
   "collection" should {
     "have a unique index on a request's crn" in {

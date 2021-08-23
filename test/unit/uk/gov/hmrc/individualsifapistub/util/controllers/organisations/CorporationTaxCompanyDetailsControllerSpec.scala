@@ -17,13 +17,19 @@
 package unit.uk.gov.hmrc.individualsifapistub.util.controllers.organisations
 
 import controllers.Assets._
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
+import uk.gov.hmrc.domain.EmpRef
+import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
+import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.controllers.organisations.CorporationTaxCompanyDetailsController
+import uk.gov.hmrc.individualsifapistub.domain.{TestAddress, TestOrganisation, TestOrganisationDetails}
+import uk.gov.hmrc.individualsifapistub.domain.individuals.JsonFormatters._
 import uk.gov.hmrc.individualsifapistub.domain.organisations.CorporationTaxCompanyDetails._
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{Address, CommunicationDetails, CorporationTaxCompanyDetailsResponse, CreateCorporationTaxCompanyDetailsRequest, Name, RegisteredDetails}
+import uk.gov.hmrc.individualsifapistub.domain.organisations.{Address, CorporationTaxCompanyDetails, Name, NameAddressDetails}
 import uk.gov.hmrc.individualsifapistub.repository.organisations.CorporationTaxCompanyDetailsRepository
 import uk.gov.hmrc.individualsifapistub.services.organisations.CorporationTaxCompanyDetailsService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
@@ -33,8 +39,10 @@ import scala.concurrent.Future
 class CorporationTaxCompanyDetailsControllerSpec extends TestSupport {
 
   val mockService = mock[CorporationTaxCompanyDetailsService]
-  val controller = new CorporationTaxCompanyDetailsController(bodyParsers, controllerComponents, mockService)
+  val mockConnector = mock[ApiPlatformTestUserConnector]
+  val controller = new CorporationTaxCompanyDetailsController(bodyParsers, controllerComponents, mockService, mockConnector)
   val repository = fakeApplication.injector.instanceOf[CorporationTaxCompanyDetailsRepository]
+  implicit val hc = HeaderCarrier()
 
   val address = Address(
     Some("Alfie House"),
@@ -45,38 +53,39 @@ class CorporationTaxCompanyDetailsControllerSpec extends TestSupport {
 
   val name = Name("Waitrose", "And Partners")
 
-  val registeredDetails = RegisteredDetails(name, address)
-  val communicationDetails = CommunicationDetails(name, address)
+  val registeredDetails = NameAddressDetails(name, address)
+  val communicationDetails = NameAddressDetails(name, address)
 
-  val request = CreateCorporationTaxCompanyDetailsRequest("1234567890", "12345678", Some(registeredDetails), Some(communicationDetails))
-  val response = CorporationTaxCompanyDetailsResponse("1234567890", "12345678", Some(registeredDetails), Some(communicationDetails))
+  val ctCompanyDetails = CorporationTaxCompanyDetails("1234567890", "12345678", Some(registeredDetails), Some(communicationDetails))
+  val testOrganisation = TestOrganisation(Some(EmpRef("1234567890", "")), Some("12345678"), Some(""),
+    TestOrganisationDetails(name.name1, TestAddress(address.line1.get, address.line2.get, address.postcode.get)))
 
   "create" should {
     "return response with created status when successful" in {
-      when(mockService.create(request)).thenReturn(Future.successful(response))
+      when(mockService.create(ctCompanyDetails)).thenReturn(Future.successful(ctCompanyDetails))
 
       val httpRequest =
         FakeRequest()
           .withMethod("Post")
-          .withBody(Json.toJson(request))
+          .withBody(Json.toJson(ctCompanyDetails))
 
-      val result = controller.create(response.crn)(httpRequest)
+      val result = controller.create(ctCompanyDetails.crn)(httpRequest)
 
       result.map(x => {
         x.header.status shouldBe CREATED
-        jsonBodyOf(x) shouldBe Json.toJson(response)
+        jsonBodyOf(x) shouldBe Json.toJson(ctCompanyDetails)
       })
     }
 
     "fail when invalid request provided" in {
-      when(mockService.create(request)).thenReturn(Future.successful(response))
+      when(mockService.create(ctCompanyDetails)).thenReturn(Future.successful(ctCompanyDetails))
 
       val httpRequest =
         FakeRequest()
           .withMethod("POST")
           .withBody(Json.parse("{}"))
 
-      val result = controller.create(response.crn)(httpRequest)
+      val result = controller.create(ctCompanyDetails.crn)(httpRequest)
 
       result.map(x => {
         x.header.status shouldBe BAD_REQUEST
@@ -86,28 +95,32 @@ class CorporationTaxCompanyDetailsControllerSpec extends TestSupport {
 
   "retrieve" should {
     "return response when entry found by service" in {
-      when(mockService.get(request.crn)).thenReturn(Future.successful(Some(response)))
+      when(mockService.get(ctCompanyDetails.crn)).thenReturn(Future.successful(Some(ctCompanyDetails)))
+      when(mockConnector.getOrganisationByCrn(any())(any())).thenReturn(Future.successful(Some(testOrganisation)))
 
       val httpRequest =
         FakeRequest()
           .withMethod("GET")
 
-      val result = controller.retrieve(request.crn)(httpRequest)
+      val result = controller.retrieve(ctCompanyDetails.crn)(httpRequest)
 
       result.map(x => {
         x.header.status shouldBe OK
-        jsonBodyOf(x) shouldBe Json.toJson(response)
+        jsonBodyOf(x) shouldBe Json.toJson(testOrganisation)
       })
     }
 
-    "fails when an entry cannot be found" in {
-      when(mockService.get(request.crn)).thenReturn(Future.failed(new Exception))
+    "fails when an exception is thrown" in {
+      when(mockConnector.getOrganisationByCrn(any())(any())).thenReturn(Future.failed(new Exception))
 
       val httpRequest =
         FakeRequest()
           .withMethod("GET")
 
-      assertThrows[Exception] { await(controller.retrieve(request.crn)(httpRequest)) }
+
+      val result = await(controller.retrieve(ctCompanyDetails.crn)(httpRequest))
+       status(result) shouldBe INTERNAL_SERVER_ERROR
     }
   }
+
 }

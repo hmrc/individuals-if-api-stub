@@ -20,6 +20,7 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.libs.json.{Format, JsPath, Json}
+import uk.gov.hmrc.individualsifapistub.domain.{TestIndividual, TestOrganisation, TestOrganisationDetails}
 
 import scala.util.matching.Regex
 
@@ -30,11 +31,27 @@ case class Address(
                     line4: Option[String],
                     postcode: Option[String]
                   )
-case class TaxPayerDetails(name: String, addressType: String, address: Address)
-case class CreateSelfAssessmentTaxPayerRequest(utr: String, taxPayerType: String, taxPayerDetails: Seq[TaxPayerDetails])
-case class SelfAssessmentTaxPayerResponse(utr: String, taxPayerType: String, taxPayerDetails: Seq[TaxPayerDetails])
+case class TaxPayerDetails(name: String, addressType: Option[String], address: Address)
+case class SelfAssessmentTaxPayer(utr: String, taxPayerType: String, taxPayerDetails: Seq[TaxPayerDetails])
 
 object SelfAssessmentTaxPayer {
+
+  def fromApiPlatformTestUser(testUser: TestIndividual): SelfAssessmentTaxPayer  = SelfAssessmentTaxPayer(
+    testUser.saUtr.map(_.utr).getOrElse(""),
+    testUser.taxpayerType.getOrElse(""),
+    taxPayerDetails = Seq(fromOrganisationDetails(testUser.organisationDetails))
+  )
+
+  def fromOrganisationDetails(taxpayerDetails: TestOrganisationDetails): TaxPayerDetails = TaxPayerDetails(
+    name = taxpayerDetails.name,
+    address = Address(
+      Some(taxpayerDetails.address.line1),
+      Some(taxpayerDetails.address.line2),
+      None,
+      None,
+      Some(taxpayerDetails.address.postcode)),
+    addressType = None
+  )
 
   val utrPattern: Regex = "^[0-9]{10}$".r
   val taxPayerTypePattern: Regex = "^[A-Z][a-zA-Z]{3,24}$".r
@@ -45,62 +62,48 @@ object SelfAssessmentTaxPayer {
   implicit val addressFormat: Format[Address] = Format(
     (
       (JsPath \ "line1").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
-        (JsPath \ "line2").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
-        (JsPath \ "line3").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
-        (JsPath \ "line4").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
-        (JsPath \ "postcode").readNullable[String](minLength[String](0) keepAnd maxLength[String](10))
-      )(Address.apply _),
+      (JsPath \ "line2").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
+      (JsPath \ "line3").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
+      (JsPath \ "line4").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
+      (JsPath \ "postcode").readNullable[String](minLength[String](0) keepAnd maxLength[String](10))
+    )(Address.apply _),
     (
       (JsPath \ "line1").writeNullable[String] and
-        (JsPath \ "line2").writeNullable[String] and
-        (JsPath \ "line3").writeNullable[String] and
-        (JsPath \ "line4").writeNullable[String] and
-        (JsPath \ "postcode").writeNullable[String]
-      )(unlift(Address.unapply))
+      (JsPath \ "line2").writeNullable[String] and
+      (JsPath \ "line3").writeNullable[String] and
+      (JsPath \ "line4").writeNullable[String] and
+      (JsPath \ "postcode").writeNullable[String]
+    )(unlift(Address.unapply))
   )
 
   implicit val taxPayerDetailsFormat: Format[TaxPayerDetails] = Format(
     (
       (JsPath \ "name").read[String] and
-        (JsPath \ "addressType").read[String](pattern(addressTypePattern, "Address Type does not fit expected pattern")) and
+        (JsPath \ "addressType").readNullable[String](pattern(addressTypePattern, "Address Type does not fit expected pattern")) and
         (JsPath \ "address").read[Address]
       )(TaxPayerDetails.apply _),
     (
       (JsPath \ "name").write[String] and
-        (JsPath \ "addressType").write[String] and
+        (JsPath \ "addressType").writeNullable[String] and
         (JsPath \ "address").write[Address]
       )(unlift(TaxPayerDetails.unapply))
   )
 
-
-  implicit val createSelfAssessmentRequestFormat: Format[CreateSelfAssessmentTaxPayerRequest] = Format(
+  implicit val selfAssessmentResponseFormat: Format[SelfAssessmentTaxPayer] = Format(
     (
       (JsPath \ "utr").read[String](pattern(utrPattern, "UTR pattern is incorrect")) and
         (JsPath \ "taxpayerType").read[String](pattern(taxPayerTypePattern, "Invalid taxpayer type")) and
         (JsPath \ "taxpayerDetails").read[Seq[TaxPayerDetails]]
-      )(CreateSelfAssessmentTaxPayerRequest.apply _),
+      )(SelfAssessmentTaxPayer.apply _),
     (
       (JsPath \ "utr").write[String] and
         (JsPath \ "taxpayerType").write[String] and
         (JsPath \ "taxpayerDetails").write[Seq[TaxPayerDetails]]
-      )(unlift(CreateSelfAssessmentTaxPayerRequest.unapply))
-  )
-
-  implicit val selfAssessmentResponseFormat: Format[SelfAssessmentTaxPayerResponse] = Format(
-    (
-      (JsPath \ "utr").read[String](pattern(utrPattern, "UTR pattern is incorrect")) and
-        (JsPath \ "taxpayerType").read[String](pattern(taxPayerTypePattern, "Invalid taxpayer type")) and
-        (JsPath \ "taxpayerDetails").read[Seq[TaxPayerDetails]]
-      )(SelfAssessmentTaxPayerResponse.apply _),
-    (
-      (JsPath \ "utr").write[String] and
-        (JsPath \ "taxpayerType").write[String] and
-        (JsPath \ "taxpayerDetails").write[Seq[TaxPayerDetails]]
-      )(unlift(SelfAssessmentTaxPayerResponse.unapply))
+      )(unlift(SelfAssessmentTaxPayer.unapply))
   )
 }
 
-case class SATaxPayerEntry(id: String, response :SelfAssessmentTaxPayerResponse)
+case class SATaxPayerEntry(id: String, response :SelfAssessmentTaxPayer)
 object SATaxPayerEntry {
   import SelfAssessmentTaxPayer._
   implicit val saTaxPayerEntryFormat = Json.format[SATaxPayerEntry]

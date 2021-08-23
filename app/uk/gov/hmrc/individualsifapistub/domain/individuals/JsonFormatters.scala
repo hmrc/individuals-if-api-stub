@@ -38,9 +38,10 @@ object JsonFormatters {
   implicit val createDetailsRequestFormat = Json.format[CreateDetailsRequest]
 
   implicit val testAddressFormat = Json.format[TestAddress]
-  implicit val testIndividualFormat = Json.format[TestIndividual]
   implicit val testOrganisationDetailsFormat = Json.format[TestOrganisationDetails]
   implicit val testOrganisationFormat = Json.format[TestOrganisation]
+  implicit val testIndividualFormat = Json.format[TestIndividual]
+
 
   implicit val errorInvalidRequestFormat = new Format[ErrorInvalidRequest] {
     def reads(json: JsValue): JsResult[ErrorInvalidRequest] = JsSuccess(

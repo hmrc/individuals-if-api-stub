@@ -23,7 +23,7 @@ import testUtils.TestHelpers
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
-import uk.gov.hmrc.individualsifapistub.domain.TestIndividual
+import uk.gov.hmrc.individualsifapistub.domain.{TestAddress, TestIndividual, TestOrganisationDetails}
 import uk.gov.hmrc.individualsifapistub.domain.individuals._
 import uk.gov.hmrc.individualsifapistub.repository.individuals.DetailsRepository
 import uk.gov.hmrc.individualsifapistub.services.individuals.DetailsService
@@ -44,6 +44,16 @@ class DetailsServiceSpec extends TestSupport with TestHelpers {
     val fields = "some(values)"
     val utr = SaUtr("2432552635")
 
+    val testIndividual = TestIndividual(
+      saUtr = Some(utr),
+      taxpayerType = Some("Individual"),
+      organisationDetails = TestOrganisationDetails(
+        name = "Barry Barryson",
+        address = TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")
+      )
+    )
+
+
     val request = CreateDetailsRequest(
       Some(Seq(ContactDetail(9, "MOBILE TELEPHONE", "07123 987654"), ContactDetail(9,"MOBILE TELEPHONE", "07123 987655"))),
       Some(Seq(
@@ -59,7 +69,7 @@ class DetailsServiceSpec extends TestSupport with TestHelpers {
     val underTest = new DetailsService(mockDetailsRepository, apiPlatformTestUserConnector, servicesConfig)
 
     when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
-      thenReturn(Future.successful(TestIndividual(Some(utr))))
+      thenReturn(Future.successful(testIndividual))
 
   }
 

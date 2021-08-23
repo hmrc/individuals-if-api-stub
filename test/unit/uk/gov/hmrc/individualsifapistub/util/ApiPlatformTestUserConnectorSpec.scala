@@ -38,12 +38,23 @@ class ApiPlatformTestUserConnectorSpec
   val empRef = EmpRef("123", "AI45678")
   val testOrganisation = TestOrganisation(
     Some(empRef),
+    None,
+    None,
     TestOrganisationDetails(
       "Disney Inc",
       TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")))
 
   val nino = Nino("AB123456A")
   val utr = SaUtr("2432552635")
+
+  val testIndividual = TestIndividual(
+    saUtr = Some(utr),
+    taxpayerType = Some("Individual"),
+    organisationDetails = TestOrganisationDetails(
+      name = "Barry Barryson",
+      address = TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")
+    )
+  )
 
   val http: HttpClient = fakeApplication.injector.instanceOf[HttpClient]
   val config: Configuration = fakeApplication.injector.instanceOf[Configuration]
@@ -123,11 +134,22 @@ class ApiPlatformTestUserConnectorSpec
           .willReturn(
             aResponse()
               .withStatus(OK)
-              .withBody(s"""{"saUtr": "${utr.value}"}""")))
+              .withBody(
+                s"""{
+                   |"saUtr": "${utr.value}",
+                   |"taxpayerType": "Individual",
+                   |"organisationDetails": {
+                   |  "name": "Barry Barryson",
+                   |  "address": {
+                   |    "line1": "Capital Tower",
+                   |    "line2": "Aberdeen",
+                   |    "postcode": "SW1 4DQ"
+                   |  }
+                   |}}""".stripMargin)))
 
       val result = await(underTest.getIndividualByNino(nino))
 
-      result shouldBe TestIndividual(Some(utr))
+      result shouldBe testIndividual
     }
 
     "fail with RecordNotFoundException when there is no individual matching the nino" in new Setup {

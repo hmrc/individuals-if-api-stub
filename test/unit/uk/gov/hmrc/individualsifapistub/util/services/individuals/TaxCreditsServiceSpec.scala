@@ -22,7 +22,7 @@ import org.scalatestplus.mockito.MockitoSugar.mock
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
-import uk.gov.hmrc.individualsifapistub.domain.TestIndividual
+import uk.gov.hmrc.individualsifapistub.domain.{TestAddress, TestIndividual, TestOrganisationDetails}
 import uk.gov.hmrc.individualsifapistub.domain.individuals.{Application, Applications, Identifier}
 import uk.gov.hmrc.individualsifapistub.repository.individuals.TaxCreditsRepository
 import uk.gov.hmrc.individualsifapistub.services.individuals.TaxCreditsService
@@ -43,6 +43,14 @@ class TaxCreditsServiceSpec extends TestSupport {
     val ident = Identifier(Some(idValue), None, Some(startDate), Some(endDate), Some(useCase))
     val id = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$useCase"
     val utr = SaUtr("2432552635")
+    val testIndividual = TestIndividual(
+      saUtr = Some(utr),
+      taxpayerType = Some("Individual"),
+      organisationDetails = TestOrganisationDetails(
+        name = "Barry Barryson",
+        address = TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")
+      )
+    )
 
     val application: Application = Application(
       id = Some(12345),
@@ -61,7 +69,7 @@ class TaxCreditsServiceSpec extends TestSupport {
     val underTest = new TaxCreditsService(taxCreditsRepository, apiPlatformTestUserConnector, servicesConfig)
 
     when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
-      thenReturn(Future.successful(TestIndividual(Some(utr))))
+      thenReturn(Future.successful(testIndividual))
 
   }
 
