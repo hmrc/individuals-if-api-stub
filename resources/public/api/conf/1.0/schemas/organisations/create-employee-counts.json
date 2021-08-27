@@ -28,6 +28,7 @@
             "example": "456"
           },
           "payeReference" : {
+            "description": "This is the organisation's scheme reference.",
             "type": "string",
             "example": "RT882d",
             "pattern": "^[a-zA-Z0-9]{1,10}$"
