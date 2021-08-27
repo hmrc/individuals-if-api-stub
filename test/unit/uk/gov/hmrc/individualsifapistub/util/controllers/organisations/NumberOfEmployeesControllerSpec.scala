@@ -16,20 +16,19 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.controllers.organisations
 
-import controllers.Assets._
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar.mock
+import org.mockito.scalatest.MockitoSugar
+import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.individualsifapistub.controllers.organisations.NumberOfEmployeesController
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{NumberOfEmployeeCounts, NumberOfEmployeeReferences, NumberOfEmployeeReferencesRequest, NumberOfEmployeesRequest, NumberOfEmployeesResponse}
 import uk.gov.hmrc.individualsifapistub.domain.organisations.NumberOfEmployees._
+import uk.gov.hmrc.individualsifapistub.domain.organisations._
 import uk.gov.hmrc.individualsifapistub.services.organisations.NumberOfEmployeesService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 import scala.concurrent.Future
 
-class NumberOfEmployeesControllerSpec extends TestSupport {
+class NumberOfEmployeesControllerSpec extends TestSupport with MockitoSugar {
   val mockService = mock[NumberOfEmployeesService]
 
   val counts = NumberOfEmployeeCounts("2019-10", 554)

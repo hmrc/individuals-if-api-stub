@@ -16,15 +16,13 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.services.individuals
 
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar.mock
+import org.mockito.scalatest.MockitoSugar
 import testUtils.TestHelpers
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
-import uk.gov.hmrc.individualsifapistub.domain.{TestAddress, TestIndividual, TestOrganisationDetails}
 import uk.gov.hmrc.individualsifapistub.domain.individuals._
+import uk.gov.hmrc.individualsifapistub.domain.{TestAddress, TestIndividual, TestOrganisationDetails}
 import uk.gov.hmrc.individualsifapistub.repository.individuals.DetailsRepository
 import uk.gov.hmrc.individualsifapistub.services.individuals.DetailsService
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -32,7 +30,7 @@ import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 import scala.concurrent.Future
 
-class DetailsServiceSpec extends TestSupport with TestHelpers {
+class DetailsServiceSpec extends TestSupport with TestHelpers with MockitoSugar {
 
   trait Setup {
 
@@ -68,7 +66,7 @@ class DetailsServiceSpec extends TestSupport with TestHelpers {
     val servicesConfig = mock[ServicesConfig]
     val underTest = new DetailsService(mockDetailsRepository, apiPlatformTestUserConnector, servicesConfig)
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
+    when(apiPlatformTestUserConnector.getIndividualByNino(any)(any)).
       thenReturn(Future.successful(testIndividual))
 
   }

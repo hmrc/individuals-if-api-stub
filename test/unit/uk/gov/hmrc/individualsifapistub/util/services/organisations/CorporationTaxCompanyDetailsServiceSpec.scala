@@ -16,9 +16,9 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.services.organisations
 
-import org.mockito.Mockito.when
-import org.scalatest.{AsyncWordSpec, Matchers}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.MockitoSugar
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AsyncWordSpec
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{Address, CorporationTaxCompanyDetails, Name, NameAddressDetails}
 import uk.gov.hmrc.individualsifapistub.repository.organisations.CorporationTaxCompanyDetailsRepository
 import uk.gov.hmrc.individualsifapistub.services.organisations.CorporationTaxCompanyDetailsService

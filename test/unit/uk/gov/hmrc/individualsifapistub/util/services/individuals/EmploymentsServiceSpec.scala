@@ -16,9 +16,7 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.services.individuals
 
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar.mock
+import org.mockito.scalatest.MockitoSugar
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
@@ -31,7 +29,7 @@ import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 import scala.concurrent.Future
 
-class EmploymentsServiceSpec extends TestSupport {
+class EmploymentsServiceSpec extends TestSupport with MockitoSugar {
   trait Setup {
 
     val idType = "Nino"
@@ -103,7 +101,7 @@ class EmploymentsServiceSpec extends TestSupport {
     val servicesConfig = mock[ServicesConfig]
     val underTest = new EmploymentsService(mockEmploymentRepository, apiPlatformTestUserConnector, servicesConfig)
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
+    when(apiPlatformTestUserConnector.getIndividualByNino(any)(any)).
       thenReturn(Future.successful(testIndividual))
   }
 

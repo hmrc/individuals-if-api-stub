@@ -16,9 +16,7 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.controllers.individuals
 
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar.mock
+import org.mockito.scalatest.MockitoSugar
 import play.api.http.Status.{BAD_REQUEST, CREATED, OK}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -26,9 +24,9 @@ import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.controllers.individuals.TaxCreditsController
-import uk.gov.hmrc.individualsifapistub.domain.{RecordNotFoundException, TestAddress, TestIndividual, TestOrganisationDetails}
 import uk.gov.hmrc.individualsifapistub.domain.individuals.TaxCredits._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.{Application, Applications, Identifier}
+import uk.gov.hmrc.individualsifapistub.domain.{RecordNotFoundException, TestAddress, TestIndividual, TestOrganisationDetails}
 import uk.gov.hmrc.individualsifapistub.repository.individuals.TaxCreditsRepository
 import uk.gov.hmrc.individualsifapistub.services.individuals.TaxCreditsService
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -36,7 +34,7 @@ import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 import scala.concurrent.Future
 
-class TaxCreditsControllerSpec extends TestSupport {
+class TaxCreditsControllerSpec extends TestSupport with MockitoSugar {
 
   trait Setup {
     implicit val hc = HeaderCarrier()
@@ -47,7 +45,7 @@ class TaxCreditsControllerSpec extends TestSupport {
     val mockTaxCreditsService = new TaxCreditsService(taxCreditsRepo, apiPlatformTestUserConnector, servicesConfig)
     val underTest = new TaxCreditsController(bodyParsers, controllerComponents, mockTaxCreditsService)
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
+    when(apiPlatformTestUserConnector.getIndividualByNino(any)(any)).
       thenReturn(Future.successful(testIndividual))
   }
 
@@ -98,7 +96,7 @@ class TaxCreditsControllerSpec extends TestSupport {
 
     "Fail when an invalid nino is provided" in new Setup {
 
-      when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
+      when(apiPlatformTestUserConnector.getIndividualByNino(any)(any)).
         thenReturn(Future.failed(new RecordNotFoundException))
 
       when(mockTaxCreditsService.create(idType, idValue, startDate, endDate, useCase, request)).thenReturn(

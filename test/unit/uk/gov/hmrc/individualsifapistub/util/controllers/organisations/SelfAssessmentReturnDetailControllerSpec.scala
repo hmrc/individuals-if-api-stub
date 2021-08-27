@@ -16,20 +16,19 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.controllers.organisations
 
-import controllers.Assets._
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar.mock
+import org.mockito.scalatest.MockitoSugar
+import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.individualsifapistub.controllers.organisations.SelfAssessmentReturnDetailController
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{CreateSelfAssessmentReturnDetailRequest, SelfAssessmentReturnDetailResponse, TaxYear}
 import uk.gov.hmrc.individualsifapistub.domain.organisations.SelfAssessmentReturnDetail._
+import uk.gov.hmrc.individualsifapistub.domain.organisations.{CreateSelfAssessmentReturnDetailRequest, SelfAssessmentReturnDetailResponse, TaxYear}
 import uk.gov.hmrc.individualsifapistub.services.organisations.SelfAssessmentReturnDetailService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 import scala.concurrent.Future
 
-class SelfAssessmentReturnDetailControllerSpec extends TestSupport {
+class SelfAssessmentReturnDetailControllerSpec extends TestSupport with MockitoSugar {
 
   val mockService = mock[SelfAssessmentReturnDetailService]
   val controller = new SelfAssessmentReturnDetailController(bodyParsers, controllerComponents, mockService)

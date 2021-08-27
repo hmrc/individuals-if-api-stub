@@ -16,14 +16,12 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.services.individuals
 
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar.mock
+import org.mockito.scalatest.MockitoSugar
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
-import uk.gov.hmrc.individualsifapistub.domain.{TestAddress, TestIndividual, TestOrganisationDetails}
 import uk.gov.hmrc.individualsifapistub.domain.individuals.{Application, Applications, Identifier}
+import uk.gov.hmrc.individualsifapistub.domain.{TestAddress, TestIndividual, TestOrganisationDetails}
 import uk.gov.hmrc.individualsifapistub.repository.individuals.TaxCreditsRepository
 import uk.gov.hmrc.individualsifapistub.services.individuals.TaxCreditsService
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -31,7 +29,7 @@ import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 import scala.concurrent.Future
 
-class TaxCreditsServiceSpec extends TestSupport {
+class TaxCreditsServiceSpec extends TestSupport with MockitoSugar {
   trait Setup {
 
     val idType = "nino"
@@ -68,7 +66,7 @@ class TaxCreditsServiceSpec extends TestSupport {
     val servicesConfig = mock[ServicesConfig]
     val underTest = new TaxCreditsService(taxCreditsRepository, apiPlatformTestUserConnector, servicesConfig)
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
+    when(apiPlatformTestUserConnector.getIndividualByNino(any)(any)).
       thenReturn(Future.successful(testIndividual))
 
   }

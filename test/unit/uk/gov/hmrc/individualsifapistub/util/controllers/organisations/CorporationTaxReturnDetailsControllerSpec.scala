@@ -16,9 +16,8 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.controllers.organisations
 
-import controllers.Assets._
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar.mock
+import org.mockito.scalatest.MockitoSugar
+import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.individualsifapistub.controllers.organisations.CorporationTaxReturnDetailsController
@@ -29,7 +28,7 @@ import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 import scala.concurrent.Future
 
-class CorporationTaxReturnDetailsControllerSpec extends TestSupport {
+class CorporationTaxReturnDetailsControllerSpec extends TestSupport with MockitoSugar {
 
   val mockService = mock[CorporationTaxReturnDetailsService]
   val controller = new CorporationTaxReturnDetailsController(bodyParsers, controllerComponents, mockService)

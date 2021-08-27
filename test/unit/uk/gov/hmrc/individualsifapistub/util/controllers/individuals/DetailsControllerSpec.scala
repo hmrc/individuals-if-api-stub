@@ -16,9 +16,7 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.controllers.individuals
 
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar.mock
+import org.mockito.scalatest.MockitoSugar
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -37,7 +35,7 @@ import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 import scala.concurrent.Future
 
-class DetailsControllerSpec extends TestSupport with TestHelpers {
+class DetailsControllerSpec extends TestSupport with TestHelpers with MockitoSugar {
 
   trait Setup {
     implicit val hc = HeaderCarrier()
@@ -66,7 +64,7 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
       )
     )
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
+    when(apiPlatformTestUserConnector.getIndividualByNino(any)(any)).
       thenReturn(Future.successful(testIndividual))
   }
 
@@ -101,7 +99,7 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
 
       val returnVal = DetailsResponseNoId(request.contactDetails, request.residences)
 
-      when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
+      when(apiPlatformTestUserConnector.getIndividualByNino(any)(any)).
         thenReturn(Future.failed(new RecordNotFoundException))
 
       when(mockDetailsService.create(idType, idValue, useCase, request)).thenReturn(

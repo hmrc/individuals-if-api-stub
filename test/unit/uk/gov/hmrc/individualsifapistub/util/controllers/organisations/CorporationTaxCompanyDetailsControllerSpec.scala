@@ -16,27 +16,25 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.controllers.organisations
 
-import controllers.Assets._
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar.mock
+import org.mockito.scalatest.MockitoSugar
+import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.EmpRef
-import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.controllers.organisations.CorporationTaxCompanyDetailsController
-import uk.gov.hmrc.individualsifapistub.domain.{TestAddress, TestOrganisation, TestOrganisationDetails}
 import uk.gov.hmrc.individualsifapistub.domain.individuals.JsonFormatters._
 import uk.gov.hmrc.individualsifapistub.domain.organisations.CorporationTaxCompanyDetails._
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{Address, CorporationTaxCompanyDetails, Name, NameAddressDetails}
+import uk.gov.hmrc.individualsifapistub.domain.{TestAddress, TestOrganisation, TestOrganisationDetails}
 import uk.gov.hmrc.individualsifapistub.repository.organisations.CorporationTaxCompanyDetailsRepository
 import uk.gov.hmrc.individualsifapistub.services.organisations.CorporationTaxCompanyDetailsService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 import scala.concurrent.Future
 
-class CorporationTaxCompanyDetailsControllerSpec extends TestSupport {
+class CorporationTaxCompanyDetailsControllerSpec extends TestSupport with MockitoSugar {
 
   val mockService = mock[CorporationTaxCompanyDetailsService]
   val mockConnector = mock[ApiPlatformTestUserConnector]
@@ -96,7 +94,7 @@ class CorporationTaxCompanyDetailsControllerSpec extends TestSupport {
   "retrieve" should {
     "return response when entry found by service" in {
       when(mockService.get(ctCompanyDetails.crn)).thenReturn(Future.successful(Some(ctCompanyDetails)))
-      when(mockConnector.getOrganisationByCrn(any())(any())).thenReturn(Future.successful(Some(testOrganisation)))
+      when(mockConnector.getOrganisationByCrn(any)(any)).thenReturn(Future.successful(Some(testOrganisation)))
 
       val httpRequest =
         FakeRequest()
@@ -111,7 +109,7 @@ class CorporationTaxCompanyDetailsControllerSpec extends TestSupport {
     }
 
     "fails when an exception is thrown" in {
-      when(mockConnector.getOrganisationByCrn(any())(any())).thenReturn(Future.failed(new Exception))
+      when(mockConnector.getOrganisationByCrn(any)(any)).thenReturn(Future.failed(new Exception))
 
       val httpRequest =
         FakeRequest()

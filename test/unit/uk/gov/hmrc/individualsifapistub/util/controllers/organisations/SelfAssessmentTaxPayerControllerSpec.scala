@@ -16,26 +16,23 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.controllers.organisations
 
-import controllers.Assets._
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar.mock
+import org.mockito.scalatest.MockitoSugar
+import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.controllers.organisations.SelfAssessmentTaxPayerController
-import uk.gov.hmrc.individualsifapistub.domain.{TestAddress, TestIndividual, TestOrganisationDetails}
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{Address, SelfAssessmentTaxPayer, TaxPayerDetails}
-import uk.gov.hmrc.individualsifapistub.domain.organisations.SelfAssessmentTaxPayer._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.JsonFormatters._
+import uk.gov.hmrc.individualsifapistub.domain.organisations.SelfAssessmentTaxPayer._
+import uk.gov.hmrc.individualsifapistub.domain.organisations.{Address, SelfAssessmentTaxPayer, TaxPayerDetails}
+import uk.gov.hmrc.individualsifapistub.domain.{TestAddress, TestIndividual, TestOrganisationDetails}
 import uk.gov.hmrc.individualsifapistub.services.organisations.SelfAssessmentTaxPayerService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 import scala.concurrent.Future
 
-class SelfAssessmentTaxPayerControllerSpec extends TestSupport {
+class SelfAssessmentTaxPayerControllerSpec extends TestSupport with MockitoSugar {
 
   val mockService = mock[SelfAssessmentTaxPayerService]
   val mockConnector = mock[ApiPlatformTestUserConnector]
@@ -97,7 +94,7 @@ class SelfAssessmentTaxPayerControllerSpec extends TestSupport {
   "retrieve" should {
     "return response when entry found by service" in {
 
-      when(mockConnector.getOrganisationBySaUtr(any())(any())).thenReturn(Future.successful(Some(testIndividual)))
+      when(mockConnector.getOrganisationBySaUtr(any)(any)).thenReturn(Future.successful(Some(testIndividual)))
 
       val httpRequest =
         FakeRequest()
@@ -113,7 +110,7 @@ class SelfAssessmentTaxPayerControllerSpec extends TestSupport {
 
     "fails when an exception is thrown" in {
 
-      when(mockConnector.getOrganisationBySaUtr(any())(any())).thenReturn(Future.failed(new Exception))
+      when(mockConnector.getOrganisationBySaUtr(any)(any)).thenReturn(Future.failed(new Exception))
 
       val httpRequest =
         FakeRequest()

@@ -68,7 +68,7 @@ class IncomeSaRepository @Inject()(mongoConnectionProvider: MongoConnectionProvi
 
     val incomeSaRecord = IncomeSaEntry(id, request)
 
-    Logger.info(s"Insert for cache key: $id - Income sa: ${Json.toJson(incomeSaRecord)}")
+    logger.info(s"Insert for cache key: $id - Income sa: ${Json.toJson(incomeSaRecord)}")
 
     insert(incomeSaRecord) map (_ => incomeSaRecord.incomeSa) recover {
       case WriteResult.Code(11000) => throw new DuplicateException
@@ -82,7 +82,7 @@ class IncomeSaRepository @Inject()(mongoConnectionProvider: MongoConnectionProvi
                       endYear: String,
                       fields: Option[String]): Future[Option[IncomeSa]] = {
 
-    Logger.info(s"IncomeSaRepository - findByTypeAndId: fields: $fields")
+    logger.info(s"IncomeSaRepository - findByTypeAndId: fields: $fields")
 
     val fieldsMap = Map(
       "sa(returnList(address(line1,line2,line3,line4,postcode),busEndDate,busStartDate,caseStartDate,deducts(totalBusExpenses,totalDisallowBusExp),income(allEmployments,foreign,foreignDivs,lifePolicies,other,partnerships,pensions,selfAssessment,shares,trusts,ukDivsAndInterest,ukInterest,ukProperty),otherBusIncome,totalNIC,totalTaxPaid,tradingIncomeAllowance,turnover),taxYear)" -> "LAA-C1",
@@ -108,7 +108,7 @@ class IncomeSaRepository @Inject()(mongoConnectionProvider: MongoConnectionProvi
     val tag = fields.flatMap(value => fieldsMap.get(value)).getOrElse("TEST")
     val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$startYear-$endYear-$tag"
 
-    Logger.info(s"Fetch income sa for cache key: $id")
+    logger.info(s"Fetch income sa for cache key: $id")
 
     collection.find[JsObject, JsObject](obj("id" -> id), None)
       .one[IncomeSaEntry].map(value => value.map(_.incomeSa))

@@ -16,9 +16,7 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.controllers.individuals
 
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar.mock
+import org.mockito.scalatest.MockitoSugar
 import play.api.http.Status.{BAD_REQUEST, CREATED, OK}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -37,7 +35,7 @@ import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 import scala.concurrent.Future
 
-class EmploymentsControllerSpec extends TestSupport {
+class EmploymentsControllerSpec extends TestSupport with MockitoSugar {
 
   trait Setup {
     implicit val hc = HeaderCarrier()
@@ -59,7 +57,7 @@ class EmploymentsControllerSpec extends TestSupport {
 
     val utr = SaUtr("2432552635")
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
+    when(apiPlatformTestUserConnector.getIndividualByNino(any)(any)).
       thenReturn(Future.successful(testIndividual))
   }
 
@@ -137,7 +135,7 @@ class EmploymentsControllerSpec extends TestSupport {
 
     "Fail with an invalid nino" in new Setup {
 
-      when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
+      when(apiPlatformTestUserConnector.getIndividualByNino(any)(any)).
         thenReturn(Future.failed(new RecordNotFoundException))
 
       when(mockEmploymentsService.create(idType, idValue, startDate, endDate, useCase, employments)).thenReturn(

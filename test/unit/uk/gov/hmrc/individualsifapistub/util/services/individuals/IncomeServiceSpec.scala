@@ -16,14 +16,12 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.services.individuals
 
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar.mock
+import org.mockito.scalatest.MockitoSugar
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
-import uk.gov.hmrc.individualsifapistub.domain.{TestAddress, TestIndividual, TestOrganisationDetails}
 import uk.gov.hmrc.individualsifapistub.domain.individuals.{IncomePaye, IncomeSa}
+import uk.gov.hmrc.individualsifapistub.domain.{TestAddress, TestIndividual, TestOrganisationDetails}
 import uk.gov.hmrc.individualsifapistub.repository.individuals.{IncomePayeRepository, IncomeSaRepository}
 import uk.gov.hmrc.individualsifapistub.services.individuals.IncomeService
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -32,7 +30,7 @@ import unit.uk.gov.hmrc.individualsifapistub.util.testUtils.{IncomePayeHelpers, 
 
 import scala.concurrent.Future
 
-class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePayeHelpers {
+class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePayeHelpers with MockitoSugar {
   trait Setup {
 
     val idType = "nino"
@@ -70,7 +68,7 @@ class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePaye
       mockSelfAssessmentRepository, mockPayeRepository, apiPlatformTestUserConnector, servicesConfig
     )
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
+    when(apiPlatformTestUserConnector.getIndividualByNino(any)(any)).
       thenReturn(Future.successful(testIndividual))
   }
 

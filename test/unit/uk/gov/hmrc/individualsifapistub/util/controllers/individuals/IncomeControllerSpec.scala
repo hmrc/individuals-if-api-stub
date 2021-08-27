@@ -16,9 +16,7 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.controllers.individuals
 
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar.mock
+import org.mockito.scalatest.MockitoSugar
 import play.api.http.Status.{CREATED, OK}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -26,10 +24,10 @@ import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.controllers.individuals.IncomeController
-import uk.gov.hmrc.individualsifapistub.domain.{RecordNotFoundException, TestAddress, TestIndividual, TestOrganisationDetails}
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomePaye._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomeSa._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.{IncomePaye, IncomeSa}
+import uk.gov.hmrc.individualsifapistub.domain.{RecordNotFoundException, TestAddress, TestIndividual, TestOrganisationDetails}
 import uk.gov.hmrc.individualsifapistub.repository.individuals.{IncomePayeRepository, IncomeSaRepository}
 import uk.gov.hmrc.individualsifapistub.services.individuals.IncomeService
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -38,7 +36,7 @@ import unit.uk.gov.hmrc.individualsifapistub.util.testUtils.{IncomePayeHelpers, 
 
 import scala.concurrent.Future
 
-class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomePayeHelpers {
+class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomePayeHelpers with MockitoSugar {
 
   trait Setup {
     implicit val hc = HeaderCarrier()
@@ -61,7 +59,7 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
       )
     )
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
+    when(apiPlatformTestUserConnector.getIndividualByNino(any)(any)).
       thenReturn(Future.successful(testIndividual))
   }
 
@@ -102,7 +100,7 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
 
       "Fail when an invalid nino is provided" in new Setup {
 
-        when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
+        when(apiPlatformTestUserConnector.getIndividualByNino(any)(any)).
           thenReturn(Future.failed(new RecordNotFoundException))
 
         when(incomeService.createSa(idType, idValue, startYear, endYear, useCase, incomeSaResponse)).thenReturn(
