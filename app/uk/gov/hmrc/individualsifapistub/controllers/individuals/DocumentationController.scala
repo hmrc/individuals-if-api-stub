@@ -52,3 +52,4 @@ class DocumentationController @Inject()(
   def raml(version: String, file: String): Action[AnyContent] =
     assets.at(s"/public/api/conf/$version", file)
 }
+
