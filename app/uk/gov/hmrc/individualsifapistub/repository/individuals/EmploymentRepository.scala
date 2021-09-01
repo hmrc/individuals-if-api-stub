@@ -70,7 +70,7 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
     val tag = useCaseMap.get(useCase).getOrElse(useCase)
     val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$tag"
 
-    Logger.info(s"Insert for cache key: $id - Employments: ${Json.toJson(employments.employments)}")
+    logger.info(s"Insert for cache key: $id - Employments: ${Json.toJson(employments.employments)}")
 
     insert(EmploymentEntry(id, employments.employments)) map (_ => employments) recover {
       case WriteResult.Code(11000) => throw new DuplicateException
@@ -109,7 +109,7 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
 
     val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-${useCase.getOrElse("TEST")}"
 
-    Logger.info(s"Fetch employments for cache key: $id")
+    logger.info(s"Fetch employments for cache key: $id")
 
     collection
       .find[JsObject, JsObject](obj("id" -> id), None)
