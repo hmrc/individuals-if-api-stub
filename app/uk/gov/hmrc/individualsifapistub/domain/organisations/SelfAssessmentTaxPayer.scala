@@ -42,16 +42,23 @@ object SelfAssessmentTaxPayer {
     taxPayerDetails = Seq(fromOrganisationDetails(testUser.organisationDetails))
   )
 
-  def fromOrganisationDetails(taxpayerDetails: TestOrganisationDetails): TaxPayerDetails = TaxPayerDetails(
-    name = taxpayerDetails.name,
-    address = Address(
-      Some(taxpayerDetails.address.line1),
-      Some(taxpayerDetails.address.line2),
-      None,
-      None,
-      Some(taxpayerDetails.address.postcode)),
-    addressType = None
-  )
+  def fromOrganisationDetails(taxpayerDetails: Option[TestOrganisationDetails]): TaxPayerDetails = {
+    taxpayerDetails match {
+      case Some(value) =>{
+        TaxPayerDetails(
+          name = value.name,
+          address = Address(
+            Some(value.address.line1),
+            Some(value.address.line2),
+            None,
+            None,
+            Some(value.address.postcode)),
+          addressType = None
+        )
+      }
+      case None =>throw new Exception("taxpayerDetails are required for this operation")
+    }
+  }
 
   val utrPattern: Regex = "^[0-9]{10}$".r
   val taxPayerTypePattern: Regex = "^[A-Z][a-zA-Z]{3,24}$".r

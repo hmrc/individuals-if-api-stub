@@ -45,12 +45,7 @@ class EmploymentsServiceSpec extends TestSupport {
     val utr = SaUtr("2432552635")
 
     val testIndividual = TestIndividual(
-      saUtr = Some(utr),
-      taxpayerType = Some("Individual"),
-      organisationDetails = TestOrganisationDetails(
-        name = "Barry Barryson",
-        address = TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")
-      )
+      saUtr = Some(utr)
     )
 
     val employment =

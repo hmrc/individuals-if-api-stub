@@ -45,14 +45,8 @@ class DetailsServiceSpec extends TestSupport with TestHelpers {
     val utr = SaUtr("2432552635")
 
     val testIndividual = TestIndividual(
-      saUtr = Some(utr),
-      taxpayerType = Some("Individual"),
-      organisationDetails = TestOrganisationDetails(
-        name = "Barry Barryson",
-        address = TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")
-      )
+      saUtr = Some(utr)
     )
-
 
     val request = CreateDetailsRequest(
       Some(Seq(ContactDetail(9, "MOBILE TELEPHONE", "07123 987654"), ContactDetail(9,"MOBILE TELEPHONE", "07123 987655"))),
