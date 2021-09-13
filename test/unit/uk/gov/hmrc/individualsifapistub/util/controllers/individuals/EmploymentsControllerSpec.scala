@@ -49,12 +49,7 @@ class EmploymentsControllerSpec extends TestSupport {
     val underTest = new EmploymentsController(bodyParsers, controllerComponents, mockEmploymentsService)
 
     val testIndividual = TestIndividual(
-      saUtr = Some(utr),
-      taxpayerType = Some("Individual"),
-      organisationDetails = TestOrganisationDetails(
-        name = "Barry Barryson",
-        address = TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")
-      )
+      saUtr = Some(utr)
     )
 
     val utr = SaUtr("2432552635")

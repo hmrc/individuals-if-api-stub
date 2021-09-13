@@ -50,10 +50,10 @@ class ApiPlatformTestUserConnectorSpec
   val testIndividual = TestIndividual(
     saUtr = Some(utr),
     taxpayerType = Some("Individual"),
-    organisationDetails = TestOrganisationDetails(
+    organisationDetails = Some(TestOrganisationDetails(
       name = "Barry Barryson",
       address = TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")
-    )
+    ))
   )
 
   val http: HttpClient = fakeApplication.injector.instanceOf[HttpClient]

@@ -24,4 +24,4 @@ case class TestOrganisationDetails(name: String, address: TestAddress)
 
 case class TestOrganisation(empRef: Option[EmpRef], ctUtr: Option[String], crn: Option[String], organisationDetails: TestOrganisationDetails)
 
-case class TestIndividual(saUtr: Option[SaUtr], taxpayerType: Option[String], organisationDetails: TestOrganisationDetails)
+case class TestIndividual(saUtr: Option[SaUtr], taxpayerType: Option[String] = None, organisationDetails: Option[TestOrganisationDetails] = None)

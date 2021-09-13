@@ -52,12 +52,7 @@ class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePaye
     val incomePayeResponse = IncomePaye(Some(innerPayeValue))
 
     val testIndividual = TestIndividual(
-      saUtr = Some(utr),
-      taxpayerType = Some("Individual"),
-      organisationDetails = TestOrganisationDetails(
-        name = "Barry Barryson",
-        address = TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")
-      )
+      saUtr = Some(utr)
     )
 
     implicit val hc = HeaderCarrier()
