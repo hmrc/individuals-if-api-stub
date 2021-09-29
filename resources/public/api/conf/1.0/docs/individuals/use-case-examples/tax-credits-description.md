@@ -11,4 +11,8 @@
 <li>HMCTS-C3-working-tax-credit</li>
 <li>LSANI-C1-working-tax-credit</li>
 <li>LSANI-C3-working-tax-credit</li>
+<li>HMCTS-C2-child-tax-credit</li>
+<li>HMCTS-C3-child-tax-credit</li>
+<li>LSANI-C1-child-tax-credit</li>
+<li>LSANI-C3-child-tax-credit</li>
 </ul>
