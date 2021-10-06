@@ -38,7 +38,7 @@ class NumberOfEmployeesRepository @Inject()(mongoConnectionProvider: MongoConnec
   )
 
   def create(request: NumberOfEmployeesResponse): Future[NumberOfEmployeesResponse] = {
-    val id = request.references.map(e => s"${e.payeReference}-${e.districtNumber}").mkString("-")
+    val id = request.references.map(e => s"${request.startDate}-${request.endDate}-${e.payeReference}-${e.districtNumber}").mkString("-")
     val entry = NumberOfEmployeesEntry(id, request)
 
     insert(entry) map (_ => request) recover {
@@ -48,7 +48,7 @@ class NumberOfEmployeesRepository @Inject()(mongoConnectionProvider: MongoConnec
 
   def find(request: NumberOfEmployeesRequest): Future[Option[NumberOfEmployeesResponse]] = {
 
-    val id = request.references.map(e => s"${e.payeReference}-${e.districtNumber}").mkString("-")
+    val id = request.references.map(e => s"${request.startDate}-${request.endDate}-${e.payeReference}-${e.districtNumber}").mkString("-")
 
     collection
       .find[JsObject, JsObject](obj("id" -> id), None)
