@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.individualsifapistub.repository.individuals
 
-import play.api.Logger
 import play.api.libs.json.Json.obj
 import play.api.libs.json.{JsObject, Json}
 import reactivemongo.api.commands.WriteResult
@@ -67,15 +66,19 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
       case Trn => Identifier(None, Some(idValue), Some(startDate), Some(endDate), Some(useCase))
     }
 
-    val tag = useCaseMap.get(useCase).getOrElse(useCase)
-    val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$tag"
+    val filterKey = useCase match {
+      case "HO-RP2" => convertToFilterKey(employments)
+      case _ => ""
+    }
+
+    val tag = useCaseMap.getOrElse(useCase, useCase)
+    val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$tag$filterKey"
 
     logger.info(s"Insert for cache key: $id - Employments: ${Json.toJson(employments.employments)}")
 
     insert(EmploymentEntry(id, employments.employments)) map (_ => employments) recover {
       case WriteResult.Code(11000) => throw new DuplicateException
     }
-
   }
 
   def findByIdAndType(idType: String,
@@ -107,12 +110,23 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
       )
     }
 
-    val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-${useCase.getOrElse("TEST")}"
+    val mappedUseCase = if (filter.isDefined) {
+      useCase.map(unmappedUseCase => unmappedUseCase + filter.map(filtered => s"-$filtered").getOrElse(""))
+    } else {
+      useCase
+    }
+
+    val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-${mappedUseCase.getOrElse("TEST")}"
 
     logger.info(s"Fetch employments for cache key: $id")
 
     collection
       .find[JsObject, JsObject](obj("id" -> id), None)
       .one[Employments]
+  }
+
+  private def convertToFilterKey(employments: Employments): String = {
+    val empRef = employments.employments.headOption.flatMap(_.employerRef)
+    empRef.map(x => s"-employments[]/employerRef eq '$x'").getOrElse("")
   }
 }
