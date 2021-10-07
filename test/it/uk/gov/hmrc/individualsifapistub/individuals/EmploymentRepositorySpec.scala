@@ -28,6 +28,7 @@ class EmploymentRepositorySpec extends RepositoryTestHelper {
   val endDate = "2020-21-31"
   val useCase = "TEST"
   val fields = "some(values)"
+  val hoRp2Fields = "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employerRef,employment(endDate,payFrequency,startDate),payments(date,paidTaxablePay))"
 
   val employment: Employment =
       Employment(
@@ -71,6 +72,49 @@ class EmploymentRepositorySpec extends RepositoryTestHelper {
   )
 
   val employments = Employments(Seq(employment))
+
+  val employment2: Employment =
+    Employment(
+      employer = Some(Employer(
+        name = Some("Name"),
+        address = Some(Address(
+          Some("line1"),
+          Some("line2"),
+          Some("line3"),
+          Some("line4"),
+          Some("line5"),
+          Some("postcode")
+        )),
+        districtNumber = Some("ABC"),
+        schemeRef = Some("ABC")
+      )),
+      employerRef = Some("123/ZT6767895A"),
+      employment = Some(EmploymentDetail(
+        startDate = Some("2001-12-31"),
+        endDate = Some("2002-05-12"),
+        payFrequency = Some("W2"),
+        payrollId = Some("12341234"),
+        address = Some(Address(
+          Some("line1"),
+          Some("line2"),
+          Some("line3"),
+          Some("line4"),
+          Some("line5"),
+          Some("postcode")
+        )))),
+      payments = Some(Seq(Payment(
+        date = Some("2001-12-31"),
+        ytdTaxablePay = Some(120.02),
+        paidTaxablePay = Some(112.75),
+        paidNonTaxOrNICPayment = Some(123123.32),
+        week = Some(52),
+        month = Some(12)
+      )
+      )
+      )
+    )
+
+  val employments2 = Employments(Seq(employment2))
 
   val repository =
     fakeApplication.injector.instanceOf[EmploymentRepository]
@@ -122,6 +166,21 @@ class EmploymentRepositorySpec extends RepositoryTestHelper {
       await(repository.create("nino", nino, startDate, endDate, useCase, employments))
       val result = await(repository.findByIdAndType("nino", nino, startDate, endDate, Some(fields), None))
       result.get shouldBe employments
+    }
+
+    "return correct result based on empRef" in {
+      await(repository.create(idType = "nino", nino, startDate, endDate, "HO-RP2", employments))
+      await(repository.create(idType = "nino", nino, startDate, endDate, "HO-RP2", employments2))
+
+      val employmentEmployerRef = employments.employments.head.employerRef.get
+      val employmentEmployerRef2 = employments2.employments.head.employerRef.get
+
+      val result = await(repository.findByIdAndType("nino", nino, startDate, endDate, Some(hoRp2Fields), Some(employmentEmployerRef)))
+      val result2 = await(repository.findByIdAndType("nino", nino, startDate, endDate, Some(hoRp2Fields), Some(employmentEmployerRef2)))
+
+      result.get shouldBe employments
+      result2.get shouldBe employments2
+      result2.get should not be employments
     }
   }
 }
