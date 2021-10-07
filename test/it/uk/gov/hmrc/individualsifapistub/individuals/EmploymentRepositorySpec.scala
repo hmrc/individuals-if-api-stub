@@ -175,8 +175,8 @@ class EmploymentRepositorySpec extends RepositoryTestHelper {
       val employmentEmployerRef = employments.employments.head.employerRef.get
       val employmentEmployerRef2 = employments2.employments.head.employerRef.get
 
-      val result = await(repository.findByIdAndType("nino", nino, startDate, endDate, Some(hoRp2Fields), Some(employmentEmployerRef)))
-      val result2 = await(repository.findByIdAndType("nino", nino, startDate, endDate, Some(hoRp2Fields), Some(employmentEmployerRef2)))
+      val result = await(repository.findByIdAndType("nino", nino, startDate, endDate, Some(hoRp2Fields), Some(s"employments[]/employerRef eq $employmentEmployerRef")))
+      val result2 = await(repository.findByIdAndType("nino", nino, startDate, endDate, Some(hoRp2Fields), Some(s"employments[]/employerRef eq $employmentEmployerRef2")))
 
       result.get shouldBe employments
       result2.get shouldBe employments2

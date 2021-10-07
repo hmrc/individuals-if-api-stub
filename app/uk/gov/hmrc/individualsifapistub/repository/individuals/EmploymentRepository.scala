@@ -66,9 +66,8 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
       case Trn => Identifier(None, Some(idValue), Some(startDate), Some(endDate), Some(useCase))
     }
 
-    val empRef = employments.employments.headOption.flatMap(_.employerRef)
     val filterKey = useCase match {
-      case "HO-RP2" => empRef.map(x => s"-$x").getOrElse("")
+      case "HO-RP2" => convertToFilterKey(employments)
       case _ => ""
     }
 
@@ -124,5 +123,10 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
     collection
       .find[JsObject, JsObject](obj("id" -> id), None)
       .one[Employments]
+  }
+
+  private def convertToFilterKey(employments: Employments): String = {
+    val empRef = employments.employments.headOption.flatMap(_.employerRef)
+    empRef.map(x => s"-employments[]/employerRef eq $x").getOrElse("")
   }
 }
