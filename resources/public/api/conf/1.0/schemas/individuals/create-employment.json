@@ -106,6 +106,12 @@
                 "id": "full-date",
                 "description": "The date the employment ended.",
                 "example": "2019-03-01"
+              },
+              "payFrequency": {
+                "type": "string",
+                "enum": ["W1", "W2", "W4", "M1", "M3", "M6", "MA", "IO", "IR"],
+                "description": "The frequency of the payments.",
+                "example": "M1"
               }
             }
           }
