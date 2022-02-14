@@ -399,12 +399,6 @@ uses:
                     code: INVALID_REQUEST
 
   /organisations/employers/employee/counts/createpayload:
-    uriParameters:
-      utr:
-        description: "A Unique Taxpayer Reference."
-        type: string
-        required: true
-        example: "1234567890"
     post:
       displayName: "Create number of employees test data for an organisation"
       description: !include docs/organisations/create-number-of-employees-description.md
