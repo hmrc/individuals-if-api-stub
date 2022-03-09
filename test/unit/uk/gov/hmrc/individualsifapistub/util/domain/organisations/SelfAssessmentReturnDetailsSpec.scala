@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ class SelfAssessmentReturnDetailsSpec extends UnitSpec {
     val json =
       """
         |{
-        |   "taxYear": "2019",
+        |   "taxyear": "2019",
         |   "businessSalesTurnover": 12343.12
         |}
         |""".stripMargin
@@ -44,7 +44,7 @@ class SelfAssessmentReturnDetailsSpec extends UnitSpec {
     val json =
       """
         |{
-        |   "taxYear": "4019",
+        |   "taxyear": "4019",
         |   "businessSalesTurnover": 12343.12
         |}
         |""".stripMargin
