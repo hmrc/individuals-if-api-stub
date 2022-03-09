@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,12 @@ package unit.uk.gov.hmrc.individualsifapistub.util
 import org.joda.time.LocalDateTime.parse
 import org.joda.time.{Interval, LocalDateTime}
 import org.scalatest.prop.TableDrivenPropertyChecks
-import org.scalatest.{EitherValues, FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.{EitherValues}
 import uk.gov.hmrc.individualsifapistub.util.{Dates, IntervalQueryStringBinder}
 
-class IntervalQueryStringBinderSpec extends FlatSpec with Matchers with EitherValues {
+class IntervalQueryStringBinderSpec extends AnyFlatSpec with Matchers with EitherValues {
 
   private val intervalQueryStringBinder = new IntervalQueryStringBinder
 

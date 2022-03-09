@@ -37,11 +37,11 @@ object SelfAssessmentReturnDetail {
 
   implicit val taxYearFormat: Format[TaxYear] = Format(
     (
-      (JsPath \ "taxYear").read[String](pattern(taxYearPattern, "Tax Year is in the incorrect Format")) and
+      (JsPath \ "taxyear").read[String](pattern(taxYearPattern, "Tax Year is in the incorrect Format")) and
         (JsPath \ "businessSalesTurnover").read[Double]
       )(TaxYear.apply _),
     (
-      (JsPath \ "taxYear").write[String] and
+      (JsPath \ "taxyear").write[String] and
         (JsPath \ "businessSalesTurnover").write[Double]
       )(unlift(TaxYear.unapply))
   )
