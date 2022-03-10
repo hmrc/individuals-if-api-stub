@@ -47,7 +47,7 @@ class CorporationTaxReturnDetailsControllerSpec extends TestSupport {
           .withMethod("Post")
           .withBody(Json.toJson(request))
 
-      val result = controller.create(response.utr)(httpRequest)
+      val result = controller.create()(httpRequest)
 
       result.map(x => {
         x.header.status shouldBe CREATED
@@ -63,7 +63,7 @@ class CorporationTaxReturnDetailsControllerSpec extends TestSupport {
           .withMethod("POST")
           .withBody(Json.parse("{}"))
 
-      val result = controller.create(response.utr)(httpRequest)
+      val result = controller.create()(httpRequest)
 
       result.map(x => {
         x.header.status shouldBe BAD_REQUEST

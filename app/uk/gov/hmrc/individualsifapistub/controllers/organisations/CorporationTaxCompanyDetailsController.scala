@@ -37,7 +37,7 @@ class CorporationTaxCompanyDetailsController @Inject()(
 
   val emptyResponse = CorporationTaxCompanyDetails("", "" ,None , None)
 
-  def create(crn: String): Action[JsValue] = {
+  def create: Action[JsValue] = {
     Action.async(bodyParsers.json) { implicit request =>
       withJsonBody[CorporationTaxCompanyDetails] { body =>
         corporationTaxCompanyDetailsService.create(body).map(

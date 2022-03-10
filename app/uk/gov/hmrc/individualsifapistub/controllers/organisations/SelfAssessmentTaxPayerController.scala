@@ -37,7 +37,7 @@ class SelfAssessmentTaxPayerController @Inject()(
 
   val emptyResponse = SelfAssessmentTaxPayer("", "" , Seq.empty)
 
-  def create(utr: String): Action[JsValue] = {
+  def create: Action[JsValue] = {
     Action.async(bodyParsers.json) { implicit request =>
       withJsonBody[SelfAssessmentTaxPayer] { body =>
         selfAssessmentTaxPayerService.create(body).map(

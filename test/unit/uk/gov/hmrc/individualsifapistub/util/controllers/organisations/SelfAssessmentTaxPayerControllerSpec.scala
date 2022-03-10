@@ -69,7 +69,7 @@ class SelfAssessmentTaxPayerControllerSpec extends TestSupport {
           .withMethod("Post")
           .withBody(Json.toJson(selfAssessmentTaxPayer))
 
-      val result = controller.create(utr.utr)(httpRequest)
+      val result = controller.create()(httpRequest)
 
       result.map(x => {
         x.header.status shouldBe CREATED
@@ -85,7 +85,7 @@ class SelfAssessmentTaxPayerControllerSpec extends TestSupport {
           .withMethod("POST")
           .withBody(Json.parse("{}"))
 
-      val result = controller.create(utr.utr)(httpRequest)
+      val result = controller.create()(httpRequest)
 
       result.map(x => {
         x.header.status shouldBe BAD_REQUEST
