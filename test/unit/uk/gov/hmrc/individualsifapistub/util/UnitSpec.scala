@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@
 package unit.uk.gov.hmrc.individualsifapistub.util
 
 import java.nio.charset.Charset
-
 import akka.stream.Materializer
 import akka.util.ByteString
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.should.Matchers
 import play.api.inject.guice.GuiceableModule
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
@@ -29,7 +29,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.{Duration, FiniteDuration, _}
 import scala.concurrent.{Await, Future}
 
-trait UnitSpec extends WordSpec with Matchers {
+trait UnitSpec extends AnyWordSpec with Matchers {
 
   implicit val defaultTimeout: FiniteDuration = 5 seconds
 
