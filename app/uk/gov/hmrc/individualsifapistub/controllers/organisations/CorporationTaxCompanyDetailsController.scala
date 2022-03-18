@@ -35,8 +35,6 @@ class CorporationTaxCompanyDetailsController @Inject()(
                                                       (implicit val ec: ExecutionContext)
   extends CommonController(cc) {
 
-  val emptyResponse = CorporationTaxCompanyDetails("", "" ,None , None)
-
   def create(crn: String): Action[JsValue] = {
     Action.async(bodyParsers.json) { implicit request =>
       withJsonBody[CorporationTaxCompanyDetails] { body =>
@@ -50,7 +48,7 @@ class CorporationTaxCompanyDetailsController @Inject()(
   def retrieve(crn: String): Action[AnyContent] = Action.async { implicit request =>
     testUserConnector.getOrganisationByCrn(crn).map {
       case Some(response) => Ok(Json.toJson(CorporationTaxCompanyDetails.fromApiPlatformTestUser(response)))
-      case None => Ok(Json.toJson(emptyResponse))
+      case None => NotFound
     } recover retrievalRecovery
   }
 }
