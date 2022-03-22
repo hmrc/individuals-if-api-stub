@@ -48,11 +48,12 @@ class CorporationTaxReturnDetailsController @Inject()(
 
   def retrieve(utr: String, fields: Option[String] = None): Action[AnyContent] = Action.async { implicit request =>
     corporationTaxReturnDetailsService.get(utr).map {
-      case Some(response) =>
-        val responseJson = Json.toJson(response)
-        val filteredJson = fields.map(FieldFilter.filterFields(responseJson, _)).getOrElse(responseJson)
-        Ok(filteredJson)
-      case None => Ok(Json.toJson(emptyResponse))
+      case Some(response) => response
+      case None => emptyResponse
+    }.map { response =>
+      val responseJson = Json.toJson(response)
+      val filteredJson = fields.map(FieldFilter.filterFields(responseJson, _)).getOrElse(responseJson)
+      Ok(filteredJson)
     } recover recovery
   }
 }

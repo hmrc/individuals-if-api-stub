@@ -22,6 +22,7 @@ import uk.gov.hmrc.individualsifapistub.controllers.CommonController
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{NumberOfEmployeesRequest, NumberOfEmployeesResponse}
 import uk.gov.hmrc.individualsifapistub.domain.organisations.NumberOfEmployees._
 import uk.gov.hmrc.individualsifapistub.services.organisations.NumberOfEmployeesService
+import uk.gov.hmrc.individualsifapistub.util.FieldFilter
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -45,11 +46,15 @@ class NumberOfEmployeesController @Inject()(
     }
   }
 
-  def retrieve(): Action[JsValue] = Action.async(bodyParsers.json) { implicit request =>
+  def retrieve(fields: Option[String] = None): Action[JsValue] = Action.async(bodyParsers.json) { implicit request =>
     withJsonBody[NumberOfEmployeesRequest] { body =>
       numberOfEmployeesService.get(body).map {
-        case Some(response) => Ok(Json.toJson(response))
-        case None => Ok(Json.toJson(emptyResponse))
+        case Some(response) => response
+        case None => emptyResponse
+      }.map { response =>
+        val responseJson = Json.toJson(response)
+        val filteredJson = fields.map(FieldFilter.filterFields(responseJson, _)).getOrElse(responseJson)
+        Ok(filteredJson)
       } recover recovery
     }
   }

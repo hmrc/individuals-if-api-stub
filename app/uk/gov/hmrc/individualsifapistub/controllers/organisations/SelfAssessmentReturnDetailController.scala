@@ -22,6 +22,7 @@ import uk.gov.hmrc.individualsifapistub.controllers.CommonController
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{CreateSelfAssessmentReturnDetailRequest, SelfAssessmentReturnDetailResponse}
 import uk.gov.hmrc.individualsifapistub.domain.organisations.SelfAssessmentReturnDetail._
 import uk.gov.hmrc.individualsifapistub.services.organisations.SelfAssessmentReturnDetailService
+import uk.gov.hmrc.individualsifapistub.util.FieldFilter
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -45,10 +46,14 @@ class SelfAssessmentReturnDetailController @Inject()(
     }
   }
 
-  def retrieve(utr: String): Action[AnyContent] = Action.async { implicit request =>
+  def retrieve(utr: String, fields: Option[String] = None): Action[AnyContent] = Action.async { implicit request =>
     selfAssessmentReturnDetailService.get(utr).map {
-      case Some(response) => Ok(Json.toJson(response))
-      case None => Ok(Json.toJson(emptyResponse))
+      case Some(response) => response
+      case None => emptyResponse
+    }.map { response =>
+      val responseJson = Json.toJson(response)
+      val filteredJson = fields.map(FieldFilter.filterFields(responseJson, _)).getOrElse(responseJson)
+      Ok(filteredJson)
     } recover recovery
   }
 
