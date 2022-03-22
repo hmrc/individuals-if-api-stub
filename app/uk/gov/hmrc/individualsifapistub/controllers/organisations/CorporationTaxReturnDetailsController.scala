@@ -22,6 +22,7 @@ import uk.gov.hmrc.individualsifapistub.controllers.CommonController
 import uk.gov.hmrc.individualsifapistub.domain.organisations.CorporationTaxReturnDetails._
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{CorporationTaxReturnDetailsResponse, CreateCorporationTaxReturnDetailsRequest}
 import uk.gov.hmrc.individualsifapistub.services.organisations.CorporationTaxReturnDetailsService
+import uk.gov.hmrc.individualsifapistub.util.FieldFilter
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -45,9 +46,12 @@ class CorporationTaxReturnDetailsController @Inject()(
     }
   }
 
-  def retrieve(utr: String): Action[AnyContent] = Action.async { implicit request =>
+  def retrieve(utr: String, fields: Option[String] = None): Action[AnyContent] = Action.async { implicit request =>
     corporationTaxReturnDetailsService.get(utr).map {
-      case Some(response) => Ok(Json.toJson(response))
+      case Some(response) =>
+        val responseJson = Json.toJson(response)
+        val filteredJson = fields.map(FieldFilter.filterFields(responseJson, _)).getOrElse(responseJson)
+        Ok(filteredJson)
       case None => Ok(Json.toJson(emptyResponse))
     } recover recovery
   }

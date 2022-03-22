@@ -19,7 +19,7 @@ POST    /individuals/details/contact/:idType/:idValue                   uk.gov.h
 GET     /organisations/corporation-tax/:crn/company/details             uk.gov.hmrc.individualsifapistub.controllers.organisations.CorporationTaxCompanyDetailsController.retrieve(crn)
 
 #Organisations Corporation Tax Return Details
-GET     /organisations/corporation-tax/:utr/return/details              uk.gov.hmrc.individualsifapistub.controllers.organisations.CorporationTaxReturnDetailsController.retrieve(utr)
+GET     /organisations/corporation-tax/:utr/return/details              uk.gov.hmrc.individualsifapistub.controllers.organisations.CorporationTaxReturnDetailsController.retrieve(utr, fields: Option[String] ?= None)
 POST    /organisations/corporation-tax/return/details/:utr              uk.gov.hmrc.individualsifapistub.controllers.organisations.CorporationTaxReturnDetailsController.create(utr)
 
 #Organisations Self Assessment Return Details
