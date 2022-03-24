@@ -20,6 +20,7 @@ import controllers.Assets
 import play.api.Configuration
 import play.api.http.HttpErrorHandler
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import uk.gov.hmrc.individualsifapistub.config.LoggingAction
 import uk.gov.hmrc.individualsifapistub.views._
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
@@ -27,6 +28,7 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class DocumentationController @Inject()(
+                                         loggingAction: LoggingAction,
                                          httpErrorHandler: HttpErrorHandler,
                                          configuration: Configuration,
                                          cc: ControllerComponents,
@@ -42,7 +44,7 @@ class DocumentationController @Inject()(
   private lazy val status: String = configuration
     .getOptional[String]("api.access.version-1.0.status").getOrElse("BETA")
 
-  def definition(): Action[AnyContent] = Action {
+  def definition(): Action[AnyContent] = loggingAction {
     Ok(txt.definition(whitelistedApplicationIds, endpointsEnabled, status)).withHeaders(CONTENT_TYPE -> JSON)
   }
 

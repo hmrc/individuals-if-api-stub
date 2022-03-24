@@ -18,6 +18,7 @@ package uk.gov.hmrc.individualsifapistub.controllers.organisations
 
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
+import uk.gov.hmrc.individualsifapistub.config.LoggingAction
 import uk.gov.hmrc.individualsifapistub.controllers.CommonController
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{CreateSelfAssessmentReturnDetailRequest, SelfAssessmentReturnDetailResponse}
 import uk.gov.hmrc.individualsifapistub.domain.organisations.SelfAssessmentReturnDetail._
@@ -28,6 +29,7 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class SelfAssessmentReturnDetailController @Inject()(
+                                                      loggingAction: LoggingAction,
                                                       bodyParsers: PlayBodyParsers,
                                                       cc: ControllerComponents,
                                                       selfAssessmentReturnDetailService: SelfAssessmentReturnDetailService)
@@ -37,7 +39,7 @@ class SelfAssessmentReturnDetailController @Inject()(
   val emptyResponse = SelfAssessmentReturnDetailResponse("", "", "", "" , Seq.empty)
 
   def create(utr: String): Action[JsValue] = {
-    Action.async(bodyParsers.json) { implicit request =>
+    loggingAction.async(bodyParsers.json) { implicit request =>
       withJsonBody[CreateSelfAssessmentReturnDetailRequest] { body =>
         selfAssessmentReturnDetailService.create(body).map(
           x => Created(Json.toJson(x))
@@ -46,7 +48,7 @@ class SelfAssessmentReturnDetailController @Inject()(
     }
   }
 
-  def retrieve(utr: String, fields: Option[String] = None): Action[AnyContent] = Action.async { implicit request =>
+  def retrieve(utr: String, fields: Option[String] = None): Action[AnyContent] = loggingAction.async { implicit request =>
     selfAssessmentReturnDetailService.get(utr).map {
       case Some(response) => response
       case None => emptyResponse

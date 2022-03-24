@@ -19,6 +19,7 @@ package uk.gov.hmrc.individualsifapistub.controllers.organisations
 import javax.inject.Inject
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
+import uk.gov.hmrc.individualsifapistub.config.LoggingAction
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.controllers.CommonController
 import uk.gov.hmrc.individualsifapistub.domain.organisations.CorporationTaxCompanyDetails._
@@ -28,6 +29,7 @@ import uk.gov.hmrc.individualsifapistub.services.organisations.CorporationTaxCom
 import scala.concurrent.ExecutionContext
 
 class CorporationTaxCompanyDetailsController @Inject()(
+                                                       loggingAction: LoggingAction,
                                                        bodyParsers: PlayBodyParsers,
                                                        cc: ControllerComponents,
                                                        corporationTaxCompanyDetailsService: CorporationTaxCompanyDetailsService,
@@ -36,7 +38,7 @@ class CorporationTaxCompanyDetailsController @Inject()(
   extends CommonController(cc) {
 
   def create(crn: String): Action[JsValue] = {
-    Action.async(bodyParsers.json) { implicit request =>
+    loggingAction.async(bodyParsers.json) { implicit request =>
       withJsonBody[CorporationTaxCompanyDetails] { body =>
         corporationTaxCompanyDetailsService.create(body).map(
           x => Created(Json.toJson(x))
@@ -45,7 +47,7 @@ class CorporationTaxCompanyDetailsController @Inject()(
     }
   }
 
-  def retrieve(crn: String): Action[AnyContent] = Action.async { implicit request =>
+  def retrieve(crn: String): Action[AnyContent] = loggingAction.async { implicit request =>
     testUserConnector.getOrganisationByCrn(crn).map {
       case Some(response) => Ok(Json.toJson(CorporationTaxCompanyDetails.fromApiPlatformTestUser(response)))
       case None => NotFound

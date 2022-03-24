@@ -46,7 +46,7 @@ class EmploymentsControllerSpec extends TestSupport {
     val employmentsRepo = mock[EmploymentRepository]
     val servicesConfig = mock[ServicesConfig]
     val mockEmploymentsService = new EmploymentsService(employmentsRepo, apiPlatformTestUserConnector, servicesConfig)
-    val underTest = new EmploymentsController(bodyParsers, controllerComponents, mockEmploymentsService)
+    val underTest = new EmploymentsController(loggingAction, bodyParsers, controllerComponents, mockEmploymentsService)
 
     val testIndividual = TestIndividual(
       saUtr = Some(utr)

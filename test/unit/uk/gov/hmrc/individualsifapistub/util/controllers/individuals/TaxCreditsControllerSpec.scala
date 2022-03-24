@@ -26,7 +26,7 @@ import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.controllers.individuals.TaxCreditsController
-import uk.gov.hmrc.individualsifapistub.domain.{RecordNotFoundException, TestAddress, TestIndividual, TestOrganisationDetails}
+import uk.gov.hmrc.individualsifapistub.domain.{RecordNotFoundException, TestIndividual}
 import uk.gov.hmrc.individualsifapistub.domain.individuals.TaxCredits._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.{Application, Applications, Identifier}
 import uk.gov.hmrc.individualsifapistub.repository.individuals.TaxCreditsRepository
@@ -45,7 +45,7 @@ class TaxCreditsControllerSpec extends TestSupport {
     val taxCreditsRepo = mock[TaxCreditsRepository]
     val servicesConfig = mock[ServicesConfig]
     val mockTaxCreditsService = new TaxCreditsService(taxCreditsRepo, apiPlatformTestUserConnector, servicesConfig)
-    val underTest = new TaxCreditsController(bodyParsers, controllerComponents, mockTaxCreditsService)
+    val underTest = new TaxCreditsController(loggingAction, bodyParsers, controllerComponents, mockTaxCreditsService)
 
     when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
       thenReturn(Future.successful(testIndividual))

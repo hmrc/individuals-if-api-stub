@@ -32,7 +32,7 @@ import scala.concurrent.Future
 class SelfAssessmentReturnDetailControllerSpec extends TestSupport {
 
   val mockService = mock[SelfAssessmentReturnDetailService]
-  val controller = new SelfAssessmentReturnDetailController(bodyParsers, controllerComponents, mockService)
+  val controller = new SelfAssessmentReturnDetailController(loggingAction, bodyParsers, controllerComponents, mockService)
 
   var taxYear = TaxYear("2019", 12343.12)
   val request = CreateSelfAssessmentReturnDetailRequest("1234567890", "2015-04-21", "Individuals", "S", Seq(taxYear))

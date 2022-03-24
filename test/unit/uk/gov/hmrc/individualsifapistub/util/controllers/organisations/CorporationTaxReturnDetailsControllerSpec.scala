@@ -32,7 +32,7 @@ import scala.concurrent.Future
 class CorporationTaxReturnDetailsControllerSpec extends TestSupport {
 
   val mockService = mock[CorporationTaxReturnDetailsService]
-  val controller = new CorporationTaxReturnDetailsController(bodyParsers, controllerComponents, mockService)
+  val controller = new CorporationTaxReturnDetailsController(loggingAction, bodyParsers, controllerComponents, mockService)
 
   val accountingPeriods = Seq(AccountingPeriod("2018-04-06", "2018-10-05", 38390))
   val request = CreateCorporationTaxReturnDetailsRequest("1234567890", "2015-04-21", "V", accountingPeriods)

@@ -18,6 +18,7 @@ package uk.gov.hmrc.individualsifapistub.controllers.individuals
 
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
+import uk.gov.hmrc.individualsifapistub.config.LoggingAction
 import uk.gov.hmrc.individualsifapistub.controllers.CommonController
 import uk.gov.hmrc.individualsifapistub.domain.individuals.CreateDetailsRequest
 import uk.gov.hmrc.individualsifapistub.domain.individuals.JsonFormatters._
@@ -27,14 +28,15 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class DetailsController @Inject()(bodyParsers: PlayBodyParsers,
+class DetailsController @Inject()(loggingAction: LoggingAction,
+                                  bodyParsers: PlayBodyParsers,
                                   cc: ControllerComponents,
                                   detailsService: DetailsService)
                                  (implicit val ec: ExecutionContext) extends CommonController(cc) {
 
   def create(idType: String,
              idValue: String,
-             useCase: String): Action[JsValue] = Action.async(bodyParsers.json) { implicit request =>
+             useCase: String): Action[JsValue] = loggingAction.async(bodyParsers.json) { implicit request =>
     withJsonBodyAndValidId[CreateDetailsRequest](idType, idValue, None, None, Some(useCase)) { createRequest =>
       detailsService.create(idType, idValue, useCase, createRequest) map (
         e => Created(Json.toJson(e)))
@@ -43,16 +45,15 @@ class DetailsController @Inject()(bodyParsers: PlayBodyParsers,
 
   def retrieve(idType: String,
                idValue: String,
-               fields: Option[String]): Action[AnyContent] = Action.async { implicit request =>
+               fields: Option[String]): Action[AnyContent] = loggingAction.async { implicit request =>
     detailsService.get(idType, idValue, fields) map {
       case Some(value) => Ok(Json.toJson(value))
-      case None => {
+      case None =>
         Ok(Json.parse(
           """{
             |"residences": [],
             |"contactDetails": []
             |}""".stripMargin))
-      }
     } recover recovery
   }
 }

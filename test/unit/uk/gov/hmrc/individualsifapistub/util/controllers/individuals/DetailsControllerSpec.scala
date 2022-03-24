@@ -46,7 +46,7 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
     val detailsRepo = mock[DetailsRepository]
     val servicesConfig = mock[ServicesConfig]
     val mockDetailsService = new DetailsService(detailsRepo, apiPlatformTestUserConnector, servicesConfig)
-    val underTest = new DetailsController(bodyParsers, controllerComponents, mockDetailsService)
+    val underTest = new DetailsController(loggingAction, bodyParsers, controllerComponents, mockDetailsService)
 
 
     val idType = "nino"

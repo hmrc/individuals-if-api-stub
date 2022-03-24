@@ -18,6 +18,7 @@ package uk.gov.hmrc.individualsifapistub.controllers.individuals
 
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
+import uk.gov.hmrc.individualsifapistub.config.LoggingAction
 import uk.gov.hmrc.individualsifapistub.controllers.CommonController
 import uk.gov.hmrc.individualsifapistub.domain.individuals.Employments
 import uk.gov.hmrc.individualsifapistub.domain.individuals.Employments._
@@ -26,7 +27,8 @@ import uk.gov.hmrc.individualsifapistub.services.individuals.EmploymentsService
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class EmploymentsController @Inject()(bodyParser: PlayBodyParsers,
+class EmploymentsController @Inject()(loggingAction: LoggingAction,
+                                      bodyParser: PlayBodyParsers,
                                       cc: ControllerComponents,
                                       employmentsService: EmploymentsService)
                                      (implicit val ec: ExecutionContext) extends CommonController(cc) {
@@ -37,17 +39,18 @@ class EmploymentsController @Inject()(bodyParser: PlayBodyParsers,
              startDate: String,
              endDate: String,
              useCase: String): Action[JsValue] = {
-    Action.async(bodyParser.json) { implicit request =>
+    loggingAction.async(bodyParser.json) { implicit request =>
 
       withJsonBodyAndValidId[Employments](idType, idValue, Some(startDate), Some(endDate), Some(useCase)) {
-        jsonBody => employmentsService.create(
-          idType,
-          idValue,
-          startDate,
-          endDate,
-          useCase,
-          jsonBody
-        ) map (e => Created(Json.toJson(e)))
+        jsonBody =>
+          employmentsService.create(
+            idType,
+            idValue,
+            startDate,
+            endDate,
+            useCase,
+            jsonBody
+          ) map (e => Created(Json.toJson(e)))
       } recover recovery
     }
   }
@@ -57,14 +60,10 @@ class EmploymentsController @Inject()(bodyParser: PlayBodyParsers,
                startDate: String,
                endDate: String,
                fields: Option[String],
-               filter: Option[String]): Action[AnyContent] = Action.async { implicit request =>
+               filter: Option[String]): Action[AnyContent] = loggingAction.async { implicit request =>
     employmentsService.get(idType, idValue, startDate, endDate, fields, filter) map {
       case Some(value) => Ok(Json.toJson(value))
-      case None => {
-        Ok(Json.parse("""{
-                        |"employments": []
-                        |}""".stripMargin))
-      }
+      case None => Ok(Json.toJson(Employments(Seq.empty)))
     } recover recovery
   }
 }

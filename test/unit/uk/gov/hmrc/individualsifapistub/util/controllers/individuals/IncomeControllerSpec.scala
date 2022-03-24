@@ -26,7 +26,7 @@ import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.controllers.individuals.IncomeController
-import uk.gov.hmrc.individualsifapistub.domain.{RecordNotFoundException, TestAddress, TestIndividual, TestOrganisationDetails}
+import uk.gov.hmrc.individualsifapistub.domain.{RecordNotFoundException, TestIndividual}
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomePaye._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomeSa._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.{IncomePaye, IncomeSa}
@@ -48,7 +48,7 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
     val incomeSaRepo = mock[IncomeSaRepository]
     val servicesConfig = mock[ServicesConfig]
     val incomeService = new IncomeService(incomeSaRepo, incomePayeRepo, apiPlatformTestUserConnector, servicesConfig)
-    val underTest = new IncomeController(bodyParsers, controllerComponents, incomeService)
+    val underTest = new IncomeController(loggingAction, bodyParsers, controllerComponents, incomeService)
 
     val utr = SaUtr("2432552635")
 
