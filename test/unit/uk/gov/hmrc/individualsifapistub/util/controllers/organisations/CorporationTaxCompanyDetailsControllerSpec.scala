@@ -40,7 +40,7 @@ class CorporationTaxCompanyDetailsControllerSpec extends TestSupport {
 
   val mockService = mock[CorporationTaxCompanyDetailsService]
   val mockConnector = mock[ApiPlatformTestUserConnector]
-  val controller = new CorporationTaxCompanyDetailsController(bodyParsers, controllerComponents, mockService, mockConnector)
+  val controller = new CorporationTaxCompanyDetailsController(loggingAction, bodyParsers, controllerComponents, mockService, mockConnector)
   val repository = fakeApplication.injector.instanceOf[CorporationTaxCompanyDetailsRepository]
   implicit val hc = HeaderCarrier()
 

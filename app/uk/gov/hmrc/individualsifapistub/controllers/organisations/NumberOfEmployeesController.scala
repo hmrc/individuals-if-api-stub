@@ -17,7 +17,8 @@
 package uk.gov.hmrc.individualsifapistub.controllers.organisations
 
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
+import play.api.mvc.{Action, ControllerComponents, PlayBodyParsers}
+import uk.gov.hmrc.individualsifapistub.config.LoggingAction
 import uk.gov.hmrc.individualsifapistub.controllers.CommonController
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{NumberOfEmployeesRequest, NumberOfEmployeesResponse}
 import uk.gov.hmrc.individualsifapistub.domain.organisations.NumberOfEmployees._
@@ -28,6 +29,7 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class NumberOfEmployeesController @Inject()(
+                                             loggingAction: LoggingAction,
                                              bodyParsers: PlayBodyParsers,
                                              cc: ControllerComponents,
                                              numberOfEmployeesService: NumberOfEmployeesService)
@@ -36,17 +38,16 @@ class NumberOfEmployeesController @Inject()(
 
   val emptyResponse = NumberOfEmployeesResponse("", "", Seq.empty)
 
-  def create(): Action[JsValue] = {
-    Action.async(bodyParsers.json) { implicit request =>
+  def create(): Action[JsValue] =
+    loggingAction.async(bodyParsers.json) { implicit request =>
       withJsonBody[NumberOfEmployeesResponse] { body =>
         numberOfEmployeesService.create(body).map(
           x => Created(Json.toJson(x))
         ) recover recovery
       }
     }
-  }
 
-  def retrieve(fields: Option[String] = None): Action[JsValue] = Action.async(bodyParsers.json) { implicit request =>
+  def retrieve(fields: Option[String] = None): Action[JsValue] = loggingAction.async(bodyParsers.json) { implicit request =>
     withJsonBody[NumberOfEmployeesRequest] { body =>
       numberOfEmployeesService.get(body).map {
         case Some(response) => response

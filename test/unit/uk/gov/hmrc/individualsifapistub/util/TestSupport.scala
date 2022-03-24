@@ -22,6 +22,7 @@ import org.scalatest.BeforeAndAfterAll
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{ControllerComponents, PlayBodyParsers}
 import play.api.{Application, Configuration, Play}
+import uk.gov.hmrc.individualsifapistub.config.LoggingAction
 
 import scala.concurrent.ExecutionContext
 
@@ -51,6 +52,8 @@ trait TestSupport extends UnitSpec with BeforeAndAfterAll {
   implicit lazy val ec: ExecutionContext = fakeApplication.injector.instanceOf[ExecutionContext]
 
   lazy val bodyParsers: PlayBodyParsers = fakeApplication.injector.instanceOf[PlayBodyParsers]
+
+  lazy val loggingAction = fakeApplication.injector.instanceOf[LoggingAction]
 
   override def beforeAll() {
     Play.start(fakeApplication)

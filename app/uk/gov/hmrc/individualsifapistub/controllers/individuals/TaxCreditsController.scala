@@ -18,6 +18,7 @@ package uk.gov.hmrc.individualsifapistub.controllers.individuals
 
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
+import uk.gov.hmrc.individualsifapistub.config.LoggingAction
 import uk.gov.hmrc.individualsifapistub.controllers.CommonController
 import uk.gov.hmrc.individualsifapistub.domain.individuals.Applications
 import uk.gov.hmrc.individualsifapistub.domain.individuals.TaxCredits.applicationsFormat
@@ -27,7 +28,8 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class TaxCreditsController @Inject()(bodyParsers: PlayBodyParsers,
+class TaxCreditsController @Inject()(loggingAction: LoggingAction,
+                                     bodyParsers: PlayBodyParsers,
                                      cc: ControllerComponents,
                                      taxCreditsService: TaxCreditsService)
                                     (implicit val ec: ExecutionContext) extends CommonController(cc) {
@@ -37,7 +39,7 @@ class TaxCreditsController @Inject()(bodyParsers: PlayBodyParsers,
              startDate: String,
              endDate: String,
              useCase: String): Action[JsValue] = {
-    Action.async(bodyParsers.json) { implicit request =>
+    loggingAction.async(bodyParsers.json) { implicit request =>
       withJsonBodyAndValidId[Applications](idType, idValue, Some(startDate), Some(endDate), Some(useCase)) { applications =>
         taxCreditsService.create(idType, idValue, startDate, endDate, useCase, applications) map (
           e => Created(Json.toJson(e)))
@@ -49,14 +51,10 @@ class TaxCreditsController @Inject()(bodyParsers: PlayBodyParsers,
                idValue: String,
                startDate: String,
                endDate: String,
-               fields: Option[String]): Action[AnyContent] = Action.async { implicit request =>
+               fields: Option[String]): Action[AnyContent] = loggingAction.async { implicit request =>
     taxCreditsService.get(idType, idValue, startDate, endDate, fields) map {
       case Some(value) => Ok(Json.toJson(value))
-      case None => {
-        Ok(Json.parse("""{
-                        |"applications": []
-                        |}""".stripMargin))
-      }
+      case None => Ok(Json.toJson(Applications(Seq.empty)))
     } recover recovery
   }
 }

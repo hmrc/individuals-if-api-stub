@@ -40,7 +40,7 @@ class NumberOfEmployeesControllerSpec extends TestSupport {
   val getReference = NumberOfEmployeeReferencesRequest("456", "RT882d")
   val getRequest = NumberOfEmployeesRequest("2019-10-01", "2020-04-05", Seq(getReference))
 
-  val controller = new NumberOfEmployeesController(bodyParsers, controllerComponents, mockService)
+  val controller = new NumberOfEmployeesController(loggingAction, bodyParsers, controllerComponents, mockService)
 
   "create" should {
     "return response with created status when successful" in {

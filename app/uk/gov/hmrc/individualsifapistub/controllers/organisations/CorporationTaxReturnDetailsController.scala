@@ -18,6 +18,7 @@ package uk.gov.hmrc.individualsifapistub.controllers.organisations
 
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
+import uk.gov.hmrc.individualsifapistub.config.LoggingAction
 import uk.gov.hmrc.individualsifapistub.controllers.CommonController
 import uk.gov.hmrc.individualsifapistub.domain.organisations.CorporationTaxReturnDetails._
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{CorporationTaxReturnDetailsResponse, CreateCorporationTaxReturnDetailsRequest}
@@ -28,25 +29,25 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class CorporationTaxReturnDetailsController @Inject()(
+                                                       loggingAction: LoggingAction,
                                                        bodyParsers: PlayBodyParsers,
                                                        cc: ControllerComponents,
                                                        corporationTaxReturnDetailsService: CorporationTaxReturnDetailsService)
                                                      (implicit val ec: ExecutionContext)
   extends CommonController(cc) {
 
-  val emptyResponse = CorporationTaxReturnDetailsResponse("", "" ,"" , Seq.empty)
+  val emptyResponse = CorporationTaxReturnDetailsResponse("", "", "", Seq.empty)
 
-  def create(utr: String): Action[JsValue] = {
-    Action.async(bodyParsers.json) { implicit request =>
+  def create(utr: String): Action[JsValue] =
+    loggingAction.async(bodyParsers.json) { implicit request =>
       withJsonBody[CreateCorporationTaxReturnDetailsRequest] { body =>
         corporationTaxReturnDetailsService.create(body).map(
           x => Created(Json.toJson(x))
         ) recover recovery
       }
     }
-  }
 
-  def retrieve(utr: String, fields: Option[String] = None): Action[AnyContent] = Action.async { implicit request =>
+  def retrieve(utr: String, fields: Option[String] = None): Action[AnyContent] = loggingAction.async { implicit request =>
     corporationTaxReturnDetailsService.get(utr).map {
       case Some(response) => response
       case None => emptyResponse
