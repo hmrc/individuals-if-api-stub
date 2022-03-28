@@ -18,9 +18,8 @@ package uk.gov.hmrc.individualsifapistub.domain.organisations
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
-import play.api.libs.json._
 import play.api.libs.json.{Format, JsPath, Json}
-import uk.gov.hmrc.individualsifapistub.domain.{TestIndividual, TestOrganisation, TestOrganisationDetails}
+import uk.gov.hmrc.individualsifapistub.domain.{TestIndividual, TestOrganisationDetails}
 
 import scala.util.matching.Regex
 
@@ -112,6 +111,5 @@ object SelfAssessmentTaxPayer {
 
 case class SATaxPayerEntry(id: String, response :SelfAssessmentTaxPayer)
 object SATaxPayerEntry {
-  import SelfAssessmentTaxPayer._
   implicit val saTaxPayerEntryFormat = Json.format[SATaxPayerEntry]
 }

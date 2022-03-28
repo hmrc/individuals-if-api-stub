@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.individualsifapistub.repository.individuals
 
-import play.api.Logger
 import play.api.libs.json.Json.obj
 import play.api.libs.json.{JsObject, Json}
 import reactivemongo.api.commands.WriteResult
