@@ -38,8 +38,6 @@ class SelfAssessmentTaxPayerController @Inject()(
                                                      (implicit val ec: ExecutionContext)
   extends CommonController(cc) {
 
-  val emptyResponse = SelfAssessmentTaxPayer("", "" , Seq.empty)
-
   def create(utr: String): Action[JsValue] = {
     loggingAction.async(bodyParsers.json) { implicit request =>
       withJsonBody[SelfAssessmentTaxPayer] { body =>
@@ -53,7 +51,7 @@ class SelfAssessmentTaxPayerController @Inject()(
   def retrieve(utr: String): Action[AnyContent] = loggingAction.async { implicit request =>
     testUserConnector.getOrganisationBySaUtr(utr).map {
       case Some(response) => Ok(Json.toJson(SelfAssessmentTaxPayer.fromApiPlatformTestUser(response)))
-      case None => Ok(Json.toJson(emptyResponse))
+      case None => NotFound
     } recover retrievalRecovery
   }
 }

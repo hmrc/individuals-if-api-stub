@@ -36,8 +36,6 @@ class SelfAssessmentReturnDetailController @Inject()(
                                                     (implicit val ec: ExecutionContext)
   extends CommonController(cc) {
 
-  val emptyResponse = SelfAssessmentReturnDetailResponse("", "", "", "" , Seq.empty)
-
   def create(utr: String): Action[JsValue] = {
     loggingAction.async(bodyParsers.json) { implicit request =>
       withJsonBody[CreateSelfAssessmentReturnDetailRequest] { body =>
@@ -50,12 +48,12 @@ class SelfAssessmentReturnDetailController @Inject()(
 
   def retrieve(utr: String, fields: Option[String] = None): Action[AnyContent] = loggingAction.async { implicit request =>
     selfAssessmentReturnDetailService.get(utr).map {
-      case Some(response) => response
-      case None => emptyResponse
-    }.map { response =>
-      val responseJson = Json.toJson(response)
-      val filteredJson = fields.map(FieldFilter.filterFields(responseJson, _)).getOrElse(responseJson)
-      Ok(filteredJson)
+      case Some(response) =>
+        val responseJson = Json.toJson(response)
+        val filteredJson = fields.map(FieldFilter.filterFields(responseJson, _)).getOrElse(responseJson)
+        Ok(filteredJson)
+      case None =>
+        NotFound
     } recover recovery
   }
 
