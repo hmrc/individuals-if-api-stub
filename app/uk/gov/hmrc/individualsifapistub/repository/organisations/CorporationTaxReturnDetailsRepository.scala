@@ -22,7 +22,6 @@ import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.individualsifapistub.domain.DuplicateException
-import uk.gov.hmrc.individualsifapistub.domain.individuals.Applications
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{CTReturnDetailsEntry, CorporationTaxReturnDetailsResponse, CreateCorporationTaxReturnDetailsRequest}
 import uk.gov.hmrc.individualsifapistub.repository.MongoConnectionProvider
 import uk.gov.hmrc.mongo.ReactiveRepository
