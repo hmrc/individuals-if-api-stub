@@ -7,6 +7,7 @@ import sbt._
 object AppDependencies {
 
   val hmrc            = "uk.gov.hmrc"
+  val hmrcMongo       = "uk.gov.hmrc.mongo"
   val akka            = "com.typesafe.akka"
   val akkaVersion     = "2.6.15"
   val akkaHttpVersion = "10.2.6"
@@ -39,7 +40,7 @@ object AppDependencies {
     "org.scalaj"             %% "scalaj-http"              % "2.4.2"             % scope,
     "org.pegdown"            % "pegdown"                   % "1.6.0"             % scope,
     "com.github.tomakehurst" % "wiremock-jre8"             % "2.27.2"            % scope,
-    hmrc                     %% "reactivemongo-test"       % "5.0.0-play-28"    % scope,
+    hmrcMongo                %% "hmrc-mongo-test-play-28"  % "0.64.0"            % scope,
     hmrc                     %% "service-integration-test" % "1.1.0-play-28"     % scope
   )
 }
