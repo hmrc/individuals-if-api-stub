@@ -20,11 +20,11 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
 import uk.gov.hmrc.individualsifapistub.repository.individuals.{DetailsRepository, EmploymentRepository, IncomePayeRepository, IncomeSaRepository, TaxCreditsRepository}
 import uk.gov.hmrc.individualsifapistub.repository.organisations.{CorporationTaxCompanyDetailsRepository, CorporationTaxReturnDetailsRepository, NumberOfEmployeesRepository, SelfAssessmentReturnDetailRepository, SelfAssessmentTaxPayerRepository}
-import uk.gov.hmrc.mongo.MongoSpecSupport
+import uk.gov.hmrc.mongo.test.MongoSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 trait RepositoryTestHelper extends TestSupport
-                            with MongoSpecSupport
+                            with MongoSupport
                             with BeforeAndAfterEach {
 
   override lazy val fakeApplication = buildFakeApplication(
