@@ -16,31 +16,34 @@
 
 package uk.gov.hmrc.individualsifapistub.repository.individuals
 
-import play.api.libs.json.Json.obj
-import play.api.libs.json.{JsObject, Json}
-import reactivemongo.api.commands.WriteResult
-import reactivemongo.api.indexes.{Index, IndexType}
-import reactivemongo.bson.BSONObjectID
+import org.mongodb.scala.MongoWriteException
+import org.mongodb.scala.model.Filters._
+import org.mongodb.scala.model.Indexes.ascending
+import org.mongodb.scala.model.{IndexModel, IndexOptions}
+import play.api.Logger
+import play.api.libs.json.Json
 import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{Nino, Trn}
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomePaye.incomePayeEntryFormat
 import uk.gov.hmrc.individualsifapistub.domain.individuals.{IdType, Identifier, IncomePaye, IncomePayeEntry}
-import uk.gov.hmrc.individualsifapistub.repository.MongoConnectionProvider
-import uk.gov.hmrc.mongo.ReactiveRepository
+import uk.gov.hmrc.mongo.MongoComponent
+import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomePayeRepository  @Inject()(mongoConnectionProvider: MongoConnectionProvider)(implicit val ec: ExecutionContext)
-  extends ReactiveRepository[IncomePayeEntry, BSONObjectID]( "incomePaye",
-    mongoConnectionProvider.mongoDatabase,
-    incomePayeEntryFormat ) {
+class IncomePayeRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
+  extends PlayMongoRepository[IncomePayeEntry](
+    mongoComponent = mongo,
+    collectionName = "incomePaye",
+    domainFormat = incomePayeEntryFormat,
+    indexes = Seq(
+      IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
+    )
+  ) {
 
-
-  override lazy val indexes = Seq(
-    Index(key = List("id" -> IndexType.Ascending), name = Some("id"), unique = true, background = true)
-  )
+  private val logger: Logger = Logger(getClass)
 
   def create(idType: String,
              idValue: String,
@@ -61,16 +64,20 @@ class IncomePayeRepository  @Inject()(mongoConnectionProvider: MongoConnectionPr
       case Trn => Identifier(None, Some(idValue), Some(startDate), Some(endDate), Some(useCase))
     }
 
-    val tag = useCaseMap.get(useCase).getOrElse(useCase)
-    val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$tag"
+    val tag = useCaseMap.getOrElse(useCase, useCase)
+    val id = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$tag"
 
     val incomePayeEntry = IncomePayeEntry(id, request)
 
     logger.info(s"Insert for cache key: $id - Income paye: ${Json.toJson(incomePayeEntry)}")
 
-    insert(incomePayeEntry) map (_ => incomePayeEntry.incomePaye) recover {
-      case WriteResult.Code(11000) => throw new DuplicateException
-    }
+    collection
+      .insertOne(incomePayeEntry)
+      .map(_ => incomePayeEntry.incomePaye)
+      .head()
+      .recover {
+        case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
+      }
 
   }
 
@@ -101,12 +108,13 @@ class IncomePayeRepository  @Inject()(mongoConnectionProvider: MongoConnectionPr
     }
 
     val tag = fields.flatMap(value => fieldsMap.get(value)).getOrElse("TEST")
-    val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$tag"
+    val id = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$tag"
 
     logger.info(s"Fetch income paye for cache key: $id")
 
-    collection.find[JsObject, JsObject](obj("id" -> id), None)
-      .one[IncomePayeEntry].map(value => value.map(_.incomePaye))
-
+    collection
+      .find(equal("id", id))
+      .headOption()
+      .map(value => value.map(_.incomePaye))
   }
 }

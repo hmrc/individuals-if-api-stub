@@ -16,41 +16,46 @@
 
 package uk.gov.hmrc.individualsifapistub.repository.organisations
 
-import javax.inject.Inject
-import play.api.libs.json.JsObject
-import play.api.libs.json.Json.obj
-import reactivemongo.api.commands.WriteResult
-import reactivemongo.api.indexes.{Index, IndexType}
-import reactivemongo.bson.BSONObjectID
+import org.mongodb.scala.MongoWriteException
+import org.mongodb.scala.model.Filters.equal
+import org.mongodb.scala.model.Indexes.ascending
+import org.mongodb.scala.model.{IndexModel, IndexOptions}
 import uk.gov.hmrc.individualsifapistub.domain.DuplicateException
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{CTCompanyDetailsEntry, CorporationTaxCompanyDetails}
-import uk.gov.hmrc.individualsifapistub.repository.MongoConnectionProvider
-import uk.gov.hmrc.mongo.ReactiveRepository
+import uk.gov.hmrc.mongo.MongoComponent
+import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
-import scala.concurrent.ExecutionContext
+import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
-class CorporationTaxCompanyDetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvider)(implicit val ec: ExecutionContext)
-  extends ReactiveRepository[CTCompanyDetailsEntry, BSONObjectID]("corporation-tax-company-details",
-    mongoConnectionProvider.mongoDatabase, CTCompanyDetailsEntry.ctCompanyDetailsEntryFormat){
-
-    override lazy val indexes = Seq(
-        Index(key = List("id" -> IndexType.Ascending), name = Some("id"), unique = true, background = true)
+class CorporationTaxCompanyDetailsRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
+  extends PlayMongoRepository[CTCompanyDetailsEntry](
+    mongoComponent = mongo,
+    collectionName = "corporation-tax-company-details",
+    domainFormat = CTCompanyDetailsEntry.ctCompanyDetailsEntryFormat,
+    indexes = Seq(
+      IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
     )
+  ) {
 
-    def create(request: CorporationTaxCompanyDetails) = {
-        val response = CorporationTaxCompanyDetails(request.utr, request.crn, request.registeredDetails, request.communicationDetails)
-        val entry = CTCompanyDetailsEntry(request.crn, response)
+  def create(request: CorporationTaxCompanyDetails): Future[CorporationTaxCompanyDetails] = {
+    val response = CorporationTaxCompanyDetails(request.utr, request.crn, request.registeredDetails, request.communicationDetails)
+    val entry = CTCompanyDetailsEntry(request.crn, response)
 
-        insert(entry) map (_ => response) recover {
-            case WriteResult.Code(11000) => throw new DuplicateException
-        }
-    }
+    collection
+      .insertOne(entry)
+      .map(_ => response)
+      .head()
+      .recover {
+        case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
+      }
+  }
 
-    def find(crn: String) = {
-        collection
-          .find[JsObject, JsObject](obj("id" -> crn), None)
-          .one[CTCompanyDetailsEntry]
-          .map(x => x.map(_.response))
-    }
+  def find(crn: String): Future[Option[CorporationTaxCompanyDetails]] = {
+    collection
+      .find(equal("id", crn))
+      .headOption()
+      .map(x => x.map(_.response))
+  }
 
 }

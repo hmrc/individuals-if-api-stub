@@ -16,31 +16,34 @@
 
 package uk.gov.hmrc.individualsifapistub.repository.individuals
 
-import play.api.libs.json.Json.obj
-import play.api.libs.json.{JsObject, Json}
-import reactivemongo.api.commands.WriteResult
-import reactivemongo.api.indexes.{Index, IndexType}
-import reactivemongo.bson.BSONObjectID
-import reactivemongo.play.json._
+import org.mongodb.scala.MongoWriteException
+import org.mongodb.scala.model.Filters._
+import org.mongodb.scala.model.Indexes.ascending
+import org.mongodb.scala.model.{IndexModel, IndexOptions}
+import play.api.Logger
+import play.api.libs.json.Json
 import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{Nino, Trn}
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomeSa.incomeSaEntryFormat
 import uk.gov.hmrc.individualsifapistub.domain.individuals.{IdType, Identifier, IncomeSa, IncomeSaEntry}
-import uk.gov.hmrc.individualsifapistub.repository.MongoConnectionProvider
-import uk.gov.hmrc.mongo.ReactiveRepository
+import uk.gov.hmrc.mongo.MongoComponent
+import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomeSaRepository @Inject()(mongoConnectionProvider: MongoConnectionProvider)(implicit val ec: ExecutionContext)
-  extends ReactiveRepository[IncomeSaEntry, BSONObjectID]( "incomeSa",
-                                                            mongoConnectionProvider.mongoDatabase,
-                                                            incomeSaEntryFormat ) {
+class IncomeSaRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
+  extends PlayMongoRepository[IncomeSaEntry](
+    mongoComponent = mongo,
+    collectionName = "incomeSa",
+    domainFormat = incomeSaEntryFormat,
+    indexes = Seq(
+      IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
+    )
+  ) {
 
-  override lazy val indexes = Seq(
-    Index(key = List("id" -> IndexType.Ascending), name = Some("id"), unique = true, background = true)
-  )
+  private val logger: Logger = Logger(getClass)
 
   def create(idType: String,
              idValue: String,
@@ -54,7 +57,7 @@ class IncomeSaRepository @Inject()(mongoConnectionProvider: MongoConnectionProvi
       "HMCTS-C3" -> "HMCTS-C2_HMCTS-C3",
       "LSANI-C1" -> "LSANI-C1_LSANI-C3",
       "LSANI-C3" -> "LSANI-C1_LSANI-C3",
-      "HO-ECP"   -> "HO-ECP"
+      "HO-ECP" -> "HO-ECP"
     )
 
     val ident = IdType.parse(idType) match {
@@ -62,16 +65,20 @@ class IncomeSaRepository @Inject()(mongoConnectionProvider: MongoConnectionProvi
       case Trn => Identifier(None, Some(idValue), Some(startYear), Some(endYear), Some(useCase))
     }
 
-    val tag = useCaseMap.get(useCase).getOrElse(useCase)
-    val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$startYear-$endYear-$tag"
+    val tag = useCaseMap.getOrElse(useCase, useCase)
+    val id = s"${ident.nino.getOrElse(ident.trn.get)}-$startYear-$endYear-$tag"
 
     val incomeSaRecord = IncomeSaEntry(id, request)
 
     logger.info(s"Insert for cache key: $id - Income sa: ${Json.toJson(incomeSaRecord)}")
 
-    insert(incomeSaRecord) map (_ => incomeSaRecord.incomeSa) recover {
-      case WriteResult.Code(11000) => throw new DuplicateException
-    }
+    collection
+      .insertOne(incomeSaRecord)
+      .map(_ => incomeSaRecord.incomeSa)
+      .head()
+      .recover {
+        case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
+      }
 
   }
 
@@ -105,11 +112,13 @@ class IncomeSaRepository @Inject()(mongoConnectionProvider: MongoConnectionProvi
     }
 
     val tag = fields.flatMap(value => fieldsMap.get(value)).getOrElse("TEST")
-    val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$startYear-$endYear-$tag"
+    val id = s"${ident.nino.getOrElse(ident.trn.get)}-$startYear-$endYear-$tag"
 
     logger.info(s"Fetch income sa for cache key: $id")
 
-    collection.find[JsObject, JsObject](obj("id" -> id), None)
-      .one[IncomeSaEntry].map(value => value.map(_.incomeSa))
+    collection
+      .find(equal("id", id))
+      .headOption()
+      .map(value => value.map(_.incomeSa))
   }
 }

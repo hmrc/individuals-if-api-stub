@@ -16,26 +16,27 @@
 
 package uk.gov.hmrc.individualsifapistub.repository.organisations
 
-import play.api.libs.json.JsObject
-import play.api.libs.json.Json.obj
-import reactivemongo.api.commands.WriteResult
-import reactivemongo.api.indexes.{Index, IndexType}
-import reactivemongo.bson.BSONObjectID
+import org.mongodb.scala.MongoWriteException
+import org.mongodb.scala.model.Filters.equal
+import org.mongodb.scala.model.Indexes.ascending
+import org.mongodb.scala.model.{IndexModel, IndexOptions}
 import uk.gov.hmrc.individualsifapistub.domain.DuplicateException
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{NumberOfEmployeesEntry, NumberOfEmployeesRequest, NumberOfEmployeesResponse}
-import uk.gov.hmrc.individualsifapistub.repository.MongoConnectionProvider
-import uk.gov.hmrc.mongo.ReactiveRepository
+import uk.gov.hmrc.mongo.MongoComponent
+import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class NumberOfEmployeesRepository @Inject()(mongoConnectionProvider: MongoConnectionProvider)(implicit val ec: ExecutionContext)
-  extends ReactiveRepository[NumberOfEmployeesEntry, BSONObjectID]("number-of-employees",
-    mongoConnectionProvider.mongoDatabase, NumberOfEmployeesEntry.numberOfEmployeesFormat){
-
-  override lazy val indexes = Seq(
-    Index(key = List("id" -> IndexType.Ascending), name = Some("id"), unique = true, background = true)
-  )
+class NumberOfEmployeesRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
+  extends PlayMongoRepository[NumberOfEmployeesEntry](
+    mongoComponent = mongo,
+    collectionName = "number-of-employees",
+    domainFormat = NumberOfEmployeesEntry.numberOfEmployeesFormat,
+    indexes = Seq(
+      IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
+    )
+  ) {
 
   def create(request: NumberOfEmployeesResponse): Future[NumberOfEmployeesResponse] = {
     val id = s"${request.startDate}-${request.endDate}-" +
@@ -43,9 +44,13 @@ class NumberOfEmployeesRepository @Inject()(mongoConnectionProvider: MongoConnec
 
     val entry = NumberOfEmployeesEntry(id, request)
 
-    insert(entry) map (_ => request) recover {
-      case WriteResult.Code(11000) => throw new DuplicateException
-    }
+    collection
+      .insertOne(entry)
+      .map(_ => request)
+      .head()
+      .recover {
+        case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
+      }
   }
 
   def find(request: NumberOfEmployeesRequest): Future[Option[NumberOfEmployeesResponse]] = {
@@ -54,8 +59,8 @@ class NumberOfEmployeesRepository @Inject()(mongoConnectionProvider: MongoConnec
       request.references.map(e => s"${e.payeReference}-${e.districtNumber}").mkString("-")
 
     collection
-      .find[JsObject, JsObject](obj("id" -> id), None)
-      .one[NumberOfEmployeesEntry]
+      .find(equal("id", id))
+      .headOption
       .map(x => x.map(_.response))
   }
 

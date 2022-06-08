@@ -16,31 +16,34 @@
 
 package uk.gov.hmrc.individualsifapistub.repository.individuals
 
-import play.api.libs.json.Json.obj
-import play.api.libs.json.{JsObject, Json}
-import reactivemongo.api.commands.WriteResult
-import reactivemongo.api.indexes.{Index, IndexType}
-import reactivemongo.bson.BSONObjectID
+import org.mongodb.scala.MongoWriteException
+import org.mongodb.scala.model.Filters._
+import org.mongodb.scala.model.Indexes.ascending
+import org.mongodb.scala.model.{IndexModel, IndexOptions}
+import play.api.Logger
+import play.api.libs.json.Json
 import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.Employments._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{Nino, Trn}
 import uk.gov.hmrc.individualsifapistub.domain.individuals.{EmploymentEntry, Employments, IdType, Identifier}
-import uk.gov.hmrc.individualsifapistub.repository.MongoConnectionProvider
-import uk.gov.hmrc.mongo.ReactiveRepository
+import uk.gov.hmrc.mongo.MongoComponent
+import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 
 @Singleton
-class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionProvider)(implicit val ec: ExecutionContext)
-  extends ReactiveRepository[EmploymentEntry, BSONObjectID]( "employment",
-                                                        mongoConnectionProvider.mongoDatabase,
-                                                        createEmploymentEntryFormat) {
+class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
+  extends PlayMongoRepository[EmploymentEntry](collectionName = "employment",
+    mongoComponent = mongo,
+    domainFormat = createEmploymentEntryFormat,
+    indexes = Seq(
+      IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
+    )
+  ) {
 
-  override lazy val indexes = Seq(
-    Index(key = List("id" -> IndexType.Ascending), name = Some("id"), unique = true, background = true)
-  )
+  private val logger: Logger = Logger(getClass)
 
   def create(idType: String,
              idValue: String,
@@ -50,13 +53,13 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
              employments: Employments): Future[Employments] = {
 
     val useCaseMap = Map(
-      "LAA-C1"      -> "LAA-C1_LAA-C2",
-      "LAA-C2"      -> "LAA-C1_LAA-C2",
-      "LAA-C3"      -> "LAA-C3_LSANI-C1_LSANI-C3",
-      "LSANI-C1"    -> "LAA-C3_LSANI-C1_LSANI-C3",
-      "LSANI-C3"    -> "LAA-C3_LSANI-C1_LSANI-C3",
-      "HMCTS-C2"    -> "HMCTS-C2_HMCTS-C3",
-      "HMCTS-C3"    -> "HMCTS-C2_HMCTS-C3",
+      "LAA-C1" -> "LAA-C1_LAA-C2",
+      "LAA-C2" -> "LAA-C1_LAA-C2",
+      "LAA-C3" -> "LAA-C3_LSANI-C1_LSANI-C3",
+      "LSANI-C1" -> "LAA-C3_LSANI-C1_LSANI-C3",
+      "LSANI-C3" -> "LAA-C3_LSANI-C1_LSANI-C3",
+      "HMCTS-C2" -> "HMCTS-C2_HMCTS-C3",
+      "HMCTS-C3" -> "HMCTS-C2_HMCTS-C3",
       "HO-RP2" -> "HO-RP2",
       "HO-ECP" -> "HO-ECP"
     )
@@ -72,13 +75,17 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
     }
 
     val tag = useCaseMap.getOrElse(useCase, useCase)
-    val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$tag$filterKey"
+    val id = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$tag$filterKey"
 
     logger.info(s"Insert for cache key: $id - Employments: ${Json.toJson(employments.employments)}")
 
-    insert(EmploymentEntry(id, employments.employments)) map (_ => employments) recover {
-      case WriteResult.Code(11000) => throw new DuplicateException
-    }
+    collection
+      .insertOne(EmploymentEntry(id, employments.employments))
+      .map(_ => employments)
+      .head()
+      .recover {
+        case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
+      }
   }
 
   def findByIdAndType(idType: String,
@@ -99,7 +106,7 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
       "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employerRef,employment(endDate,payFrequency,startDate),payments(date,paidTaxablePay))_filtered" -> "HO-RP2"
     )
 
-    val useCase:Option[String] = fields.flatMap(value => fieldsMap.get(value + (if (filter.isDefined) "_filtered" else "")))
+    val useCase: Option[String] = fields.flatMap(value => fieldsMap.get(value + (if (filter.isDefined) "_filtered" else "")))
 
     val ident = IdType.parse(idType) match {
       case Nino => Identifier(
@@ -116,13 +123,14 @@ class EmploymentRepository @Inject()(mongoConnectionProvider: MongoConnectionPro
       useCase
     }
 
-    val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-${mappedUseCase.getOrElse("TEST")}"
+    val id = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-${mappedUseCase.getOrElse("TEST")}"
 
     logger.info(s"Fetch employments for cache key: $id")
 
     collection
-      .find[JsObject, JsObject](obj("id" -> id), None)
-      .one[Employments]
+      .find(equal("id", id))
+      .headOption()
+      .map(_.map(entry => Employments(entry.employments)))
   }
 
   private def convertToFilterKey(employments: Employments): String = {

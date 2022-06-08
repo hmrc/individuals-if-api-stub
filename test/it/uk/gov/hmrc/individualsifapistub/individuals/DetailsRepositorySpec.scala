@@ -30,7 +30,7 @@ class DetailsRepositorySpec extends RepositoryTestHelper with TestHelpers {
   val fields = "some(values)"
 
   val request = CreateDetailsRequest(
-    Some(Seq(ContactDetail(9, "MOBILE TELEPHONE", "07123 987654"), ContactDetail(9,"MOBILE TELEPHONE", "07123 987655"))),
+    Some(Seq(ContactDetail(9, "MOBILE TELEPHONE", "07123 987654"), ContactDetail(9, "MOBILE TELEPHONE", "07123 987655"))),
     None
   )
 
@@ -38,14 +38,13 @@ class DetailsRepositorySpec extends RepositoryTestHelper with TestHelpers {
 
     "have a unique index on nino and trn" in {
 
-      await(repository.collection.indexesManager.list()).find({ i =>
-      {
-        i.name.contains("id") &&
-          i.key.exists(key => key._1 == "details")
-          i.background &&
-          i.unique
-      }
-      }) should not be None
+      repository.indexes
+        .find { i =>
+          i.getOptions.getName.contains("id") &&
+            i.getKeys.toBsonDocument.getFirstKey == "details" &&
+            i.getOptions.isBackground &&
+            i.getOptions.isUnique
+        } should not be None
     }
 
   }
