@@ -44,15 +44,15 @@ trait RepositoryTestHelper extends TestSupport
   )
 
   override def beforeEach() {
-    allRepos.foreach(r => {
-      await(r.drop)
+    allRepos.foreach { r =>
+      await(r.collection.drop().headOption())
       await(r.ensureIndexes)
-    })
+    }
   }
 
   override def afterEach() {
-    allRepos.foreach(r => {
-      await(r.drop)
-    })
+    allRepos.foreach { r =>
+      await(r.collection.drop().headOption())
+    }
   }
 }

@@ -191,7 +191,7 @@ object TaxCredits {
     (JsPath \ "applications").write[Seq[Application]].contramap(x => x.applications)
   )
 
-  val taxCreditsEntryFormat: Format[TaxCreditsEntry] = Format(
+  implicit val taxCreditsEntryFormat: Format[TaxCreditsEntry] = Format(
     (
       (JsPath \ "id").read[String] and
       (JsPath \ "applications").read[Seq[Application]]

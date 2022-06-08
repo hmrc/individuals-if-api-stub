@@ -317,7 +317,7 @@ object IncomeSa {
     (JsPath \ "sa").writeNullable[Seq[SaTaxYearEntry]].contramap(value => value.sa)
   )
 
-  val incomeSaEntryFormat: Format[IncomeSaEntry] = Format(
+  implicit val incomeSaEntryFormat: Format[IncomeSaEntry] = Format(
     (
       (JsPath \ "id").read[String] and
         (JsPath \ "incomeSaResponse").read[IncomeSa]
@@ -571,7 +571,7 @@ object IncomePaye {
     (JsPath \ "paye").writeNullable[Seq[PayeEntry]].contramap(value => value.paye)
   )
 
-  val incomePayeEntryFormat: Format[IncomePayeEntry] = Format(
+  implicit val incomePayeEntryFormat: Format[IncomePayeEntry] = Format(
     (
       (JsPath \ "id").read[String] and
         (JsPath \ "incomePaye").read[IncomePaye]

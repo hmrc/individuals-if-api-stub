@@ -16,40 +16,45 @@
 
 package uk.gov.hmrc.individualsifapistub.repository.organisations
 
-import play.api.libs.json.JsObject
-import play.api.libs.json.Json.obj
-import reactivemongo.api.commands.WriteResult
-import reactivemongo.api.indexes.{Index, IndexType}
-import reactivemongo.bson.BSONObjectID
+import org.mongodb.scala.MongoWriteException
+import org.mongodb.scala.model.Filters.equal
+import org.mongodb.scala.model.Indexes.ascending
+import org.mongodb.scala.model.{IndexModel, IndexOptions}
 import uk.gov.hmrc.individualsifapistub.domain.DuplicateException
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{CreateSelfAssessmentReturnDetailRequest, SelfAssessmentReturnDetailEntry, SelfAssessmentReturnDetailResponse}
-import uk.gov.hmrc.individualsifapistub.repository.MongoConnectionProvider
-import uk.gov.hmrc.mongo.ReactiveRepository
+import uk.gov.hmrc.mongo.MongoComponent
+import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SelfAssessmentReturnDetailRepository @Inject()(mongoConnectionProvider: MongoConnectionProvider)(implicit val ec: ExecutionContext)
-  extends ReactiveRepository[SelfAssessmentReturnDetailEntry, BSONObjectID]("self-assessment-return-details",
-    mongoConnectionProvider.mongoDatabase, SelfAssessmentReturnDetailEntry.format){
-
-  override lazy val indexes = Seq(
-    Index(key = List("id" -> IndexType.Ascending), name = Some("id"), unique = true, background = true)
-  )
+class SelfAssessmentReturnDetailRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
+  extends PlayMongoRepository[SelfAssessmentReturnDetailEntry](
+    mongoComponent = mongo,
+    collectionName = "self-assessment-return-details",
+    domainFormat = SelfAssessmentReturnDetailEntry.format,
+    indexes = Seq(
+      IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
+    )
+  ) {
 
   def create(request: CreateSelfAssessmentReturnDetailRequest): Future[SelfAssessmentReturnDetailResponse] = {
     val response = SelfAssessmentReturnDetailResponse(request.utr, request.startDate, request.taxPayerType, request.taxSolvencyStatus, request.taxYears)
     val entry = SelfAssessmentReturnDetailEntry(request.utr, response)
 
-    insert(entry) map (_ => response) recover {
-      case WriteResult.Code(11000) => throw new DuplicateException
-    }
+    collection
+      .insertOne(entry)
+      .map(_ => response)
+      .head()
+      .recover {
+        case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
+      }
   }
 
   def find(utr: String): Future[Option[SelfAssessmentReturnDetailResponse]] = {
     collection
-      .find[JsObject, JsObject](obj("id" -> utr), None)
-      .one[SelfAssessmentReturnDetailEntry]
+      .find(equal("id", utr))
+      .headOption()
       .map(x => x.map(_.response))
   }
 

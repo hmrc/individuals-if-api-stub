@@ -16,30 +16,33 @@
 
 package uk.gov.hmrc.individualsifapistub.repository.individuals
 
-import play.api.libs.json.Json.obj
-import play.api.libs.json.{JsObject, Json}
-import reactivemongo.api.commands.WriteResult
-import reactivemongo.api.indexes.{Index, IndexType}
-import reactivemongo.bson.BSONObjectID
-import reactivemongo.play.json._
+import org.mongodb.scala.MongoWriteException
+import org.mongodb.scala.model.Filters._
+import org.mongodb.scala.model.Indexes.ascending
+import org.mongodb.scala.model.{IndexModel, IndexOptions}
+import play.api.Logger
+import play.api.libs.json.Json
 import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{Nino, Trn}
 import uk.gov.hmrc.individualsifapistub.domain.individuals._
-import uk.gov.hmrc.individualsifapistub.repository.MongoConnectionProvider
-import uk.gov.hmrc.mongo.ReactiveRepository
+import uk.gov.hmrc.mongo.MongoComponent
+import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvider)(implicit val ec: ExecutionContext)
-  extends ReactiveRepository[DetailsResponse, BSONObjectID]("details",
-    mongoConnectionProvider.mongoDatabase,
-    JsonFormatters.detailsResponseFormat) {
+class DetailsRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
+  extends PlayMongoRepository[DetailsResponse](
+    mongoComponent = mongo,
+    collectionName = "details",
+    domainFormat = JsonFormatters.detailsResponseFormat,
+    indexes = Seq(
+      IndexModel(ascending("details"), IndexOptions().name("id").unique(true).background(true))
+    )
+  ) {
 
-  override lazy val indexes = Seq(
-    Index(key = List("details" -> IndexType.Ascending), name = Some("id"), unique = true, background = true)
-  )
+  private val logger: Logger = Logger(getClass)
 
   def create(idType: String,
              idValue: String,
@@ -47,14 +50,14 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
              createDetailsRequest: CreateDetailsRequest): Future[DetailsResponseNoId] = {
 
     val useCaseMap = Map(
-      "LAA-C3-residences"        -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
-      "LAA-C4-residences"        -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
-      "HMCTS-C3-residences"      -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
-      "HMCTS-C4-residences"      -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
-      "LSANI-C1-residences"      -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
-      "LSANI-C3-residences"      -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
-      "NICTSEJO-C4-residences"   -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
-      "LAA-C4-contact-details"   -> "LAA-C4_HMCTS-C4-contact-details",
+      "LAA-C3-residences" -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
+      "LAA-C4-residences" -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
+      "HMCTS-C3-residences" -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
+      "HMCTS-C4-residences" -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
+      "LSANI-C1-residences" -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
+      "LSANI-C3-residences" -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
+      "NICTSEJO-C4-residences" -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
+      "LAA-C4-contact-details" -> "LAA-C4_HMCTS-C4-contact-details",
       "HMCTS-C4-contact-details" -> "LAA-C4_HMCTS-C4-contact-details"
     )
 
@@ -63,23 +66,24 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
       case Trn => Identifier(None, Some(idValue), None, None, Some(useCase))
     }
 
-    val tag = useCaseMap.get(useCase).getOrElse(useCase)
-    val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$tag"
+    val tag = useCaseMap.getOrElse(useCase, useCase)
+    val id = s"${ident.nino.getOrElse(ident.trn.get)}-$tag"
 
-    val detailsResponse = useCase.contains("residences") match {
-      case true => {
-        DetailsResponse(id, None, createDetailsRequest.residences)
-      }
-      case _    => {
-        DetailsResponse(id, createDetailsRequest.contactDetails, None)
-      }
+    val detailsResponse = if (useCase.contains("residences")) {
+      DetailsResponse(id, None, createDetailsRequest.residences)
+    } else {
+      DetailsResponse(id, createDetailsRequest.contactDetails, None)
     }
 
     logger.info(s"Insert for cache key: $id - Details: ${Json.toJson(detailsResponse)}")
 
-    insert(detailsResponse) map (_ => DetailsResponseNoId(detailsResponse.contactDetails, detailsResponse.residences)) recover {
-      case WriteResult.Code(11000) => throw new DuplicateException
-    }
+    collection
+      .insertOne(detailsResponse)
+      .map(_ => DetailsResponseNoId(detailsResponse.contactDetails, detailsResponse.residences))
+      .head()
+      .recover {
+        case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
+      }
 
   }
 
@@ -102,11 +106,10 @@ class DetailsRepository @Inject()(mongoConnectionProvider: MongoConnectionProvid
     }
 
     val tag = fields.flatMap(value => fieldsMap.get(value)).getOrElse("TEST")
-    val id  = s"${ident.nino.getOrElse(ident.trn.get)}-$tag"
+    val id = s"${ident.nino.getOrElse(ident.trn.get)}-$tag"
 
     logger.info(s"Fetch details for cache key: $id")
 
-    collection.find[JsObject, JsObject](obj("details" ->id), None).one[DetailsResponse]
-
+    collection.find(equal("details", id)).headOption()
   }
 }

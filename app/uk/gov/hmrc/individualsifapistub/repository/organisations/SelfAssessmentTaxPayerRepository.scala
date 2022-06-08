@@ -16,41 +16,45 @@
 
 package uk.gov.hmrc.individualsifapistub.repository.organisations
 
-import play.api.libs.json.JsObject
-import play.api.libs.json.Json.obj
-import reactivemongo.api.commands.WriteResult
-import reactivemongo.api.indexes.{Index, IndexType}
-import reactivemongo.bson.BSONObjectID
+import org.mongodb.scala.MongoWriteException
+import org.mongodb.scala.model.Filters._
+import org.mongodb.scala.model.Indexes.ascending
+import org.mongodb.scala.model.{IndexModel, IndexOptions}
 import uk.gov.hmrc.individualsifapistub.domain.DuplicateException
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{SATaxPayerEntry, SelfAssessmentTaxPayer}
-import uk.gov.hmrc.individualsifapistub.repository.MongoConnectionProvider
-import uk.gov.hmrc.mongo.ReactiveRepository
+import uk.gov.hmrc.mongo.MongoComponent
+import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
-class SelfAssessmentTaxPayerRepository @Inject()(mongoConnectionProvider: MongoConnectionProvider)(implicit val ec: ExecutionContext)
-  extends ReactiveRepository[SATaxPayerEntry, BSONObjectID]("self-assessment-tax-payer",
-    mongoConnectionProvider.mongoDatabase, SATaxPayerEntry.saTaxPayerEntryFormat){
+class SelfAssessmentTaxPayerRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
+  extends PlayMongoRepository[SATaxPayerEntry](
+    mongoComponent = mongo,
+    collectionName = "self-assessment-tax-payer",
+    domainFormat = SATaxPayerEntry.saTaxPayerEntryFormat,
+    indexes = Seq(
+      IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
+    )
+  ) {
 
-  override lazy val indexes = Seq(
-    Index(key = List("id" -> IndexType.Ascending), name = Some("id"), unique = true, background = true)
-  )
-
-  def create(request: SelfAssessmentTaxPayer) = {
+  def create(request: SelfAssessmentTaxPayer): Future[SelfAssessmentTaxPayer] = {
     val response = SelfAssessmentTaxPayer(request.utr, request.taxPayerType, request.taxPayerDetails)
     val entry = SATaxPayerEntry(request.utr, response)
 
-    insert(entry) map (_ => response) recover {
-      case WriteResult.Code(11000) => throw new DuplicateException
-    }
+    collection
+      .insertOne(entry)
+      .map(_ => response)
+      .head()
+      .recover {
+        case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
+      }
   }
 
-  def find(utr: String) = {
+  def find(utr: String): Future[Option[SelfAssessmentTaxPayer]] =
     collection
-      .find[JsObject, JsObject](obj("id" -> utr), None)
-      .one[SATaxPayerEntry]
+      .find(equal("id", utr))
+      .headOption()
       .map(x => x.map(_.response))
-  }
 
 }

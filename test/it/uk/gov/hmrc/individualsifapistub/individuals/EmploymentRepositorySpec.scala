@@ -123,14 +123,12 @@ class EmploymentRepositorySpec extends RepositoryTestHelper {
 
     "have a unique index on nino and trn" in {
 
-      await(repository.collection.indexesManager.list()).find({ i =>
-      {
-        i.name.contains("id") &&
-          i.key.exists(key => key._1 == "id")
-        i.background &&
-          i.unique
-      }
-      }) should not be None
+      repository.indexes.find{ i =>
+        i.getOptions.getName.contains("id") &&
+          i.getKeys.toBsonDocument.getFirstKey == "id" &&
+          i.getOptions.isBackground &&
+          i.getOptions.isUnique
+      } should not be None
     }
   }
 
