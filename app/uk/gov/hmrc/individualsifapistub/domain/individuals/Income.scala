@@ -517,8 +517,7 @@ object IncomePaye {
         (JsPath \ "totalTaxToDate").readNullable[Double](verifying(paymentAmountValidator)) and
         (JsPath \ "taxDeductedOrRefunded").readNullable[Double](verifying(paymentAmountValidator)) and
         (JsPath \ "employerPayeRef").readNullable[String]
-          (maxLength[String](10)
-            .keepAnd(pattern(employerPayeRefPattern, "Invalid employer PAYE reference"))) and
+          (maxLength[String](14).keepAnd(pattern(employerPayeRefPattern, "Invalid employer PAYE reference"))) and
         (JsPath \ "paymentDate").readNullable[String](pattern(paymentDatePattern, "Invalid Payment Date")) and
         (JsPath \ "taxablePay").readNullable[Double](verifying(paymentAmountValidator)) and
         (JsPath \ "taxYear").readNullable[String](pattern(payeTaxYearPattern, "Invalid Tax Year")) and
