@@ -29,7 +29,7 @@ object AppDependencies {
     hmrc                %% "play-hal"                   % "2.1.0-play-27",
     hmrc                %% "play-hmrc-api"              % "6.4.0-play-28",
     hmrc                %% "json-encryption"            % "4.10.0-play-28",
-    hmrcMongo           %% "hmrc-mongo-play-28"         % "0.64.0",
+    hmrcMongo           %% "hmrc-mongo-play-28"         % "0.68.0",
     "com.typesafe.play" %% "play-json-joda"             % "2.9.2"
   )
 
