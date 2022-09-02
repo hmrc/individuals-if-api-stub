@@ -61,7 +61,8 @@ class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
       "HMCTS-C2" -> "HMCTS-C2_HMCTS-C3",
       "HMCTS-C3" -> "HMCTS-C2_HMCTS-C3",
       "HO-RP2" -> "HO-RP2",
-      "HO-ECP" -> "HO-ECP"
+      "HO-ECP" -> "HO-ECP",
+      "HO-V2" -> "HO-V2"
     )
 
     val ident = IdType.parse(idType) match {
@@ -103,7 +104,8 @@ class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
       "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employerRef,employment(endDate,startDate))" -> "HMCTS-C4",
       "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employment(startDate))" -> "NICTSEJO-C4",
       "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employerRef,employment(endDate,payFrequency,startDate),payments(date,paidTaxablePay))" -> "HO-ECP",
-      "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employerRef,employment(endDate,payFrequency,startDate),payments(date,paidTaxablePay))_filtered" -> "HO-RP2"
+      "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employerRef,employment(endDate,payFrequency,startDate),payments(date,paidTaxablePay))_filtered" -> "HO-RP2",
+      "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employerRef,employment(endDate,payFrequency,startDate))" -> "HO-V2"
     )
 
     val useCase: Option[String] = fields.flatMap(value => fieldsMap.get(value + (if (filter.isDefined) "_filtered" else "")))

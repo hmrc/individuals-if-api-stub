@@ -10,3 +10,4 @@ One of the following :
 * HMCTS-C4
 * NICTSEJO-C4
 * HO-ECP
+* HO-V2

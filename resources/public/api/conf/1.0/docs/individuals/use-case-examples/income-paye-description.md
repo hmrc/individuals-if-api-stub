@@ -11,4 +11,5 @@
 <li>HMCTS-C3</li>
 <li>HMCTS-C4</li>
 <li>NICTSEJO-C4</li>
+<li>HO-V2</li>
 </ul>
