@@ -100,7 +100,8 @@ class IncomeSaRepository @Inject()(mongo: MongoComponent)(implicit val ec: Execu
       "sa(returnList(address(line1,line2,line3,line4,postcode),businessDescription,caseStartDate,telephoneNumber),taxYear)" -> "HMCTS-C4",
       "sa(returnList(busEndDate,busStartDate,deducts(totalBusExpenses),income(allEmployments,foreign,foreignDivs,lifePolicies,other,partnerships,pensions,selfAssessment,selfEmployment,shares,trusts,ukDivsAndInterest,ukInterest,ukProperty),receivedDate,totalNIC,totalTaxPaid),taxYear)" -> "LSANI-C1_LSANI-C3",
       "sa(returnList(address(line1,line2,line3,line4,postcode),businessDescription,caseStartDate,income(allEmployments,foreignDivs,lifePolicies,other,partnerships,pensions,selfAssessment,selfEmployment,shares,trusts,ukDivsAndInterest,ukInterest,ukProperty),receivedDate,telephoneNumber),taxYear)" -> "NICTSEJO-C4",
-      "sa(returnList(income(allEmployments,other,selfAssessment,selfEmployment),receivedDate,utr),taxYear)" -> "HO-ECP"
+      "sa(returnList(income(allEmployments,other,selfAssessment,selfEmployment),receivedDate,utr),taxYear)" -> "HO-ECP",
+      "sa(returnList(address(line1,line2,line3,line4,postcode),businessDescription,caseStartDate,income(allEmployments,foreign,foreignDivs,lifePolicies,other,partnerships,pensions,selfAssessment,selfEmployment,shares,trusts,ukDivsAndInterest,ukInterest,ukProperty),receivedDate,telephoneNumber,utr),taxYear)" -> "HO-V2"
     )
 
     val ident = IdType.parse(idType) match {
