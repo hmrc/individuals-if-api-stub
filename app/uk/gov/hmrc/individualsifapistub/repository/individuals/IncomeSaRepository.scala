@@ -57,7 +57,8 @@ class IncomeSaRepository @Inject()(mongo: MongoComponent)(implicit val ec: Execu
       "HMCTS-C3" -> "HMCTS-C2_HMCTS-C3",
       "LSANI-C1" -> "LSANI-C1_LSANI-C3",
       "LSANI-C3" -> "LSANI-C1_LSANI-C3",
-      "HO-ECP" -> "HO-ECP"
+      "HO-ECP" -> "HO-ECP",
+      "HO-V2" -> "HO-V2"
     )
 
     val ident = IdType.parse(idType) match {
