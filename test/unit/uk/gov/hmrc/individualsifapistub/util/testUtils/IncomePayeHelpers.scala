@@ -16,6 +16,7 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.testUtils
 
+import org.joda.time.LocalDate
 import uk.gov.hmrc.individualsifapistub.domain.individuals.{AdditionalFields, Benefits, EmployeeNics, EmployeePensionContribs, GrossEarningsForNics, PayeEntry, PostGradLoan, StatutoryPayYTD, StudentLoan, TotalEmployerNics}
 
 trait IncomePayeHelpers {
@@ -27,7 +28,7 @@ trait IncomePayeHelpers {
       Some(3095.89),
       Some(159228.49),
       Some("345/34678"),
-      Some("2006-02-27"),
+      Some(LocalDate.parse("2006-02-27")),
       Some(16533.95),
       Some("18-19"),
       Some("3"),
