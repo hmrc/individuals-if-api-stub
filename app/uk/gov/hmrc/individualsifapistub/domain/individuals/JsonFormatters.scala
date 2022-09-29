@@ -17,6 +17,7 @@
 package uk.gov.hmrc.individualsifapistub.domain.individuals
 
 import org.joda.time.DateTime
+import org.joda.time.LocalDate
 import play.api.libs.json.JodaWrites._
 import play.api.libs.json._
 import uk.gov.hmrc.individualsifapistub.domain.{ErrorInvalidRequest, ErrorResponse, TestAddress, TestIndividual, TestOrganisation, TestOrganisationDetails}
@@ -30,6 +31,12 @@ object JsonFormatters {
     override def reads(json: JsValue): JsResult[DateTime] = JodaReads.DefaultJodaDateTimeReads.reads(json)
 
     override def writes(o: DateTime): JsValue = JodaDateTimeNumberWrites.writes(o)
+  }
+
+  implicit val localDateFormatDefault = new Format[LocalDate] {
+    override def reads(json: JsValue): JsResult[LocalDate] = JodaReads.DefaultJodaLocalDateReads.reads(json)
+
+    override def writes(o: LocalDate): JsValue = DefaultJodaLocalDateWrites.writes(o)
   }
 
   implicit val responseNoId = Json.format[DetailsResponseNoId]

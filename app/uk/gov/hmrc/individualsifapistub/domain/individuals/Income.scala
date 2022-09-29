@@ -16,10 +16,12 @@
 
 package uk.gov.hmrc.individualsifapistub.domain.individuals
 
+import org.joda.time.LocalDate
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomeSa._
+import JsonFormatters._
 
 case class StudentLoan(
                         planType: Option[String],
@@ -89,7 +91,7 @@ case class PayeEntry(
                       totalTaxToDate: Option[Double],
                       taxDeductedOrRefunded: Option[Double],
                       employerPayeRef: Option[String],
-                      paymentDate: Option[String],
+                      paymentDate: Option[LocalDate],
                       taxablePay: Option[Double],
                       taxYear: Option[String],
                       monthlyPeriodNumber: Option[String],
@@ -151,7 +153,7 @@ case class SaTaxYearEntry(taxYear: Option[String], income: Option[Double], retur
 
 case class IncomeSaEntry(id: String, incomeSa: IncomeSa)
 
-case class IncomePayeEntry(id: String, incomePaye: IncomePaye)
+case class IncomePayeEntry(id: String, incomePaye: IncomePaye, nino: String)
 
 case class IncomeSa(sa: Option[Seq[SaTaxYearEntry]])
 
@@ -518,7 +520,7 @@ object IncomePaye {
         (JsPath \ "taxDeductedOrRefunded").readNullable[Double](verifying(paymentAmountValidator)) and
         (JsPath \ "employerPayeRef").readNullable[String]
           (maxLength[String](14).keepAnd(pattern(employerPayeRefPattern, "Invalid employer PAYE reference"))) and
-        (JsPath \ "paymentDate").readNullable[String](pattern(paymentDatePattern, "Invalid Payment Date")) and
+        (JsPath \ "paymentDate").readNullable[LocalDate] and
         (JsPath \ "taxablePay").readNullable[Double](verifying(paymentAmountValidator)) and
         (JsPath \ "taxYear").readNullable[String](pattern(payeTaxYearPattern, "Invalid Tax Year")) and
         (JsPath \ "monthlyPeriodNumber").readNullable[String]
@@ -546,7 +548,7 @@ object IncomePaye {
         (JsPath \ "totalTaxToDate").writeNullable[Double] and
         (JsPath \ "taxDeductedOrRefunded").writeNullable[Double] and
         (JsPath \ "employerPayeRef").writeNullable[String] and
-        (JsPath \ "paymentDate").writeNullable[String] and
+        (JsPath \ "paymentDate").writeNullable[LocalDate] and
         (JsPath \ "taxablePay").writeNullable[Double] and
         (JsPath \ "taxYear").writeNullable[String] and
         (JsPath \ "monthlyPeriodNumber").writeNullable[String] and
@@ -573,11 +575,13 @@ object IncomePaye {
   implicit val incomePayeEntryFormat: Format[IncomePayeEntry] = Format(
     (
       (JsPath \ "id").read[String] and
-        (JsPath \ "incomePaye").read[IncomePaye]
+        (JsPath \ "incomePaye").read[IncomePaye] and
+          (JsPath \ "nino").read[String]
       )(IncomePayeEntry.apply _),
     (
       (JsPath \ "id").write[String] and
-        (JsPath \ "incomePaye").write[IncomePaye]
+        (JsPath \ "incomePaye").write[IncomePaye] and
+          (JsPath \ "nino").write[String]
       )(unlift(IncomePayeEntry.unapply))
   )
 }

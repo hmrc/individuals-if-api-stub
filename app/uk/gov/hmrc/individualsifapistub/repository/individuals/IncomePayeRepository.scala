@@ -47,9 +47,9 @@ class IncomePayeRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
 
   def create(idType: String,
              idValue: String,
-             startDate: String,
-             endDate: String,
-             useCase: String,
+             startDate: Option[String],
+             endDate: Option[String],
+             useCase: Option[String],
              request: IncomePaye): Future[IncomePaye] = {
 
     val useCaseMap = Map(
@@ -61,14 +61,14 @@ class IncomePayeRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
     )
 
     val ident = IdType.parse(idType) match {
-      case Nino => Identifier(Some(idValue), None, Some(startDate), Some(endDate), Some(useCase))
-      case Trn => Identifier(None, Some(idValue), Some(startDate), Some(endDate), Some(useCase))
+      case Nino => Identifier(Some(idValue), None, startDate, endDate, useCase)
+      case Trn => Identifier(None, Some(idValue), startDate, endDate, useCase)
     }
 
-    val tag = useCaseMap.getOrElse(useCase, useCase)
-    val id = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$tag"
+    val tag = useCaseMap.getOrElse(useCase.getOrElse(""), useCase.getOrElse(""))
+    val id = s"${ident.nino.getOrElse(ident.trn.get)}-${startDate.getOrElse("")}-${endDate.getOrElse("")}-$tag"
 
-    val incomePayeEntry = IncomePayeEntry(id, request)
+    val incomePayeEntry = IncomePayeEntry(id, request, idValue)
 
     logger.info(s"Insert for cache key: $id - Income paye: ${Json.toJson(incomePayeEntry)}")
 

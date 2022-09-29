@@ -59,9 +59,9 @@ class IncomeController @Inject()(loggingAction: LoggingAction,
 
   def createPaye(idType: String,
                  idValue: String,
-                 startDate: String,
-                 endDate: String,
-                 useCase: String): Action[JsValue] = loggingAction.async(bodyParser.json) { implicit request =>
+                 startDate: Option[String],
+                 endDate: Option[String],
+                 useCase: Option[String]): Action[JsValue] = loggingAction.async(bodyParser.json) { implicit request =>
     withJsonBody[IncomePaye] { createRequest =>
       incomeService.createPaye(idType, idValue, startDate, endDate, useCase, createRequest) map (
         e => Created(Json.toJson(e))
