@@ -29,6 +29,7 @@ import uk.gov.hmrc.individualsifapistub.domain.individuals.{IdType, Identifier, 
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
+import java.util.UUID
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -66,7 +67,7 @@ class IncomePayeRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
     }
 
     val tag = useCaseMap.getOrElse(useCase.getOrElse(""), useCase.getOrElse(""))
-    val id = s"${ident.nino.getOrElse(ident.trn.get)}-${startDate.getOrElse("")}-${endDate.getOrElse("")}-$tag"
+    val id = s"${ident.nino.getOrElse(ident.trn.get)}-${startDate.getOrElse("")}-${endDate.getOrElse("")}-$tag-${UUID.randomUUID()}"
 
     val incomePayeEntry = IncomePayeEntry(id, request, idValue)
 
