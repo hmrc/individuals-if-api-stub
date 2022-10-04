@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.individualsifapistub.util
 
-import org.joda.time.{Interval, LocalDate}
+import org.joda.time.{ Interval, LocalDate }
 
 object Dates {
 

@@ -16,22 +16,25 @@
 
 package uk.gov.hmrc.individualsifapistub.repository.individuals
 
+import org.bson.codecs.configuration.CodecRegistries
+import org.joda.time.Interval
 import org.mongodb.scala.MongoWriteException
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.Indexes.ascending
-import org.mongodb.scala.model.{IndexModel, IndexOptions}
+import org.mongodb.scala.model.{ IndexModel, IndexOptions }
 import play.api.Logger
-import play.api.libs.json.Json
+import play.api.libs.json.{ Format, Json }
 import uk.gov.hmrc.individualsifapistub.domain._
-import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{Nino, Trn}
-import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomePaye.incomePayeEntryFormat
-import uk.gov.hmrc.individualsifapistub.domain.individuals.{IdType, Identifier, IncomePaye, IncomePayeEntry}
+import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{ Nino, Trn }
+import uk.gov.hmrc.individualsifapistub.domain.individuals.{ IdType, Identifier, IncomePaye, IncomePayeEntry, PayeEntry }
+import uk.gov.hmrc.individualsifapistub.util.Dates
 import uk.gov.hmrc.mongo.MongoComponent
-import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
+import uk.gov.hmrc.mongo.play.json.formats.MongoJodaFormats
+import uk.gov.hmrc.mongo.play.json.{ Codecs, PlayMongoRepository }
 
 import java.util.UUID
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import javax.inject.{ Inject, Singleton }
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 class IncomePayeRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
@@ -40,8 +43,10 @@ class IncomePayeRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
     collectionName = "incomePaye",
     domainFormat = incomePayeEntryFormat,
     indexes = Seq(
-      IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
-    )
+      IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true)),
+      IndexModel(ascending("nino"), IndexOptions().background(true))
+    ),
+    extraCodecs = Seq(Codecs.playFormatCodec(MongoJodaFormats.localDateFormat))
   ) {
 
   private val logger: Logger = Logger(getClass)
@@ -67,11 +72,11 @@ class IncomePayeRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
     }
 
     val tag = useCaseMap.getOrElse(useCase.getOrElse(""), useCase.getOrElse(""))
-    val id = s"${ident.nino.getOrElse(ident.trn.get)}-${startDate.getOrElse("")}-${endDate.getOrElse("")}-$tag-${UUID.randomUUID()}"
+    val id = s"${ ident.nino.getOrElse(ident.trn.get) }-${ startDate.getOrElse("") }-${ endDate.getOrElse("") }-$tag-${ UUID.randomUUID() }"
 
     val incomePayeEntry = IncomePayeEntry(id, request, idValue)
 
-    logger.info(s"Insert for cache key: $id - Income paye: ${Json.toJson(incomePayeEntry)}")
+    logger.info(s"Insert for cache key: $id - Income paye: ${ Json.toJson(incomePayeEntry) }")
 
     collection
       .insertOne(incomePayeEntry)
@@ -111,13 +116,50 @@ class IncomePayeRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
     }
 
     val tag = fields.flatMap(value => fieldsMap.get(value)).getOrElse("TEST")
-    val id = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$tag"
+    val id = s"${ ident.nino.getOrElse(ident.trn.get) }-$startDate-$endDate-$tag"
 
     logger.info(s"Fetch income paye for cache key: $id")
 
+    val query = queryPaye(id, idType, idValue, Dates.toInterval(startDate, endDate))
+
+    println(
+      query.toBsonDocument(
+        classOf[IncomePayeEntry],
+        CodecRegistries.fromCodecs(
+          Codecs.playFormatCodec(implicitly[Format[String]]),
+          Codecs.playFormatCodec(incomePayeEntryFormat),
+          Codecs.playFormatCodec(MongoJodaFormats.localDateFormat))
+      ).toJson
+    )
     collection
-      .find(equal("id", id))
-      .headOption()
-      .map(value => value.map(_.incomePaye))
+      .find(query)
+      .toFuture()
+      .map {
+        case Seq() => None
+        case nonEmpty =>
+          val payeEntries = nonEmpty.foldLeft(Seq.empty[PayeEntry]) { case (result, current) =>
+            result ++ current.incomePaye.paye.getOrElse(Seq.empty)
+          }
+          Some(IncomePaye(Some(payeEntries)))
+      }
   }
+
+  private def queryPaye(id: String, idType: String, idValue: String, interval: Interval) =
+    or(
+      idBasedSearch(id),
+      deepSearch(idType, idValue, interval)
+    )
+
+  // legacy search
+  private def idBasedSearch(id: String) = equal("id", id)
+
+  // deep search with nino and paymentDate range
+  private def deepSearch(idType: String, idValue: String, interval: Interval) =
+    and(
+      equal(s"incomePaye.$idType", idValue),
+      elemMatch(
+        "incomePaye.paye",
+        gte("paymentDate", interval.getStart.toLocalDate)
+      )
+    )
 }

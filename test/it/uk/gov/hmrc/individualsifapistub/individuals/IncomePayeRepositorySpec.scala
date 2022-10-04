@@ -34,7 +34,7 @@ class IncomePayeRepositorySpec
   val nino = "XH123456A"
   val trn = "12345678"
   val startDate = "2020-01-01"
-  val endDate = "2020-21-31"
+  val endDate = "2020-12-31"
   val useCase = "TEST"
   val fields = "some(values)"
 
@@ -60,11 +60,6 @@ class IncomePayeRepositorySpec
     "create a paye record" in {
       val result = await(repository.create("nino", nino, Some(startDate), Some(endDate), Some(useCase), request))
       result shouldBe request
-    }
-
-    "fail to create duplicate" in {
-      await(repository.create("nino", nino, Some(startDate), Some(endDate), Some(useCase), request))
-      intercept[Exception](await(repository.create("nino", nino, Some(startDate), Some(endDate), Some(useCase), request)))
     }
   }
 
