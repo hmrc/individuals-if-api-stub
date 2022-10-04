@@ -164,11 +164,11 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
 
       "Successfully create a PAYE record and return the PAYE as response" in new Setup {
 
-        when(incomeService.createPaye(idType, idValue, startDate, endDate, useCase, incomePayeResponse)).thenReturn(
+        when(incomeService.createPaye(idType, idValue, Some(startDate), Some(endDate), Some(useCase), incomePayeResponse)).thenReturn(
           Future.successful(incomePayeResponse)
         )
 
-        val result = await(underTest.createPaye(idType, idValue, startDate, endDate, useCase)(
+        val result = await(underTest.createPaye(idType, idValue, Some(startDate), Some(endDate), Some(useCase))(
           fakeRequest.withBody(Json.toJson(incomePayeResponse)))
         )
 
@@ -180,12 +180,12 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
 
       "Fails to create PayeIncome when a request is not provided" in new Setup {
 
-        when(incomeService.createPaye(idType, idValue, startDate, endDate, useCase, incomePayeResponse)).thenReturn(
+        when(incomeService.createPaye(idType, idValue, Some(startDate), Some(endDate), Some(useCase), incomePayeResponse)).thenReturn(
           Future.successful(incomePayeResponse)
         )
 
         assertThrows[Exception] {
-          await(underTest.createPaye(idType, idValue, startDate, endDate, useCase)(
+          await(underTest.createPaye(idType, idValue, Some(startDate), Some(endDate), Some(useCase))(
             fakeRequest.withBody(Json.toJson("")))
           )
         }

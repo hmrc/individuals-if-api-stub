@@ -16,6 +16,7 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.domain.individuals.income
 
+import org.joda.time.LocalDate
 import play.api.libs.json.Json
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomePaye._
 import uk.gov.hmrc.individualsifapistub.domain.individuals._
@@ -30,7 +31,7 @@ class PayeEntrySpec extends UnitSpec {
     Some(3095.89),
     Some(159228.49),
     Some("345/34678"),
-    Some("2006-02-27"),
+    Some(LocalDate.parse("2020-02-27")),
     Some(16533.95),
     Some("18-19"),
     Some("3"),
@@ -55,7 +56,7 @@ class PayeEntrySpec extends UnitSpec {
     Some(3095.89),
     Some(159228.49),
     Some("TEST"),
-    Some("TEST"),
+    Some(LocalDate.parse("2020-02-27")),
     Some(16533.95),
     Some("TEST"),
     Some("TEST"),
@@ -84,7 +85,7 @@ class PayeEntrySpec extends UnitSpec {
           |  "totalTaxToDate": 3095.89,
           |  "taxDeductedOrRefunded": 159228.49,
           |  "employerPayeRef": "345/34678",
-          |  "paymentDate": "2006-02-27",
+          |  "paymentDate": "2020-02-27",
           |  "taxablePay": 16533.95,
           |  "taxYear": "18-19",
           |  "monthlyPeriodNumber": "3",

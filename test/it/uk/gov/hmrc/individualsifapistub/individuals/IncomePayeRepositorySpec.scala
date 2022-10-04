@@ -34,7 +34,7 @@ class IncomePayeRepositorySpec
   val nino = "XH123456A"
   val trn = "12345678"
   val startDate = "2020-01-01"
-  val endDate = "2020-21-31"
+  val endDate = "2020-12-31"
   val useCase = "TEST"
   val fields = "some(values)"
 
@@ -58,20 +58,15 @@ class IncomePayeRepositorySpec
   "create when type is nino" should {
 
     "create a paye record" in {
-      val result = await(repository.create("nino", nino, startDate, endDate, useCase, request))
+      val result = await(repository.create("nino", nino, Some(startDate), Some(endDate), Some(useCase), request))
       result shouldBe request
-    }
-
-    "fail to create duplicate" in {
-      await(repository.create("nino", nino, startDate, endDate, useCase, request))
-      intercept[Exception](await(repository.create("nino", nino, startDate, endDate, useCase, request)))
     }
   }
 
   "create when type is trn" should {
 
     "create a paye" in {
-      val result = await(repository.create("trn", trn, startDate, endDate, useCase, request))
+      val result = await(repository.create("trn", trn, Some(startDate), Some(endDate), Some(useCase), request))
       result shouldBe request
     }
 
@@ -84,7 +79,7 @@ class IncomePayeRepositorySpec
     }
 
     "return the paye response" in {
-      await(repository.create("nino", nino, startDate, endDate, useCase, request))
+      await(repository.create("nino", nino, Some(startDate), Some(endDate), Some(useCase), request))
       val result = await(repository.findByTypeAndId("nino", nino, startDate, endDate, Some(fields)))
       result shouldBe Some(request)
     }
@@ -97,7 +92,7 @@ class IncomePayeRepositorySpec
     }
 
     "return the paye response" in {
-      await(repository.create("trn", trn, startDate, endDate, useCase, request))
+      await(repository.create("trn", trn, Some(startDate), Some(endDate), Some(useCase), request))
       val result = await(repository.findByTypeAndId("trn", trn, startDate, endDate, Some(fields)))
       result shouldBe Some(request)
     }

@@ -134,11 +134,11 @@ class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePaye
 
         "Return the created PAYE when created" in new Setup {
 
-          when(mockPayeRepository.create(idType, idValue, startDate, endDate, useCase, incomePayeResponse)).thenReturn(
+          when(mockPayeRepository.create(idType, idValue, Some(startDate), Some(endDate), Some(useCase), incomePayeResponse)).thenReturn(
             Future.successful(incomePayeResponse)
           )
 
-          val response = await(underTest.createPaye(idType, idValue, startDate, endDate, useCase, incomePayeResponse))
+          val response = await(underTest.createPaye(idType, idValue, Some(startDate), Some(endDate), Some(useCase), incomePayeResponse))
 
           response shouldBe incomePayeResponse
 
@@ -146,12 +146,12 @@ class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePaye
 
         "Return failure when unable to create PAYE object" in new Setup {
 
-          when(mockPayeRepository.create(idType, idValue, startDate, endDate, useCase, incomePayeResponse)).thenReturn(
+          when(mockPayeRepository.create(idType, idValue, Some(startDate), Some(endDate), Some(useCase), incomePayeResponse)).thenReturn(
             Future.failed(new Exception)
           )
 
           assertThrows[Exception] {
-            await(underTest.createPaye(idType, idValue, startDate, endDate, useCase, incomePayeResponse))
+            await(underTest.createPaye(idType, idValue, Some(startDate), Some(endDate), Some(useCase), incomePayeResponse))
           }
 
         }
