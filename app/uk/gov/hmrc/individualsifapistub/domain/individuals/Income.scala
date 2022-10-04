@@ -153,7 +153,7 @@ case class SaTaxYearEntry(taxYear: Option[String], income: Option[Double], retur
 
 case class IncomeSaEntry(id: String, incomeSa: IncomeSa)
 
-case class IncomePayeEntry(id: String, incomePaye: IncomePaye, nino: String)
+case class IncomePayeEntry(id: String, incomePaye: IncomePaye, idValue: String)
 
 case class IncomeSa(sa: Option[Seq[SaTaxYearEntry]])
 
@@ -573,12 +573,12 @@ object IncomePaye {
     (
       (JsPath \ "id").read[String] and
         (JsPath \ "incomePaye").read[IncomePaye] and
-          (JsPath \ "nino").read[String]
+          (JsPath \ "idValue").read[String]
       )(IncomePayeEntry.apply _),
     (
       (JsPath \ "id").write[String] and
         (JsPath \ "incomePaye").write[IncomePaye] and
-          (JsPath \ "nino").write[String]
+          (JsPath \ "idValue").write[String]
       )(unlift(IncomePayeEntry.unapply))
   )
 }

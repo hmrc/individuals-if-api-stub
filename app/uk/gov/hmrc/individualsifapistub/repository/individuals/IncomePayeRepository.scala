@@ -16,17 +16,16 @@
 
 package uk.gov.hmrc.individualsifapistub.repository.individuals
 
-import org.bson.codecs.configuration.CodecRegistries
 import org.joda.time.Interval
 import org.mongodb.scala.MongoWriteException
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.Indexes.ascending
 import org.mongodb.scala.model.{ IndexModel, IndexOptions }
 import play.api.Logger
-import play.api.libs.json.{ Format, Json }
+import play.api.libs.json._
 import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{ Nino, Trn }
-import uk.gov.hmrc.individualsifapistub.domain.individuals.{ IdType, Identifier, IncomePaye, IncomePayeEntry, PayeEntry }
+import uk.gov.hmrc.individualsifapistub.domain.individuals.{ IdType, Identifier, IncomePaye, IncomePayeEntry }
 import uk.gov.hmrc.individualsifapistub.util.Dates
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.formats.MongoJodaFormats
@@ -44,7 +43,7 @@ class IncomePayeRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
     domainFormat = incomePayeEntryFormat,
     indexes = Seq(
       IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true)),
-      IndexModel(ascending("nino"), IndexOptions().background(true))
+      IndexModel(ascending("idValue"), IndexOptions().background(true))
     ),
     extraCodecs = Seq(Codecs.playFormatCodec(MongoJodaFormats.localDateFormat))
   ) {
@@ -120,46 +119,40 @@ class IncomePayeRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
 
     logger.info(s"Fetch income paye for cache key: $id")
 
-    val query = queryPaye(id, idType, idValue, Dates.toInterval(startDate, endDate))
-
-    println(
-      query.toBsonDocument(
-        classOf[IncomePayeEntry],
-        CodecRegistries.fromCodecs(
-          Codecs.playFormatCodec(implicitly[Format[String]]),
-          Codecs.playFormatCodec(incomePayeEntryFormat),
-          Codecs.playFormatCodec(MongoJodaFormats.localDateFormat))
-      ).toJson
-    )
+    val interval = Dates.toInterval(startDate, Option(endDate).filter(_.nonEmpty))
+    val query = queryPaye(id, idValue, interval)
     collection
       .find(query)
       .toFuture()
       .map {
         case Seq() => None
         case nonEmpty =>
-          val payeEntries = nonEmpty.foldLeft(Seq.empty[PayeEntry]) { case (result, current) =>
-            result ++ current.incomePaye.paye.getOrElse(Seq.empty)
-          }
+          val payeEntries = nonEmpty
+            .flatMap(_.incomePaye.paye.getOrElse(Seq.empty))
+            .filter(payeEntry => payeEntry.paymentDate.forall(pd => interval.contains(pd.toDateTimeAtCurrentTime)))
           Some(IncomePaye(Some(payeEntries)))
       }
   }
 
-  private def queryPaye(id: String, idType: String, idValue: String, interval: Interval) =
+  private def queryPaye(id: String, idValue: String, interval: Interval) =
     or(
       idBasedSearch(id),
-      deepSearch(idType, idValue, interval)
+      deepSearch(idValue, interval)
     )
 
   // legacy search
-  private def idBasedSearch(id: String) = equal("id", id)
+  private def idBasedSearch(id: String) = regex("id", s"^$id/")
 
   // deep search with nino and paymentDate range
-  private def deepSearch(idType: String, idValue: String, interval: Interval) =
+  private def deepSearch(idValue: String, interval: Interval) =
     and(
-      equal(s"incomePaye.$idType", idValue),
+      equal(s"idValue", idValue),
       elemMatch(
         "incomePaye.paye",
-        gte("paymentDate", interval.getStart.toLocalDate)
+        and(
+          gte("paymentDate", interval.getStart.toLocalDate),
+          lte("paymentDate", interval.getEnd.toLocalDate)
+        )
       )
     )
 }

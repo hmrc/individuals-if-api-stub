@@ -27,4 +27,7 @@ object Dates {
 
   def toInterval(from: LocalDate, to: LocalDate): Interval =
     new Interval(from.toDate.getTime, to.toDateTimeAtStartOfDay.plusMillis(1).toDate.getTime)
+
+  def toInterval(from: String, to: Option[String]): Interval =
+    toInterval(asDate(from), to.map(asDate).getOrElse(LocalDate.now))
 }

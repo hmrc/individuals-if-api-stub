@@ -17,8 +17,6 @@
 package uk.gov.hmrc.individualsifapistub.repository
 
 import org.joda.time.LocalDate
-import play.api.libs.functional.syntax.unlift
-import play.api.libs.json.{ Format, Json }
 import uk.gov.hmrc.individualsifapistub.domain.individuals._
 import uk.gov.hmrc.mongo.play.json.formats.MongoJodaFormats
 import play.api.libs.json._
@@ -96,12 +94,12 @@ package object individuals {
     (
       (JsPath \ "id").read[String] and
         (JsPath \ "incomePaye").read[IncomePaye] and
-        (JsPath \ "nino").read[String]
+        (JsPath \ "idValue").read[String]
       )(IncomePayeEntry.apply _),
     (
       (JsPath \ "id").write[String] and
         (JsPath \ "incomePaye").write[IncomePaye] and
-        (JsPath \ "nino").write[String]
+        (JsPath \ "idValue").write[String]
       )(unlift(IncomePayeEntry.unapply))
   )
 
