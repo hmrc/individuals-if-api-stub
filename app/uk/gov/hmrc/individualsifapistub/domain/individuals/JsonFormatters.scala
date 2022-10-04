@@ -20,11 +20,11 @@ import org.joda.time.DateTime
 import org.joda.time.LocalDate
 import play.api.libs.json.JodaWrites._
 import play.api.libs.json._
-import uk.gov.hmrc.individualsifapistub.domain.{ErrorInvalidRequest, ErrorResponse, TestAddress, TestIndividual, TestOrganisation, TestOrganisationDetails}
+import uk.gov.hmrc.individualsifapistub.domain.{ ErrorInvalidRequest, ErrorResponse, TestAddress, TestIndividual, TestOrganisation, TestOrganisationDetails }
 import uk.gov.hmrc.individualsifapistub.domain.individuals.DetailsResponse.contactDetailsFormat
 import uk.gov.hmrc.individualsifapistub.domain.individuals.DetailsResponse.residencesFormat
 
-import scala.util.{Failure, Try}
+import scala.util.{ Failure, Try }
 
 object JsonFormatters {
   implicit val dateFormatDefault = new Format[DateTime] {

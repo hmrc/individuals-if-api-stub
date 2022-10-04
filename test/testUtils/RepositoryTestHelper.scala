@@ -18,8 +18,8 @@ package testUtils
 
 import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
-import uk.gov.hmrc.individualsifapistub.repository.individuals.{DetailsRepository, EmploymentRepository, IncomePayeRepository, IncomeSaRepository, TaxCreditsRepository}
-import uk.gov.hmrc.individualsifapistub.repository.organisations.{CorporationTaxCompanyDetailsRepository, CorporationTaxReturnDetailsRepository, NumberOfEmployeesRepository, SelfAssessmentReturnDetailRepository, SelfAssessmentTaxPayerRepository}
+import uk.gov.hmrc.individualsifapistub.repository.individuals.{ DetailsRepository, EmploymentRepository, IncomePayeRepository, IncomeSaRepository, TaxCreditsRepository }
+import uk.gov.hmrc.individualsifapistub.repository.organisations.{ CorporationTaxCompanyDetailsRepository, CorporationTaxReturnDetailsRepository, NumberOfEmployeesRepository, SelfAssessmentReturnDetailRepository, SelfAssessmentTaxPayerRepository }
 import uk.gov.hmrc.mongo.test.MongoSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
