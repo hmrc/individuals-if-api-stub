@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.individualsifapistub.repository.individuals
 
-import org.joda.time.Interval
+import org.joda.time.{ Interval, LocalTime }
 import org.mongodb.scala.MongoWriteException
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.Indexes.ascending
@@ -129,7 +129,7 @@ class IncomePayeRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
         case nonEmpty =>
           val payeEntries = nonEmpty
             .flatMap(_.incomePaye.paye.getOrElse(Seq.empty))
-            .filter(payeEntry => payeEntry.paymentDate.forall(pd => interval.contains(pd.toDateTimeAtCurrentTime)))
+            .filter(payeEntry => payeEntry.paymentDate.forall(pd => interval.contains(pd.toDateTime(LocalTime.MIDNIGHT))))
           Some(IncomePaye(Some(payeEntries)))
       }
   }
