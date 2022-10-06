@@ -169,17 +169,17 @@ uses:
         startDate:
           description: !include docs/individuals/create-paye-data-date-from.md
           type: string
-          required: true
+          required: false
           example: 2019-01-01
         endDate:
           description: !include docs/individuals/create-paye-data-date-to.md
           type: string
-          required: true
+          required: false
           example: 2020-01-01
         useCase:
           description: !include docs/individuals/use-case-examples/income-paye-description.md
           type: string
-          required: true
+          required: false
           example: LAA-C1
       body:
         application/json:
