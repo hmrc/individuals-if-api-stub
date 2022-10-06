@@ -67,7 +67,7 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
   val startYear = "2019"
   val endYear = "2020"
   val useCase = "TEST"
-  val fields = "some(values)"
+  val fields = "paye(employerPayeRef,monthlyPeriodNumber,paymentDate,taxablePay,weeklyPeriodNumber)"
 
 
   val innerSaValue = Seq(createValidSaTaxYearEntry(), createValidSaTaxYearEntry())
@@ -75,6 +75,9 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
 
   val innerPayeValue = Seq(createValidPayeEntry(), createValidPayeEntry())
   val incomePayeResponse = IncomePaye(Some(innerPayeValue))
+
+  val innerPayeValueWithFieldFiltered = Seq(createValidPayeHOV2FieldsEntry(), createValidPayeHOV2FieldsEntry())
+  val incomePayeWithFieldFilteredResponse = IncomePaye(Some(innerPayeValueWithFieldFiltered))
 
   "Sa" should {
 
@@ -195,17 +198,17 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
 
     "Retrieve Paye" should {
 
-      "Return aye when successfully retrieved from service" in new Setup {
+      "Return Paye when successfully retrieved from service" in new Setup {
 
         when(incomeService.getPaye(idType, idValue, startDate, endDate, Some(fields))).thenReturn(
-          Future.successful(Some(incomePayeResponse))
+          Future.successful(Some(incomePayeWithFieldFilteredResponse))
         )
 
         val result = await(underTest.retrievePaye(idType, idValue, startDate, endDate, Some(fields))(fakeRequest))
 
         status(result) shouldBe OK
 
-        jsonBodyOf(result) shouldBe Json.toJson(Some(incomePayeResponse))
+        jsonBodyOf(result) shouldBe Json.toJson(Some(incomePayeWithFieldFilteredResponse))
 
       }
 
