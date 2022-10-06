@@ -47,6 +47,33 @@ trait IncomePayeHelpers {
     )
   }
 
+  def createValidPayeHOV2FieldsEntry() = {
+    PayeEntry(
+      None,
+      None,
+      None,
+      None,
+      None,
+      Some("345/34678"),
+      Some(LocalDate.parse("2020-02-27")),
+      Some(16533.95),
+      None,
+      Some("3"),
+      Some("2"),
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None
+    )
+  }
+
   private def createValidEmployeeNics() = {
     EmployeeNics(
       Some(15797.45),

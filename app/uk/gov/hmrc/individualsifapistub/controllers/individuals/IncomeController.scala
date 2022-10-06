@@ -24,6 +24,7 @@ import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomePaye._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomeSa._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.{IncomePaye, IncomeSa}
 import uk.gov.hmrc.individualsifapistub.services.individuals.IncomeService
+import uk.gov.hmrc.individualsifapistub.util.FieldFilter
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -74,10 +75,17 @@ class IncomeController @Inject()(loggingAction: LoggingAction,
                    startDate: String,
                    endDate: String,
                    fields: Option[String]): Action[AnyContent] = loggingAction.async { implicit request =>
-    incomeService.getPaye(idType, idValue, startDate, endDate, fields) map {
-      case Some(value) => Ok(Json.toJson(value))
-      case None => Ok(Json.toJson(IncomePaye(Some(Seq.empty))))
-    } recover recovery
+    incomeService.getPaye(idType, idValue, startDate, endDate, fields)
+      .map {
+        case Some(value) => value
+        case None => IncomePaye(Some(Seq.empty))
+      }
+      .map { response =>
+        val responseJson = Json.toJson(response)
+        val filteredJson = fields.map(FieldFilter.filterFields(responseJson, _)).getOrElse(responseJson)
+        Ok(filteredJson)
+      }
+      .recover(recovery)
   }
 
 }
