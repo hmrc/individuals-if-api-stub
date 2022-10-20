@@ -19,18 +19,18 @@ package uk.gov.hmrc.individualsifapistub.repository.individuals
 import org.mongodb.scala.MongoWriteException
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.Indexes.ascending
-import org.mongodb.scala.model.{IndexModel, IndexOptions}
+import org.mongodb.scala.model.{ IndexModel, IndexOptions }
 import play.api.Logger
 import play.api.libs.json.Json
 import uk.gov.hmrc.individualsifapistub.domain._
-import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{Nino, Trn}
-import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomeSa.incomeSaEntryFormat
-import uk.gov.hmrc.individualsifapistub.domain.individuals.{IdType, Identifier, IncomeSa, IncomeSaEntry}
+import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{ Nino, Trn }
+import uk.gov.hmrc.individualsifapistub.domain.individuals.{ IdType, Identifier, IncomeSa, IncomeSaEntry, SaTaxYearEntry }
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import java.util.UUID
+import javax.inject.{ Inject, Singleton }
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 class IncomeSaRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
@@ -39,7 +39,8 @@ class IncomeSaRepository @Inject()(mongo: MongoComponent)(implicit val ec: Execu
     collectionName = "incomeSa",
     domainFormat = incomeSaEntryFormat,
     indexes = Seq(
-      IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
+      IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true)),
+      IndexModel(ascending("idValue"), IndexOptions().name("idValue").unique(false).background(true))
     )
   ) {
 
@@ -67,11 +68,11 @@ class IncomeSaRepository @Inject()(mongo: MongoComponent)(implicit val ec: Execu
     }
 
     val tag = useCaseMap.getOrElse(useCase, useCase)
-    val id = s"${ident.nino.getOrElse(ident.trn.get)}-$startYear-$endYear-$tag"
+    val id = s"${ ident.nino.getOrElse(ident.trn.get) }-$startYear-$endYear-$tag-${ UUID.randomUUID() }"
 
-    val incomeSaRecord = IncomeSaEntry(id, request)
+    val incomeSaRecord = IncomeSaEntry(id, request, Some(idValue))
 
-    logger.info(s"Insert for cache key: $id - Income sa: ${Json.toJson(incomeSaRecord)}")
+    logger.info(s"Insert for cache key: $id - Income sa: ${ Json.toJson(incomeSaRecord) }")
 
     collection
       .insertOne(incomeSaRecord)
@@ -114,13 +115,46 @@ class IncomeSaRepository @Inject()(mongo: MongoComponent)(implicit val ec: Execu
     }
 
     val tag = fields.flatMap(value => fieldsMap.get(value)).getOrElse("TEST")
-    val id = s"${ident.nino.getOrElse(ident.trn.get)}-$startYear-$endYear-$tag"
+    val id = s"${ ident.nino.getOrElse(ident.trn.get) }-$startYear-$endYear-$tag"
 
     logger.info(s"Fetch income sa for cache key: $id")
 
     collection
-      .find(equal("id", id))
-      .headOption()
-      .map(value => value.map(_.incomeSa))
+      .find(
+        deepSearch(
+          idValue,
+          Option(startYear).filter(_.nonEmpty).map(_.toInt).getOrElse(1000),
+          Option(endYear).filter(_.nonEmpty).map(_.toInt).getOrElse(3000)
+        )
+      )
+      .map(_.incomeSa.sa.getOrElse(Seq.empty))
+      .foldLeft(Seq.empty[SaTaxYearEntry])(_ ++ _)
+      .toFuture()
+      .flatMap {
+        case entries if entries.nonEmpty =>
+          Future.successful(Some(IncomeSa(Some(entries))))
+        case _ =>
+          // fallback to legacy search
+          collection
+            .find(idBasedSearch(id))
+            .headOption()
+            .map(_.map(_.incomeSa))
+      }
   }
+
+  private def idBasedSearch(id: String) = regex("id", s"^$id")
+
+  // deep search with nino and paymentDate range
+  private def deepSearch(idValue: String, startYear: Int, endYear: Int) =
+    and(
+      equal(s"idValue", idValue),
+      elemMatch(
+        "incomeSaResponse.sa",
+        and(
+          gte("taxYear", startYear),
+          lte("taxYear", endYear)
+        )
+      )
+    )
+
 }
