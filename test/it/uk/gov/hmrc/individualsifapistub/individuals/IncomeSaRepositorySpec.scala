@@ -27,7 +27,8 @@ class IncomeSaRepositorySpec
     with IncomeSaHelpers {
 
   override lazy val fakeApplication = buildFakeApplication(
-    Configuration("mongodb.uri" -> mongoUri))
+    Configuration("mongodb.uri" -> mongoUri)
+  )
 
   val repository = fakeApplication.injector.instanceOf[IncomeSaRepository]
 
@@ -60,11 +61,6 @@ class IncomeSaRepositorySpec
     "create a self assessment" in {
       val result = await(repository.create("nino", nino, startYear, endYear, useCase, request))
       result shouldBe request
-    }
-
-    "fail to create duplicate" in {
-      await(repository.create("nino", nino, startYear, endYear, useCase, request))
-      intercept[Exception](await(repository.create("nino", nino, startYear, endYear, useCase, request)))
     }
 
   }

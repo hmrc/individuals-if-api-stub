@@ -23,6 +23,7 @@ import play.api.libs.json._
 import play.api.libs.functional.syntax._
 
 package object individuals {
+
   import MongoJodaFormats.Implicits._
 
   implicit val employeeNicsFormat = Json.format[EmployeeNics]
@@ -52,7 +53,7 @@ package object individuals {
         (JsPath \ "employeeNICs").readNullable[EmployeeNics] and
         (JsPath \ "employeePensionContribs").readNullable[EmployeePensionContribs] and
         (JsPath \ "benefits").readNullable[Benefits] and
-        (JsPath \ "statutoryPayYTD") .readNullable[StatutoryPayYTD] and
+        (JsPath \ "statutoryPayYTD").readNullable[StatutoryPayYTD] and
         (JsPath \ "studentLoan").readNullable[StudentLoan] and
         (JsPath \ "postGradLoan").readNullable[PostGradLoan] and
         (JsPath \ "grossEarningsForNICs").readNullable[GrossEarningsForNics] and
@@ -95,12 +96,50 @@ package object individuals {
       (JsPath \ "id").read[String] and
         (JsPath \ "incomePaye").read[IncomePaye] and
         (JsPath \ "idValue").read[String]
-      )(IncomePayeEntry.apply _),
+      ) (IncomePayeEntry.apply _),
     (
       (JsPath \ "id").write[String] and
         (JsPath \ "incomePaye").write[IncomePaye] and
         (JsPath \ "idValue").write[String]
-      )(unlift(IncomePayeEntry.unapply))
+      ) (unlift(IncomePayeEntry.unapply))
   )
 
+  // SA
+  implicit val addressFormat: Format[Address] = Json.format
+  implicit val incomeFormat: Format[SaIncome] = Json.format
+  implicit val deductsFormat: Format[Deducts] = Json.format
+
+  implicit val saReturnTypeFormat: Format[SaReturnType] = Json.format
+
+  implicit val saTaxYearEntryFormat: Format[SaTaxYearEntry] = Format(
+    (
+      ((JsPath \ "taxYear").readNullable[Int].map(_.map(_.toString)) or (JsPath \ "taxYear").readNullable[String]) and
+        (JsPath \ "income").readNullable[Double] and
+        (JsPath \ "returnList").readNullable[Seq[SaReturnType]]
+      ) (SaTaxYearEntry.apply _),
+    (
+      (JsPath \ "taxYear").writeNullable[Int].contramap[Option[String]](_.map(_.toInt)) and
+        (JsPath \ "income").writeNullable[Double] and
+        (JsPath \ "returnList").writeNullable[Seq[SaReturnType]]
+      ) (unlift(SaTaxYearEntry.unapply))
+
+  )
+
+  implicit val incomeSaFormat: Format[IncomeSa] = Format(
+    (JsPath \ "sa").readNullable[Seq[SaTaxYearEntry]].map(IncomeSa.apply),
+    (JsPath \ "sa").writeNullable[Seq[SaTaxYearEntry]].contramap(_.sa)
+  )
+
+  implicit val incomeSaEntryFormat: Format[IncomeSaEntry] = Format(
+    (
+      (JsPath \ "id").read[String] and
+        (JsPath \ "incomeSaResponse").read[IncomeSa] and
+        (JsPath \ "idValue").readNullable[String]
+      ) (IncomeSaEntry.apply _),
+    (
+      (JsPath \ "id").write[String] and
+        (JsPath \ "incomeSaResponse").write[IncomeSa] and
+        (JsPath \ "idValue").writeNullable[String]
+      ) (unlift(IncomeSaEntry.unapply))
+  )
 }
