@@ -16,8 +16,8 @@
 
 package uk.gov.hmrc.individualsifapistub.controllers.organisations
 
-import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
+import play.api.libs.json.{ JsValue, Json }
+import play.api.mvc.{ Action, AnyContent, ControllerComponents, PlayBodyParsers }
 import uk.gov.hmrc.individualsifapistub.config.LoggingAction
 import uk.gov.hmrc.individualsifapistub.controllers.CommonController
 import uk.gov.hmrc.individualsifapistub.domain.organisations.CreateSelfAssessmentReturnDetailRequest
@@ -47,14 +47,12 @@ class SelfAssessmentReturnDetailController @Inject()(
   }
 
   def retrieve(utr: String, fields: Option[String] = None): Action[AnyContent] = loggingAction.async { implicit request =>
-    selfAssessmentReturnDetailService.get(utr).map {
-      case Some(response) =>
-        val responseJson = Json.toJson(response)
-        val filteredJson = fields.map(FieldFilter.filterFields(responseJson, _)).getOrElse(responseJson)
-        Ok(filteredJson)
-      case None =>
-        NotFound
-    } recover recovery
+    selfAssessmentReturnDetailService.get(utr)
+      .map {
+        case Some(response) => Ok(FieldFilter.toFilteredJson(response, fields))
+        case None => NotFound
+      }
+      .recover(recovery)
   }
 
 }

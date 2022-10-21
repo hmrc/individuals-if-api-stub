@@ -17,7 +17,7 @@
 package uk.gov.hmrc.individualsifapistub.util
 
 import play.api.libs.json.Json.JsValueWrapper
-import play.api.libs.json.{JsArray, JsDefined, JsUndefined, JsValue, Json}
+import play.api.libs.json.{ JsArray, JsDefined, JsUndefined, JsValue, Json, Writes }
 
 import scala.annotation.tailrec
 
@@ -25,6 +25,11 @@ object FieldFilter {
   def filterFields(json: JsValue, fieldsStr: String): JsValue = {
     val fields = extractFields(fieldsStr, "", List.empty)
     filterFieldsInternal(fields, json)
+  }
+
+  def toFilteredJson[A : Writes](a: A, fields: Option[String]): JsValue = {
+    val json = Json.toJson(a)
+    fields.map(filterFields(json, _)).getOrElse(json)
   }
 
   private sealed trait Field

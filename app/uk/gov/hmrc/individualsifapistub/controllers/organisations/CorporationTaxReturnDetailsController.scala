@@ -16,12 +16,12 @@
 
 package uk.gov.hmrc.individualsifapistub.controllers.organisations
 
-import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
+import play.api.libs.json.{ JsValue, Json }
+import play.api.mvc.{ Action, AnyContent, ControllerComponents, PlayBodyParsers }
 import uk.gov.hmrc.individualsifapistub.config.LoggingAction
 import uk.gov.hmrc.individualsifapistub.controllers.CommonController
 import uk.gov.hmrc.individualsifapistub.domain.organisations.CorporationTaxReturnDetails._
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{CorporationTaxReturnDetailsResponse, CreateCorporationTaxReturnDetailsRequest}
+import uk.gov.hmrc.individualsifapistub.domain.organisations.{ CorporationTaxReturnDetailsResponse, CreateCorporationTaxReturnDetailsRequest }
 import uk.gov.hmrc.individualsifapistub.services.organisations.CorporationTaxReturnDetailsService
 import uk.gov.hmrc.individualsifapistub.util.FieldFilter
 
@@ -48,13 +48,12 @@ class CorporationTaxReturnDetailsController @Inject()(
     }
 
   def retrieve(utr: String, fields: Option[String] = None): Action[AnyContent] = loggingAction.async { implicit request =>
-    corporationTaxReturnDetailsService.get(utr).map {
-      case Some(response) => response
-      case None => emptyResponse
-    }.map { response =>
-      val responseJson = Json.toJson(response)
-      val filteredJson = fields.map(FieldFilter.filterFields(responseJson, _)).getOrElse(responseJson)
-      Ok(filteredJson)
-    } recover recovery
+    corporationTaxReturnDetailsService.get(utr)
+      .map {
+        case Some(response) => response
+        case None => emptyResponse
+      }
+      .map(response => Ok(FieldFilter.toFilteredJson(response, fields)))
+      .recover(recovery)
   }
 }

@@ -16,11 +16,11 @@
 
 package uk.gov.hmrc.individualsifapistub.controllers.organisations
 
-import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Action, ControllerComponents, PlayBodyParsers}
+import play.api.libs.json.{ JsValue, Json }
+import play.api.mvc.{ Action, ControllerComponents, PlayBodyParsers }
 import uk.gov.hmrc.individualsifapistub.config.LoggingAction
 import uk.gov.hmrc.individualsifapistub.controllers.CommonController
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{NumberOfEmployeesRequest, NumberOfEmployeesResponse}
+import uk.gov.hmrc.individualsifapistub.domain.organisations.{ NumberOfEmployeesRequest, NumberOfEmployeesResponse }
 import uk.gov.hmrc.individualsifapistub.domain.organisations.NumberOfEmployees._
 import uk.gov.hmrc.individualsifapistub.services.organisations.NumberOfEmployeesService
 import uk.gov.hmrc.individualsifapistub.util.FieldFilter
@@ -49,14 +49,13 @@ class NumberOfEmployeesController @Inject()(
 
   def retrieve(fields: Option[String] = None): Action[JsValue] = loggingAction.async(bodyParsers.json) { implicit request =>
     withJsonBody[NumberOfEmployeesRequest] { body =>
-      numberOfEmployeesService.get(body).map {
-        case Some(response) => response
-        case None => emptyResponse
-      }.map { response =>
-        val responseJson = Json.toJson(response)
-        val filteredJson = fields.map(FieldFilter.filterFields(responseJson, _)).getOrElse(responseJson)
-        Ok(filteredJson)
-      } recover recovery
+      numberOfEmployeesService.get(body)
+        .map {
+          case Some(response) => response
+          case None => emptyResponse
+        }
+        .map(response => Ok(FieldFilter.toFilteredJson(response, fields)))
+        .recover(recovery)
     }
   }
 
