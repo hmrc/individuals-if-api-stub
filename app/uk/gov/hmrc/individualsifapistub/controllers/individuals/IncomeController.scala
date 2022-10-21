@@ -16,13 +16,13 @@
 
 package uk.gov.hmrc.individualsifapistub.controllers.individuals
 
-import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
+import play.api.libs.json.{ JsValue, Json }
+import play.api.mvc.{ Action, AnyContent, ControllerComponents, PlayBodyParsers }
 import uk.gov.hmrc.individualsifapistub.config.LoggingAction
 import uk.gov.hmrc.individualsifapistub.controllers.CommonController
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomePaye._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomeSa._
-import uk.gov.hmrc.individualsifapistub.domain.individuals.{IncomePaye, IncomeSa}
+import uk.gov.hmrc.individualsifapistub.domain.individuals.{ IncomePaye, IncomeSa }
 import uk.gov.hmrc.individualsifapistub.services.individuals.IncomeService
 import uk.gov.hmrc.individualsifapistub.util.FieldFilter
 
@@ -52,10 +52,13 @@ class IncomeController @Inject()(loggingAction: LoggingAction,
                  startYear: String,
                  endYear: String,
                  fields: Option[String]): Action[AnyContent] = loggingAction.async { implicit request =>
-    incomeService.getSa(idType, idValue, startYear, endYear, fields) map {
-      case Some(value) => Ok(Json.toJson(value))
-      case None => Ok(Json.toJson(IncomeSa(Some(Seq.empty))))
-    } recover recovery
+    incomeService.getSa(idType, idValue, startYear, endYear, fields)
+      .map {
+        case Some(value) => value
+        case None => IncomeSa(Some(Seq.empty))
+      }
+      .map(response => Ok(FieldFilter.toFilteredJson(response, fields)))
+      .recover(recovery)
   }
 
   def createPaye(idType: String,
@@ -80,11 +83,7 @@ class IncomeController @Inject()(loggingAction: LoggingAction,
         case Some(value) => value
         case None => IncomePaye(Some(Seq.empty))
       }
-      .map { response =>
-        val responseJson = Json.toJson(response)
-        val filteredJson = fields.map(FieldFilter.filterFields(responseJson, _)).getOrElse(responseJson)
-        Ok(filteredJson)
-      }
+      .map(response => Ok(FieldFilter.toFilteredJson(response, fields)))
       .recover(recovery)
   }
 

@@ -68,6 +68,7 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
   val endYear = "2020"
   val useCase = "TEST"
   val fields = "paye(employerPayeRef,monthlyPeriodNumber,paymentDate,taxablePay,weeklyPeriodNumber)"
+  val saFields = "sa(taxYear,income,returnList(utr,caseStartDate,receivedDate,businessDescription,telephoneNumber,busStartDate,busEndDate,totalTaxPaid,totalNIC,turnover,otherBusIncome,tradingIncomeAllowance,address(line1,line2,line3,line4,postcode),income(selfAssessment,allEmployments,ukInterest,foreignDivs,ukDivsAndInterest,partnerships,pensions,selfEmployment,trusts,ukProperty,foreign,lifePolicies,shares,other),deducts(totalBusExpenses,totalDisallowBusExp)))"
 
 
   val innerSaValue = Seq(createValidSaTaxYearEntry(), createValidSaTaxYearEntry())
@@ -134,12 +135,12 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
 
       "Return data when successfully retrieved from service" in new Setup {
 
-        when(incomeService.getSa(idType, idValue, startYear, endYear, Some(fields))).thenReturn(
+        when(incomeService.getSa(idType, idValue, startYear, endYear, Some(saFields))).thenReturn(
           Future.successful(Some(incomeSaResponse))
         )
 
         val result = await{
-          underTest.retrieveSa(idType, idValue, startYear, endYear, Some(fields))(fakeRequest)
+          underTest.retrieveSa(idType, idValue, startYear, endYear, Some(saFields))(fakeRequest)
         }
 
         status(result) shouldBe OK
