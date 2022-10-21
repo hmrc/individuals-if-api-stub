@@ -59,7 +59,7 @@ class IncomeSaRepositorySpec
   "create when type is nino" should {
 
     "create a self assessment" in {
-      val result = await(repository.create("nino", nino, startYear, endYear, useCase, request))
+      val result = await(repository.create("nino", nino, Some(startYear), Some(endYear), Some(useCase), request))
       result shouldBe request
     }
 
@@ -68,7 +68,7 @@ class IncomeSaRepositorySpec
   "create when type is trn" should {
 
     "create a self assessment" in {
-      val result = await(repository.create("trn", trn, startYear, endYear, useCase, request))
+      val result = await(repository.create("trn", trn, Some(startYear), Some(endYear), Some(useCase), request))
       result shouldBe request
     }
 
@@ -80,7 +80,7 @@ class IncomeSaRepositorySpec
     }
 
     "return the self assessment" in {
-      await(repository.create("nino", nino, startYear, endYear, useCase, request))
+      await(repository.create("nino", nino, Some(startYear), Some(endYear), Some(useCase), request))
       val result = await(repository.findByTypeAndId("nino", nino, startYear, endYear, Some(fields)))
       result shouldBe Some(request)
     }
@@ -94,7 +94,7 @@ class IncomeSaRepositorySpec
     }
 
     "return the self assessment" in {
-      await(repository.create("trn", trn, startYear, endYear, useCase, request))
+      await(repository.create("trn", trn, Some(startYear), Some(endYear), Some(useCase), request))
       val result = await(repository.findByTypeAndId("trn", trn, startYear, endYear, Some(fields)))
       result shouldBe Some(request)
     }

@@ -78,11 +78,11 @@ class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePaye
         "Return the created SA when created" in new Setup {
 
 
-          when(mockSelfAssessmentRepository.create(idType, idValue, startYear, endYear, useCase, incomeSaResponse)).thenReturn(
+          when(mockSelfAssessmentRepository.create(idType, idValue, Some(startYear), Some(endYear), Some(useCase), incomeSaResponse)).thenReturn(
             Future.successful(incomeSaResponse)
           )
 
-          val response = await(underTest.createSa(idType, idValue, startYear, endYear, useCase, incomeSaResponse))
+          val response = await(underTest.createSa(idType, idValue, Some(startYear), Some(endYear), Some(useCase), incomeSaResponse))
 
           response shouldBe incomeSaResponse
 
@@ -90,12 +90,12 @@ class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePaye
 
         "Return failure when unable to create SA object" in new Setup {
 
-          when(mockSelfAssessmentRepository.create(idType, idValue, startYear, endYear, useCase, incomeSaResponse)).thenReturn(
+          when(mockSelfAssessmentRepository.create(idType, idValue, Some(startYear), Some(endYear), Some(useCase), incomeSaResponse)).thenReturn(
             Future.failed(new Exception)
           )
 
           assertThrows[Exception] {
-            await(underTest.createSa(idType, idValue, startYear, endYear, useCase, incomeSaResponse))
+            await(underTest.createSa(idType, idValue, Some(startYear), Some(endYear), Some(useCase), incomeSaResponse))
           }
 
         }

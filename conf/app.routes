@@ -1,7 +1,7 @@
 #Individuals Income
 GET     /individuals/income/sa/:idType/:idValue                         uk.gov.hmrc.individualsifapistub.controllers.individuals.IncomeController.retrieveSa(idType, idValue, startYear, endYear, fields: Option[String] ?= None)
 GET     /individuals/income/paye/:idType/:idValue                       uk.gov.hmrc.individualsifapistub.controllers.individuals.IncomeController.retrievePaye(idType, idValue, startDate, endDate, fields: Option[String] ?= None)
-POST    /individuals/income/sa/:idType/:idValue                         uk.gov.hmrc.individualsifapistub.controllers.individuals.IncomeController.createSa(idType, idValue, startYear, endYear, useCase)
+POST    /individuals/income/sa/:idType/:idValue                         uk.gov.hmrc.individualsifapistub.controllers.individuals.IncomeController.createSa(idType, idValue, startYear: Option[String] ?= None, endYear: Option[String] ?= None, useCase: Option[String] ?= None)
 POST    /individuals/income/paye/:idType/:idValue                       uk.gov.hmrc.individualsifapistub.controllers.individuals.IncomeController.createPaye(idType, idValue, startDate: Option[String] ?= None, endDate: Option[String] ?= None, useCase: Option[String] ?= None)
 #Individuals Benefits and Credits
 GET     /individuals/tax-credits/:idType/:idValue                       uk.gov.hmrc.individualsifapistub.controllers.individuals.TaxCreditsController.retrieve(idType, idValue, startDate, endDate, fields: Option[String] ?= None)
