@@ -33,9 +33,9 @@ class IncomeService @Inject()(incomeSaRepository: IncomeSaRepository,
 
   def createSa(idType: String,
                idValue: String,
-               startYear: String,
-               endYear: String,
-               useCase: String,
+               startYear: Option[String],
+               endYear: Option[String],
+               useCase: Option[String],
                createSelfAssessmentRequest: IncomeSa)
               (implicit ec: ExecutionContext,
                hc: HeaderCarrier): Future[IncomeSa] = {

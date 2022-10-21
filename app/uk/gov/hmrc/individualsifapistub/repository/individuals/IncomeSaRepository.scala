@@ -48,9 +48,9 @@ class IncomeSaRepository @Inject()(mongo: MongoComponent)(implicit val ec: Execu
 
   def create(idType: String,
              idValue: String,
-             startYear: String,
-             endYear: String,
-             useCase: String,
+             startYear: Option[String],
+             endYear: Option[String],
+             useCase: Option[String],
              request: IncomeSa): Future[IncomeSa] = {
 
     val useCaseMap = Map(
@@ -63,12 +63,12 @@ class IncomeSaRepository @Inject()(mongo: MongoComponent)(implicit val ec: Execu
     )
 
     val ident = IdType.parse(idType) match {
-      case Nino => Identifier(Some(idValue), None, Some(startYear), Some(endYear), Some(useCase))
-      case Trn => Identifier(None, Some(idValue), Some(startYear), Some(endYear), Some(useCase))
+      case Nino => Identifier(Some(idValue), None, startYear, endYear, useCase)
+      case Trn => Identifier(None, Some(idValue), startYear, endYear, useCase)
     }
 
-    val tag = useCaseMap.getOrElse(useCase, useCase)
-    val id = s"${ ident.nino.getOrElse(ident.trn.get) }-$startYear-$endYear-$tag-${ UUID.randomUUID() }"
+    val tag = useCaseMap.getOrElse(useCase.getOrElse(""), useCase.getOrElse(""))
+    val id = s"${ ident.nino.getOrElse(ident.trn.get) }-${ startYear.getOrElse("") }-${ endYear.getOrElse("") }-$tag-${ UUID.randomUUID() }"
 
     val incomeSaRecord = IncomeSaEntry(id, request, Some(idValue))
 

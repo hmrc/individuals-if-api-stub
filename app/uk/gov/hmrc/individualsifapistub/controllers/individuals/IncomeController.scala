@@ -37,9 +37,9 @@ class IncomeController @Inject()(loggingAction: LoggingAction,
 
   def createSa(idType: String,
                idValue: String,
-               startYear: String,
-               endYear: String,
-               useCase: String): Action[JsValue] = loggingAction.async(bodyParser.json) { implicit request =>
+               startYear: Option[String],
+               endYear: Option[String],
+               useCase: Option[String]): Action[JsValue] = loggingAction.async(bodyParser.json) { implicit request =>
     withJsonBody[IncomeSa] { createRequest =>
       incomeService.createSa(idType, idValue, startYear, endYear, useCase, createRequest) map (
         e => Created(Json.toJson(e))

@@ -85,11 +85,11 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
 
       "Successfully create a SA record and return the SA as response" in new Setup {
 
-        when(incomeService.createSa(idType, idValue, startYear, endYear, useCase, incomeSaResponse)).thenReturn(
+        when(incomeService.createSa(idType, idValue, Some(startYear), Some(endYear), Some(useCase), incomeSaResponse)).thenReturn(
           Future.successful(incomeSaResponse)
         )
 
-        val result = await(underTest.createSa(idType, idValue, startYear, endYear, useCase)(
+        val result = await(underTest.createSa(idType, idValue, Some(startYear), Some(endYear), Some(useCase))(
           fakeRequest.withBody(Json.toJson(incomeSaResponse)))
         )
 
@@ -103,12 +103,12 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
         when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
           thenReturn(Future.failed(new RecordNotFoundException))
 
-        when(incomeService.createSa(idType, idValue, startYear, endYear, useCase, incomeSaResponse)).thenReturn(
+        when(incomeService.createSa(idType, idValue, Some(startYear), Some(endYear), Some(useCase), incomeSaResponse)).thenReturn(
           Future.successful(incomeSaResponse)
         )
 
         assertThrows[Exception] {
-          await(underTest.createSa(idType, idValue, startYear, endYear, useCase)(
+          await(underTest.createSa(idType, idValue, Some(startYear), Some(endYear), Some(useCase))(
             fakeRequest.withBody(Json.toJson("")))
           )
         }
@@ -117,12 +117,12 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
 
       "Fails to create SaIncome when a request is not provided" in new Setup {
 
-        when(incomeService.createSa(idType, idValue, startYear, endYear, useCase, incomeSaResponse)).thenReturn(
+        when(incomeService.createSa(idType, idValue, Some(startYear), Some(endYear), Some(useCase), incomeSaResponse)).thenReturn(
           Future.successful(incomeSaResponse)
         )
 
         assertThrows[Exception] {
-          await(underTest.createSa(idType, idValue, startYear, endYear, useCase)(
+          await(underTest.createSa(idType, idValue, Some(startYear), Some(endYear), Some(useCase))(
             fakeRequest.withBody(Json.toJson("")))
           )
         }
