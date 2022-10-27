@@ -120,7 +120,7 @@ class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
     }
 
     val mappedUseCase = if (filter.isDefined) {
-      useCase.map(unmappedUseCase => unmappedUseCase + filter.map(filtered => s"-$filtered").getOrElse(""))
+      useCase.map(unmappedUseCase => unmappedUseCase + filter.map(filtered => s"-$filtered").mkString)
     } else {
       useCase
     }
@@ -137,6 +137,6 @@ class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
 
   private def convertToFilterKey(employments: Employments): String = {
     val empRef = employments.employments.headOption.flatMap(_.employerRef)
-    empRef.map(x => s"-employments[]/employerRef eq '$x'").getOrElse("")
+    empRef.map(x => s"-employments[]/employerRef eq '$x'").mkString
   }
 }

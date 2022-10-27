@@ -31,8 +31,8 @@ object CorporationTaxCompanyDetails {
   val crnPattern = "^[A-Z0-9]{1,10}$".r
 
   def fromApiPlatformTestUser(testUser: TestOrganisation): CorporationTaxCompanyDetails  = CorporationTaxCompanyDetails(
-    testUser.ctUtr.getOrElse(""),
-    testUser.crn.getOrElse(""),
+    testUser.ctUtr.mkString,
+    testUser.crn.mkString,
     registeredDetails = Some(fromOrganisationDetails(testUser.organisationDetails)),
     communicationDetails = None
   )

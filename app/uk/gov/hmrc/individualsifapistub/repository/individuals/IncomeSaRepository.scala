@@ -67,8 +67,8 @@ class IncomeSaRepository @Inject()(mongo: MongoComponent)(implicit val ec: Execu
       case Trn => Identifier(None, Some(idValue), startYear, endYear, useCase)
     }
 
-    val tag = useCaseMap.getOrElse(useCase.getOrElse(""), useCase.getOrElse(""))
-    val id = s"${ ident.nino.getOrElse(ident.trn.get) }-${ startYear.getOrElse("") }-${ endYear.getOrElse("") }-$tag-${ UUID.randomUUID() }"
+    val tag = useCaseMap.getOrElse(useCase.mkString, useCase.mkString)
+    val id = s"${ ident.nino.getOrElse(ident.trn.get) }-${ startYear.mkString }-${ endYear.mkString }-$tag-${ UUID.randomUUID() }"
 
     val incomeSaRecord = IncomeSaEntry(id, request, Some(idValue))
 
