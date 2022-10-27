@@ -36,8 +36,8 @@ case class SelfAssessmentTaxPayer(utr: String, taxPayerType: String, taxPayerDet
 object SelfAssessmentTaxPayer {
 
   def fromApiPlatformTestUser(testUser: TestIndividual): SelfAssessmentTaxPayer  = SelfAssessmentTaxPayer(
-    testUser.saUtr.map(_.utr).getOrElse(""),
-    testUser.taxpayerType.getOrElse(""),
+    testUser.saUtr.map(_.utr).mkString,
+    testUser.taxpayerType.mkString,
     taxPayerDetails = Seq(fromOrganisationDetails(testUser.organisationDetails))
   )
 

@@ -70,8 +70,8 @@ class IncomePayeRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
       case Trn => Identifier(None, Some(idValue), startDate, endDate, useCase)
     }
 
-    val tag = useCaseMap.getOrElse(useCase.getOrElse(""), useCase.getOrElse(""))
-    val id = s"${ ident.nino.getOrElse(ident.trn.get) }-${ startDate.getOrElse("") }-${ endDate.getOrElse("") }-$tag-${ UUID.randomUUID() }"
+    val tag = useCaseMap.getOrElse(useCase.mkString, useCase.mkString)
+    val id = s"${ ident.nino.getOrElse(ident.trn.get) }-${ startDate.mkString }-${ endDate.mkString }-$tag-${ UUID.randomUUID() }"
 
     val incomePayeEntry = IncomePayeEntry(id, request, idValue)
 
