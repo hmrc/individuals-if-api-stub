@@ -21,7 +21,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(playSettings : _*)
   .settings(scalaSettings: _*)
   .settings(publishingSettings: _*)
-  .settings(scalaVersion := "2.12.11")
+  .settings(scalaVersion := "2.13.8")
   .settings(defaultSettings(): _*)
   .settings(
     dependencyOverrides ++= AppDependencies.overrides,
