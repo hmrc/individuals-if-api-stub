@@ -13,5 +13,4 @@
 <li>NICTSEJO-C4</li>
 <li>HO-RP2</li>
 <li>HO-ECP</li>
-<li>HO-V2</li>
 </ul>
