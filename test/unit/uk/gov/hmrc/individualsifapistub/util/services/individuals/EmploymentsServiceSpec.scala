@@ -16,6 +16,7 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.services.individuals
 
+import org.joda.time.LocalDate
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
@@ -78,7 +79,7 @@ class EmploymentsServiceSpec extends TestSupport {
               Some("postcode")
             )))),
           payments = Some(Seq(Payment(
-            date = Some("2001-12-31"),
+            date = Some(LocalDate.parse("2001-12-31")),
             ytdTaxablePay = Some(120.02),
             paidTaxablePay = Some(112.75),
             paidNonTaxOrNICPayment = Some(123123.32),
@@ -93,7 +94,7 @@ class EmploymentsServiceSpec extends TestSupport {
     val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
 
     val employments = Employments(Seq(employment))
-    val request = EmploymentEntry(id, Seq(employment))
+    val request = EmploymentEntry(id, Seq(employment), None)
     val mockEmploymentRepository = mock[EmploymentRepository]
     val servicesConfig = mock[ServicesConfig]
     val underTest = new EmploymentsService(mockEmploymentRepository, apiPlatformTestUserConnector, servicesConfig)
@@ -108,11 +109,11 @@ class EmploymentsServiceSpec extends TestSupport {
 
       "Return the created employment when created" in new Setup {
 
-        when(mockEmploymentRepository.create(idType, idValue, startDate, endDate, useCase, employments)).thenReturn(
+        when(mockEmploymentRepository.create(idType, idValue, Some(startDate), Some(endDate), Some(useCase), employments)).thenReturn(
           Future.successful(employments)
         )
 
-        val response = await(underTest.create(idType, idValue, startDate, endDate, useCase, employments))
+        val response = await(underTest.create(idType, idValue, Some(startDate), Some(endDate), Some(useCase), employments))
 
         response shouldBe employments
 
@@ -120,12 +121,12 @@ class EmploymentsServiceSpec extends TestSupport {
 
       "Return failure when unable to create Employment object" in new Setup {
 
-        when(mockEmploymentRepository.create(idType, idValue, startDate, endDate, useCase, employments)).thenReturn(
+        when(mockEmploymentRepository.create(idType, idValue, Some(startDate), Some(endDate), Some(useCase), employments)).thenReturn(
           Future.failed(new Exception)
         )
 
         assertThrows[Exception] {
-          await(underTest.create(idType, idValue, startDate, endDate, useCase, employments))
+          await(underTest.create(idType, idValue, Some(startDate), Some(endDate), Some(useCase), employments))
         }
 
       }

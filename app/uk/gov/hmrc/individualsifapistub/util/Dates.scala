@@ -20,7 +20,9 @@ import org.joda.time.{ Interval, LocalDate }
 
 object Dates {
 
-  private def asDate(string: String) = LocalDate.parse(string)
+  def asDate(string: String) = LocalDate.parse(string)
+
+  def asString(date: LocalDate) = date.toString("yyyy-MM-dd")
 
   def toInterval(from: String, to: String): Interval =
     toInterval(asDate(from), asDate(to))

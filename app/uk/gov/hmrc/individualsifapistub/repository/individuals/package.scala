@@ -142,4 +142,85 @@ package object individuals {
         (JsPath \ "idValue").writeNullable[String]
       ) (unlift(IncomeSaEntry.unapply))
   )
+
+  implicit val employerFormat: Format[Employer] = Format(
+    (
+      (JsPath \ "name").readNullable[String] and
+        (JsPath \ "address").readNullable[Address] and
+        (JsPath \ "districtNumber").readNullable[String] and
+        (JsPath \ "schemeRef").readNullable[String]
+      ) (Employer.apply _),
+    (
+      (JsPath \ "name").writeNullable[String] and
+        (JsPath \ "address").writeNullable[Address] and
+        (JsPath \ "districtNumber").writeNullable[String] and
+        (JsPath \ "schemeRef").writeNullable[String]
+      ) (unlift(Employer.unapply))
+  )
+
+  implicit val employmentDetailFormat: Format[EmploymentDetail] = Format(
+    (
+      (JsPath \ "startDate").readNullable[String] and
+        (JsPath \ "endDate").readNullable[String] and
+        (JsPath \ "payFrequency").readNullable[String] and
+        (JsPath \ "payrollId").readNullable[String] and
+        (JsPath \ "address").readNullable[Address]
+      ) (EmploymentDetail.apply _),
+    (
+      (JsPath \ "startDate").writeNullable[String] and
+        (JsPath \ "endDate").writeNullable[String] and
+        (JsPath \ "payFrequency").writeNullable[String] and
+        (JsPath \ "payrollId").writeNullable[String] and
+        (JsPath \ "address").writeNullable[Address]
+      ) (unlift(EmploymentDetail.unapply))
+  )
+
+  implicit val paymentFormat: Format[Payment] = Format(
+    (
+      (JsPath \ "date").readNullable[LocalDate] and
+        (JsPath \ "ytdTaxablePay").readNullable[Double] and
+        (JsPath \ "paidTaxablePay").readNullable[Double] and
+        (JsPath \ "paidNonTaxOrNICPayment").readNullable[Double] and
+        (JsPath \ "week").readNullable[Int] and
+        (JsPath \ "month").readNullable[Int]
+      ) (Payment.apply _),
+    (
+      (JsPath \ "date").writeNullable[LocalDate] and
+        (JsPath \ "ytdTaxablePay").writeNullable[Double] and
+        (JsPath \ "paidTaxablePay").writeNullable[Double] and
+        (JsPath \ "paidNonTaxOrNICPayment").writeNullable[Double] and
+        (JsPath \ "week").writeNullable[Int] and
+        (JsPath \ "month").writeNullable[Int]
+      ) (unlift(Payment.unapply))
+  )
+
+  implicit val employmentFormat: Format[Employment] = Format(
+    (
+      (JsPath \ "employer").readNullable[Employer] and
+        (JsPath \ "employerRef").readNullable[String] and
+        (JsPath \ "employment").readNullable[EmploymentDetail] and
+        (JsPath \ "payments").readNullable[Seq[Payment]]
+      ) (Employment.apply _),
+    (
+      (JsPath \ "employer").writeNullable[Employer] and
+        (JsPath \ "employerRef").writeNullable[String] and
+        (JsPath \ "employment").writeNullable[EmploymentDetail] and
+        (JsPath \ "payments").writeNullable[Seq[Payment]]
+      ) (unlift(Employment.unapply))
+  )
+
+
+  implicit val employmentEntryFormat: Format[EmploymentEntry] = Format(
+    (
+      (JsPath \ "id").read[String] and
+        (JsPath \ "employments").read[Seq[Employment]] and
+        (JsPath \ "idValue").readNullable[String]
+      ) (EmploymentEntry.apply _),
+    (
+      (JsPath \ "id").write[String] and
+        (JsPath \ "employments").write[Seq[Employment]] and
+        (JsPath \ "idValue").writeNullable[String]
+      ) (unlift(EmploymentEntry.unapply))
+  )
+
 }

@@ -9,7 +9,7 @@ POST    /individuals/tax-credits/:idType/:idValue                       uk.gov.h
 
 #Individuals Employments
 GET     /individuals/employment/:idType/:idValue                       uk.gov.hmrc.individualsifapistub.controllers.individuals.EmploymentsController.retrieve(idType, idValue, startDate, endDate, fields: Option[String] ?= None, filter: Option[String] ?= None)
-POST    /individuals/employment/:idType/:idValue                       uk.gov.hmrc.individualsifapistub.controllers.individuals.EmploymentsController.create(idType, idValue, startDate, endDate, useCase)
+POST    /individuals/employment/:idType/:idValue                       uk.gov.hmrc.individualsifapistub.controllers.individuals.EmploymentsController.create(idType, idValue, startDate: Option[String] ?= None, endDate: Option[String] ?= None, useCase: Option[String] ?= None)
 
 #Individuals Details
 GET     /individuals/details/contact/:idType/:idValue                   uk.gov.hmrc.individualsifapistub.controllers.individuals.DetailsController.retrieve(idType, idValue, fields: Option[String] ?= None)
