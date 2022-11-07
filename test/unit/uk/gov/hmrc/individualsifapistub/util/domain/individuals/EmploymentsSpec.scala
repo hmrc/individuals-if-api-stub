@@ -16,7 +16,8 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.domain.individuals
 
-import play.api.libs.json.{JsNumber, Json}
+import org.joda.time.LocalDate
+import play.api.libs.json.{ JsNumber, Json }
 import testUtils.TestHelpers
 import uk.gov.hmrc.individualsifapistub.domain.individuals.Employments._
 import uk.gov.hmrc.individualsifapistub.domain.individuals._
@@ -56,7 +57,7 @@ class EmploymentsSpec extends UnitSpec with TestHelpers {
     address = Some(address))
 
   val payment = Payment(
-    date = Some("2001-12-31"),
+    date = Some(LocalDate.parse("2001-12-31")),
     ytdTaxablePay = Some(162081.23),
     paidTaxablePay = Some(112.75),
     paidNonTaxOrNICPayment = Some(123123.32),

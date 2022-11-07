@@ -16,40 +16,44 @@
 
 package uk.gov.hmrc.individualsifapistub.repository.individuals
 
+import org.joda.time.LocalDate
 import org.mongodb.scala.MongoWriteException
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.Indexes.ascending
-import org.mongodb.scala.model.{IndexModel, IndexOptions}
+import org.mongodb.scala.model.{ IndexModel, IndexOptions }
 import play.api.Logger
 import play.api.libs.json.Json
 import uk.gov.hmrc.individualsifapistub.domain._
-import uk.gov.hmrc.individualsifapistub.domain.individuals.Employments._
-import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{Nino, Trn}
-import uk.gov.hmrc.individualsifapistub.domain.individuals.{EmploymentEntry, Employments, IdType, Identifier}
+import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{ Nino, Trn }
+import uk.gov.hmrc.individualsifapistub.domain.individuals.{ EmploymentEntry, Employments, IdType, Identifier }
+import uk.gov.hmrc.individualsifapistub.util.Dates
 import uk.gov.hmrc.mongo.MongoComponent
-import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
+import uk.gov.hmrc.mongo.play.json.formats.MongoJodaFormats
+import uk.gov.hmrc.mongo.play.json.{ Codecs, PlayMongoRepository }
 
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import java.util.UUID
+import javax.inject.{ Inject, Singleton }
+import scala.concurrent.{ ExecutionContext, Future }
 
 
 @Singleton
 class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
   extends PlayMongoRepository[EmploymentEntry](collectionName = "employment",
     mongoComponent = mongo,
-    domainFormat = createEmploymentEntryFormat,
+    domainFormat = employmentEntryFormat,
     indexes = Seq(
       IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
-    )
+    ),
+    extraCodecs = Seq(Codecs.playFormatCodec(MongoJodaFormats.localDateFormat))
   ) {
 
   private val logger: Logger = Logger(getClass)
 
   def create(idType: String,
              idValue: String,
-             startDate: String,
-             endDate: String,
-             useCase: String,
+             startDate: Option[String],
+             endDate: Option[String],
+             useCase: Option[String],
              employments: Employments): Future[Employments] = {
 
     val useCaseMap = Map(
@@ -66,22 +70,22 @@ class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
     )
 
     val ident = IdType.parse(idType) match {
-      case Nino => Identifier(Some(idValue), None, Some(startDate), Some(endDate), Some(useCase))
-      case Trn => Identifier(None, Some(idValue), Some(startDate), Some(endDate), Some(useCase))
+      case Nino => Identifier(Some(idValue), None, startDate, endDate, useCase)
+      case Trn => Identifier(None, Some(idValue), startDate, endDate, useCase)
     }
 
     val filterKey = useCase match {
-      case "HO-RP2" => convertToFilterKey(employments)
+      case Some("HO-RP2") => convertToFilterKey(employments)
       case _ => ""
     }
 
-    val tag = useCaseMap.getOrElse(useCase, useCase)
-    val id = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$tag$filterKey"
+    val tag = useCaseMap.getOrElse(useCase.mkString, useCase.mkString)
+    val id = s"${ ident.nino.getOrElse(ident.trn.get) }-$startDate-$endDate-$tag$filterKey-${ UUID.randomUUID() }"
 
-    logger.info(s"Insert for cache key: $id - Employments: ${Json.toJson(employments.employments)}")
+    logger.info(s"Insert for cache key: $id - Employments: ${ Json.toJson(employments.employments) }")
 
     collection
-      .insertOne(EmploymentEntry(id, employments.employments))
+      .insertOne(EmploymentEntry(id, employments.employments, Some(idValue)))
       .map(_ => employments)
       .head()
       .recover {
@@ -91,8 +95,8 @@ class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
 
   def findByIdAndType(idType: String,
                       idValue: String,
-                      startDate: String,
-                      endDate: String,
+                      startDateStr: String,
+                      endDateStr: String,
                       fields: Option[String],
                       filter: Option[String]): Future[Option[Employments]] = {
 
@@ -112,10 +116,10 @@ class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
 
     val ident = IdType.parse(idType) match {
       case Nino => Identifier(
-        Some(idValue), None, Some(startDate), Some(endDate), useCase
+        Some(idValue), None, Some(startDateStr), Some(endDateStr), useCase
       )
       case Trn => Identifier(
-        None, Some(idValue), Some(startDate), Some(endDate), useCase
+        None, Some(idValue), Some(startDateStr), Some(endDateStr), useCase
       )
     }
 
@@ -125,15 +129,55 @@ class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
       useCase
     }
 
-    val id = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-${mappedUseCase.getOrElse("TEST")}"
+    val id = s"${ ident.nino.getOrElse(ident.trn.get) }-$startDateStr-$endDateStr-${ mappedUseCase.getOrElse("TEST") }"
 
     logger.info(s"Fetch employments for cache key: $id")
 
+    val startDate = Dates.asDate(startDateStr)
+    val endDate = Dates.asDate(endDateStr)
     collection
-      .find(equal("id", id))
+      .find(deepSearch(idValue, startDate, endDate))
       .headOption()
-      .map(_.map(entry => Employments(entry.employments)))
+      .flatMap {
+        case Some(entry) =>
+          val interval = Dates.toInterval(startDateStr, endDateStr)
+          val result = entry
+            .employments
+            .flatMap { employment =>
+              val payments = employment.payments.map { payments =>
+                payments.filter(payment =>
+                  payment.date.exists(paymentDate => interval.contains(paymentDate.toDateTimeAtStartOfDay))
+                )
+              }
+              if(payments.nonEmpty) Some(employment.copy(payments = payments))
+              else None
+            }
+          Future.successful(
+            if (result.nonEmpty) Some(Employments(result))
+            else None
+          )
+        case None =>
+          collection
+            .find(idBasedSearch(id))
+            .headOption()
+            .map(_.map(entry => Employments(entry.employments)))
+      }
   }
+
+  // legacy search
+  private def idBasedSearch(id: String) = regex("id", s"^$id")
+
+  private def deepSearch(idValue: String, startDate: LocalDate, endDate: LocalDate) =
+    and(
+      equal(s"idValue", idValue),
+      elemMatch(
+        "employments.payments",
+        and(
+          gte("date", startDate),
+          lte("date", endDate)
+        )
+      )
+    )
 
   private def convertToFilterKey(employments: Employments): String = {
     val empRef = employments.employments.headOption.flatMap(_.employerRef)

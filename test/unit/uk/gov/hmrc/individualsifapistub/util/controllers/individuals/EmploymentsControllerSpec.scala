@@ -16,10 +16,11 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.controllers.individuals
 
+import org.joda.time.LocalDate
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
-import play.api.http.Status.{BAD_REQUEST, CREATED, OK}
+import play.api.http.Status.{ BAD_REQUEST, CREATED, OK }
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.SaUtr
@@ -28,7 +29,7 @@ import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.controllers.individuals.EmploymentsController
 import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.Employments._
-import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{Nino, Trn}
+import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{ Nino, Trn }
 import uk.gov.hmrc.individualsifapistub.domain.individuals._
 import uk.gov.hmrc.individualsifapistub.repository.individuals.EmploymentRepository
 import uk.gov.hmrc.individualsifapistub.services.individuals.EmploymentsService
@@ -61,7 +62,7 @@ class EmploymentsControllerSpec extends TestSupport {
   val idType = Nino.toString
   val idValue = "XH123456A"
   val startDate = "2020-01-01"
-  val endDate = "2020-21-31"
+  val endDate = "2020-12-31"
   val useCase = "TEST"
   val fields = "some(values)"
 
@@ -97,7 +98,7 @@ class EmploymentsControllerSpec extends TestSupport {
             Some("postcode")
           )))),
         payments = Some(Seq(Payment(
-          date = Some("2001-12-31"),
+          date = Some(LocalDate.parse("2020-02-28")),
           ytdTaxablePay = Some(120.02),
           paidTaxablePay = Some(112.75),
           paidNonTaxOrNICPayment = Some(123123.32),
@@ -111,17 +112,17 @@ class EmploymentsControllerSpec extends TestSupport {
   val employments = Employments(Seq(employment))
   val ident = Identifier(Some("XH123456A"), None, Some(startDate), Some(endDate), Some(useCase))
   val id = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$useCase"
-  val request = EmploymentEntry(id, Seq(employment))
+  val request = EmploymentEntry(id, Seq(employment), None)
 
   "Create Employment" should {
 
     "Successfully create a record and return created record as response" in new Setup {
 
-      when(mockEmploymentsService.create(idType, idValue, startDate, endDate, useCase, employments)).thenReturn(
+      when(mockEmploymentsService.create(idType, idValue, Some(startDate), Some(endDate), Some(useCase), employments)).thenReturn(
         Future.successful(employments)
       )
 
-      val result = await(underTest.create(idType, idValue, startDate, endDate, useCase)(
+      val result = await(underTest.create(idType, idValue, Some(startDate), Some(endDate), Some(useCase))(
         fakeRequest.withBody(Json.toJson(employments)))
       )
 
@@ -135,11 +136,11 @@ class EmploymentsControllerSpec extends TestSupport {
       when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
         thenReturn(Future.failed(new RecordNotFoundException))
 
-      when(mockEmploymentsService.create(idType, idValue, startDate, endDate, useCase, employments)).thenReturn(
+      when(mockEmploymentsService.create(idType, idValue, Some(startDate), Some(endDate), Some(useCase), employments)).thenReturn(
         Future.successful(employments)
       )
 
-      val result = await(underTest.create(idType, idValue, startDate, endDate, useCase)(
+      val result = await(underTest.create(idType, idValue, Some(startDate), Some(endDate), Some(useCase))(
         fakeRequest.withBody(Json.toJson("")))
       )
 
@@ -151,11 +152,11 @@ class EmploymentsControllerSpec extends TestSupport {
 
       "the NINO is invalid" in new Setup {
 
-        when(mockEmploymentsService.create(idType, idValue, startDate, endDate, useCase, employments)).thenReturn(
+        when(mockEmploymentsService.create(idType, idValue, Some(startDate), Some(endDate), Some(useCase), employments)).thenReturn(
           Future.successful(employments)
         )
 
-        val result = await(underTest.create(idType, "abc", startDate, endDate, useCase)(
+        val result = await(underTest.create(idType, "abc", Some(startDate), Some(endDate), Some(useCase))(
           fakeRequest.withBody(Json.toJson(employments)))
         )
 
@@ -165,11 +166,11 @@ class EmploymentsControllerSpec extends TestSupport {
 
       "the TRN is invalid" in new Setup {
 
-        when(mockEmploymentsService.create(idType, idValue, startDate, endDate, useCase, employments)).thenReturn(
+        when(mockEmploymentsService.create(idType, idValue, Some(startDate), Some(endDate), Some(useCase), employments)).thenReturn(
           Future.successful(employments)
         )
 
-        val result = await(underTest.create(Trn.toString, "abc", startDate, endDate, useCase)(
+        val result = await(underTest.create(Trn.toString, "abc", Some(startDate), Some(endDate), Some(useCase))(
           fakeRequest.withBody(Json.toJson(employments)))
         )
         status(result) shouldBe BAD_REQUEST
@@ -177,11 +178,11 @@ class EmploymentsControllerSpec extends TestSupport {
       }
 
       "the idType is invalid" in new Setup {
-        when(mockEmploymentsService.create(idType, idValue, startDate, endDate, useCase, employments)).thenReturn(
+        when(mockEmploymentsService.create(idType, idValue, Some(startDate), Some(endDate), Some(useCase), employments)).thenReturn(
           Future.successful(employments)
         )
 
-        val result = await(underTest.create("idType", idValue, startDate, endDate, useCase)(
+        val result = await(underTest.create("idType", idValue, Some(startDate), Some(endDate), Some(useCase))(
           fakeRequest.withBody(Json.toJson(employments)))
         )
 
@@ -191,11 +192,11 @@ class EmploymentsControllerSpec extends TestSupport {
 
       "a request is not provided" in new Setup {
 
-        when(mockEmploymentsService.create(idType, idValue, startDate, endDate, useCase, employments)).thenReturn(
+        when(mockEmploymentsService.create(idType, idValue, Some(startDate), Some(endDate), Some(useCase), employments)).thenReturn(
           Future.successful(employments)
         )
 
-        val result = await(underTest.create(idType, idValue, startDate, endDate, useCase)(
+        val result = await(underTest.create(idType, idValue, Some(startDate), Some(endDate), Some(useCase))(
           fakeRequest.withBody(Json.toJson("")))
         )
 
@@ -209,11 +210,11 @@ class EmploymentsControllerSpec extends TestSupport {
 
     "Return employments when successfully retrieved from service" in new Setup {
 
-      when(mockEmploymentsService.get(idType, idValue, startDate, endDate, Some(fields), None)).thenReturn(
+      when(mockEmploymentsService.get(idType, idValue, startDate, endDate, None, None)).thenReturn(
         Future.successful(Some(employments))
       )
 
-      val result = await(underTest.retrieve(idType, idValue, startDate, endDate, Some(fields), None)(fakeRequest))
+      val result = await(underTest.retrieve(idType, idValue, startDate, endDate, None, None)(fakeRequest))
 
       status(result) shouldBe OK
 

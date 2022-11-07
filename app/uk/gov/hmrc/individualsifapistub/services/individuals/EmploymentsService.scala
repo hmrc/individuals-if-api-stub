@@ -24,7 +24,7 @@ import uk.gov.hmrc.individualsifapistub.services.ServiceBase
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 class EmploymentsService @Inject()(employmentsRepository: EmploymentRepository,
                                    val apiPlatformTestUserConnector: ApiPlatformTestUserConnector,
@@ -32,9 +32,9 @@ class EmploymentsService @Inject()(employmentsRepository: EmploymentRepository,
 
   def create(idType: String,
              idValue: String,
-             startDate: String,
-             endDate: String,
-             useCase: String,
+             startDate: Option[String],
+             endDate: Option[String],
+             useCase: Option[String],
              employments: Employments)
             (implicit ec: ExecutionContext,
              hc: HeaderCarrier): Future[Employments] = {

@@ -16,13 +16,14 @@
 
 package uk.gov.hmrc.individualsifapistub.controllers.individuals
 
-import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
+import play.api.libs.json.{ JsValue, Json }
+import play.api.mvc.{ Action, AnyContent, ControllerComponents, PlayBodyParsers }
 import uk.gov.hmrc.individualsifapistub.config.LoggingAction
 import uk.gov.hmrc.individualsifapistub.controllers.CommonController
 import uk.gov.hmrc.individualsifapistub.domain.individuals.Employments
 import uk.gov.hmrc.individualsifapistub.domain.individuals.Employments._
 import uk.gov.hmrc.individualsifapistub.services.individuals.EmploymentsService
+import uk.gov.hmrc.individualsifapistub.util.FieldFilter
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -36,12 +37,12 @@ class EmploymentsController @Inject()(loggingAction: LoggingAction,
 
   def create(idType: String,
              idValue: String,
-             startDate: String,
-             endDate: String,
-             useCase: String): Action[JsValue] = {
+             startDate: Option[String],
+             endDate: Option[String],
+             useCase: Option[String]): Action[JsValue] = {
     loggingAction.async(bodyParser.json) { implicit request =>
 
-      withJsonBodyAndValidId[Employments](idType, idValue, Some(startDate), Some(endDate), Some(useCase)) {
+      withJsonBodyAndValidId[Employments](idType, idValue, startDate, endDate, useCase) {
         jsonBody =>
           employmentsService.create(
             idType,
@@ -61,9 +62,15 @@ class EmploymentsController @Inject()(loggingAction: LoggingAction,
                endDate: String,
                fields: Option[String],
                filter: Option[String]): Action[AnyContent] = loggingAction.async { implicit request =>
-    employmentsService.get(idType, idValue, startDate, endDate, fields, filter) map {
-      case Some(value) => Ok(Json.toJson(value))
-      case None => Ok(Json.toJson(Employments(Seq.empty)))
-    } recover recovery
+    employmentsService
+      .get(idType, idValue, startDate, endDate, fields, filter)
+      .map {
+        case Some(value) => value
+        case None => Employments(Seq.empty)
+      }
+      .map { employments =>
+        Ok(FieldFilter.toFilteredJson(employments, fields))
+      }
+      .recover(recovery)
   }
 }
