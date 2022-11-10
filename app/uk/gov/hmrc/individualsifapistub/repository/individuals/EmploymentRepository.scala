@@ -25,7 +25,7 @@ import play.api.Logger
 import play.api.libs.json.Json
 import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{ Nino, Trn }
-import uk.gov.hmrc.individualsifapistub.domain.individuals.{ Employment, EmploymentEntry, Employments, IdType, Identifier }
+import uk.gov.hmrc.individualsifapistub.domain.individuals.{ Employment, EmploymentDetail, EmploymentEntry, Employments, IdType, Identifier }
 import uk.gov.hmrc.individualsifapistub.util.Dates
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.formats.MongoJodaFormats
@@ -144,12 +144,15 @@ class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
           .flatMap(entry => entry.employments)
           .groupBy(employment => (employment.employer, employment.employerRef, employment.employment))
           .flatMap { case ((employer, employerRef, employmentDetail), employments) =>
-            if(filterByEmployerRef && employerRef.nonEmpty && filter.exists(_.contains(employerRef.mkString))) {
+            if(!filterByEmployerRef || (employerRef.nonEmpty && filter.exists(_.contains(employerRef.mkString)))) {
               val interval = Dates.toInterval(startDateStr, endDateStr)
               val payments = employments
                 .flatMap(_.payments.getOrElse(Seq.empty))
                 .filter(payment => payment.date.exists(date => interval.contains(date.toDateTimeAtStartOfDay)))
-              payments.headOption.map(_ => Employment(employer, employerRef, employmentDetail, Some(payments)))
+              if(payments.nonEmpty || employmentDateOverlaps(employmentDetail, startDate, endDate))
+                Some(Employment(employer, employerRef, employmentDetail, payments.headOption.map(_ => payments)))
+              else
+                None
             }
             else
               None
@@ -187,5 +190,14 @@ class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
   private def convertToFilterKey(employments: Employments): String = {
     val empRef = employments.employments.headOption.flatMap(_.employerRef)
     empRef.map(x => s"-employments[]/employerRef eq '$x'").mkString
+  }
+
+  // this is a workaround to make sure that an employment overlaps the queried time interval
+  private def employmentDateOverlaps(employmentDetail: Option[EmploymentDetail], startDate: LocalDate, endDate: LocalDate): Boolean = {
+    employmentDetail.exists { detail =>
+      val employmentInterval = Dates.toInterval(detail.startDate.getOrElse("1900-01-01"), detail.endDate)
+      val queryInterval = Dates.toInterval(startDate, endDate)
+      queryInterval.overlaps(employmentInterval)
+    }
   }
 }
