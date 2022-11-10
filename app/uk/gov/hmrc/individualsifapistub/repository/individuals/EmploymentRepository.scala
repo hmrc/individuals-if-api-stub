@@ -25,7 +25,7 @@ import play.api.Logger
 import play.api.libs.json.Json
 import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{ Nino, Trn }
-import uk.gov.hmrc.individualsifapistub.domain.individuals.{ EmploymentEntry, Employments, IdType, Identifier }
+import uk.gov.hmrc.individualsifapistub.domain.individuals.{ Employment, EmploymentEntry, Employments, IdType, Identifier }
 import uk.gov.hmrc.individualsifapistub.util.Dates
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.formats.MongoJodaFormats
@@ -80,7 +80,7 @@ class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
     }
 
     val tag = useCaseMap.getOrElse(useCase.mkString, useCase.mkString)
-    val id = s"${ ident.nino.getOrElse(ident.trn.get) }-$startDate-$endDate-$tag$filterKey-${ UUID.randomUUID() }"
+    val id = s"${ ident.nino.getOrElse(ident.trn.get) }-${startDate.mkString}-${ endDate.mkString }-$tag$filterKey-${ UUID.randomUUID() }"
 
     logger.info(s"Insert for cache key: $id - Employments: ${ Json.toJson(employments.employments) }")
 
@@ -137,25 +137,28 @@ class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
     val endDate = Dates.asDate(endDateStr)
     collection
       .find(deepSearch(idValue, startDate, endDate))
-      .headOption()
+      .toFuture()
+      .map { employmentEntries =>
+        val employments = employmentEntries
+          .flatMap(entry => entry.employments)
+          .groupBy(employment => (employment.employer, employment.employerRef, employment.employment))
+          .flatMap { case ((employer, employerRef, employmentDetail), employments) =>
+            val interval = Dates.toInterval(startDateStr, endDateStr)
+            val payments = employments
+              .flatMap(_.payments.getOrElse(Seq.empty))
+              .filter(payment => payment.date.exists(date => interval.contains(date.toDateTimeAtStartOfDay)))
+            if(payments.nonEmpty)
+              Some(Employment(employer, employerRef, employmentDetail, Some(payments)))
+            else
+              None
+          }
+          .toSeq
+
+        employments.headOption.map(_ => Employments(employments))
+      }
       .flatMap {
-        case Some(entry) =>
-          val interval = Dates.toInterval(startDateStr, endDateStr)
-          val result = entry
-            .employments
-            .flatMap { employment =>
-              val payments = employment.payments.map { payments =>
-                payments.filter(payment =>
-                  payment.date.exists(paymentDate => interval.contains(paymentDate.toDateTimeAtStartOfDay))
-                )
-              }
-              if(payments.nonEmpty) Some(employment.copy(payments = payments))
-              else None
-            }
-          Future.successful(
-            if (result.nonEmpty) Some(Employments(result))
-            else None
-          )
+        case result @ Some(_) =>
+          Future.successful(result)
         case None =>
           collection
             .find(idBasedSearch(id))
