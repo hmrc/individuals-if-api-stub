@@ -139,16 +139,18 @@ class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
       .find(deepSearch(idValue, startDate, endDate))
       .toFuture()
       .map { employmentEntries =>
+        val filterByEmployerRef = filter.exists(_.contains("employerRef"))
         val employments = employmentEntries
           .flatMap(entry => entry.employments)
           .groupBy(employment => (employment.employer, employment.employerRef, employment.employment))
           .flatMap { case ((employer, employerRef, employmentDetail), employments) =>
-            val interval = Dates.toInterval(startDateStr, endDateStr)
-            val payments = employments
-              .flatMap(_.payments.getOrElse(Seq.empty))
-              .filter(payment => payment.date.exists(date => interval.contains(date.toDateTimeAtStartOfDay)))
-            if(payments.nonEmpty)
-              Some(Employment(employer, employerRef, employmentDetail, Some(payments)))
+            if(filterByEmployerRef && employerRef.nonEmpty && filter.exists(_.contains(employerRef.mkString))) {
+              val interval = Dates.toInterval(startDateStr, endDateStr)
+              val payments = employments
+                .flatMap(_.payments.getOrElse(Seq.empty))
+                .filter(payment => payment.date.exists(date => interval.contains(date.toDateTimeAtStartOfDay)))
+              payments.headOption.map(_ => Employment(employer, employerRef, employmentDetail, Some(payments)))
+            }
             else
               None
           }
