@@ -136,7 +136,7 @@ class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
     val startDate = Dates.asDate(startDateStr)
     val endDate = Dates.asDate(endDateStr)
     collection
-      .find(deepSearch(idValue, startDate, endDate))
+      .find(deepSearch(idValue))
       .toFuture()
       .map { employmentEntries =>
         val filterByEmployerRef = filter.exists(_.contains("employerRef"))
@@ -145,7 +145,7 @@ class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
           .groupBy(employment => (employment.employer, employment.employerRef, employment.employment))
           .flatMap { case ((employer, employerRef, employmentDetail), employments) =>
             if(!filterByEmployerRef || (employerRef.nonEmpty && filter.exists(_.contains(employerRef.mkString)))) {
-              val interval = Dates.toInterval(startDateStr, endDateStr)
+              val interval = Dates.toInterval(startDate, endDate)
               val payments = employments
                 .flatMap(_.payments.getOrElse(Seq.empty))
                 .filter(payment => payment.date.exists(date => interval.contains(date.toDateTimeAtStartOfDay)))
@@ -175,17 +175,7 @@ class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
   // legacy search
   private def idBasedSearch(id: String) = regex("id", s"^$id")
 
-  private def deepSearch(idValue: String, startDate: LocalDate, endDate: LocalDate) =
-    and(
-      equal(s"idValue", idValue),
-      elemMatch(
-        "employments.payments",
-        and(
-          gte("date", startDate),
-          lte("date", endDate)
-        )
-      )
-    )
+  private def deepSearch(idValue: String) = equal(s"idValue", idValue)
 
   private def convertToFilterKey(employments: Employments): String = {
     val empRef = employments.employments.headOption.flatMap(_.employerRef)
