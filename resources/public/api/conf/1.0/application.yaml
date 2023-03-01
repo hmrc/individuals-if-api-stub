@@ -1,0 +1,2903 @@
+openapi: 3.0.3
+info:
+  title: Integration Framework Test Support
+  description: "#### Overview
+  \nThe Integration Framework (IF) Test Support API allows you to use custom data to test the following APIs:\n\n- Individuals Employments (V2)\n- Individuals Income (V2)\n- Individuals Benefits and Credits (V1)\n- Individuals Details (V1)\n- Organisations Details (V1)\n\nExternal Test is a non-integrated environment. This API allows you to stub IF JSON response objects.\n\nThe endpoints in the IF Test Support API mirror the endpoints in IF that the Individuals and Organisations APIs get their data from.\n\nBefore calling the endpoints, you will need to create a test user using the [Create Test User API](https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/api-platform-test-user/1.0).\n\nThe test user will either be an individual or an organisation. You will need to create the relevant type of test user for the endpoint you want to post data to.\n\nYou can call each endpoint once with the appropriate type of test user. For example, you can call one or more of the Individuals endpoints with the same user. Yet, you will not be able to call the same endpoint twice. The data cannot be updated so you will need to create another test user to post data to the endpoint again.
+  
+  \n#### Versioning\nWhen an API changes in a way that is backwards-incompatible, we increase the version number of the API. \nSee our [reference guide](/api-documentation/docs/reference-guide#versioning) for more on\nversioning.
+  
+  \n#### Errors \nWe use standard HTTP status codes to show whether an API request succeeded or not. They are usually in the range:\n* 200 to 299 if it succeeded, including code 202 if it was accepted by an API that needs to wait for further action\n* 400 to 499 if it failed because of a client error by your application\n* 500 to 599 if it failed because of an error on our server\n\nErrors specific to each API are shown in the Endpoints section, under Response. \nSee our [reference guide](/api-documentation/docs/reference-guide#errors) for more on errors."
+  contact: {}
+  version: '1.0'
+servers:
+  - url: https://api.service.hmrc.gov.uk/
+    description: Production
+    variables: {}
+paths:
+  /individuals/integration-framework-test-support/individuals/employment/nino/{nino}:
+    post:
+      tags:
+        - individuals
+      summary: Create employments test data for an individual
+      description: "
+        \nUse this endpoint to create employments test data for an individual.
+
+        \nThis resource acts as a stub for the Integration Framework (IF). It accepts JSON payloads.
+
+        \nThe JSON payloads must match the IF schema. Example IF payloads are provided.
+
+        \nAs data is scoped, the JSON payload that you send should only contain the data items specific to the use case."
+      operationId: post '/individuals/integration-framework-test-support/individuals/employment/nino/{nino}'
+      security:
+        - applicationRestricted: [ "Authorization" ]
+      parameters:
+        - name: nino
+          in: path
+          description: The employee's National Insurance number.
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: AA123456D
+        - name: startDate
+          in: query
+          description: >-
+            <p>The date that employment data is requested from.</p>
+  
+            Date in the format `YYYY-MM-DD`
+          style: form
+          explode: true
+          schema:
+            type: string
+            example: 2019-01-01
+        - name: endDate
+          in: query
+          description: >-
+            <p>The date that employment data is requested to.</p>
+  
+            Date in the format `YYYY-MM-DD`
+          style: form
+          explode: true
+          schema:
+            type: string
+            example: 2020-01-01
+        - name: useCase
+          in: query
+          description: >-
+            <p>The use case that the employments data relates to.</p>
+  
+            <p>Limited to the following possible values:</p>
+  
+            <ul>
+  
+            <li>LAA-C1</li>
+  
+            <li>LAA-C2</li>
+  
+            <li>LAA-C3</li>
+  
+            <li>LAA-C4</li>
+  
+            <li>LSANI-C1</li>
+  
+            <li>LSANI-C3</li>
+  
+            <li>HMCTS-C2</li>
+  
+            <li>HMCTS-C3</li>
+  
+            <li>HMCTS-C4</li>
+  
+            <li>NICTSEJO-C4</li>
+  
+            <li>HO-RP2</li>
+  
+            <li>HO-ECP</li>
+  
+            </ul>
+          style: form
+          explode: true
+          schema:
+            type: string
+            example: LAA-C1
+        - name: Authorization
+          in: header
+          description: OAuth 2.0 Bearer Token or server token.
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: Bearer <BEARER_TOKEN>
+        - $ref: '#/components/parameters/acceptHeader'
+        - $ref: '#/components/parameters/contentTypeHeader'
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/IndividualsIntegrationFrameworkTestSupportIndividualsEmploymentNinoRequest'
+                - example:
+                    employments:
+                    - employerRef: 247/ZT6767895A
+                      payments:
+                      - date: 2019-01-31
+                        paidTaxablePay: 4765.32
+                      - date: 2019-02-28
+                        paidTaxablePay: 9876.54
+                      employer:
+                        name: ACME Industries Limited
+                        address:
+                          line1: Unit 23
+                          line2: Utilitarian Industrial Park
+                          line3: Utilitown
+                          line4: County Durham
+                          line5: UK
+                          postcode: DH4 4YY
+                        districtNumber: '247'
+                        schemeRef: ZT6767895A
+                      employment:
+                        startDate: 2019-01-01
+                        endDate: 2019-03-31
+                        payFrequency: M1
+              example:
+                employments:
+                - employerRef: 247/ZT6767895A
+                  payments:
+                  - date: 2019-01-31
+                    paidTaxablePay: 4765.32
+                  - date: 2019-02-28
+                    paidTaxablePay: 9876.54
+                  employer:
+                    name: ACME Industries Limited
+                    address:
+                      line1: Unit 23
+                      line2: Utilitarian Industrial Park
+                      line3: Utilitown
+                      line4: County Durham
+                      line5: UK
+                      postcode: DH4 4YY
+                    districtNumber: '247'
+                    schemeRef: ZT6767895A
+                  employment:
+                    startDate: 2019-01-01
+                    endDate: 2019-03-31
+                    payFrequency: M1
+        required: true
+      responses:
+        '201':
+          description: The created employment
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/IndividualsIntegrationFrameworkTestSupportIndividualsEmploymentNinoResponse'
+                  - example:
+                      employments:
+                      - employerRef: 247/ZT6767895A
+                        payments:
+                        - date: 2019-01-31
+                          paidTaxablePay: 4765.32
+                        - date: 2019-02-28
+                          paidTaxablePay: 9876.54
+                        employer:
+                          name: ACME Industries Limited
+                          address:
+                            line1: Unit 23
+                            line2: Utilitarian Industrial Park
+                            line3: Utilitown
+                            line4: County Durham
+                            line5: UK
+                            postcode: DH4 4YY
+                          employerRef: 247/ZT6767895A
+                          districtNumber: '247'
+                          schemeRef: ZT6767895A
+                        employment:
+                          startDate: 2019-01-01
+                          endDate: 2019-03-31
+                          payFrequency: M1
+                example:
+                  employments:
+                  - employerRef: 247/ZT6767895A
+                    payments:
+                    - date: 2019-01-31
+                      paidTaxablePay: 4765.32
+                    - date: 2019-02-28
+                      paidTaxablePay: 9876.54
+                    employer:
+                      name: ACME Industries Limited
+                      address:
+                        line1: Unit 23
+                        line2: Utilitarian Industrial Park
+                        line3: Utilitown
+                        line4: County Durham
+                        line5: UK
+                        postcode: DH4 4YY
+                      employerRef: 247/ZT6767895A
+                      districtNumber: '247'
+                      schemeRef: ZT6767895A
+                    employment:
+                      startDate: 2019-01-01
+                      endDate: 2019-03-31
+                      payFrequency: M1
+        '400':
+          description: Bad Request
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/errorResponse'
+                  - example:
+                      code: INVALID_REQUEST
+                examples:
+                  BadRequest:
+                    description: Invalid request
+                    value:
+                      code: INVALID_REQUEST
+      deprecated: false
+  /individuals/integration-framework-test-support/individuals/income/sa/nino/{nino}:
+    post:
+      tags:
+        - individuals
+      summary: Create Self Assessment income test data for an individual
+      description: "
+        \nUse this endpoint to create Self Assessment income test data for an individual.
+
+        \nThis resource acts as a stub for the Integration Framework (IF). It accepts JSON payloads.
+
+        \nThe JSON payloads must match the IF schema. Example IF payloads are provided.
+
+        \nAs data is scoped, the JSON payload that you send should only contain the data items specific to the use case.
+
+        \nAs filtering logic forms part of this API, the fields the application is not eligible to see is filtered out."
+      operationId: post '/individuals/integration-framework-test-support/individuals/income/sa/nino/{nino}'
+      security:
+        - applicationRestricted: [ "Authorization" ]
+      parameters:
+        - name: nino
+          in: path
+          description: The employee's National Insurance number.
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: AA123456D
+        - name: startYear
+          in: query
+          description: >-
+            <p>The first tax year to be included in the dataset requested.</p>
+  
+            Year in the format `YYYY`
+          style: form
+          explode: true
+          schema:
+            type: string
+            example: '2018'
+        - name: endYear
+          in: query
+          description: >-
+            <p>The last tax year to be included in the dataset requested.</p>
+  
+            Year in the format `YYYY`
+          style: form
+          explode: true
+          schema:
+            type: string
+            example: '2019'
+        - name: useCase
+          in: query
+          description: >-
+            <p>The use case that the Self Assessment income data relates to.</p>
+  
+            <p>Limited to the following possible values:</p>
+  
+            <ul>
+  
+            <li>LAA-C1</li>
+  
+            <li>LAA-C2</li>
+  
+            <li>LAA-C3</li>
+  
+            <li>LAA-C4</li>
+  
+            <li>LSANI-C1</li>
+  
+            <li>LSANI-C3</li>
+  
+            <li>HMCTS-C2</li>
+  
+            <li>HMCTS-C3</li>
+  
+            <li>HMCTS-C4</li>
+  
+            <li>NICTSEJO-C4</li>
+  
+            <li>HO-ECP</li>
+  
+            <li>HO-V2</li>
+  
+            </ul>
+          style: form
+          explode: true
+          schema:
+            type: string
+            example: LAA-C1
+        - name: Authorization
+          in: header
+          description: OAuth 2.0 Bearer Token or server token.
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: Bearer <BEARER_TOKEN>
+        - $ref: '#/components/parameters/acceptHeader'
+        - $ref: '#/components/parameters/contentTypeHeader'
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/IndividualsIntegrationFrameworkTestSupportIndividualsIncomeSaNinoRequest'
+                - example:
+                    sa:
+                    - taxYear: '2019'
+                      returnList:
+                      - utr: '3287654321'
+                        busStartDate: 2018-02-21
+                        busEndDate: 2018-02-22
+                        caseStartDate: 2018-02-20
+                        receivedDate: 2018-02-20
+                        businessDescription: Dogs body
+                        address:
+                          line1: Line 1
+                          line2: Line 2
+                          line3: Line 3
+                          line4: Line 4
+                          postcode: NE65 0UH
+                        telephoneNumber: '0191111222'
+                        income:
+                          selfAssessment: 99999999999.99
+                          trusts: 99999999999.98
+                          allEmployments: 99999999999.97
+                          selfEmployment: 99999999999.97
+                          partnerships: 99999999999.96
+                          ukProperty: 99999999999.95
+                          foreign: 99999999999.94
+                          foreignDivs: 99999999999.93
+                          ukInterest: 99999999999.92
+                          ukDivsAndInterest: 99999999999.91
+                          pensions: 99999999999.9
+                          other: 99999999999.89
+                          lifePolicies: 99999999999.88
+                          shares: 99999999999.87
+                        totalTaxPaid: -99.99
+                        totalNIC: 99999999999.99
+                        turnover: 345435.03
+                        otherBusIncome: 34545.88
+                        tradingIncomeAllowance: 100
+                        deducts:
+                          totalBusExpenses: 99999999999.86
+                          totalDisallowBusExp: 99999999999.85
+              example:
+                sa:
+                - taxYear: '2019'
+                  returnList:
+                  - utr: '3287654321'
+                    busStartDate: 2018-02-21
+                    busEndDate: 2018-02-22
+                    caseStartDate: 2018-02-20
+                    receivedDate: 2018-02-20
+                    businessDescription: Dogs body
+                    address:
+                      line1: Line 1
+                      line2: Line 2
+                      line3: Line 3
+                      line4: Line 4
+                      postcode: NE65 0UH
+                    telephoneNumber: '0191111222'
+                    income:
+                      selfAssessment: 99999999999.99
+                      trusts: 99999999999.98
+                      allEmployments: 99999999999.97
+                      selfEmployment: 99999999999.97
+                      partnerships: 99999999999.96
+                      ukProperty: 99999999999.95
+                      foreign: 99999999999.94
+                      foreignDivs: 99999999999.93
+                      ukInterest: 99999999999.92
+                      ukDivsAndInterest: 99999999999.91
+                      pensions: 99999999999.9
+                      other: 99999999999.89
+                      lifePolicies: 99999999999.88
+                      shares: 99999999999.87
+                    totalTaxPaid: -99.99
+                    totalNIC: 99999999999.99
+                    turnover: 345435.03
+                    otherBusIncome: 34545.88
+                    tradingIncomeAllowance: 100
+                    deducts:
+                      totalBusExpenses: 99999999999.86
+                      totalDisallowBusExp: 99999999999.85
+        required: true
+      responses:
+        '201':
+          description: The created self assessment
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/IndividualsIntegrationFrameworkTestSupportIndividualsIncomeSaNinoResponse'
+                  - example:
+                      sa:
+                      - taxYear: '2019'
+                        returnList:
+                        - utr: '3287654321'
+                          busStartDate: 2018-02-21
+                          busEndDate: 2018-02-22
+                          caseStartDate: 2018-02-20
+                          receivedDate: 2018-02-20
+                          businessDescription: Dogs body
+                          address:
+                            line1: Line 1
+                            line2: Line 2
+                            line3: Line 3
+                            line4: Line 4
+                            postcode: NE65 0UH
+                          telephoneNumber: '0191111222'
+                          income:
+                            selfAssessment: 99999999999.99
+                            trusts: 99999999999.98
+                            allEmployments: 99999999999.97
+                            selfEmployment: 99999999999.97
+                            partnerships: 99999999999.96
+                            ukProperty: 99999999999.95
+                            foreign: 99999999999.94
+                            foreignDivs: 99999999999.93
+                            ukInterest: 99999999999.92
+                            ukDivsAndInterest: 99999999999.91
+                            pensions: 99999999999.9
+                            other: 99999999999.89
+                            lifePolicies: 99999999999.88
+                            shares: 99999999999.87
+                          totalTaxPaid: -99.99
+                          totalNIC: 99999999999.99
+                          turnover: 345435.03
+                          otherBusIncome: 34545.88
+                          tradingIncomeAllowance: 100
+                          deducts:
+                            totalBusExpenses: 99999999999.86
+                            totalDisallowBusExp: 99999999999.85
+                example:
+                  sa:
+                  - taxYear: '2019'
+                    returnList:
+                    - utr: '3287654321'
+                      busStartDate: 2018-02-21
+                      busEndDate: 2018-02-22
+                      caseStartDate: 2018-02-20
+                      receivedDate: 2018-02-20
+                      businessDescription: Dogs body
+                      address:
+                        line1: Line 1
+                        line2: Line 2
+                        line3: Line 3
+                        line4: Line 4
+                        postcode: NE65 0UH
+                      telephoneNumber: '0191111222'
+                      income:
+                        selfAssessment: 99999999999.99
+                        trusts: 99999999999.98
+                        allEmployments: 99999999999.97
+                        selfEmployment: 99999999999.97
+                        partnerships: 99999999999.96
+                        ukProperty: 99999999999.95
+                        foreign: 99999999999.94
+                        foreignDivs: 99999999999.93
+                        ukInterest: 99999999999.92
+                        ukDivsAndInterest: 99999999999.91
+                        pensions: 99999999999.9
+                        other: 99999999999.89
+                        lifePolicies: 99999999999.88
+                        shares: 99999999999.87
+                      totalTaxPaid: -99.99
+                      totalNIC: 99999999999.99
+                      turnover: 345435.03
+                      otherBusIncome: 34545.88
+                      tradingIncomeAllowance: 100
+                      deducts:
+                        totalBusExpenses: 99999999999.86
+                        totalDisallowBusExp: 99999999999.85
+        '400':
+          description: Bad Request
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/errorResponse'
+                - example:
+                    code: INVALID_REQUEST
+              examples:
+                BadRequest:
+                  description: Invalid request
+                  value:
+                    code: INVALID_REQUEST
+      deprecated: false
+  /individuals/integration-framework-test-support/individuals/income/paye/nino/{nino}:
+    post:
+      tags:
+        - individuals
+      summary: Create PAYE income test data for an individual
+      description: "<p>Use this endpoint to create PAYE income test data for an individual.</p>\n<p>This resource acts as a stub for the Integration Framework (IF). It accepts JSON payloads.</p>\n<p>The JSON payloads must match the IF schema. Example IF payloads are provided.</p>\n<p>As data is scoped, the JSON payload that you send should only contain the data items specific to the use case.</p>\n<p>The paymentDate value provided in the POST body will be used to determine if the PAYE data sits within the date range \nprovided in the query parameters, if they do not then the PAYE data will not be returned.</p>\n"
+      operationId: post '/individuals/integration-framework-test-support/individuals/income/paye/nino/{nino}'
+      security:
+        - applicationRestricted: [ "Authorization" ]
+      parameters:
+        - name: nino
+          in: path
+          description: The employee's National Insurance number.
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: AA123456D
+        - name: startDate
+          in: query
+          description: >-
+            <p>The date that PAYE income data is requested from.</p>
+  
+            Date in the format `YYYY-MM-DD`
+          style: form
+          explode: true
+          schema:
+            type: string
+            example: 2019-01-01
+        - name: endDate
+          in: query
+          description: >-
+            <p>The date that PAYE income data is requested to.</p>
+  
+            Date in the format `YYYY-MM-DD`
+          style: form
+          explode: true
+          schema:
+            type: string
+            example: 2020-01-01
+        - name: useCase
+          in: query
+          description: >-
+            <p>The use case that the PAYE income data relates to.</p>
+  
+            <p>Limited to the following possible values:</p>
+  
+            <ul>
+  
+            <li>LAA-C1</li>
+  
+            <li>LAA-C2</li>
+  
+            <li>LAA-C3</li>
+  
+            <li>LAA-C4</li>
+  
+            <li>LSANI-C1</li>
+  
+            <li>LSANI-C3</li>
+  
+            <li>HMCTS-C2</li>
+  
+            <li>HMCTS-C3</li>
+  
+            <li>HMCTS-C4</li>
+  
+            <li>NICTSEJO-C4</li>
+  
+            <li>HO-V2</li>
+  
+            </ul>
+          style: form
+          explode: true
+          schema:
+            type: string
+            example: LAA-C1
+        - name: Authorization
+          in: header
+          description: OAuth 2.0 Bearer Token or server token.
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: Bearer <BEARER_TOKEN>
+        - $ref: '#/components/parameters/acceptHeader'
+        - $ref: '#/components/parameters/contentTypeHeader'
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/IndividualsIntegrationFrameworkTestSupportIndividualsIncomePayeNinoRequest'
+                - example:
+                    paye:
+                    - taxYear: 18-19
+                      employee:
+                        hasPartner: true
+                      payFrequency: W4
+                      weeklyPeriodNumber: '2'
+                      monthlyPeriodNumber: '3'
+                      paymentDate: 2020-02-27
+                      taxCode: K971
+                      taxablePayToDate: 19157.5
+                      totalTaxToDate: 3095.89
+                      taxablePay: 16533.95
+                      taxDeductedOrRefunded: 159228.49
+                      employeePensionContributions:
+                        paidYTD: 169731.51
+                        notPaidYTD: 173987.07
+                        paid: 822317.49
+                        notPaid: 818841.65
+                      dednsFromNetPay: 198035.8
+                      statutoryPayYTD:
+                        maternity: 628562.9
+                        paternity: 98600.58
+                        adoption: 48703.26
+                        parentalBereavement: 39708.7
+                      grossEarningsForNICs:
+                        inPayPeriod1: 995979.04
+                        inPayPeriod2: 606456.38
+                        inPayPeriod3: 797877.34
+                        inPayPeriod4: 166334.69
+                      payroll:
+                        id: '}\^W7 ci|)pENG;62$'
+                      employerPayeRef: 345/34678
+                      paidHoursWorked: '35'
+                      totalEmployerNICs:
+                        inPayPeriod1: 18290.8
+                        inPayPeriod2: 192417.2
+                        inPayPeriod3: 14881.1
+                        inPayPeriod4: 17460.88
+                        ytd1: 530979.47
+                        ytd2: 197448.92
+                        ytd3: 172265.64
+                        ytd4: 122452.65
+                      employeeNICs:
+                        inPayPeriod1: 15797.45
+                        inPayPeriod2: 13170.69
+                        inPayPeriod3: 16193.76
+                        inPayPeriod4: 30846.56
+                        ytd1: 10633.5
+                        ytd2: 15579.18
+                        ytd3: 110849.27
+                        ytd4: 162081.23
+              example:
+                paye:
+                - taxYear: 18-19
+                  employee:
+                    hasPartner: true
+                  payFrequency: W4
+                  weeklyPeriodNumber: '2'
+                  monthlyPeriodNumber: '3'
+                  paymentDate: 2020-02-27
+                  taxCode: K971
+                  taxablePayToDate: 19157.5
+                  totalTaxToDate: 3095.89
+                  taxablePay: 16533.95
+                  taxDeductedOrRefunded: 159228.49
+                  employeePensionContributions:
+                    paidYTD: 169731.51
+                    notPaidYTD: 173987.07
+                    paid: 822317.49
+                    notPaid: 818841.65
+                  dednsFromNetPay: 198035.8
+                  statutoryPayYTD:
+                    maternity: 628562.9
+                    paternity: 98600.58
+                    adoption: 48703.26
+                    parentalBereavement: 39708.7
+                  grossEarningsForNICs:
+                    inPayPeriod1: 995979.04
+                    inPayPeriod2: 606456.38
+                    inPayPeriod3: 797877.34
+                    inPayPeriod4: 166334.69
+                  payroll:
+                    id: '}\^W7 ci|)pENG;62$'
+                  employerPayeRef: 345/34678
+                  paidHoursWorked: '35'
+                  totalEmployerNICs:
+                    inPayPeriod1: 18290.8
+                    inPayPeriod2: 192417.2
+                    inPayPeriod3: 14881.1
+                    inPayPeriod4: 17460.88
+                    ytd1: 530979.47
+                    ytd2: 197448.92
+                    ytd3: 172265.64
+                    ytd4: 122452.65
+                  employeeNICs:
+                    inPayPeriod1: 15797.45
+                    inPayPeriod2: 13170.69
+                    inPayPeriod3: 16193.76
+                    inPayPeriod4: 30846.56
+                    ytd1: 10633.5
+                    ytd2: 15579.18
+                    ytd3: 110849.27
+                    ytd4: 162081.23
+        required: true
+      responses:
+        '201':
+          description: The created paye income
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/IndividualsIntegrationFrameworkTestSupportIndividualsIncomePayeNinoResponse'
+                  - example:
+                      paye:
+                      - taxYear: 18-19
+                        employee:
+                          hasPartner: true
+                        payFrequency: W4
+                        weeklyPeriodNumber: '2'
+                        monthlyPeriodNumber: '3'
+                        paymentDate: 2020-02-27
+                        taxCode: K971
+                        taxablePayToDate: 19157.5
+                        totalTaxToDate: 3095.89
+                        taxablePay: 16533.95
+                        taxDeductedOrRefunded: 159228.49
+                        employeePensionContributions:
+                          paidYTD: 169731.51
+                          notPaidYTD: 173987.07
+                          paid: 822317.49
+                          notPaid: 818841.65
+                        dednsFromNetPay: 198035.8
+                        statutoryPayYTD:
+                          maternity: 628562.9
+                          paternity: 98600.58
+                          adoption: 48703.26
+                          parentalBereavement: 39708.7
+                        grossEarningsForNICs:
+                          inPayPeriod1: 995979.04
+                          inPayPeriod2: 606456.38
+                          inPayPeriod3: 797877.34
+                          inPayPeriod4: 166334.69
+                        payroll:
+                          id: '}\^W7 ci|)pENG;62$'
+                        employerPayeRef: 345/34678
+                        paidHoursWorked: '35'
+                        totalEmployerNICs:
+                          inPayPeriod1: 18290.8
+                          inPayPeriod2: 192417.2
+                          inPayPeriod3: 14881.1
+                          inPayPeriod4: 17460.88
+                          ytd1: 530979.47
+                          ytd2: 197448.92
+                          ytd3: 172265.64
+                          ytd4: 122452.65
+                        employeeNICs:
+                          inPayPeriod1: 15797.45
+                          inPayPeriod2: 13170.69
+                          inPayPeriod3: 16193.76
+                          inPayPeriod4: 30846.56
+                          ytd1: 10633.5
+                          ytd2: 15579.18
+                          ytd3: 110849.27
+                          ytd4: 162081.23
+                example:
+                  paye:
+                  - taxYear: 18-19
+                    employee:
+                      hasPartner: true
+                    payFrequency: W4
+                    weeklyPeriodNumber: '2'
+                    monthlyPeriodNumber: '3'
+                    paymentDate: 2020-02-27
+                    taxCode: K971
+                    taxablePayToDate: 19157.5
+                    totalTaxToDate: 3095.89
+                    taxablePay: 16533.95
+                    taxDeductedOrRefunded: 159228.49
+                    employeePensionContributions:
+                      paidYTD: 169731.51
+                      notPaidYTD: 173987.07
+                      paid: 822317.49
+                      notPaid: 818841.65
+                    dednsFromNetPay: 198035.8
+                    statutoryPayYTD:
+                      maternity: 628562.9
+                      paternity: 98600.58
+                      adoption: 48703.26
+                      parentalBereavement: 39708.7
+                    grossEarningsForNICs:
+                      inPayPeriod1: 995979.04
+                      inPayPeriod2: 606456.38
+                      inPayPeriod3: 797877.34
+                      inPayPeriod4: 166334.69
+                    payroll:
+                      id: '}\^W7 ci|)pENG;62$'
+                    employerPayeRef: 345/34678
+                    paidHoursWorked: '35'
+                    totalEmployerNICs:
+                      inPayPeriod1: 18290.8
+                      inPayPeriod2: 192417.2
+                      inPayPeriod3: 14881.1
+                      inPayPeriod4: 17460.88
+                      ytd1: 530979.47
+                      ytd2: 197448.92
+                      ytd3: 172265.64
+                      ytd4: 122452.65
+                    employeeNICs:
+                      inPayPeriod1: 15797.45
+                      inPayPeriod2: 13170.69
+                      inPayPeriod3: 16193.76
+                      inPayPeriod4: 30846.56
+                      ytd1: 10633.5
+                      ytd2: 15579.18
+                      ytd3: 110849.27
+                      ytd4: 162081.23
+        '400':
+          description: Bad Request
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/errorResponse'
+                - example:
+                    code: INVALID_REQUEST
+              examples:
+                BadRequest:
+                  description: Invalid request
+                  value:
+                    code: INVALID_REQUEST
+      deprecated: false
+  /individuals/integration-framework-test-support/individuals/tax-credits/nino/{nino}:
+    post:
+      tags:
+        - individuals
+      summary: Create benefits and credits test data for an individual
+      description: "
+        \nUse this endpoint to create benefits and credits test data for an individual.
+
+        \nThis resource acts as a stub for the Integration Framework (IF). It accepts JSON payloads.
+
+        \nThe JSON payloads must match the IF schema. Example IF payloads are provided.
+
+        \nAs data is scoped, the JSON payload that you send should only contain the data items specific to the use case.
+
+        \nAs filtering logic does not form part of this API, it will return the exact JSON that was submitted."
+      operationId: post '/individuals/integration-framework-test-support/individuals/tax-credits/nino/{nino}'
+      security:
+        - applicationRestricted: [ "Authorization" ]
+      parameters:
+        - name: nino
+          in: path
+          description: The employee's National Insurance number.
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: AA123456D
+        - name: startDate
+          in: query
+          description: >-
+            <p>The date that benefits and credits data is requested from.</p>
+  
+            Date in the format `YYYY-MM-DD`
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
+            example: 2019-01-01
+        - name: endDate
+          in: query
+          description: >-
+            <p>The date that benefits and credits data is requested to.</p>
+  
+            Date in the format `YYYY-MM-DD`
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
+            example: 2020-01-01
+        - name: useCase
+          in: query
+          description: >-
+            <p>The use case that the benefits and credits data relates to.</p>
+  
+            <p>Limited to the following possible values:</p>
+  
+            <ul>
+  
+            <li>LAA-C1-working-tax-credit</li>
+  
+            <li>LAA-C2-working-tax-credit</li>
+  
+            <li>LAA-C3-working-tax-credit</li>
+  
+            <li>LAA-C1-child-tax-credit</li>
+  
+            <li>LAA-C2-child-tax-credit</li>
+  
+            <li>LAA-C3-child-tax-credit</li>
+  
+            <li>HMCTS-C2-working-tax-credit</li>
+  
+            <li>HMCTS-C3-working-tax-credit</li>
+  
+            <li>LSANI-C1-working-tax-credit</li>
+  
+            <li>LSANI-C3-working-tax-credit</li>
+  
+            <li>HMCTS-C2-child-tax-credit</li>
+  
+            <li>HMCTS-C3-child-tax-credit</li>
+  
+            <li>LSANI-C1-child-tax-credit</li>
+  
+            <li>LSANI-C3-child-tax-credit</li>
+  
+            </ul>
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
+            example: LAA-C1-working-tax-credit
+        - name: Authorization
+          in: header
+          description: OAuth 2.0 Bearer Token or server token.
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: Bearer <BEARER_TOKEN>
+        - $ref: '#/components/parameters/acceptHeader'
+        - $ref: '#/components/parameters/contentTypeHeader'
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/IndividualsIntegrationFrameworkTestSupportIndividualsTaxCreditsNinoRequest'
+                - example:
+                    applications:
+                    - id: 123
+                      awards:
+                      - totalEntitlement: 18765.23
+                        payProfCalcDate: 2020-08-18
+                        workingTaxCredit:
+                          amount: 930.98
+                          paidYTD: 8976.34
+                        childTaxCredit:
+                          childCareAmount: 930.98
+                          ctcChildAmount: 730.49
+                          familyAmount: 100.49
+                          babyAmount: 100
+                          paidYTD: 8976.34
+                        payments:
+                        - startDate: 1996-01-01
+                          endDate: 1996-03-01
+                          frequency: 7
+                          tcType: ETC
+                          amount: 76.34
+                        - startDate: 1996-01-01
+                          endDate: 1996-03-01
+                          frequency: 7
+                          tcType: ICC
+                          amount: 76.34
+              example:
+                applications:
+                - id: 123
+                  awards:
+                  - totalEntitlement: 18765.23
+                    payProfCalcDate: 2020-08-18
+                    workingTaxCredit:
+                      amount: 930.98
+                      paidYTD: 8976.34
+                    childTaxCredit:
+                      childCareAmount: 930.98
+                      ctcChildAmount: 730.49
+                      familyAmount: 100.49
+                      babyAmount: 100
+                      paidYTD: 8976.34
+                    payments:
+                    - startDate: 1996-01-01
+                      endDate: 1996-03-01
+                      frequency: 7
+                      tcType: ETC
+                      amount: 76.34
+                    - startDate: 1996-01-01
+                      endDate: 1996-03-01
+                      frequency: 7
+                      tcType: ICC
+                      amount: 76.34
+          required: true
+      responses:
+        '201':
+          description: The created employment
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/IndividualsIntegrationFrameworkTestSupportIndividualsTaxCreditsNinoResponse'
+                  - example:
+                      applications:
+                      - id: 123
+                        awards:
+                        - totalEntitlement: 18765.23
+                          payProfCalcDate: 2020-08-18
+                          workingTaxCredit:
+                            amount: 930.98
+                            paidYTD: 8976.34
+                          childTaxCredit:
+                            childCareAmount: 930.98
+                            ctcChildAmount: 730.49
+                            familyAmount: 100.49
+                            babyAmount: 100
+                            paidYTD: 8976.34
+                          payments:
+                          - startDate: 1996-01-01
+                            endDate: 1996-03-01
+                            frequency: 7
+                            tcType: ETC
+                            amount: 76.34
+                          - startDate: 1996-01-01
+                            endDate: 1996-03-01
+                            frequency: 7
+                            tcType: ICC
+                            amount: 76.34
+                example:
+                  applications:
+                  - id: 123
+                    awards:
+                    - totalEntitlement: 18765.23
+                      payProfCalcDate: 2020-08-18
+                      workingTaxCredit:
+                        amount: 930.98
+                        paidYTD: 8976.34
+                      childTaxCredit:
+                        childCareAmount: 930.98
+                        ctcChildAmount: 730.49
+                        familyAmount: 100.49
+                        babyAmount: 100
+                        paidYTD: 8976.34
+                      payments:
+                      - startDate: 1996-01-01
+                        endDate: 1996-03-01
+                        frequency: 7
+                        tcType: ETC
+                        amount: 76.34
+                      - startDate: 1996-01-01
+                        endDate: 1996-03-01
+                        frequency: 7
+                        tcType: ICC
+                        amount: 76.34
+        '400':
+          description: Bad Request
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/errorResponse'
+                  - example:
+                      code: INVALID_REQUEST
+              examples:
+                BadRequest:
+                  description: Invalid request
+                  value:
+                    code: INVALID_REQUEST
+      deprecated: false
+  /individuals/integration-framework-test-support/individuals/details/contact/nino/{nino}:
+    post:
+      tags:
+      - individuals
+      summary: Create details test data for an individual
+      description: "
+        \nUse this endpoint to create details test data for an individual.
+
+        \nThis resource acts as a stub for the Integration Framework (IF). It accepts JSON payloads.
+
+        \nThe JSON payloads must match the IF schema. Example IF payloads are provided.
+
+        \nAs data is scoped, the JSON payload that you send should only contain the data items specific to the use case.
+
+        \nAs filtering logic does not form part of this API, it will return the exact JSON that was submitted."
+      operationId: post '/individuals/integration-framework-test-support/individuals/details/contact/nino/{nino}'
+      security:
+        - applicationRestricted: [ "Authorization" ]
+      parameters:
+        - name: nino
+          in: path
+          description: The employee's National Insurance number.
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: AA123456D
+        - name: useCase
+          in: query
+          description: >-
+            <p>The use case that the details relate to.</p>
+  
+            <p>Limited to the following possible values:</p>
+  
+            <ul>
+  
+            <li>LAA-C3-residences</li>
+  
+            <li>LAA-C4-residences</li>
+  
+            <li>HMCTS-C3-residences</li>
+  
+            <li>HMCTS-C4-residences</li>
+  
+            <li>LSANI-C1-residences</li>
+  
+            <li>LSANI-C3-residences</li>
+  
+            <li>NICTSEJO-C4-residences</li>
+  
+            <li>LAA-C4-contact-details</li>
+  
+            <li>HMCTS-C4-contact-details</li>
+  
+            </ul>
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
+            example: LAA-C3-residences
+        - name: Authorization
+          in: header
+          description: OAuth 2.0 Bearer Token or server token.
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: Bearer <BEARER_TOKEN>
+        - $ref: '#/components/parameters/acceptHeader'
+        - $ref: '#/components/parameters/contentTypeHeader'
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/IndividualsIntegrationFrameworkTestSupportIndividualsDetailsContactNinoRequest'
+              - example:
+                  contactDetails:
+                  - code: 9
+                    detail: 07123 987654
+                    type: MOBILE TELEPHONE
+                  - code: 8
+                    detail: 07124 987655
+                    type: EVENING TELEPHONE
+                  - code: 7
+                    detail: 07124 987656
+                    type: DAYTIME TELEPHONE
+                  residences:
+                  - type: NOMINATED
+                    address:
+                      line1: 24 Trinity Street
+                      line2: Dawley Bank
+                      line3: Telford
+                      line4: Shropshire
+                      line5: UK
+                      postcode: TF3 4ER
+                    noLongerUsed: N
+            example:
+              contactDetails:
+              - code: 9
+                detail: 07123 987654
+                type: MOBILE TELEPHONE
+              - code: 8
+                detail: 07124 987655
+                type: EVENING TELEPHONE
+              - code: 7
+                detail: 07124 987656
+                type: DAYTIME TELEPHONE
+              residences:
+              - type: NOMINATED
+                address:
+                  line1: 24 Trinity Street
+                  line2: Dawley Bank
+                  line3: Telford
+                  line4: Shropshire
+                  line5: UK
+                  postcode: TF3 4ER
+                noLongerUsed: N
+        required: true
+      responses:
+        '201':
+          description: The created contact details
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/IndividualsIntegrationFrameworkTestSupportIndividualsDetailsContactNinoResponse'
+                - example:
+                    contactDetails:
+                    - code: 9
+                      detail: 07123 987654
+                      type: MOBILE TELEPHONE
+                    - code: 8
+                      detail: 07124 987655
+                      type: EVENING TELEPHONE
+                    - code: 7
+                      detail: 07124 987656
+                      type: DAYTIME TELEPHONE
+                    residences:
+                    - type: NOMINATED
+                      address:
+                        line1: 24 Trinity Street
+                        line2: Dawley Bank
+                        line3: Telford
+                        line4: Shropshire
+                        line5: UK
+                        postcode: TF3 4ER
+                      noLongerUsed: N
+              example:
+                contactDetails:
+                - code: 9
+                  detail: 07123 987654
+                  type: MOBILE TELEPHONE
+                - code: 8
+                  detail: 07124 987655
+                  type: EVENING TELEPHONE
+                - code: 7
+                  detail: 07124 987656
+                  type: DAYTIME TELEPHONE
+                residences:
+                - type: NOMINATED
+                  address:
+                    line1: 24 Trinity Street
+                    line2: Dawley Bank
+                    line3: Telford
+                    line4: Shropshire
+                    line5: UK
+                    postcode: TF3 4ER
+                  noLongerUsed: N
+        '400':
+          description: Bad Request
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/errorResponse'
+                  - example:
+                      code: INVALID_REQUEST
+              examples:
+                BadRequest:
+                  description: Invalid request
+                  value:
+                    code: INVALID_REQUEST
+      deprecated: false
+  /individuals/integration-framework-test-support/organisations/self-assessment/return/details/{utr}:
+    post:
+      tags:
+        - individuals
+      summary: Create Self Assessment details test data for an organisation
+      description: "
+        \nUse this endpoint to create Self Assessment details test data for an organisation.
+
+        \nThis resource acts as a stub for the Integration Framework (IF). It accepts JSON payloads
+
+        \nThe JSON payloads must match the IF schema. Example IF payloads are provided
+
+        \nAs data is scoped, the JSON payload that you send should only contain the data items specific to the use case.
+
+        \nAs filtering logic does not form part of this API, it will return the exact JSON that was submitted."
+      operationId: post '/individuals/integration-framework-test-support/organisations/self-assessment/return/details/{utr}'
+      security:
+        - applicationRestricted: [ "Authorization" ]
+      parameters:
+        - name: utr
+          in: path
+          description: A Unique Taxpayer Reference.
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: '1234567890'
+        - name: Authorization
+          in: header
+          description: OAuth 2.0 Bearer Token or server token.
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: Bearer <BEARER_TOKEN>
+        - $ref: '#/components/parameters/acceptHeader'
+        - $ref: '#/components/parameters/contentTypeHeader'
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/IndividualsIntegrationFrameworkTestSupportOrganisationsSelfAssessmentReturnDetailsRequest'
+                - example:
+                    utr: '1234567890'
+                    taxpayerType: Individual
+                    startDate: 2015-04-21
+                    taxSolvencyStatus: S
+                    taxyears:
+                    - taxYear: '2020'
+                      businessSalesTurnover: 38390.76
+                    - taxYear: '2019'
+                      businessSalesTurnover: 12343.12
+                    - taxYear: '2018'
+                      businessSalesTurnover: 20182.22
+                    - taxYear: '2017'
+                      businessSalesTurnover: 20177.77
+                    - taxYear: '2016'
+                      businessSalesTurnover: 20166.66
+                    - taxYear: '2015'
+                      businessSalesTurnover: 20155.55
+                    - taxYear: '2014'
+                      businessSalesTurnover: 20144.5
+              example:
+                utr: '1234567890'
+                taxpayerType: Individual
+                startDate: 2015-04-21
+                taxSolvencyStatus: S
+                taxyears:
+                - taxYear: '2020'
+                  businessSalesTurnover: 38390.76
+                - taxYear: '2019'
+                  businessSalesTurnover: 12343.12
+                - taxYear: '2018'
+                  businessSalesTurnover: 20182.22
+                - taxYear: '2017'
+                  businessSalesTurnover: 20177.77
+                - taxYear: '2016'
+                  businessSalesTurnover: 20166.66
+                - taxYear: '2015'
+                  businessSalesTurnover: 20155.55
+                - taxYear: '2014'
+                  businessSalesTurnover: 20144.5
+        required: true
+      responses:
+        '201':
+          description: The created contact details
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/IndividualsIntegrationFrameworkTestSupportOrganisationsSelfAssessmentReturnDetailsResponse'
+                - example:
+                    utr: '1234567890'
+                    taxpayerType: Individual
+                    startDate: 2015-04-21
+                    taxSolvencyStatus: S
+                    taxyears:
+                    - taxYear: '2020'
+                      businessSalesTurnover: 38390.76
+                    - taxYear: '2019'
+                      businessSalesTurnover: 12343.12
+                    - taxYear: '2018'
+                      businessSalesTurnover: 20182.22
+                    - taxYear: '2017'
+                      businessSalesTurnover: 20177.77
+                    - taxYear: '2016'
+                      businessSalesTurnover: 20166.66
+                    - taxYear: '2015'
+                      businessSalesTurnover: 20155.55
+                    - taxYear: '2014'
+                      businessSalesTurnover: 20144.5
+              example:
+                utr: '1234567890'
+                taxpayerType: Individual
+                startDate: 2015-04-21
+                taxSolvencyStatus: S
+                taxyears:
+                - taxYear: '2020'
+                  businessSalesTurnover: 38390.76
+                - taxYear: '2019'
+                  businessSalesTurnover: 12343.12
+                - taxYear: '2018'
+                  businessSalesTurnover: 20182.22
+                - taxYear: '2017'
+                  businessSalesTurnover: 20177.77
+                - taxYear: '2016'
+                  businessSalesTurnover: 20166.66
+                - taxYear: '2015'
+                  businessSalesTurnover: 20155.55
+                - taxYear: '2014'
+                  businessSalesTurnover: 20144.5
+        '400':
+          description: ''
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/errorResponse'
+                - example:
+                    code: INVALID_REQUEST
+              examples:
+                BadRequest:
+                  description: Invalid request
+                  value:
+                    code: INVALID_REQUEST
+      deprecated: false
+  /individuals/integration-framework-test-support/organisations/corporation-tax/return/details/{utr}:
+    post:
+      tags:
+        - individuals
+      summary: Create Corporation Tax details test data for an organisation
+      description: "
+        \nUse this endpoint to create Corporation Tax details test data for an organisation.
+
+        \nThis resource acts as a stub for the Integration Framework (IF). It accepts JSON payloads.
+
+        \nThe JSON payloads must match the IF schema. Example IF payloads are provided.
+
+        \nAs data is scoped, the JSON payload that you send should only contain the data items specific to the use case.
+
+        \nAs filtering logic does not form part of this API, it will return the exact JSON that was submitted."
+      operationId: post '/individuals/integration-framework-test-support/organisations/corporation-tax/return/details/{utr}'
+      security:
+        - applicationRestricted: [ "Authorization" ]
+      parameters:
+        - name: utr
+          in: path
+          description: A Unique Taxpayer Reference.
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: '1234567890'
+        - name: Authorization
+          in: header
+          description: OAuth 2.0 Bearer Token or server token.
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: Bearer <BEARER_TOKEN>
+        - $ref: '#/components/parameters/acceptHeader'
+        - $ref: '#/components/parameters/contentTypeHeader'
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/IndividualsIntegrationFrameworkTestSupportOrganisationsCorporationTaxReturnDetailsRequest'
+                - example:
+                    utr: '1234567890'
+                    taxpayerStartDate: 2015-04-21
+                    taxSolvencyStatus: V
+                    accountingPeriods:
+                    - apStartDate: 2018-04-06
+                      apEndDate: 2018-10-05
+                      turnover: 38390
+                    - apStartDate: 2018-10-06
+                      apEndDate: 2019-04-05
+                      turnover: 2340
+              example:
+                utr: '1234567890'
+                taxpayerStartDate: 2015-04-21
+                taxSolvencyStatus: V
+                accountingPeriods:
+                - apStartDate: 2018-04-06
+                  apEndDate: 2018-10-05
+                  turnover: 38390
+                - apStartDate: 2018-10-06
+                  apEndDate: 2019-04-05
+                  turnover: 2340
+        required: true
+      responses:
+        '201':
+          description: The created corporation-tax return details
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/IndividualsIntegrationFrameworkTestSupportOrganisationsCorporationTaxReturnDetailsResponse'
+                  - example:
+                      utr: '1234567890'
+                      taxpayerStartDate: 2015-04-21
+                      taxSolvencyStatus: V
+                      accountingPeriods:
+                      - apStartDate: 2018-04-06
+                        apEndDate: 2018-10-05
+                        turnover: 38390
+                      - apStartDate: 2018-10-06
+                        apEndDate: 2019-04-05
+                        turnover: 2340
+                example:
+                  utr: '1234567890'
+                  taxpayerStartDate: 2015-04-21
+                  taxSolvencyStatus: V
+                  accountingPeriods:
+                  - apStartDate: 2018-04-06
+                    apEndDate: 2018-10-05
+                    turnover: 38390
+                  - apStartDate: 2018-10-06
+                    apEndDate: 2019-04-05
+                    turnover: 2340
+        '400':
+          description: Bad Request
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/errorResponse'
+                - example:
+                    code: INVALID_REQUEST
+              examples:
+                BadRequest:
+                  description: Invalid request
+                  value:
+                    code: INVALID_REQUEST
+      deprecated: false
+  /individuals/integration-framework-test-support/organisations/employers/employee/counts/createpayload:
+    post:
+      tags:
+        - individuals
+      summary: Create number of employees test data for an organisation
+      description: "
+       \n Use this endpoint to create number of employees test data for an organisation.
+
+        \nThis resource acts as a stub for the Integration Framework (IF). It accepts JSON payloads.
+
+        \nThe JSON payloads must match the IF schema. Example IF payloads are provided.
+
+        \nAs data is scoped, the JSON payload that you send should only contain the data items specific to the use case.
+
+        \nAs filtering logic does not form part of this API, it will return the exact JSON that was submitted."
+      operationId: post '/individuals/integration-framework-test-support/organisations/employers/employee/counts/createpayload'
+      security:
+        - applicationRestricted: [ "Authorization" ]
+      parameters:
+      - name: Authorization
+        in: header
+        description: OAuth 2.0 Bearer Token or server token.
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: Bearer <BEARER_TOKEN>
+      - $ref: '#/components/parameters/acceptHeader'
+      - $ref: '#/components/parameters/contentTypeHeader'
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/IndividualsIntegrationFrameworkTestSupportOrganisationsEmployersEmployeeCountsCreatePayloadRequest'
+                - example:
+                    startDate: 2019-10-01
+                    endDate: 2020-04-05
+                    references:
+                    - districtNumber: '456'
+                      payeReference: RT882d
+                      counts: []
+                    - districtNumber: '123'
+                      payeReference: AB888666
+                      counts:
+                      - dateTaken: 2019-10
+                        employeeCount: 554
+                      - dateTaken: 2019-11
+                        employeeCount: 567
+                      - dateTaken: 2019-12
+                        employeeCount: 599
+                      - dateTaken: 2020-01
+                        employeeCount: 571
+                      - dateTaken: 2020-02
+                        employeeCount: 566
+                      - dateTaken: 2020-03
+                        employeeCount: 555
+              example:
+                startDate: 2019-10-01
+                endDate: 2020-04-05
+                references:
+                - districtNumber: '456'
+                  payeReference: RT882d
+                  counts: []
+                - districtNumber: '123'
+                  payeReference: AB888666
+                  counts:
+                  - dateTaken: 2019-10
+                    employeeCount: 554
+                  - dateTaken: 2019-11
+                    employeeCount: 567
+                  - dateTaken: 2019-12
+                    employeeCount: 599
+                  - dateTaken: 2020-01
+                    employeeCount: 571
+                  - dateTaken: 2020-02
+                    employeeCount: 566
+                  - dateTaken: 2020-03
+                    employeeCount: 555
+        required: true
+      responses:
+        '201':
+          description: The created employee counts
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/IndividualsIntegrationFrameworkTestSupportOrganisationsEmployersEmployeeCountsCreatePayloadResponse'
+                  - example:
+                      startDate: 2019-10-01
+                      endDate: 2020-04-05
+                      references:
+                      - districtNumber: '456'
+                        payeReference: RT882d
+                        counts: []
+                      - districtNumber: '123'
+                        payeReference: AB888666
+                        counts:
+                        - dateTaken: 2019-10
+                          employeeCount: 554
+                        - dateTaken: 2019-11
+                          employeeCount: 567
+                        - dateTaken: 2019-12
+                          employeeCount: 599
+                        - dateTaken: 2020-01
+                          employeeCount: 571
+                        - dateTaken: 2020-02
+                          employeeCount: 566
+                        - dateTaken: 2020-03
+                          employeeCount: 555
+                example:
+                  startDate: 2019-10-01
+                  endDate: 2020-04-05
+                  references:
+                  - districtNumber: '456'
+                    payeReference: RT882d
+                    counts: []
+                  - districtNumber: '123'
+                    payeReference: AB888666
+                    counts:
+                    - dateTaken: 2019-10
+                      employeeCount: 554
+                    - dateTaken: 2019-11
+                      employeeCount: 567
+                    - dateTaken: 2019-12
+                      employeeCount: 599
+                    - dateTaken: 2020-01
+                      employeeCount: 571
+                    - dateTaken: 2020-02
+                      employeeCount: 566
+                    - dateTaken: 2020-03
+                      employeeCount: 555
+        '400':
+          description: Bad Request
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/errorResponse'
+                  - example:
+                      code: INVALID_REQUEST
+                examples:
+                  BadRequest:
+                    description: Invalid request
+                    value:
+                      code: INVALID_REQUEST
+      deprecated: false
+components:
+  parameters:
+    acceptHeader:
+      name: Accept
+      in: header
+      description: >-
+        Specifies the response format and the
+        [version](/api-documentation/docs/reference-guide#versioning) of the API
+        to be used.
+      required: true
+      schema:
+        type: string
+        enum: [
+          "application/vnd.hmrc.2.0+json"
+        ]
+    contentTypeHeader:
+      name: Content-Type
+      in: header
+      description: The media type of the request body.
+      schema:
+        type: string
+        enum:
+          - application/json
+      required: true
+  securitySchemes:
+    applicationRestricted:
+      type: oauth2
+      description: |
+        HMRC supports OAuth 2.0 for authenticating application restricted API requests using an OAuth 2.0 Bearer Token in the AUTHORIZATION header.
+        See https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints for details.
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.service.hmrc.gov.uk/oauth/token
+          scopes: { }
+  schemas:
+    errorResponse:
+      title: errorResponse
+      required:
+        - code
+      type: object
+      properties:
+        code:
+          type: string
+    AccountingPeriod:
+      title: AccountingPeriod
+      required:
+        - turnover
+      type: object
+      properties:
+        apStartDate:
+          description: The start date of the accounting period.
+        apEndDate:
+          description: The end date of the accounting period.
+        turnover:
+          type: integer
+          description: The amount of money taken by an organisation in the accounting period. Turnover is recorded in thousands of pounds (rounded to the nearest £1,000). Turnover is in the range of -1 to 99999999999.
+          format: int32
+          example: 38390
+    Address:
+      title: Address
+      type: object
+      properties:
+        line1:
+          type: string
+          description: Address line 1.
+          example: Unit 23
+        line2:
+          type: string
+          description: Address line 2.
+          example: Utilitarian Industrial Park
+        line3:
+          type: string
+          description: Address line 3.
+          example: Utilitown
+        line4:
+          type: string
+          description: Address line 4.
+          example: County Durham
+        line5:
+          type: string
+          description: Address line 5.
+          example: UK
+        postcode:
+          type: string
+          description: The postcode for the address.
+          example: DH4 4YY
+      description: The address of the employer.
+    Address2:
+      title: Address2
+      type: object
+      properties:
+        line1:
+          type: string
+          description: Address line 1.
+          example: Line 1
+        line2:
+          type: string
+          description: Address line 2.
+          example: Line 2
+        line3:
+          type: string
+          description: Address line 3.
+          example: Line 3
+        line4:
+          type: string
+          description: Address line 4.
+          example: Line 4
+        line5:
+          type: string
+          description: Address line 5.
+          example: Line 5
+        postcode:
+          type: string
+          description: The postcode for the address.
+          example: NE65 0UH
+      description: The address.
+    Address4:
+      title: Address4
+      type: object
+      properties:
+        line1:
+          type: string
+          description: Address line 1.
+          example: 24 Trinity Street
+        line2:
+          type: string
+          description: Address line 2.
+          example: Dawley Bank
+        line3:
+          type: string
+          description: Address line 3.
+          example: Telford
+        line4:
+          type: string
+          description: Address line 4.
+          example: Shropshire
+        line5:
+          type: string
+          description: Address line 5.
+          example: UK
+        postcode:
+          type: string
+          description: The postcode for the address.
+          example: TF3 4ER
+      description: The individual's address.
+    Application:
+      title: Application
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The identifier for the household application that the individual is active on. Multiple individuals can be active on the same application id.
+          format: int32
+          example: 123
+        awards:
+          type: array
+          items:
+            $ref: '#/components/schemas/Award'
+          description: The awards that were active for this application during the time period.
+    Award:
+      title: Award
+      type: object
+      properties:
+        totalEntitlement:
+          type: number
+          description: The sum of all the award entitlements for an award version. The net amount that will be received.
+          example: 18765.23
+        payProfCalcDate:
+          type: string
+          description: The date the Payment Profile was calculated.
+          example: 1996-08-01
+        workingTaxCredit:
+          allOf:
+            - $ref: '#/components/schemas/WorkingTaxCredit'
+            - description: Working Tax Credit (WTC) amounts.
+        childTaxCredit:
+          allOf:
+            - $ref: '#/components/schemas/ChildTaxCredit'
+            - description: Child Tax Credit (CTC) amounts.
+        payments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Payment2'
+            description: All payments made to the individual during the time period. If there were no payments to this individual, an empty array will be returned.
+    ChildTaxCredit:
+      title: ChildTaxCredit
+      type: object
+      properties:
+        childCareAmount:
+          type: number
+          description: The amount for childcare.
+          example: 930.98
+        ctcChildAmount:
+          type: number
+          description: CTC child entitlements.
+          example: 730.49
+        familyAmount:
+          type: number
+          description: Family entitlement.
+          example: 100.49
+        babyAmount:
+          type: number
+          description: Baby entitlement. This was no longer available after 2017.
+          example: 100.01
+        paidYTD:
+          type: number
+          description: The actual payment amount both direct and payment via employer (PVE) from the start of the tax credit period up to the calculated date of the payment profile.
+          example: 8976.34
+      description: Child Tax Credit (CTC) amounts.
+    Code:
+      title: Code
+      enum:
+      - 7
+      - 8
+      - 9
+      type: integer
+      description: The numeric code for the associated type of telephone number. 7 = DAYTIME TELEPHONE, 8 = EVENING TELEPHONE, and 9 = MOBILE TELEPHONE.
+    ContactDetail:
+      title: ContactDetail
+      type: object
+      properties:
+        code:
+          allOf:
+            - $ref: '#/components/schemas/Code'
+            - description: The numeric code for the associated type of telephone number. 7 = DAYTIME TELEPHONE, 8 = EVENING TELEPHONE, and 9 = MOBILE TELEPHONE.
+        detail:
+          type: string
+          description: The telephone number.
+          example: 0123 737654
+        type:
+          allOf:
+            - $ref: '#/components/schemas/Type'
+            - description: The type of contact telephone number. If the backend returns an unexpected string it will be returned 'as is', i.e. untransformed, to a maximum of 35 characters.
+    Count:
+      title: Count
+      type: object
+      properties:
+        dateTaken:
+          description: The date the employee count was taken. Date in the format YYYY-MM.
+        employeeCount:
+          type: integer
+          description: The number of employees counted on a particular date.
+          format: int32
+          example: 554
+    Deducts:
+      title: Deducts
+      type: object
+      properties:
+        totalBusExpenses:
+          type: number
+          description: The total business expenses for the requested time period. Amount in the range -99999999999.99 to 99999999999.99.
+          example: 99999999999.86
+        totalDisallowBusExp:
+          type: number
+          description: The total disallowed business expenses for the requested time period. Amount in the range -99999999999.99 to 99999999999.99.
+          example: 99999999999.85
+      description: Deductions for the requested time period.
+    Employee:
+      title: Employee
+      type: object
+      properties:
+        hasPartner:
+          type: boolean
+          description: States if the employee has a partner.
+          example: true
+      description: Details about the employee.
+    EmployeeNICs:
+      title: EmployeeNICs
+      type: object
+      properties:
+        inPayPeriod1:
+          type: number
+          description: The value in pay period 1. Amount in the range -999999999.99 to 999999999.99.
+          example: 163068.82
+        inPayPeriod2:
+          type: number
+          description: The value in pay period 2. Amount in the range -999999999.99 to 999999999.99.
+          example: 163068.82
+        inPayPeriod3:
+          type: number
+          description: The value in pay period 3. Amount in the range -999999999.99 to 999999999.99.
+          example: 163068.82
+        inPayPeriod4:
+          type: number
+          description: The value in pay period 4. Amount in the range -999999999.99 to 999999999.99.
+          example: 163068.82
+        ytd1:
+          type: number
+          description: The value year to date 1. Amount in the range -999999999.99 to 999999999.99.
+          example: 163068.82
+        ytd2:
+          type: number
+          description: The value year to date 2. Amount in the range -999999999.99 to 999999999.99.
+          example: 163068.82
+        ytd3:
+          type: number
+          description: The value year to date 3. Amount in the range -999999999.99 to 999999999.99.
+          example: 163068.82
+        ytd4:
+          type: number
+          description: The value year to date 3. Amount in the range -999999999.99 to 999999999.99.
+          example: 163068.82
+      description: Details about the employee's National Insurance contributions due on all earnings.
+    EmployeePensionContributions:
+      title: EmployeePensionContributions
+      type: object
+      properties:
+        paidYTD:
+          type: number
+          description: 'The value of employee pension contributions to date. Amount in the range of: -999999999.99 to 999999999.99.'
+          example: 163068.82
+        notPaidYTD:
+          type: number
+          description: 'The value of employee pension contributions that are not paid under a net pay arrangement. Amount in the range of: -999999999.99 to 999999999.99.'
+          example: 163068.82
+        paid:
+          type: number
+          description: 'The value of the employee pension contributions paid under net pay arrangements in the pay period. Amount in the range of: -999999999.99 to 999999999.99.'
+          example: 163068.82
+        notPaid:
+          type: number
+          description: 'The value of employee pension contributions that are not paid under a net pay arrangement. Amount in the range of: -999999999.99 to 999999999.99.'
+          example: 163068.82
+      description: Details about the employee's pension contributions.
+    Employer:
+      title: Employer
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the employer.
+          example: ACME Industries Limited
+        address:
+          allOf:
+          - $ref: '#/components/schemas/Address'
+          - description: The address of the employer.
+        districtNumber:
+          type: string
+          description: The employer's district number.
+          example: '247'
+        schemeRef:
+          type: string
+          description: The employer's scheme reference.
+          example: ZT6767895A
+      description: The employer's details.
+    Employment:
+      title: Employment
+      type: object
+      properties:
+        employerRef:
+          pattern: ^[0-9]{3}[/][a-zA-Z0-9]{1,10}$
+          type: string
+          description: The employer reference is made up of the employer's district number and scheme reference.
+          example: 247/ZT6767895A
+        payments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Payment'
+          description: Payments made during the employment.
+        employer:
+          allOf:
+            - $ref: '#/components/schemas/Employer'
+            - description: The employer's details.
+        employment:
+          allOf:
+            - $ref: '#/components/schemas/Employment1'
+            - description: The employment details.
+    Employment1:
+      title: Employment1
+      type: object
+      properties:
+        startDate:
+          type: string
+          description: The date the employment started.
+          example: 2019-01-01
+        endDate:
+          type: string
+          description: The date the employment ended.
+          example: 2019-03-01
+        payFrequency:
+          allOf:
+            - $ref: '#/components/schemas/PayFrequency'
+            - description: The frequency of the payments.
+              example: M1
+      description: The employment details.
+    GrossEarningsForNICs:
+      title: GrossEarningsForNICs
+      type: object
+      properties:
+        inPayPeriod1:
+          type: number
+          description: The value in pay period 1. Amount in the range -999999999.99 to 999999999.99.
+          example: 163068.82
+        inPayPeriod2:
+          type: number
+          description: The value in pay period 2. Amount in the range -999999999.99 to 999999999.99.
+          example: 163068.8
+        inPayPeriod3:
+          type: number
+          description: The value in pay period 3. Amount in the range -999999999.99 to 999999999.99.
+          example: 163068.82
+        inPayPeriod4:
+          type: number
+          description: The value in pay period 4. Amount in the range -999999999.99 to 999999999.99.
+          example: 163068.82
+      description: Details about gross earnings for National Insurance contributions.
+    Income:
+      title: Income
+      type: object
+      properties:
+        selfAssessment:
+          type: number
+          description: 'The income from Self Assessment for the requested time period. Amount in the range of: -99999999999.99 to 99999999999.99.'
+          example: 99999999999.99
+        trusts:
+          type: number
+          description: The income from trusts for the requested time period. Amount in the range -99999999999.99 to 99999999999.99.
+          example: 99999999999.98
+        allEmployments:
+          type: number
+          description: The income from employments for the requested time period. Amount in the range -99999999999.99 to 99999999999.99.
+          example: 99999999999.97
+        selfEmployment:
+          type: number
+          description: The income from employments for the requested time period. Amount in the range -99999999999.99 to 99999999999.99.
+          example: 99999999999.96
+        partnerships:
+          type: number
+          description: The income from partnerships for the requested time period. Amount in the range -99999999999.99 to 99999999999.99.
+          example: 99999999999.95
+        ukProperty:
+          type: number
+          description: The income from UK property for the requested time period. Amount in the range -99999999999.99 to 99999999999.99.
+          example: 99999999999.94
+        foreign:
+          type: number
+          description: The foreign income for the requested time period. Amount in the range -99999999999.99 to 99999999999.99.
+          example: 99999999999.93
+        foreignDivs:
+          type: number
+          description: The income from foreign dividends for the requested time period. Amount in the range -99999999999.99 to 99999999999.99.
+          example: 99999999999.92
+        ukInterest:
+          type: number
+          description: The UK interest for the requested time period. Amount in the range -99999999999.99 to 99999999999.99.
+          example: 99999999999.91
+        ukDivsAndInterest:
+          type: number
+          description: The UK interests and dividends for the requested time period. Amount in the range -99999999999.99 to 99999999999.99.
+          example: 99999999999.9
+        pensions:
+          type: number
+          description: The income from pensions for the requested time period. Amount in the range -99999999999.99 to 99999999999.99.
+          example: 99999999999.89
+        other:
+          type: number
+          description: Other income for the requested time period. Amount in the range -99999999999.99 to 99999999999.99.
+          example: 99999999999.88
+        lifePolicies:
+          type: number
+          description: The income from life policies for the requested time period. Amount in the range -99999999999.99 to 99999999999.99.
+          example: 99999999999.87
+        shares:
+          type: number
+          description: The income from shares for the requested time period. Amount in the range -99999999999.99 to 99999999999.99.
+          example: 99999999999.86
+      description: Income for a requested time period.
+    IndividualsIntegrationFrameworkTestSupportIndividualsDetailsContactNinoRequest:
+      title: IndividualsIntegrationFrameworkTestSupportIndividualsDetailsContactNinoRequest
+      type: object
+      properties:
+        contactDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactDetail'
+          description: The list of the individual's contact telephone numbers.
+        residences:
+          type: array
+          items:
+            $ref: '#/components/schemas/Residence'
+          description: The list of the individual's residences.
+      description: Addresses
+    IndividualsIntegrationFrameworkTestSupportIndividualsDetailsContactNinoResponse:
+      title: IndividualsIntegrationFrameworkTestSupportIndividualsDetailsContactNinoResponse
+      type: object
+      properties:
+        contactDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactDetail'
+          description: The list of the individual's contact telephone numbers.
+        residences:
+          type: array
+          items:
+            $ref: '#/components/schemas/Residence'
+          description: The list of the individual's residences.
+      description: Addresses
+    IndividualsIntegrationFrameworkTestSupportIndividualsEmploymentNinoRequest:
+      title: IndividualsIntegrationFrameworkTestSupportIndividualsEmploymentNinoRequest
+      required:
+        - employments
+      type: object
+      properties:
+        employments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Employment'
+          description: The individual’s PAYE employment data for the requested time period.
+      description: Individual's PAYE employments
+    IndividualsIntegrationFrameworkTestSupportIndividualsEmploymentNinoResponse:
+      title: IndividualsIntegrationFrameworkTestSupportIndividualsEmploymentNinoResponse
+      required:
+        - employments
+      type: object
+      properties:
+        employments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Employment'
+          description: The list of the individual’s PAYE employment data for the requested time period.
+      description: Individual's PAYE employments
+    IndividualsIntegrationFrameworkTestSupportIndividualsIncomePayeNinoRequest:
+      title: IndividualsIntegrationFrameworkTestSupportIndividualsIncomePayeNinoRequest
+      required:
+        - paye
+      type: object
+      properties:
+        paye:
+          type: array
+          items:
+            $ref: '#/components/schemas/Paye'
+          description: PAYE income details for an individual for the requested time period.
+      description: Income
+    IndividualsIntegrationFrameworkTestSupportIndividualsIncomePayeNinoResponse:
+      title: IndividualsIntegrationFrameworkTestSupportIndividualsIncomePayeNinoResponse
+      required:
+        - paye
+      type: object
+      properties:
+        paye:
+          type: array
+          items:
+            $ref: '#/components/schemas/Paye'
+          description: PAYE income details for an individual for the requested time period.
+      description: Income
+    IndividualsIntegrationFrameworkTestSupportIndividualsIncomeSaNinoRequest:
+      title: IndividualsIntegrationFrameworkTestSupportIndividualsIncomeSaNinoRequest
+      required:
+        - sa
+      type: object
+      properties:
+        sa:
+          type: array
+          items:
+            $ref: '#/components/schemas/Sa'
+          description: Self Assessment tax return details for an individual for the requested time period.
+      description: Further details for income from Self Assessment
+    IndividualsIntegrationFrameworkTestSupportIndividualsIncomeSaNinoResponse:
+      title: IndividualsIntegrationFrameworkTestSupportIndividualsIncomeSaNinoResponse
+      required:
+        - sa
+      type: object
+      properties:
+        sa:
+          type: array
+          items:
+            $ref: '#/components/schemas/Sa1'
+          description: Self Assessment tax return history for the requested time period.
+      description: Further details for income from Self Assessment
+    IndividualsIntegrationFrameworkTestSupportIndividualsTaxCreditsNinoRequest:
+      title: IndividualsIntegrationFrameworkTestSupportIndividualsTaxCreditsNinoRequest
+      required:
+        - applications
+      type: object
+      properties:
+        applications:
+          type: array
+          items:
+            $ref: '#/components/schemas/Application'
+          description: The applications that are active during the date range requested.
+      description: Tax Credits
+    IndividualsIntegrationFrameworkTestSupportIndividualsTaxCreditsNinoResponse:
+      title: IndividualsIntegrationFrameworkTestSupportIndividualsTaxCreditsNinoResponse
+      required:
+        - applications
+      type: object
+      properties:
+        applications:
+          type: array
+          items:
+            $ref: '#/components/schemas/Application'
+          description: The applications that are active during the date range requested.
+      description: Tax Credits
+    IndividualsIntegrationFrameworkTestSupportOrganisationsCorporationTaxReturnDetailsRequest:
+      title: IndividualsIntegrationFrameworkTestSupportOrganisationsCorporationTaxReturnDetailRequest
+      required:
+        - utr
+        - accountingPeriods
+      type: object
+      properties:
+        utr:
+          pattern: ^[0-9]{10}$
+          type: string
+          description: A Unique Taxpayer Reference.
+          example: '1234567890'
+        taxpayerStartDate:
+          description: The date of registration with HMRC.
+        taxSolvencyStatus:
+          allOf:
+            - $ref: '#/components/schemas/TaxSolvencyStatus2'
+            - description: The tax solvency status for the organisation. A - Administrative Order, V - Voluntary Arrangement, S - Solvent, I - Insolvent.
+              example: V
+        accountingPeriods:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountingPeriod'
+          description: The accounting periods. There will be at least one accounting period.
+      description: Organisations corporation-tax details
+    IndividualsIntegrationFrameworkTestSupportOrganisationsCorporationTaxReturnDetailsResponse:
+      title: IndividualsIntegrationFrameworkTestSupportOrganisationsCorporationTaxReturnDetailsResponse
+      required:
+        - utr
+        - accountingPeriods
+      type: object
+      properties:
+        utr:
+          pattern: ^[0-9]{10}$
+          type: string
+          description: A Unique Taxpayer Reference.
+          example: '1234567890'
+        taxpayerStartDate:
+          description: The date of registration with HMRC.
+        taxSolvencyStatus:
+          allOf:
+            - $ref: '#/components/schemas/TaxSolvencyStatus2'
+            - description: The tax solvency status for the organisation. A - Administrative Order, V - Voluntary Arrangement, S - Solvent, I - Insolvent.
+              example: V
+        accountingPeriods:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountingPeriod'
+          description: The accounting periods. There will be at least one accounting period.
+      description: Organisations corporation-tax details
+    IndividualsIntegrationFrameworkTestSupportOrganisationsEmployersEmployeeCountsCreatePayloadRequest:
+      title: IndividualsIntegrationFrameworkTestSupportOrganisationsEmployersEmployeeCountsCreatePayloadRequest
+      type: object
+      properties:
+        startDate:
+          description: The start date for the data.
+        endDate:
+          description: The end date for the data. If missing, it defaults to today's date.
+        references:
+          maxItems: 10
+          minItems: 1
+          type: array
+          items:
+            $ref: '#/components/schemas/Reference'
+          description: The organisation's PAYE (Pay As You Earn) reference details.
+      description: Create Employee Counts
+    IndividualsIntegrationFrameworkTestSupportOrganisationsEmployersEmployeeCountsCreatePayloadResponse:
+      title: IndividualsIntegrationFrameworkTestSupportOrganisationsEmployersEmployeeCountsCreatePayloadResponse
+      type: object
+      properties:
+        startDate:
+          description: The start date for the data.
+        endDate:
+          description: The end date for the data. If missing, it defaults to today's date.
+        references:
+          maxItems: 10
+          minItems: 1
+          type: array
+          items:
+            $ref: '#/components/schemas/Reference'
+          description: The organisation's PAYE (Pay As You Earn) reference details.
+      description: Create Employee Counts
+    IndividualsIntegrationFrameworkTestSupportOrganisationsSelfAssessmentReturnDetailsRequest:
+      title: IndividualsIntegrationFrameworkTestSupportOrganisationsSelfAssessmentReturnDetailsRequest
+      required:
+        - utr
+        - startDate
+        - taxpayerType
+        - taxSolvencyStatus
+        - taxyears
+      type: object
+      properties:
+        utr:
+          pattern: ^[0-9]{10}$
+          type: string
+          description: A Unique Taxpayer Reference.
+          example: '1234567890'
+        startDate:
+          type: string
+          description: The start date for Self Assessment data.
+          example: 2015-04-21
+        taxpayerType:
+          pattern: ^[A-Z][a-zA-Z]{3,24}$
+          type: string
+          description: The type of taxpayer the organisation is.
+          example: Individual
+        taxSolvencyStatus:
+          allOf:
+            - $ref: '#/components/schemas/TaxSolvencyStatus'
+            - description: The tax solvency status for the organisation. I - Insolvent, S - Solvent.
+              example: S
+        taxyears:
+          type: array
+          items:
+            $ref: '#/components/schemas/Taxyear'
+          description: Self Assessment tax returns.
+      description: Organisations return details
+    IndividualsIntegrationFrameworkTestSupportOrganisationsSelfAssessmentReturnDetailsResponse:
+      title: IndividualsIntegrationFrameworkTestSupportOrganisationsSelfAssessmentReturnDetailsResponse
+      required:
+      - utr
+      - startDate
+      - taxpayerType
+      - taxSolvencyStatus
+      - taxyears
+      type: object
+      properties:
+        utr:
+          pattern: ^[0-9]{10}$
+          type: string
+          description: A Unique Taxpayer Reference.
+          example: '1234567890'
+        startDate:
+          type: string
+          description: The start date for Self Assessment data.
+          example: 2015-04-21
+        taxpayerType:
+          pattern: ^[A-Z][a-zA-Z]{3,24}$
+          type: string
+          description: The type of taxpayer the organisation is.
+          example: Individual
+        taxSolvencyStatus:
+          allOf:
+          - $ref: '#/components/schemas/TaxSolvencyStatus'
+          - description: The tax solvency status for the organisation. I - Insolvent, S - Solvent.
+            example: S
+        taxyears:
+          type: array
+          items:
+            $ref: '#/components/schemas/Taxyear'
+          description: Self Assessment tax returns.
+      description: Organisations return details
+    Paye:
+      title: Paye
+      type: object
+      properties:
+        taxYear:
+          type: string
+          description: The tax year in the format YY-YY.
+          example: 18-19
+        employee:
+          allOf:
+            - $ref: '#/components/schemas/Employee'
+            - description: Details about the employee.
+        payFrequency:
+          type: string
+          description: The frequency of payments. W1 Weekly, W2 Fortnightly, W4 Four weekly, M1 Monthly, M3 Quarterly, M6 Bi-annually, MA Annually, IO One off, IR Irregular.
+          example: W1
+        weeklyPeriodNumber:
+          type: string
+          description: The number corresponding to the week the payment was made. As pay dates may not align with calendar weeks, the range of permitted values is 1 through to 54 (inclusive), and 56.
+          example: '45'
+        monthlyPeriodNumber:
+          type: string
+          description: The number between 1 and 12, corresponding to the month the payment was made. As the tax year starts in April, so does the monthPayNumber, with 1 corresponding to April.
+          example: '10'
+        paymentDate:
+          type: string
+          description: The payment date.
+          example: 2016-02-28
+        taxCode:
+          pattern: ^([1-9][0-9]{0,5}[LMNPTY])|(BR)|(0T)|(NT)|(D[0-8])|([K][1-9][0-9]{0,5})$
+          type: string
+          description: The tax code associated with the payment.
+          example: K971
+        taxablePayToDate:
+          type: number
+          description: 'The taxable pay in this pay period including payrolled benefits to date. Amount in the range of: -999999999.99 to 999999999.99.'
+          example: 163068.82
+        taxablePay:
+          type: number
+          description: 'Taxable pay in this pay period including payrolled benefits in kind. Amount in the range of: -999999999.99 to 999999999.99.'
+          example: 163068.82
+        totalTaxToDate:
+          type: number
+          description: 'The total tax to date in this employment. Amount in the range of: -999999999.99 to 999999999.99.'
+          example: 163068.82
+        taxDeductedOrRefunded:
+          type: number
+          description: 'The value of tax deducted or refunded from this payment. Amount in the range of: -999999999.99 to 999999999.99'
+          example: 159228.45
+        employeePensionContributions:
+          allOf:
+            - $ref: '#/components/schemas/EmployeePensionContributions'
+            - description: Details about the employee's pension contributions.
+        dednsFromNetPay:
+          type: number
+          description: 'The value of deductions from net pay in the pay period. Amount in the range of: -999999999.99 to 999999999.99.'
+          example: 159228.45
+        statutoryPayYTD:
+          allOf:
+            - $ref: '#/components/schemas/StatutoryPayYTD'
+            - description: Details about statutory pay for the year to date.
+        grossEarningsForNICs:
+          allOf:
+            - $ref: '#/components/schemas/GrossEarningsForNICs'
+            - description: Details about gross earnings for National Insurance contributions.
+        payroll:
+          allOf:
+            - $ref: '#/components/schemas/Payroll'
+            - description: The employee's payroll details.
+        employerPayeRef:
+          type: string
+          description: The employer's PAYE Reference.
+          example: 123/AI45678
+        paidHoursWorked:
+          pattern: ^[^ ].{0,34}$
+          type: string
+          description: The number of normal hours worked.
+          example: '35'
+        totalEmployerNICs:
+          allOf:
+            - $ref: '#/components/schemas/TotalEmployerNICs'
+            - description: Details about the employer's total National Insurance contributions.
+        employeeNICs:
+          allOf:
+            - $ref: '#/components/schemas/EmployeeNICs'
+            - description: Details about the employee's National Insurance contributions due on all earnings.
+    PayFrequency:
+      title: PayFrequency
+      enum:
+      - W1
+      - W2
+      - W4
+      - M1
+      - M3
+      - M6
+      - MA
+      - IO
+      - IR
+      type: string
+      description: The frequency of the payments. Limited to the above possible values.
+      example: M1
+    Payment:
+      title: Payment
+      type: object
+      properties:
+        date:
+          description: The date of the payment.
+        paidTaxablePay:
+          type: number
+          description: The amount of the payment.
+          example: 4765.32
+    Payment2:
+      title: Payment2
+      type: object
+      properties:
+        startDate:
+          type: string
+          description: The start date of the payment.
+          example: 1996-08-01
+        endDate:
+          type: string
+          description: The end date of the payment.
+          example: 1996-08-07
+        frequency:
+          type: integer
+          description: The number of days between payments. Currently supported values are 1, 7, 14, and 28.
+          format: int32
+          example: 7
+        tcType:
+          type: string
+          description: The type of tax credit. Currently supported values are ETC and ICC.
+          example: ICC
+        amount:
+          type: number
+          description: The amount to be paid to the recipient.
+          example: 76.34
+    Payroll:
+      title: Payroll
+      type: object
+      properties:
+        id:
+          pattern: ^[^ ].{0,34}$
+          type: string
+          description: An identifier assigned by the employer to the individual.
+          example: yxz8Lt5?/`/>6]5b+7%>o-y4~W5suW
+      description: The employee's payroll details.
+    Reference:
+      title: Reference
+      type: object
+      properties:
+        districtNumber:
+          pattern: ^[0-9]{3}$
+          type: string
+          description: The organisation's district number.
+          example: '456'
+        payeReference:
+          pattern: ^[a-zA-Z0-9]{1,10}$
+          type: string
+          description: This is the organisation's scheme reference.
+          example: RT882d
+        counts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Count'
+          description: Details about the employee count.
+    Residence:
+      title: Residence
+      type: object
+      properties:
+        type:
+          allOf:
+            - $ref: '#/components/schemas/Type1'
+            - description: States the type of residence.
+        address:
+          allOf:
+            - $ref: '#/components/schemas/Address4'
+            - description: The individual's address.
+        noLongerUsed:
+          type: string
+          description: Indicates if the nominated residence is no longer used (NLU). If the value is Y, the address is NLU. If the value is N, the address is still in use.
+          example: N
+    ReturnList:
+      title: ReturnList
+      type: object
+      properties:
+        utr:
+          pattern: ^[0-9]{10}$
+          type: string
+          description: The individual's Unique Taxpayer Reference (UTR).
+          example: '3287654321'
+        busStartDate:
+          type: string
+          description: The start date for the business.
+          example: 2019-08-18
+        busEndDate:
+          type: string
+          description: The end date for the business.
+          example: 2020-12-01
+        caseStartDate:
+          type: string
+          description: The start date for the case.
+          example: 2012-01-06
+        receivedDate:
+          type: string
+          description: The received date.
+          example: 2012-02-06
+        address:
+          allOf:
+            - $ref: '#/components/schemas/Address2'
+            - description: The address.
+        telephoneNumber:
+          type: string
+          description: The telephone number.
+          example: '0191111222'
+        income:
+          allOf:
+            - $ref: '#/components/schemas/Income'
+            - description: Income for a requested time period.
+        totalTaxPaid:
+          type: number
+          description: The total tax paid for the requested time period. Amount in the range -99999999999.99 to 99999999999.99.
+          example: -99.99
+        totalNIC:
+          type: number
+          description: The total National Insurance contributions paid for the requested time period. Amount in the range -99999999999.99 to 99999999999.99.
+          example: 345435.03
+        turnover:
+          type: number
+          description: Turnover for the requested time period. Amount in the range -99999999999.99 to 99999999999.99.
+          example: 99999999999.99
+        otherBusIncome:
+          type: number
+          description: Other business income for the requested time period. Amount in the range -99999999999.99 to 99999999999.99.
+          example: 456543.99
+        tradingIncomeAllowance:
+          type: number
+          description: The trading income allowance for the requested time period. Amount in the range -99999999999.99 to 99999999999.99.
+          example: 100
+        deducts:
+          allOf:
+            - $ref: '#/components/schemas/Deducts'
+            - description: Deductions for the requested time period.
+    ReturnList1:
+      title: ReturnList1
+      type: object
+      properties:
+        utr:
+          pattern: ^[0-9]{10}$
+          type: string
+          description: The individual's Unique Taxpayer Reference (UTR).
+          example: '3287654321'
+        busStartDate:
+          type: string
+          description: The start date for the business.
+          example: 2019-08-18
+        busEndDate:
+          type: string
+          description: The end date for the business.
+          example: 2020-12-01
+        caseStartDate:
+          type: string
+          description: The start date for the case.
+          example: 2012-01-06
+        receivedDate:
+          type: string
+          description: The received date.
+          example: 2012-02-06
+        businessDescription:
+          type: string
+          description: A description of the main business activity relating to the Self Assessment tax return.
+        address:
+          allOf:
+            - $ref: '#/components/schemas/Address2'
+            - description: The address.
+        telephoneNumber:
+          type: string
+          description: The telephone number.
+          example: '0191111222'
+        income:
+          allOf:
+            - $ref: '#/components/schemas/Income'
+            - description: Income for a requested time period.
+        totalTaxPaid:
+          type: number
+          description: The total tax paid for the requested time period. Amount in the range -99999999999.99 to 99999999999.99.
+          example: -99.99
+        totalNIC:
+          type: number
+          description: The total National Insurance contributions paid for the requested time period. Amount in the range -99999999999.99 to 99999999999.99.
+          example: 345435.03
+        turnover:
+          type: number
+          description: Turnover for the requested time period. Amount in the range -99999999999.99 to 99999999999.99.
+          example: 99999999999.99
+        otherBusIncome:
+          type: number
+          description: Other business income for the requested time period. Amount in the range -99999999999.99 to 99999999999.99.
+          example: 456543.99
+        tradingIncomeAllowance:
+          type: number
+          description: The trading income allowance for the requested time period. Amount in the range -99999999999.99 to 99999999999.99.
+          example: 100
+        deducts:
+          allOf:
+            - $ref: '#/components/schemas/Deducts'
+            - description: Deductions for the requested time period.
+    Sa:
+      title: Sa
+      required:
+        - taxYear
+      type: object
+      properties:
+        taxYear:
+          type: string
+          description: The tax year in the format YYYY.
+          example: '2019'
+        returnList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReturnList'
+          description: List of information returned.
+    Sa1:
+      title: Sa1
+      required:
+        - taxYear
+      type: object
+      properties:
+        taxYear:
+          type: string
+          description: The tax year in the format YYYY.
+          example: '2019'
+        returnList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReturnList1'
+          description: List of information returned.
+    StatutoryPayYTD:
+      title: StatutoryPayYTD
+      type: object
+      properties:
+        maternity:
+          type: number
+          description: The value for maternity pay. Amount in the range -999999999.99 to 999999999.99.
+          example: 163068.82
+        paternity:
+          type: number
+          description: Value for paternity pay. Amount in the range -999999999.99 to 999999999.99.
+          example: 163068.8
+        adoption:
+          type: number
+          description: The value for adoption pay. Amount the range -999999999.99 to 999999999.99.
+          example: 163068.82
+        parentalBereavement:
+          type: number
+          description: The value for parental bereavement pay. Amount in the range -999999999.99 to 999999999.99.
+          example: 163068.82
+      description: Details about statutory pay for the year to date.
+    TaxSolvencyStatus:
+      title: TaxSolvencyStatus
+      enum:
+      - I
+      - S
+      type: string
+      description: The tax solvency status for the organisation. I - Insolvent, S - Solvent.
+      example: S
+    TaxSolvencyStatus2:
+      title: TaxSolvencyStatus2
+      enum:
+      - A
+      - V
+      - S
+      - I
+      type: string
+      description: The tax solvency status for the organisation. A - Administrative Order, V - Voluntary Arrangement, S - Solvent, I - Insolvent.
+      example: V
+    Taxyear:
+      title: Taxyear
+      type: object
+      properties:
+        taxyear:
+          type: integer
+          description: The tax year.
+          format: int32
+          example: 2020
+        businessSalesTurnover:
+          type: number
+          description: The total business sales turnover in the range -99999999999.99 to 99999999999.99.
+          example: 20177.77
+    TotalEmployerNICs:
+      title: TotalEmployerNICs
+      type: object
+      properties:
+        inPayPeriod1:
+          type: number
+          description: The value in pay period 1. Amount in the range -999999999.99 to 999999999.99.
+          example: 163068.82
+        inPayPeriod2:
+          type: number
+          description: The value in pay period 2. Amount in the range -999999999.99 to 999999999.99.
+          example: 163068.82
+        inPayPeriod3:
+          type: number
+          description: The value in pay period 3. Amount in the range -999999999.99 to 999999999.99.
+          example: 163068.82
+        inPayPeriod4:
+          type: number
+          description: The value in pay period 4. Amount in the range -999999999.99 to 999999999.99.
+          example: 163068.82
+        ytd1:
+          type: number
+          description: The value year to date 1. Amount in the range -999999999.99 to 999999999.99.
+          example: 163068.82
+        ytd2:
+          type: number
+          description: The value year to date 2. Amount in the range -999999999.99 to 999999999.99.
+          example: 163068.82
+        ytd3:
+          type: number
+          description: The value year to date 3. Amount in the range -999999999.99 to 999999999.99.
+          example: 163068.82
+        ytd4:
+          type: number
+          description: The value year to date 4. Amount in the range -999999999.99 to 999999999.99.
+          example: 163068.82
+      description: Details about the employer's total National Insurance contributions.
+    Type:
+      title: Type
+      enum:
+        - DAYTIME TELEPHONE
+        - EVENING TELEPHONE
+        - MOBILE TELEPHONE
+      type: string
+      description: The type of contact telephone number. If the backend returns an unexpected string it will be returned 'as is', i.e. untransformed, to a maximum of 35 characters.
+    Type1:
+      title: Type1
+      enum:
+        - BASE
+        - NOMINATED
+      type: string
+      description: States the type of residence.
+    WorkingTaxCredit:
+      title: WorkingTaxCredit
+      type: object
+      properties:
+        amount:
+          type: number
+          description: Working Tax Credit element of the overall entitlement (totalEntitlement).
+          example: 930.98
+        paidYTD:
+          type: number
+          description: The actual payment amount, both direct and payment via employer (PVE). This is from the start of the tax credit period up to the calculated date of the payment profile.
+          example: 8976.34
+      description: Working Tax Credit (WTC) amounts.
+tags:
+- name: individuals
+  description: ''
