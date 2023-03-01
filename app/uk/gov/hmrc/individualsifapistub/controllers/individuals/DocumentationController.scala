@@ -16,15 +16,18 @@
 
 package uk.gov.hmrc.individualsifapistub.controllers.individuals
 
+import akka.stream.Materializer
 import controllers.Assets
 import play.api.Configuration
 import play.api.http.HttpErrorHandler
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import play.filters.cors.CORSActionBuilder
 import uk.gov.hmrc.individualsifapistub.config.LoggingAction
 import uk.gov.hmrc.individualsifapistub.views._
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class DocumentationController @Inject()(
@@ -33,7 +36,8 @@ class DocumentationController @Inject()(
                                          configuration: Configuration,
                                          cc: ControllerComponents,
                                          assets: Assets
-                                       ) extends BackendController(cc) {
+                                       ) (implicit materializer: Materializer, executionContext: ExecutionContext)
+  extends BackendController(cc) {
 
   private lazy val whitelistedApplicationIds = configuration
     .getOptional[Seq[String]]("api.access.version-1.0.whitelistedApplicationIds").getOrElse(Seq.empty)
@@ -51,7 +55,9 @@ class DocumentationController @Inject()(
   def documentation(version: String, endpointName: String): Action[AnyContent] =
     assets.at(s"/public/api/documentation/$version", s"${endpointName.replaceAll(" ", "-")}.xml")
 
-  def raml(version: String, file: String): Action[AnyContent] =
-    assets.at(s"/public/api/conf/$version", file)
+  def yaml(version: String, file: String): Action[AnyContent] =
+    CORSActionBuilder(configuration).async { implicit request =>
+      assets.at(s"/public/api/conf/$version", file)(request)
+    }
 }
 
