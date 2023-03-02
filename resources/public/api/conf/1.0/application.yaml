@@ -26,10 +26,16 @@ paths:
 
         \nThe JSON payloads must match the IF schema. Example IF payloads are provided.
 
-        \nAs data is scoped, the JSON payload that you send should only contain the data items specific to the use case."
+        \nAs data is scoped, the JSON payload that you send should only contain the data items specific to the use case.
+        
+        \n#### Authorisation
+        
+        \nThis endpoint is [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints) and requires `Authorization` header containing an OAUTH 2.0 Bearer Token.
+        
+        \nSee also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/)."
       operationId: post '/individuals/integration-framework-test-support/individuals/employment/nino/{nino}'
       security:
-        - applicationRestricted: [ "Authorization" ]
+        - applicationRestricted: [ ]
       parameters:
         - name: nino
           in: path
@@ -251,10 +257,16 @@ paths:
 
         \nAs data is scoped, the JSON payload that you send should only contain the data items specific to the use case.
 
-        \nAs filtering logic forms part of this API, the fields the application is not eligible to see is filtered out."
+        \nAs filtering logic forms part of this API, the fields the application is not eligible to see is filtered out.
+        
+        \n#### Authorisation
+        
+        \nThis endpoint is [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints) and requires `Authorization` header containing an OAUTH 2.0 Bearer Token.
+        
+        \nSee also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/)."
       operationId: post '/individuals/integration-framework-test-support/individuals/income/sa/nino/{nino}'
       security:
-        - applicationRestricted: [ "Authorization" ]
+        - applicationRestricted: [ ]
       parameters:
         - name: nino
           in: path
@@ -533,10 +545,16 @@ paths:
       tags:
         - individuals
       summary: Create PAYE income test data for an individual
-      description: "<p>Use this endpoint to create PAYE income test data for an individual.</p>\n<p>This resource acts as a stub for the Integration Framework (IF). It accepts JSON payloads.</p>\n<p>The JSON payloads must match the IF schema. Example IF payloads are provided.</p>\n<p>As data is scoped, the JSON payload that you send should only contain the data items specific to the use case.</p>\n<p>The paymentDate value provided in the POST body will be used to determine if the PAYE data sits within the date range \nprovided in the query parameters, if they do not then the PAYE data will not be returned.</p>\n"
+      description: "<p>Use this endpoint to create PAYE income test data for an individual.</p>\n<p>This resource acts as a stub for the Integration Framework (IF). It accepts JSON payloads.</p>\n<p>The JSON payloads must match the IF schema. Example IF payloads are provided.</p>\n<p>As data is scoped, the JSON payload that you send should only contain the data items specific to the use case.</p>\n<p>The paymentDate value provided in the POST body will be used to determine if the PAYE data sits within the date range \nprovided in the query parameters, if they do not then the PAYE data will not be returned.</p>\n
+      
+        \n#### Authorisation
+        
+        \nThis endpoint is [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints) and requires `Authorization` header containing an OAUTH 2.0 Bearer Token.
+        
+        \nSee also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/)."
       operationId: post '/individuals/integration-framework-test-support/individuals/income/paye/nino/{nino}'
       security:
-        - applicationRestricted: [ "Authorization" ]
+        - applicationRestricted: [ ]
       parameters:
         - name: nino
           in: path
@@ -870,10 +888,16 @@ paths:
 
         \nAs data is scoped, the JSON payload that you send should only contain the data items specific to the use case.
 
-        \nAs filtering logic does not form part of this API, it will return the exact JSON that was submitted."
+        \nAs filtering logic does not form part of this API, it will return the exact JSON that was submitted.
+        
+        \n#### Authorisation
+        
+        \nThis endpoint is [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints) and requires `Authorization` header containing an OAUTH 2.0 Bearer Token.
+        
+        \nSee also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/)."
       operationId: post '/individuals/integration-framework-test-support/individuals/tax-credits/nino/{nino}'
       security:
-        - applicationRestricted: [ "Authorization" ]
+        - applicationRestricted: [ ]
       parameters:
         - name: nino
           in: path
@@ -1112,10 +1136,16 @@ paths:
 
         \nAs data is scoped, the JSON payload that you send should only contain the data items specific to the use case.
 
-        \nAs filtering logic does not form part of this API, it will return the exact JSON that was submitted."
+        \nAs filtering logic does not form part of this API, it will return the exact JSON that was submitted.
+        
+        \n#### Authorisation
+        
+        \nThis endpoint is [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints) and requires `Authorization` header containing an OAUTH 2.0 Bearer Token.
+        
+        \nSee also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/)."
       operationId: post '/individuals/integration-framework-test-support/individuals/details/contact/nino/{nino}'
       security:
-        - applicationRestricted: [ "Authorization" ]
+        - applicationRestricted: [ ]
       parameters:
         - name: nino
           in: path
@@ -1300,10 +1330,16 @@ paths:
 
         \nAs data is scoped, the JSON payload that you send should only contain the data items specific to the use case.
 
-        \nAs filtering logic does not form part of this API, it will return the exact JSON that was submitted."
+        \nAs filtering logic does not form part of this API, it will return the exact JSON that was submitted.
+        
+        \n#### Authorisation
+        
+        \nThis endpoint is [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints) and requires `Authorization` header containing an OAUTH 2.0 Bearer Token.
+        
+        \nSee also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/)."
       operationId: post '/individuals/integration-framework-test-support/organisations/self-assessment/return/details/{utr}'
       security:
-        - applicationRestricted: [ "Authorization" ]
+        - applicationRestricted: [ ]
       parameters:
         - name: utr
           in: path
@@ -1450,10 +1486,16 @@ paths:
 
         \nAs data is scoped, the JSON payload that you send should only contain the data items specific to the use case.
 
-        \nAs filtering logic does not form part of this API, it will return the exact JSON that was submitted."
+        \nAs filtering logic does not form part of this API, it will return the exact JSON that was submitted.
+        
+        \n#### Authorisation
+        
+        \nThis endpoint is [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints) and requires `Authorization` header containing an OAUTH 2.0 Bearer Token.
+        
+        \nSee also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/)."
       operationId: post '/individuals/integration-framework-test-support/organisations/corporation-tax/return/details/{utr}'
       security:
-        - applicationRestricted: [ "Authorization" ]
+        - applicationRestricted: [ ]
       parameters:
         - name: utr
           in: path
@@ -1564,21 +1606,27 @@ paths:
 
         \nAs data is scoped, the JSON payload that you send should only contain the data items specific to the use case.
 
-        \nAs filtering logic does not form part of this API, it will return the exact JSON that was submitted."
+        \nAs filtering logic does not form part of this API, it will return the exact JSON that was submitted.
+        
+        \n#### Authorisation
+        
+        \nThis endpoint is [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints) and requires `Authorization` header containing an OAUTH 2.0 Bearer Token.
+        
+        \nSee also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/)."
       operationId: post '/individuals/integration-framework-test-support/organisations/employers/employee/counts/createpayload'
       security:
-        - applicationRestricted: [ "Authorization" ]
+        - applicationRestricted: [ ]
       parameters:
-      - name: Authorization
-        in: header
-        description: OAuth 2.0 Bearer Token or server token.
-        required: true
-        style: simple
-        schema:
-          type: string
-          example: Bearer <BEARER_TOKEN>
-      - $ref: '#/components/parameters/acceptHeader'
-      - $ref: '#/components/parameters/contentTypeHeader'
+        - name: Authorization
+          in: header
+          description: OAuth 2.0 Bearer Token or server token.
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: Bearer <BEARER_TOKEN>
+        - $ref: '#/components/parameters/acceptHeader'
+        - $ref: '#/components/parameters/contentTypeHeader'
       requestBody:
         description: ''
         content:
@@ -1712,9 +1760,8 @@ components:
       required: true
       schema:
         type: string
-        enum: [
-          "application/vnd.hmrc.2.0+json"
-        ]
+        enum:
+          - application/vnd.hmrc.2.0+json
     contentTypeHeader:
       name: Content-Type
       in: header
