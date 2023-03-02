@@ -125,62 +125,6 @@ paths:
                 - $ref: '#/components/schemas/IndividualsIntegrationFrameworkTestSupportIndividualsEmploymentNinoRequest'
                 - example:
                     employments:
-                    - employerRef: 247/ZT6767895A
-                      payments:
-                      - date: 2019-01-31
-                        paidTaxablePay: 4765.32
-                      - date: 2019-02-28
-                        paidTaxablePay: 9876.54
-                      employer:
-                        name: ACME Industries Limited
-                        address:
-                          line1: Unit 23
-                          line2: Utilitarian Industrial Park
-                          line3: Utilitown
-                          line4: County Durham
-                          line5: UK
-                          postcode: DH4 4YY
-                        districtNumber: '247'
-                        schemeRef: ZT6767895A
-                      employment:
-                        startDate: 2019-01-01
-                        endDate: 2019-03-31
-                        payFrequency: M1
-              example:
-                employments:
-                - employerRef: 247/ZT6767895A
-                  payments:
-                  - date: 2019-01-31
-                    paidTaxablePay: 4765.32
-                  - date: 2019-02-28
-                    paidTaxablePay: 9876.54
-                  employer:
-                    name: ACME Industries Limited
-                    address:
-                      line1: Unit 23
-                      line2: Utilitarian Industrial Park
-                      line3: Utilitown
-                      line4: County Durham
-                      line5: UK
-                      postcode: DH4 4YY
-                    districtNumber: '247'
-                    schemeRef: ZT6767895A
-                  employment:
-                    startDate: 2019-01-01
-                    endDate: 2019-03-31
-                    payFrequency: M1
-        required: true
-      responses:
-        '201':
-          description: The created employment
-          headers: {}
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/IndividualsIntegrationFrameworkTestSupportIndividualsEmploymentNinoResponse'
-                  - example:
-                      employments:
                       - employerRef: 247/ZT6767895A
                         payments:
                           - date: 2019-01-31
@@ -196,7 +140,6 @@ paths:
                             line4: County Durham
                             line5: UK
                             postcode: DH4 4YY
-                          employerRef: 247/ZT6767895A
                           districtNumber: '247'
                           schemeRef: ZT6767895A
                         employment:
@@ -220,13 +163,70 @@ paths:
                         line4: County Durham
                         line5: UK
                         postcode: DH4 4YY
-                      employerRef: 247/ZT6767895A
                       districtNumber: '247'
                       schemeRef: ZT6767895A
                     employment:
                       startDate: 2019-01-01
                       endDate: 2019-03-31
                       payFrequency: M1
+        required: true
+      responses:
+        '201':
+          description: The created employment
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/IndividualsIntegrationFrameworkTestSupportIndividualsEmploymentNinoResponse'
+                  - example:
+                      employments:
+                        - employerRef: 247/ZT6767895A
+                          payments:
+                            - date: 2019-01-31
+                              paidTaxablePay: 4765.32
+                            - date: 2019-02-28
+                              paidTaxablePay: 9876.54
+                          employer:
+                            name: ACME Industries Limited
+                            address:
+                              line1: Unit 23
+                              line2: Utilitarian Industrial Park
+                              line3: Utilitown
+                              line4: County Durham
+                              line5: UK
+                              postcode: DH4 4YY
+                            employerRef: 247/ZT6767895A
+                            districtNumber: '247'
+                            schemeRef: ZT6767895A
+                          employment:
+                            startDate: 2019-01-01
+                            endDate: 2019-03-31
+                            payFrequency: M1
+                example:
+                  employments:
+                    - employerRef: 247/ZT6767895A
+                      payments:
+                        - date: 2019-01-31
+                          paidTaxablePay: 4765.32
+                        - date: 2019-02-28
+                          paidTaxablePay: 9876.54
+                      employer:
+                        name: ACME Industries Limited
+                        address:
+                          line1: Unit 23
+                          line2: Utilitarian Industrial Park
+                          line3: Utilitown
+                          line4: County Durham
+                          line5: UK
+                          postcode: DH4 4YY
+                        employerRef: 247/ZT6767895A
+                        districtNumber: '247'
+                        schemeRef: ZT6767895A
+                      employment:
+                        startDate: 2019-01-01
+                        endDate: 2019-03-31
+                        payFrequency: M1
         '400':
           description: Bad Request
           headers: {}
@@ -237,11 +237,8 @@ paths:
                   - $ref: '#/components/schemas/errorResponse'
                   - example:
                       code: INVALID_REQUEST
-                examples:
-                  BadRequest:
-                    description: Invalid request
-                    value:
-                      code: INVALID_REQUEST
+                example:
+                  - code: INVALID_REQUEST
       deprecated: false
   /individuals/integration-framework-test-support/individuals/income/sa/nino/{nino}:
     post:
@@ -356,8 +353,48 @@ paths:
                 - $ref: '#/components/schemas/IndividualsIntegrationFrameworkTestSupportIndividualsIncomeSaNinoRequest'
                 - example:
                     sa:
-                    - taxYear: '2019'
-                      returnList:
+                      - taxYear: '2019'
+                        returnList:
+                          - utr: '3287654321'
+                            busStartDate: 2018-02-21
+                            busEndDate: 2018-02-22
+                            caseStartDate: 2018-02-20
+                            receivedDate: 2018-02-20
+                            businessDescription: Dogs body
+                            address:
+                              line1: Line 1
+                              line2: Line 2
+                              line3: Line 3
+                              line4: Line 4
+                              postcode: NE65 0UH
+                            telephoneNumber: '0191111222'
+                            income:
+                              selfAssessment: 99999999999.99
+                              trusts: 99999999999.98
+                              allEmployments: 99999999999.97
+                              selfEmployment: 99999999999.97
+                              partnerships: 99999999999.96
+                              ukProperty: 99999999999.95
+                              foreign: 99999999999.94
+                              foreignDivs: 99999999999.93
+                              ukInterest: 99999999999.92
+                              ukDivsAndInterest: 99999999999.91
+                              pensions: 99999999999.9
+                              other: 99999999999.89
+                              lifePolicies: 99999999999.88
+                              shares: 99999999999.87
+                            totalTaxPaid: -99.99
+                            totalNIC: 99999999999.99
+                            turnover: 345435.03
+                            otherBusIncome: 34545.88
+                            tradingIncomeAllowance: 100
+                            deducts:
+                              totalBusExpenses: 99999999999.86
+                              totalDisallowBusExp: 99999999999.85
+              example:
+                sa:
+                  - taxYear: '2019'
+                    returnList:
                       - utr: '3287654321'
                         busStartDate: 2018-02-21
                         busEndDate: 2018-02-22
@@ -394,46 +431,6 @@ paths:
                         deducts:
                           totalBusExpenses: 99999999999.86
                           totalDisallowBusExp: 99999999999.85
-              example:
-                sa:
-                - taxYear: '2019'
-                  returnList:
-                  - utr: '3287654321'
-                    busStartDate: 2018-02-21
-                    busEndDate: 2018-02-22
-                    caseStartDate: 2018-02-20
-                    receivedDate: 2018-02-20
-                    businessDescription: Dogs body
-                    address:
-                      line1: Line 1
-                      line2: Line 2
-                      line3: Line 3
-                      line4: Line 4
-                      postcode: NE65 0UH
-                    telephoneNumber: '0191111222'
-                    income:
-                      selfAssessment: 99999999999.99
-                      trusts: 99999999999.98
-                      allEmployments: 99999999999.97
-                      selfEmployment: 99999999999.97
-                      partnerships: 99999999999.96
-                      ukProperty: 99999999999.95
-                      foreign: 99999999999.94
-                      foreignDivs: 99999999999.93
-                      ukInterest: 99999999999.92
-                      ukDivsAndInterest: 99999999999.91
-                      pensions: 99999999999.9
-                      other: 99999999999.89
-                      lifePolicies: 99999999999.88
-                      shares: 99999999999.87
-                    totalTaxPaid: -99.99
-                    totalNIC: 99999999999.99
-                    turnover: 345435.03
-                    otherBusIncome: 34545.88
-                    tradingIncomeAllowance: 100
-                    deducts:
-                      totalBusExpenses: 99999999999.86
-                      totalDisallowBusExp: 99999999999.85
         required: true
       responses:
         '201':
@@ -446,8 +443,48 @@ paths:
                   - $ref: '#/components/schemas/IndividualsIntegrationFrameworkTestSupportIndividualsIncomeSaNinoResponse'
                   - example:
                       sa:
-                      - taxYear: '2019'
-                        returnList:
+                        - taxYear: '2019'
+                          returnList:
+                            - utr: '3287654321'
+                              busStartDate: 2018-02-21
+                              busEndDate: 2018-02-22
+                              caseStartDate: 2018-02-20
+                              receivedDate: 2018-02-20
+                              businessDescription: Dogs body
+                              address:
+                                line1: Line 1
+                                line2: Line 2
+                                line3: Line 3
+                                line4: Line 4
+                                postcode: NE65 0UH
+                              telephoneNumber: '0191111222'
+                              income:
+                                selfAssessment: 99999999999.99
+                                trusts: 99999999999.98
+                                allEmployments: 99999999999.97
+                                selfEmployment: 99999999999.97
+                                partnerships: 99999999999.96
+                                ukProperty: 99999999999.95
+                                foreign: 99999999999.94
+                                foreignDivs: 99999999999.93
+                                ukInterest: 99999999999.92
+                                ukDivsAndInterest: 99999999999.91
+                                pensions: 99999999999.9
+                                other: 99999999999.89
+                                lifePolicies: 99999999999.88
+                                shares: 99999999999.87
+                              totalTaxPaid: -99.99
+                              totalNIC: 99999999999.99
+                              turnover: 345435.03
+                              otherBusIncome: 34545.88
+                              tradingIncomeAllowance: 100
+                              deducts:
+                                totalBusExpenses: 99999999999.86
+                                totalDisallowBusExp: 99999999999.85
+                example:
+                  sa:
+                    - taxYear: '2019'
+                      returnList:
                         - utr: '3287654321'
                           busStartDate: 2018-02-21
                           busEndDate: 2018-02-22
@@ -484,46 +521,6 @@ paths:
                           deducts:
                             totalBusExpenses: 99999999999.86
                             totalDisallowBusExp: 99999999999.85
-                example:
-                  sa:
-                  - taxYear: '2019'
-                    returnList:
-                    - utr: '3287654321'
-                      busStartDate: 2018-02-21
-                      busEndDate: 2018-02-22
-                      caseStartDate: 2018-02-20
-                      receivedDate: 2018-02-20
-                      businessDescription: Dogs body
-                      address:
-                        line1: Line 1
-                        line2: Line 2
-                        line3: Line 3
-                        line4: Line 4
-                        postcode: NE65 0UH
-                      telephoneNumber: '0191111222'
-                      income:
-                        selfAssessment: 99999999999.99
-                        trusts: 99999999999.98
-                        allEmployments: 99999999999.97
-                        selfEmployment: 99999999999.97
-                        partnerships: 99999999999.96
-                        ukProperty: 99999999999.95
-                        foreign: 99999999999.94
-                        foreignDivs: 99999999999.93
-                        ukInterest: 99999999999.92
-                        ukDivsAndInterest: 99999999999.91
-                        pensions: 99999999999.9
-                        other: 99999999999.89
-                        lifePolicies: 99999999999.88
-                        shares: 99999999999.87
-                      totalTaxPaid: -99.99
-                      totalNIC: 99999999999.99
-                      turnover: 345435.03
-                      otherBusIncome: 34545.88
-                      tradingIncomeAllowance: 100
-                      deducts:
-                        totalBusExpenses: 99999999999.86
-                        totalDisallowBusExp: 99999999999.85
         '400':
           description: Bad Request
           headers: {}
@@ -531,14 +528,11 @@ paths:
             application/json:
               schema:
                 allOf:
-                - $ref: '#/components/schemas/errorResponse'
-                - example:
-                    code: INVALID_REQUEST
-              examples:
-                BadRequest:
-                  description: Invalid request
-                  value:
-                    code: INVALID_REQUEST
+                  - $ref: '#/components/schemas/errorResponse'
+                  - example:
+                      code: INVALID_REQUEST
+              example:
+                - code: INVALID_REQUEST
       deprecated: false
   /individuals/integration-framework-test-support/individuals/income/paye/nino/{nino}:
     post:
@@ -642,120 +636,6 @@ paths:
                 - $ref: '#/components/schemas/IndividualsIntegrationFrameworkTestSupportIndividualsIncomePayeNinoRequest'
                 - example:
                     paye:
-                    - taxYear: 18-19
-                      employee:
-                        hasPartner: true
-                      payFrequency: W4
-                      weeklyPeriodNumber: '2'
-                      monthlyPeriodNumber: '3'
-                      paymentDate: 2020-02-27
-                      taxCode: K971
-                      taxablePayToDate: 19157.5
-                      totalTaxToDate: 3095.89
-                      taxablePay: 16533.95
-                      taxDeductedOrRefunded: 159228.49
-                      employeePensionContributions:
-                        paidYTD: 169731.51
-                        notPaidYTD: 173987.07
-                        paid: 822317.49
-                        notPaid: 818841.65
-                      dednsFromNetPay: 198035.8
-                      statutoryPayYTD:
-                        maternity: 628562.9
-                        paternity: 98600.58
-                        adoption: 48703.26
-                        parentalBereavement: 39708.7
-                      grossEarningsForNICs:
-                        inPayPeriod1: 995979.04
-                        inPayPeriod2: 606456.38
-                        inPayPeriod3: 797877.34
-                        inPayPeriod4: 166334.69
-                      payroll:
-                        id: '}\^W7 ci|)pENG;62$'
-                      employerPayeRef: 345/34678
-                      paidHoursWorked: '35'
-                      totalEmployerNICs:
-                        inPayPeriod1: 18290.8
-                        inPayPeriod2: 192417.2
-                        inPayPeriod3: 14881.1
-                        inPayPeriod4: 17460.88
-                        ytd1: 530979.47
-                        ytd2: 197448.92
-                        ytd3: 172265.64
-                        ytd4: 122452.65
-                      employeeNICs:
-                        inPayPeriod1: 15797.45
-                        inPayPeriod2: 13170.69
-                        inPayPeriod3: 16193.76
-                        inPayPeriod4: 30846.56
-                        ytd1: 10633.5
-                        ytd2: 15579.18
-                        ytd3: 110849.27
-                        ytd4: 162081.23
-              example:
-                paye:
-                - taxYear: 18-19
-                  employee:
-                    hasPartner: true
-                  payFrequency: W4
-                  weeklyPeriodNumber: '2'
-                  monthlyPeriodNumber: '3'
-                  paymentDate: 2020-02-27
-                  taxCode: K971
-                  taxablePayToDate: 19157.5
-                  totalTaxToDate: 3095.89
-                  taxablePay: 16533.95
-                  taxDeductedOrRefunded: 159228.49
-                  employeePensionContributions:
-                    paidYTD: 169731.51
-                    notPaidYTD: 173987.07
-                    paid: 822317.49
-                    notPaid: 818841.65
-                  dednsFromNetPay: 198035.8
-                  statutoryPayYTD:
-                    maternity: 628562.9
-                    paternity: 98600.58
-                    adoption: 48703.26
-                    parentalBereavement: 39708.7
-                  grossEarningsForNICs:
-                    inPayPeriod1: 995979.04
-                    inPayPeriod2: 606456.38
-                    inPayPeriod3: 797877.34
-                    inPayPeriod4: 166334.69
-                  payroll:
-                    id: '}\^W7 ci|)pENG;62$'
-                  employerPayeRef: 345/34678
-                  paidHoursWorked: '35'
-                  totalEmployerNICs:
-                    inPayPeriod1: 18290.8
-                    inPayPeriod2: 192417.2
-                    inPayPeriod3: 14881.1
-                    inPayPeriod4: 17460.88
-                    ytd1: 530979.47
-                    ytd2: 197448.92
-                    ytd3: 172265.64
-                    ytd4: 122452.65
-                  employeeNICs:
-                    inPayPeriod1: 15797.45
-                    inPayPeriod2: 13170.69
-                    inPayPeriod3: 16193.76
-                    inPayPeriod4: 30846.56
-                    ytd1: 10633.5
-                    ytd2: 15579.18
-                    ytd3: 110849.27
-                    ytd4: 162081.23
-        required: true
-      responses:
-        '201':
-          description: The created paye income
-          headers: {}
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/IndividualsIntegrationFrameworkTestSupportIndividualsIncomePayeNinoResponse'
-                  - example:
-                      paye:
                       - taxYear: 18-19
                         employee:
                           hasPartner: true
@@ -858,6 +738,120 @@ paths:
                       ytd2: 15579.18
                       ytd3: 110849.27
                       ytd4: 162081.23
+        required: true
+      responses:
+        '201':
+          description: The created paye income
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/IndividualsIntegrationFrameworkTestSupportIndividualsIncomePayeNinoResponse'
+                  - example:
+                      paye:
+                        - taxYear: 18-19
+                          employee:
+                            hasPartner: true
+                          payFrequency: W4
+                          weeklyPeriodNumber: '2'
+                          monthlyPeriodNumber: '3'
+                          paymentDate: 2020-02-27
+                          taxCode: K971
+                          taxablePayToDate: 19157.5
+                          totalTaxToDate: 3095.89
+                          taxablePay: 16533.95
+                          taxDeductedOrRefunded: 159228.49
+                          employeePensionContributions:
+                            paidYTD: 169731.51
+                            notPaidYTD: 173987.07
+                            paid: 822317.49
+                            notPaid: 818841.65
+                          dednsFromNetPay: 198035.8
+                          statutoryPayYTD:
+                            maternity: 628562.9
+                            paternity: 98600.58
+                            adoption: 48703.26
+                            parentalBereavement: 39708.7
+                          grossEarningsForNICs:
+                            inPayPeriod1: 995979.04
+                            inPayPeriod2: 606456.38
+                            inPayPeriod3: 797877.34
+                            inPayPeriod4: 166334.69
+                          payroll:
+                            id: '}\^W7 ci|)pENG;62$'
+                          employerPayeRef: 345/34678
+                          paidHoursWorked: '35'
+                          totalEmployerNICs:
+                            inPayPeriod1: 18290.8
+                            inPayPeriod2: 192417.2
+                            inPayPeriod3: 14881.1
+                            inPayPeriod4: 17460.88
+                            ytd1: 530979.47
+                            ytd2: 197448.92
+                            ytd3: 172265.64
+                            ytd4: 122452.65
+                          employeeNICs:
+                            inPayPeriod1: 15797.45
+                            inPayPeriod2: 13170.69
+                            inPayPeriod3: 16193.76
+                            inPayPeriod4: 30846.56
+                            ytd1: 10633.5
+                            ytd2: 15579.18
+                            ytd3: 110849.27
+                            ytd4: 162081.23
+                example:
+                  paye:
+                    - taxYear: 18-19
+                      employee:
+                        hasPartner: true
+                      payFrequency: W4
+                      weeklyPeriodNumber: '2'
+                      monthlyPeriodNumber: '3'
+                      paymentDate: 2020-02-27
+                      taxCode: K971
+                      taxablePayToDate: 19157.5
+                      totalTaxToDate: 3095.89
+                      taxablePay: 16533.95
+                      taxDeductedOrRefunded: 159228.49
+                      employeePensionContributions:
+                        paidYTD: 169731.51
+                        notPaidYTD: 173987.07
+                        paid: 822317.49
+                        notPaid: 818841.65
+                      dednsFromNetPay: 198035.8
+                      statutoryPayYTD:
+                        maternity: 628562.9
+                        paternity: 98600.58
+                        adoption: 48703.26
+                        parentalBereavement: 39708.7
+                      grossEarningsForNICs:
+                        inPayPeriod1: 995979.04
+                        inPayPeriod2: 606456.38
+                        inPayPeriod3: 797877.34
+                        inPayPeriod4: 166334.69
+                      payroll:
+                        id: '}\^W7 ci|)pENG;62$'
+                      employerPayeRef: 345/34678
+                      paidHoursWorked: '35'
+                      totalEmployerNICs:
+                        inPayPeriod1: 18290.8
+                        inPayPeriod2: 192417.2
+                        inPayPeriod3: 14881.1
+                        inPayPeriod4: 17460.88
+                        ytd1: 530979.47
+                        ytd2: 197448.92
+                        ytd3: 172265.64
+                        ytd4: 122452.65
+                      employeeNICs:
+                        inPayPeriod1: 15797.45
+                        inPayPeriod2: 13170.69
+                        inPayPeriod3: 16193.76
+                        inPayPeriod4: 30846.56
+                        ytd1: 10633.5
+                        ytd2: 15579.18
+                        ytd3: 110849.27
+                        ytd4: 162081.23
         '400':
           description: Bad Request
           headers: {}
@@ -865,14 +859,11 @@ paths:
             application/json:
               schema:
                 allOf:
-                - $ref: '#/components/schemas/errorResponse'
-                - example:
-                    code: INVALID_REQUEST
-              examples:
-                BadRequest:
-                  description: Invalid request
-                  value:
-                    code: INVALID_REQUEST
+                  - $ref: '#/components/schemas/errorResponse'
+                  - example:
+                      code: INVALID_REQUEST
+              example:
+                - code: INVALID_REQUEST
       deprecated: false
   /individuals/integration-framework-test-support/individuals/tax-credits/nino/{nino}:
     post:
@@ -994,8 +985,34 @@ paths:
                 - $ref: '#/components/schemas/IndividualsIntegrationFrameworkTestSupportIndividualsTaxCreditsNinoRequest'
                 - example:
                     applications:
-                    - id: 123
-                      awards:
+                      - id: 123
+                        awards:
+                          - totalEntitlement: 18765.23
+                            payProfCalcDate: 2020-08-18
+                            workingTaxCredit:
+                              amount: 930.98
+                              paidYTD: 8976.34
+                            childTaxCredit:
+                              childCareAmount: 930.98
+                              ctcChildAmount: 730.49
+                              familyAmount: 100.49
+                              babyAmount: 100
+                              paidYTD: 8976.34
+                            payments:
+                              - startDate: 1996-01-01
+                                endDate: 1996-03-01
+                                frequency: 7
+                                tcType: ETC
+                                amount: 76.34
+                              - startDate: 1996-01-01
+                                endDate: 1996-03-01
+                                frequency: 7
+                                tcType: ICC
+                                amount: 76.34
+              example:
+                applications:
+                  - id: 123
+                    awards:
                       - totalEntitlement: 18765.23
                         payProfCalcDate: 2020-08-18
                         workingTaxCredit:
@@ -1008,43 +1025,17 @@ paths:
                           babyAmount: 100
                           paidYTD: 8976.34
                         payments:
-                        - startDate: 1996-01-01
-                          endDate: 1996-03-01
-                          frequency: 7
-                          tcType: ETC
-                          amount: 76.34
-                        - startDate: 1996-01-01
-                          endDate: 1996-03-01
-                          frequency: 7
-                          tcType: ICC
-                          amount: 76.34
-              example:
-                applications:
-                - id: 123
-                  awards:
-                  - totalEntitlement: 18765.23
-                    payProfCalcDate: 2020-08-18
-                    workingTaxCredit:
-                      amount: 930.98
-                      paidYTD: 8976.34
-                    childTaxCredit:
-                      childCareAmount: 930.98
-                      ctcChildAmount: 730.49
-                      familyAmount: 100.49
-                      babyAmount: 100
-                      paidYTD: 8976.34
-                    payments:
-                    - startDate: 1996-01-01
-                      endDate: 1996-03-01
-                      frequency: 7
-                      tcType: ETC
-                      amount: 76.34
-                    - startDate: 1996-01-01
-                      endDate: 1996-03-01
-                      frequency: 7
-                      tcType: ICC
-                      amount: 76.34
-          required: true
+                          - startDate: 1996-01-01
+                            endDate: 1996-03-01
+                            frequency: 7
+                            tcType: ETC
+                            amount: 76.34
+                          - startDate: 1996-01-01
+                            endDate: 1996-03-01
+                            frequency: 7
+                            tcType: ICC
+                            amount: 76.34
+        required: true
       responses:
         '201':
           description: The created employment
@@ -1056,8 +1047,34 @@ paths:
                   - $ref: '#/components/schemas/IndividualsIntegrationFrameworkTestSupportIndividualsTaxCreditsNinoResponse'
                   - example:
                       applications:
-                      - id: 123
-                        awards:
+                        - id: 123
+                          awards:
+                            - totalEntitlement: 18765.23
+                              payProfCalcDate: 2020-08-18
+                              workingTaxCredit:
+                                amount: 930.98
+                                paidYTD: 8976.34
+                              childTaxCredit:
+                                childCareAmount: 930.98
+                                ctcChildAmount: 730.49
+                                familyAmount: 100.49
+                                babyAmount: 100
+                                paidYTD: 8976.34
+                              payments:
+                                - startDate: 1996-01-01
+                                  endDate: 1996-03-01
+                                  frequency: 7
+                                  tcType: ETC
+                                  amount: 76.34
+                                - startDate: 1996-01-01
+                                  endDate: 1996-03-01
+                                  frequency: 7
+                                  tcType: ICC
+                                  amount: 76.34
+                example:
+                  applications:
+                    - id: 123
+                      awards:
                         - totalEntitlement: 18765.23
                           payProfCalcDate: 2020-08-18
                           workingTaxCredit:
@@ -1070,42 +1087,16 @@ paths:
                             babyAmount: 100
                             paidYTD: 8976.34
                           payments:
-                          - startDate: 1996-01-01
-                            endDate: 1996-03-01
-                            frequency: 7
-                            tcType: ETC
-                            amount: 76.34
-                          - startDate: 1996-01-01
-                            endDate: 1996-03-01
-                            frequency: 7
-                            tcType: ICC
-                            amount: 76.34
-                example:
-                  applications:
-                  - id: 123
-                    awards:
-                    - totalEntitlement: 18765.23
-                      payProfCalcDate: 2020-08-18
-                      workingTaxCredit:
-                        amount: 930.98
-                        paidYTD: 8976.34
-                      childTaxCredit:
-                        childCareAmount: 930.98
-                        ctcChildAmount: 730.49
-                        familyAmount: 100.49
-                        babyAmount: 100
-                        paidYTD: 8976.34
-                      payments:
-                      - startDate: 1996-01-01
-                        endDate: 1996-03-01
-                        frequency: 7
-                        tcType: ETC
-                        amount: 76.34
-                      - startDate: 1996-01-01
-                        endDate: 1996-03-01
-                        frequency: 7
-                        tcType: ICC
-                        amount: 76.34
+                            - startDate: 1996-01-01
+                              endDate: 1996-03-01
+                              frequency: 7
+                              tcType: ETC
+                              amount: 76.34
+                            - startDate: 1996-01-01
+                              endDate: 1996-03-01
+                              frequency: 7
+                              tcType: ICC
+                              amount: 76.34
         '400':
           description: Bad Request
           headers: {}
@@ -1116,11 +1107,8 @@ paths:
                   - $ref: '#/components/schemas/errorResponse'
                   - example:
                       code: INVALID_REQUEST
-              examples:
-                BadRequest:
-                  description: Invalid request
-                  value:
-                    code: INVALID_REQUEST
+              example:
+                - code: INVALID_REQUEST
       deprecated: false
   /individuals/integration-framework-test-support/individuals/details/contact/nino/{nino}:
     post:
@@ -1205,59 +1193,7 @@ paths:
           application/json:
             schema:
               allOf:
-              - $ref: '#/components/schemas/IndividualsIntegrationFrameworkTestSupportIndividualsDetailsContactNinoRequest'
-              - example:
-                  contactDetails:
-                  - code: 9
-                    detail: 07123 987654
-                    type: MOBILE TELEPHONE
-                  - code: 8
-                    detail: 07124 987655
-                    type: EVENING TELEPHONE
-                  - code: 7
-                    detail: 07124 987656
-                    type: DAYTIME TELEPHONE
-              residences:
-                      - type: NOMINATED
-                        address:
-                          line1: 24 Trinity Street
-                          line2: Dawley Bank
-                          line3: Telford
-                          line4: Shropshire
-                          line5: UK
-                          postcode: TF3 4ER
-                        noLongerUsed: N
-            example:
-              contactDetails:
-              - code: 9
-                detail: 07123 987654
-                type: MOBILE TELEPHONE
-              - code: 8
-                detail: 07124 987655
-                type: EVENING TELEPHONE
-              - code: 7
-                detail: 07124 987656
-                type: DAYTIME TELEPHONE
-              residences:
-              - type: NOMINATED
-                address:
-                  line1: 24 Trinity Street
-                  line2: Dawley Bank
-                  line3: Telford
-                  line4: Shropshire
-                  line5: UK
-                  postcode: TF3 4ER
-                noLongerUsed: N
-        required: true
-      responses:
-        '201':
-          description: The created contact details
-          headers: {}
-          content:
-            application/json:
-              schema:
-                allOf:
-                - $ref: '#/components/schemas/IndividualsIntegrationFrameworkTestSupportIndividualsDetailsContactNinoResponse'
+                - $ref: '#/components/schemas/IndividualsIntegrationFrameworkTestSupportIndividualsDetailsContactNinoRequest'
                 - example:
                     contactDetails:
                       - code: 9
@@ -1300,6 +1236,58 @@ paths:
                     line5: UK
                     postcode: TF3 4ER
                   noLongerUsed: N
+        required: true
+      responses:
+        '201':
+          description: The created contact details
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/IndividualsIntegrationFrameworkTestSupportIndividualsDetailsContactNinoResponse'
+                  - example:
+                      contactDetails:
+                        - code: 9
+                          detail: 07123 987654
+                          type: MOBILE TELEPHONE
+                        - code: 8
+                          detail: 07124 987655
+                          type: EVENING TELEPHONE
+                        - code: 7
+                          detail: 07124 987656
+                          type: DAYTIME TELEPHONE
+                      residences:
+                        - type: NOMINATED
+                          address:
+                            line1: 24 Trinity Street
+                            line2: Dawley Bank
+                            line3: Telford
+                            line4: Shropshire
+                            line5: UK
+                            postcode: TF3 4ER
+                          noLongerUsed: N
+              example:
+                contactDetails:
+                  - code: 9
+                    detail: 07123 987654
+                    type: MOBILE TELEPHONE
+                  - code: 8
+                    detail: 07124 987655
+                    type: EVENING TELEPHONE
+                  - code: 7
+                    detail: 07124 987656
+                    type: DAYTIME TELEPHONE
+                residences:
+                  - type: NOMINATED
+                    address:
+                      line1: 24 Trinity Street
+                      line2: Dawley Bank
+                      line3: Telford
+                      line4: Shropshire
+                      line5: UK
+                      postcode: TF3 4ER
+                    noLongerUsed: N
         '400':
           description: Bad Request
           headers: {}
@@ -1310,11 +1298,8 @@ paths:
                   - $ref: '#/components/schemas/errorResponse'
                   - example:
                       code: INVALID_REQUEST
-              examples:
-                BadRequest:
-                  description: Invalid request
-                  value:
-                    code: INVALID_REQUEST
+              example:
+                - code: INVALID_REQUEST
       deprecated: false
   /individuals/integration-framework-test-support/organisations/self-assessment/return/details/{utr}:
     post:
@@ -1463,14 +1448,11 @@ paths:
             application/json:
               schema:
                 allOf:
-                - $ref: '#/components/schemas/errorResponse'
-                - example:
-                    code: INVALID_REQUEST
-              examples:
-                BadRequest:
-                  description: Invalid request
-                  value:
-                    code: INVALID_REQUEST
+                  - $ref: '#/components/schemas/errorResponse'
+                  - example:
+                      code: INVALID_REQUEST
+              example:
+                - code: INVALID_REQUEST
       deprecated: false
   /individuals/integration-framework-test-support/organisations/corporation-tax/return/details/{utr}:
     post:
@@ -1583,14 +1565,11 @@ paths:
             application/json:
               schema:
                 allOf:
-                - $ref: '#/components/schemas/errorResponse'
-                - example:
-                    code: INVALID_REQUEST
-              examples:
-                BadRequest:
-                  description: Invalid request
-                  value:
-                    code: INVALID_REQUEST
+                  - $ref: '#/components/schemas/errorResponse'
+                  - example:
+                      code: INVALID_REQUEST
+              example:
+                - code: INVALID_REQUEST
       deprecated: false
   /individuals/integration-framework-test-support/organisations/employers/employee/counts/createpayload:
     post:
@@ -1638,12 +1617,34 @@ paths:
                     startDate: 2019-10-01
                     endDate: 2020-04-05
                     references:
-                    - districtNumber: '456'
-                      payeReference: RT882d
-                      counts: []
-                    - districtNumber: '123'
-                      payeReference: AB888666
-                      counts:
+                      - districtNumber: '456'
+                        payeReference: RT882d
+                        counts: []
+                      - districtNumber: '123'
+                        payeReference: AB888666
+                        counts:
+                          - dateTaken: 2019-10
+                            employeeCount: 554
+                          - dateTaken: 2019-11
+                            employeeCount: 567
+                          - dateTaken: 2019-12
+                            employeeCount: 599
+                          - dateTaken: 2020-01
+                            employeeCount: 571
+                          - dateTaken: 2020-02
+                            employeeCount: 566
+                          - dateTaken: 2020-03
+                            employeeCount: 555
+              example:
+                startDate: 2019-10-01
+                endDate: 2020-04-05
+                references:
+                  - districtNumber: '456'
+                    payeReference: RT882d
+                    counts: []
+                  - districtNumber: '123'
+                    payeReference: AB888666
+                    counts:
                       - dateTaken: 2019-10
                         employeeCount: 554
                       - dateTaken: 2019-11
@@ -1656,28 +1657,6 @@ paths:
                         employeeCount: 566
                       - dateTaken: 2020-03
                         employeeCount: 555
-              example:
-                startDate: 2019-10-01
-                endDate: 2020-04-05
-                references:
-                - districtNumber: '456'
-                  payeReference: RT882d
-                  counts: []
-                - districtNumber: '123'
-                  payeReference: AB888666
-                  counts:
-                  - dateTaken: 2019-10
-                    employeeCount: 554
-                  - dateTaken: 2019-11
-                    employeeCount: 567
-                  - dateTaken: 2019-12
-                    employeeCount: 599
-                  - dateTaken: 2020-01
-                    employeeCount: 571
-                  - dateTaken: 2020-02
-                    employeeCount: 566
-                  - dateTaken: 2020-03
-                    employeeCount: 555
         required: true
       responses:
         '201':
@@ -1692,12 +1671,34 @@ paths:
                       startDate: 2019-10-01
                       endDate: 2020-04-05
                       references:
-                      - districtNumber: '456'
-                        payeReference: RT882d
-                        counts: []
-                      - districtNumber: '123'
-                        payeReference: AB888666
-                        counts:
+                        - districtNumber: '456'
+                          payeReference: RT882d
+                          counts: []
+                        - districtNumber: '123'
+                          payeReference: AB888666
+                          counts:
+                            - dateTaken: 2019-10
+                              employeeCount: 554
+                            - dateTaken: 2019-11
+                              employeeCount: 567
+                            - dateTaken: 2019-12
+                              employeeCount: 599
+                            - dateTaken: 2020-01
+                              employeeCount: 571
+                            - dateTaken: 2020-02
+                              employeeCount: 566
+                            - dateTaken: 2020-03
+                              employeeCount: 555
+                example:
+                  startDate: 2019-10-01
+                  endDate: 2020-04-05
+                  references:
+                    - districtNumber: '456'
+                      payeReference: RT882d
+                      counts: []
+                    - districtNumber: '123'
+                      payeReference: AB888666
+                      counts:
                         - dateTaken: 2019-10
                           employeeCount: 554
                         - dateTaken: 2019-11
@@ -1710,28 +1711,6 @@ paths:
                           employeeCount: 566
                         - dateTaken: 2020-03
                           employeeCount: 555
-                example:
-                  startDate: 2019-10-01
-                  endDate: 2020-04-05
-                  references:
-                  - districtNumber: '456'
-                    payeReference: RT882d
-                    counts: []
-                  - districtNumber: '123'
-                    payeReference: AB888666
-                    counts:
-                    - dateTaken: 2019-10
-                      employeeCount: 554
-                    - dateTaken: 2019-11
-                      employeeCount: 567
-                    - dateTaken: 2019-12
-                      employeeCount: 599
-                    - dateTaken: 2020-01
-                      employeeCount: 571
-                    - dateTaken: 2020-02
-                      employeeCount: 566
-                    - dateTaken: 2020-03
-                      employeeCount: 555
         '400':
           description: Bad Request
           headers: {}
@@ -1742,11 +1721,8 @@ paths:
                   - $ref: '#/components/schemas/errorResponse'
                   - example:
                       code: INVALID_REQUEST
-                examples:
-                  BadRequest:
-                    description: Invalid request
-                    value:
-                      code: INVALID_REQUEST
+                example:
+                  - code: INVALID_REQUEST
       deprecated: false
 components:
   parameters:
