@@ -49,7 +49,7 @@ paths:
           in: query
           description: >-
             <p>The date that employment data is requested from.</p>
-  
+            
             Date in the format `YYYY-MM-DD`
           style: form
           explode: true
@@ -60,7 +60,7 @@ paths:
           in: query
           description: >-
             <p>The date that employment data is requested to.</p>
-  
+            
             Date in the format `YYYY-MM-DD`
           style: form
           explode: true
@@ -71,35 +71,35 @@ paths:
           in: query
           description: >-
             <p>The use case that the employments data relates to.</p>
-  
+            
             <p>Limited to the following possible values:</p>
-  
+            
             <ul>
-  
+            
             <li>LAA-C1</li>
-  
+            
             <li>LAA-C2</li>
-  
+            
             <li>LAA-C3</li>
-  
+            
             <li>LAA-C4</li>
-  
+            
             <li>LSANI-C1</li>
-  
+            
             <li>LSANI-C3</li>
-  
+            
             <li>HMCTS-C2</li>
-  
+            
             <li>HMCTS-C3</li>
-  
+            
             <li>HMCTS-C4</li>
-  
+            
             <li>NICTSEJO-C4</li>
-  
+            
             <li>HO-RP2</li>
-  
+            
             <li>HO-ECP</li>
-  
+            
             </ul>
           style: form
           explode: true
@@ -183,10 +183,10 @@ paths:
                       employments:
                       - employerRef: 247/ZT6767895A
                         payments:
-                        - date: 2019-01-31
-                          paidTaxablePay: 4765.32
-                        - date: 2019-02-28
-                          paidTaxablePay: 9876.54
+                          - date: 2019-01-31
+                            paidTaxablePay: 4765.32
+                          - date: 2019-02-28
+                            paidTaxablePay: 9876.54
                         employer:
                           name: ACME Industries Limited
                           address:
@@ -203,14 +203,14 @@ paths:
                           startDate: 2019-01-01
                           endDate: 2019-03-31
                           payFrequency: M1
-                example:
-                  employments:
+              example:
+                employments:
                   - employerRef: 247/ZT6767895A
                     payments:
-                    - date: 2019-01-31
-                      paidTaxablePay: 4765.32
-                    - date: 2019-02-28
-                      paidTaxablePay: 9876.54
+                      - date: 2019-01-31
+                        paidTaxablePay: 4765.32
+                      - date: 2019-02-28
+                        paidTaxablePay: 9876.54
                     employer:
                       name: ACME Industries Limited
                       address:
@@ -280,7 +280,7 @@ paths:
           in: query
           description: >-
             <p>The first tax year to be included in the dataset requested.</p>
-  
+            
             Year in the format `YYYY`
           style: form
           explode: true
@@ -291,7 +291,7 @@ paths:
           in: query
           description: >-
             <p>The last tax year to be included in the dataset requested.</p>
-  
+            
             Year in the format `YYYY`
           style: form
           explode: true
@@ -302,35 +302,35 @@ paths:
           in: query
           description: >-
             <p>The use case that the Self Assessment income data relates to.</p>
-  
+            
             <p>Limited to the following possible values:</p>
-  
+            
             <ul>
-  
+            
             <li>LAA-C1</li>
-  
+            
             <li>LAA-C2</li>
-  
+            
             <li>LAA-C3</li>
-  
+            
             <li>LAA-C4</li>
-  
+            
             <li>LSANI-C1</li>
-  
+            
             <li>LSANI-C3</li>
-  
+            
             <li>HMCTS-C2</li>
-  
+            
             <li>HMCTS-C3</li>
-  
+            
             <li>HMCTS-C4</li>
-  
+            
             <li>NICTSEJO-C4</li>
-  
+            
             <li>HO-ECP</li>
-  
+            
             <li>HO-V2</li>
-  
+            
             </ul>
           style: form
           explode: true
@@ -568,7 +568,7 @@ paths:
           in: query
           description: >-
             <p>The date that PAYE income data is requested from.</p>
-  
+            
             Date in the format `YYYY-MM-DD`
           style: form
           explode: true
@@ -579,7 +579,7 @@ paths:
           in: query
           description: >-
             <p>The date that PAYE income data is requested to.</p>
-  
+            
             Date in the format `YYYY-MM-DD`
           style: form
           explode: true
@@ -590,33 +590,33 @@ paths:
           in: query
           description: >-
             <p>The use case that the PAYE income data relates to.</p>
-  
+            
             <p>Limited to the following possible values:</p>
-  
+            
             <ul>
-  
+            
             <li>LAA-C1</li>
-  
+            
             <li>LAA-C2</li>
-  
+            
             <li>LAA-C3</li>
-  
+            
             <li>LAA-C4</li>
-  
+            
             <li>LSANI-C1</li>
-  
+            
             <li>LSANI-C3</li>
-  
+            
             <li>HMCTS-C2</li>
-  
+            
             <li>HMCTS-C3</li>
-  
+            
             <li>HMCTS-C4</li>
-  
+            
             <li>NICTSEJO-C4</li>
-  
+            
             <li>HO-V2</li>
-  
+            
             </ul>
           style: form
           explode: true
@@ -806,8 +806,8 @@ paths:
                           ytd2: 15579.18
                           ytd3: 110849.27
                           ytd4: 162081.23
-                example:
-                  paye:
+              example:
+                paye:
                   - taxYear: 18-19
                     employee:
                       hasPartner: true
@@ -911,7 +911,7 @@ paths:
           in: query
           description: >-
             <p>The date that benefits and credits data is requested from.</p>
-  
+            
             Date in the format `YYYY-MM-DD`
           required: true
           style: form
@@ -923,7 +923,7 @@ paths:
           in: query
           description: >-
             <p>The date that benefits and credits data is requested to.</p>
-  
+            
             Date in the format `YYYY-MM-DD`
           required: true
           style: form
@@ -935,39 +935,39 @@ paths:
           in: query
           description: >-
             <p>The use case that the benefits and credits data relates to.</p>
-  
+            
             <p>Limited to the following possible values:</p>
-  
+            
             <ul>
-  
+            
             <li>LAA-C1-working-tax-credit</li>
-  
+            
             <li>LAA-C2-working-tax-credit</li>
-  
+            
             <li>LAA-C3-working-tax-credit</li>
-  
+            
             <li>LAA-C1-child-tax-credit</li>
-  
+            
             <li>LAA-C2-child-tax-credit</li>
-  
+            
             <li>LAA-C3-child-tax-credit</li>
-  
+            
             <li>HMCTS-C2-working-tax-credit</li>
-  
+            
             <li>HMCTS-C3-working-tax-credit</li>
-  
+            
             <li>LSANI-C1-working-tax-credit</li>
-  
+            
             <li>LSANI-C3-working-tax-credit</li>
-  
+            
             <li>HMCTS-C2-child-tax-credit</li>
-  
+            
             <li>HMCTS-C3-child-tax-credit</li>
-  
+            
             <li>LSANI-C1-child-tax-credit</li>
-  
+            
             <li>LSANI-C3-child-tax-credit</li>
-  
+            
             </ul>
           required: true
           style: form
@@ -1125,7 +1125,7 @@ paths:
   /individuals/integration-framework-test-support/individuals/details/contact/nino/{nino}:
     post:
       tags:
-      - individuals
+        - individuals
       summary: Create details test data for an individual
       description: "
         \nUse this endpoint to create details test data for an individual.
@@ -1159,29 +1159,29 @@ paths:
           in: query
           description: >-
             <p>The use case that the details relate to.</p>
-  
+            
             <p>Limited to the following possible values:</p>
-  
+            
             <ul>
-  
+            
             <li>LAA-C3-residences</li>
-  
+            
             <li>LAA-C4-residences</li>
-  
+            
             <li>HMCTS-C3-residences</li>
-  
+            
             <li>HMCTS-C4-residences</li>
-  
+            
             <li>LSANI-C1-residences</li>
-  
+            
             <li>LSANI-C3-residences</li>
-  
+            
             <li>NICTSEJO-C4-residences</li>
-  
+            
             <li>LAA-C4-contact-details</li>
-  
+            
             <li>HMCTS-C4-contact-details</li>
-  
+            
             </ul>
           required: true
           style: form
@@ -1217,16 +1217,16 @@ paths:
                   - code: 7
                     detail: 07124 987656
                     type: DAYTIME TELEPHONE
-                  residences:
-                  - type: NOMINATED
-                    address:
-                      line1: 24 Trinity Street
-                      line2: Dawley Bank
-                      line3: Telford
-                      line4: Shropshire
-                      line5: UK
-                      postcode: TF3 4ER
-                    noLongerUsed: N
+              residences:
+                      - type: NOMINATED
+                        address:
+                          line1: 24 Trinity Street
+                          line2: Dawley Bank
+                          line3: Telford
+                          line4: Shropshire
+                          line5: UK
+                          postcode: TF3 4ER
+                        noLongerUsed: N
             example:
               contactDetails:
               - code: 9
@@ -1260,27 +1260,27 @@ paths:
                 - $ref: '#/components/schemas/IndividualsIntegrationFrameworkTestSupportIndividualsDetailsContactNinoResponse'
                 - example:
                     contactDetails:
-                    - code: 9
-                      detail: 07123 987654
-                      type: MOBILE TELEPHONE
-                    - code: 8
-                      detail: 07124 987655
-                      type: EVENING TELEPHONE
-                    - code: 7
-                      detail: 07124 987656
-                      type: DAYTIME TELEPHONE
+                      - code: 9
+                        detail: 07123 987654
+                        type: MOBILE TELEPHONE
+                      - code: 8
+                        detail: 07124 987655
+                        type: EVENING TELEPHONE
+                      - code: 7
+                        detail: 07124 987656
+                        type: DAYTIME TELEPHONE
                     residences:
-                    - type: NOMINATED
-                      address:
-                        line1: 24 Trinity Street
-                        line2: Dawley Bank
-                        line3: Telford
-                        line4: Shropshire
-                        line5: UK
-                        postcode: TF3 4ER
-                      noLongerUsed: N
-              example:
-                contactDetails:
+                      - type: NOMINATED
+                        address:
+                          line1: 24 Trinity Street
+                          line2: Dawley Bank
+                          line3: Telford
+                          line4: Shropshire
+                          line5: UK
+                          postcode: TF3 4ER
+                        noLongerUsed: N
+            example:
+              contactDetails:
                 - code: 9
                   detail: 07123 987654
                   type: MOBILE TELEPHONE
@@ -1290,7 +1290,7 @@ paths:
                 - code: 7
                   detail: 07124 987656
                   type: DAYTIME TELEPHONE
-                residences:
+              residences:
                 - type: NOMINATED
                   address:
                     line1: 24 Trinity Street
@@ -1372,40 +1372,40 @@ paths:
                     startDate: 2015-04-21
                     taxSolvencyStatus: S
                     taxyears:
-                    - taxYear: '2020'
-                      businessSalesTurnover: 38390.76
-                    - taxYear: '2019'
-                      businessSalesTurnover: 12343.12
-                    - taxYear: '2018'
-                      businessSalesTurnover: 20182.22
-                    - taxYear: '2017'
-                      businessSalesTurnover: 20177.77
-                    - taxYear: '2016'
-                      businessSalesTurnover: 20166.66
-                    - taxYear: '2015'
-                      businessSalesTurnover: 20155.55
-                    - taxYear: '2014'
-                      businessSalesTurnover: 20144.5
+                      - taxYear: '2020'
+                        businessSalesTurnover: 38390.76
+                      - taxYear: '2019'
+                        businessSalesTurnover: 12343.12
+                      - taxYear: '2018'
+                        businessSalesTurnover: 20182.22
+                      - taxYear: '2017'
+                        businessSalesTurnover: 20177.77
+                      - taxYear: '2016'
+                        businessSalesTurnover: 20166.66
+                      - taxYear: '2015'
+                        businessSalesTurnover: 20155.55
+                      - taxYear: '2014'
+                        businessSalesTurnover: 20144.5
               example:
                 utr: '1234567890'
                 taxpayerType: Individual
                 startDate: 2015-04-21
                 taxSolvencyStatus: S
                 taxyears:
-                - taxYear: '2020'
-                  businessSalesTurnover: 38390.76
-                - taxYear: '2019'
-                  businessSalesTurnover: 12343.12
-                - taxYear: '2018'
-                  businessSalesTurnover: 20182.22
-                - taxYear: '2017'
-                  businessSalesTurnover: 20177.77
-                - taxYear: '2016'
-                  businessSalesTurnover: 20166.66
-                - taxYear: '2015'
-                  businessSalesTurnover: 20155.55
-                - taxYear: '2014'
-                  businessSalesTurnover: 20144.5
+                  - taxYear: '2020'
+                    businessSalesTurnover: 38390.76
+                  - taxYear: '2019'
+                    businessSalesTurnover: 12343.12
+                  - taxYear: '2018'
+                    businessSalesTurnover: 20182.22
+                  - taxYear: '2017'
+                    businessSalesTurnover: 20177.77
+                  - taxYear: '2016'
+                    businessSalesTurnover: 20166.66
+                  - taxYear: '2015'
+                    businessSalesTurnover: 20155.55
+                  - taxYear: '2014'
+                    businessSalesTurnover: 20144.5
         required: true
       responses:
         '201':
@@ -1415,47 +1415,47 @@ paths:
             application/json:
               schema:
                 allOf:
-                - $ref: '#/components/schemas/IndividualsIntegrationFrameworkTestSupportOrganisationsSelfAssessmentReturnDetailsResponse'
-                - example:
-                    utr: '1234567890'
-                    taxpayerType: Individual
-                    startDate: 2015-04-21
-                    taxSolvencyStatus: S
-                    taxyears:
-                    - taxYear: '2020'
-                      businessSalesTurnover: 38390.76
-                    - taxYear: '2019'
-                      businessSalesTurnover: 12343.12
-                    - taxYear: '2018'
-                      businessSalesTurnover: 20182.22
-                    - taxYear: '2017'
-                      businessSalesTurnover: 20177.77
-                    - taxYear: '2016'
-                      businessSalesTurnover: 20166.66
-                    - taxYear: '2015'
-                      businessSalesTurnover: 20155.55
-                    - taxYear: '2014'
-                      businessSalesTurnover: 20144.5
+                  - $ref: '#/components/schemas/IndividualsIntegrationFrameworkTestSupportOrganisationsSelfAssessmentReturnDetailsResponse'
+                  - example:
+                      utr: '1234567890'
+                      taxpayerType: Individual
+                      startDate: 2015-04-21
+                      taxSolvencyStatus: S
+                      taxyears:
+                        - taxYear: '2020'
+                          businessSalesTurnover: 38390.76
+                        - taxYear: '2019'
+                          businessSalesTurnover: 12343.12
+                        - taxYear: '2018'
+                          businessSalesTurnover: 20182.22
+                        - taxYear: '2017'
+                          businessSalesTurnover: 20177.77
+                        - taxYear: '2016'
+                          businessSalesTurnover: 20166.66
+                        - taxYear: '2015'
+                          businessSalesTurnover: 20155.55
+                        - taxYear: '2014'
+                          businessSalesTurnover: 20144.5
               example:
                 utr: '1234567890'
                 taxpayerType: Individual
                 startDate: 2015-04-21
                 taxSolvencyStatus: S
                 taxyears:
-                - taxYear: '2020'
-                  businessSalesTurnover: 38390.76
-                - taxYear: '2019'
-                  businessSalesTurnover: 12343.12
-                - taxYear: '2018'
-                  businessSalesTurnover: 20182.22
-                - taxYear: '2017'
-                  businessSalesTurnover: 20177.77
-                - taxYear: '2016'
-                  businessSalesTurnover: 20166.66
-                - taxYear: '2015'
-                  businessSalesTurnover: 20155.55
-                - taxYear: '2014'
-                  businessSalesTurnover: 20144.5
+                  - taxYear: '2020'
+                    businessSalesTurnover: 38390.76
+                  - taxYear: '2019'
+                    businessSalesTurnover: 12343.12
+                  - taxYear: '2018'
+                    businessSalesTurnover: 20182.22
+                  - taxYear: '2017'
+                    businessSalesTurnover: 20177.77
+                  - taxYear: '2016'
+                    businessSalesTurnover: 20166.66
+                  - taxYear: '2015'
+                    businessSalesTurnover: 20155.55
+                  - taxYear: '2014'
+                    businessSalesTurnover: 20144.5
         '400':
           description: ''
           headers: {}
@@ -1527,23 +1527,23 @@ paths:
                     taxpayerStartDate: 2015-04-21
                     taxSolvencyStatus: V
                     accountingPeriods:
-                    - apStartDate: 2018-04-06
-                      apEndDate: 2018-10-05
-                      turnover: 38390
-                    - apStartDate: 2018-10-06
-                      apEndDate: 2019-04-05
-                      turnover: 2340
+                      - apStartDate: 2018-04-06
+                        apEndDate: 2018-10-05
+                        turnover: 38390
+                      - apStartDate: 2018-10-06
+                        apEndDate: 2019-04-05
+                        turnover: 2340
               example:
                 utr: '1234567890'
                 taxpayerStartDate: 2015-04-21
                 taxSolvencyStatus: V
                 accountingPeriods:
-                - apStartDate: 2018-04-06
-                  apEndDate: 2018-10-05
-                  turnover: 38390
-                - apStartDate: 2018-10-06
-                  apEndDate: 2019-04-05
-                  turnover: 2340
+                  - apStartDate: 2018-04-06
+                    apEndDate: 2018-10-05
+                    turnover: 38390
+                  - apStartDate: 2018-10-06
+                    apEndDate: 2019-04-05
+                    turnover: 2340
         required: true
       responses:
         '201':
@@ -1559,23 +1559,23 @@ paths:
                       taxpayerStartDate: 2015-04-21
                       taxSolvencyStatus: V
                       accountingPeriods:
-                      - apStartDate: 2018-04-06
-                        apEndDate: 2018-10-05
-                        turnover: 38390
-                      - apStartDate: 2018-10-06
-                        apEndDate: 2019-04-05
-                        turnover: 2340
+                        - apStartDate: 2018-04-06
+                          apEndDate: 2018-10-05
+                          turnover: 38390
+                        - apStartDate: 2018-10-06
+                          apEndDate: 2019-04-05
+                          turnover: 2340
                 example:
                   utr: '1234567890'
                   taxpayerStartDate: 2015-04-21
                   taxSolvencyStatus: V
                   accountingPeriods:
-                  - apStartDate: 2018-04-06
-                    apEndDate: 2018-10-05
-                    turnover: 38390
-                  - apStartDate: 2018-10-06
-                    apEndDate: 2019-04-05
-                    turnover: 2340
+                    - apStartDate: 2018-04-06
+                      apEndDate: 2018-10-05
+                      turnover: 38390
+                    - apStartDate: 2018-10-06
+                      apEndDate: 2019-04-05
+                      turnover: 2340
         '400':
           description: Bad Request
           headers: {}
@@ -1959,9 +1959,9 @@ components:
     Code:
       title: Code
       enum:
-      - 7
-      - 8
-      - 9
+        - 7
+        - 8
+        - 9
       type: integer
       description: The numeric code for the associated type of telephone number. 7 = DAYTIME TELEPHONE, 8 = EVENING TELEPHONE, and 9 = MOBILE TELEPHONE.
     ContactDetail:
@@ -2081,8 +2081,8 @@ components:
           example: ACME Industries Limited
         address:
           allOf:
-          - $ref: '#/components/schemas/Address'
-          - description: The address of the employer.
+            - $ref: '#/components/schemas/Address'
+            - description: The address of the employer.
         districtNumber:
           type: string
           description: The employer's district number.
@@ -2460,11 +2460,11 @@ components:
     IndividualsIntegrationFrameworkTestSupportOrganisationsSelfAssessmentReturnDetailsResponse:
       title: IndividualsIntegrationFrameworkTestSupportOrganisationsSelfAssessmentReturnDetailsResponse
       required:
-      - utr
-      - startDate
-      - taxpayerType
-      - taxSolvencyStatus
-      - taxyears
+        - utr
+        - startDate
+        - taxpayerType
+        - taxSolvencyStatus
+        - taxyears
       type: object
       properties:
         utr:
@@ -2483,9 +2483,9 @@ components:
           example: Individual
         taxSolvencyStatus:
           allOf:
-          - $ref: '#/components/schemas/TaxSolvencyStatus'
-          - description: The tax solvency status for the organisation. I - Insolvent, S - Solvent.
-            example: S
+            - $ref: '#/components/schemas/TaxSolvencyStatus'
+            - description: The tax solvency status for the organisation. I - Insolvent, S - Solvent.
+              example: S
         taxyears:
           type: array
           items:
@@ -2581,15 +2581,15 @@ components:
     PayFrequency:
       title: PayFrequency
       enum:
-      - W1
-      - W2
-      - W4
-      - M1
-      - M3
-      - M6
-      - MA
-      - IO
-      - IR
+        - W1
+        - W2
+        - W4
+        - M1
+        - M3
+        - M6
+        - MA
+        - IO
+        - IR
       type: string
       description: The frequency of the payments. Limited to the above possible values.
       example: M1
@@ -2852,18 +2852,18 @@ components:
     TaxSolvencyStatus:
       title: TaxSolvencyStatus
       enum:
-      - I
-      - S
+        - I
+        - S
       type: string
       description: The tax solvency status for the organisation. I - Insolvent, S - Solvent.
       example: S
     TaxSolvencyStatus2:
       title: TaxSolvencyStatus2
       enum:
-      - A
-      - V
-      - S
-      - I
+        - A
+        - V
+        - S
+        - I
       type: string
       description: The tax solvency status for the organisation. A - Administrative Order, V - Voluntary Arrangement, S - Solvent, I - Insolvent.
       example: V
@@ -2946,5 +2946,5 @@ components:
           example: 8976.34
       description: Working Tax Credit (WTC) amounts.
 tags:
-- name: individuals
-  description: ''
+  - name: individuals
+    description: ''
