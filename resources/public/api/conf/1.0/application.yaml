@@ -1766,6 +1766,7 @@ components:
       properties:
         code:
           type: string
+          description: INVALID_REQUEST
     AccountingPeriod:
       title: AccountingPeriod
       required:
