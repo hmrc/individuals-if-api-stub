@@ -21,6 +21,7 @@
             {
               "startDate": "1996-01-01",
               "endDate": "1996-03-01",
+              "postedDate": "1996-04-01",
               "frequency": 7,
               "tcType": "ETC",
               "amount": 76.34
@@ -28,6 +29,7 @@
             {
               "startDate": "1996-01-01",
               "endDate": "1996-03-01",
+              "postedDate": "1996-04-01",
               "frequency": 7,
               "tcType": "ICC",
               "amount": 76.34

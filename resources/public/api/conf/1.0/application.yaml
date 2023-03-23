@@ -1001,11 +1001,13 @@ paths:
                             payments:
                               - startDate: 1996-01-01
                                 endDate: 1996-03-01
+                                postedDate: 1996-04-01
                                 frequency: 7
                                 tcType: ETC
                                 amount: 76.34
                               - startDate: 1996-01-01
                                 endDate: 1996-03-01
+                                postedDate: 1996-04-01
                                 frequency: 7
                                 tcType: ICC
                                 amount: 76.34
@@ -1027,11 +1029,13 @@ paths:
                         payments:
                           - startDate: 1996-01-01
                             endDate: 1996-03-01
+                            postedDate: 1996-04-01
                             frequency: 7
                             tcType: ETC
                             amount: 76.34
                           - startDate: 1996-01-01
                             endDate: 1996-03-01
+                            postedDate: 1996-04-01
                             frequency: 7
                             tcType: ICC
                             amount: 76.34
@@ -1063,11 +1067,13 @@ paths:
                               payments:
                                 - startDate: 1996-01-01
                                   endDate: 1996-03-01
+                                  postedDate: 1996-04-01
                                   frequency: 7
                                   tcType: ETC
                                   amount: 76.34
                                 - startDate: 1996-01-01
                                   endDate: 1996-03-01
+                                  postedDate: 1996-04-01
                                   frequency: 7
                                   tcType: ICC
                                   amount: 76.34
@@ -1089,11 +1095,13 @@ paths:
                           payments:
                             - startDate: 1996-01-01
                               endDate: 1996-03-01
+                              postedDate: 1996-04-01
                               frequency: 7
                               tcType: ETC
                               amount: 76.34
                             - startDate: 1996-01-01
                               endDate: 1996-03-01
+                              postedDate: 1996-04-01
                               frequency: 7
                               tcType: ICC
                               amount: 76.34
@@ -2591,6 +2599,10 @@ components:
           type: string
           description: The end date of the payment.
           example: 1996-08-07
+        postedDate:
+          type: string
+          description: The end date of the payment.
+          example: 1996-08-18
         frequency:
           type: integer
           description: The number of days between payments. Currently supported values are 1, 7, 14, and 28.
