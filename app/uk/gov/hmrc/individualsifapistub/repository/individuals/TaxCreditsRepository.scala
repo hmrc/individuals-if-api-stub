@@ -96,13 +96,13 @@ class TaxCreditsRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
                       fields: Option[String]): Future[Option[Applications]] = {
 
     def fieldsMap = Map(
-      "applications(awards(childTaxCredit(childCareAmount),payProfCalcDate,payments(amount,endDate,frequency,startDate,tcType),totalEntitlement,workingTaxCredit(amount,paidYTD)))" ->
+      "applications(awards(childTaxCredit(childCareAmount),payProfCalcDate,payments(amount,endDate,frequency,startDate,postedDate,tcType),totalEntitlement,workingTaxCredit(amount,paidYTD)))" ->
         "LAA-C1_LAA-C2_LAA-C3_working-tax-credit",
-      "applications(awards(childTaxCredit(babyAmount,childCareAmount,ctcChildAmount,familyAmount,paidYTD),payProfCalcDate,payments(amount,endDate,frequency,startDate,tcType),totalEntitlement))" ->
+      "applications(awards(childTaxCredit(babyAmount,childCareAmount,ctcChildAmount,familyAmount,paidYTD),payProfCalcDate,payments(amount,endDate,frequency,startDate,postedDate,tcType),totalEntitlement))" ->
         "LAA-C1_LAA-C2_LAA-C3_child-tax-credit",
-      "applications(awards(childTaxCredit(childCareAmount),payProfCalcDate,payments(amount,endDate,frequency,startDate,tcType),totalEntitlement,workingTaxCredit(amount,paidYTD)),id)" ->
+      "applications(awards(childTaxCredit(childCareAmount),payProfCalcDate,payments(amount,endDate,frequency,postedDate,startDate,tcType),totalEntitlement,workingTaxCredit(amount,paidYTD)),id)" ->
         "HMCTS-C2_HMCTS-C3_LSANI-C1_LSANI-C3_working-tax-credit",
-      "applications(awards(childTaxCredit(babyAmount,childCareAmount,ctcChildAmount,familyAmount,paidYTD),payProfCalcDate,payments(amount,endDate,frequency,startDate,tcType),totalEntitlement),id)" ->
+      "applications(awards(childTaxCredit(babyAmount,childCareAmount,ctcChildAmount,familyAmount,paidYTD),payProfCalcDate,payments(amount,endDate,frequency,postedDate,startDate,tcType),totalEntitlement),id)" ->
         "HMCTS-C2_HMCTS-C3_LSANI-C1_LSANI-C3_child-tax-credit"
     )
 
