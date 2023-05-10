@@ -109,7 +109,7 @@ object SelfAssessmentTaxPayer {
   )
 }
 
-case class SATaxPayerEntry(id: String, response :SelfAssessmentTaxPayer)
+case class SATaxPayerEntry(id: String, response: SelfAssessmentTaxPayer)
 object SATaxPayerEntry {
   implicit val saTaxPayerEntryFormat = Json.format[SATaxPayerEntry]
 }
