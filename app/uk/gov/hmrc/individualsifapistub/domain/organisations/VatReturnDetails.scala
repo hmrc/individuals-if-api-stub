@@ -35,3 +35,9 @@ case class VatReturnDetails(vrn: String, appDate: Option[String], taxYears: List
 object VatReturnDetails {
   implicit val format = Json.format[VatReturnDetails]
 }
+
+case class VatReturnDetailsEntry(id: String, vatReturnDetails: VatReturnDetails)
+
+object VatReturnDetailsEntry {
+  implicit val format = Json.format[VatReturnDetailsEntry]
+}
