@@ -18,26 +18,26 @@ package uk.gov.hmrc.individualsifapistub.repository.organisations
 
 import org.mongodb.scala.MongoWriteException
 import org.mongodb.scala.model.Filters.equal
-import org.mongodb.scala.model.Indexes.ascending
 import org.mongodb.scala.model.{IndexModel, IndexOptions}
-import uk.gov.hmrc.individualsifapistub.domain.DuplicateException
-import uk.gov.hmrc.individualsifapistub.domain.organisations.VatInformationEntry
+import uk.gov.hmrc.individualsifapistub.domain.organisations.VatReturnDetailsEntry
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
+import org.mongodb.scala.model.Indexes.ascending
+import uk.gov.hmrc.individualsifapistub.domain.DuplicateException
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class VatInformationRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
-  extends PlayMongoRepository[VatInformationEntry](
+class VatReturnDetailsRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
+  extends PlayMongoRepository[VatReturnDetailsEntry](
     mongoComponent = mongo,
-    collectionName = "vat-information",
-    domainFormat = VatInformationEntry.format,
+    collectionName = "vat-return-details",
+    domainFormat = VatReturnDetailsEntry.format,
     indexes = Seq(
       IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
     )
   ) {
-  def create(entry: VatInformationEntry): Future[VatInformationEntry] =
+  def create(entry: VatReturnDetailsEntry): Future[VatReturnDetailsEntry] =
     collection
       .insertOne(entry)
       .map(_ => entry)
@@ -46,8 +46,7 @@ class VatInformationRepository @Inject()(mongo: MongoComponent)(implicit val ec:
         case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
       }
 
-
-  def retrieve(vrn: String): Future[Option[VatInformationEntry]] =
+  def retrieve(vrn: String): Future[Option[VatReturnDetailsEntry]] =
     collection
       .find(equal("id", vrn))
       .headOption()

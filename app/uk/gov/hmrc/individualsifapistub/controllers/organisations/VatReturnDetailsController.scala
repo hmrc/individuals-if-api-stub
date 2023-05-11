@@ -16,17 +16,37 @@
 
 package uk.gov.hmrc.individualsifapistub.controllers.organisations
 
-import play.api.mvc.{ ControllerComponents, PlayBodyParsers }
+import play.api.libs.json.{JsValue, Json}
+import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
 import uk.gov.hmrc.individualsifapistub.config.LoggingAction
 import uk.gov.hmrc.individualsifapistub.controllers.CommonController
+import uk.gov.hmrc.individualsifapistub.domain.organisations.VatReturnDetails
+import uk.gov.hmrc.individualsifapistub.services.organisations.VatReturnDetailsService
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class VatReturnDetailsController @Inject()(
-                                          loggingAction: LoggingAction,
-                                          bodyParsers: PlayBodyParsers,
-                                          cc: ControllerComponents,
-                                        )(implicit val ec: ExecutionContext) extends CommonController(cc) {
+                                            loggingAction: LoggingAction,
+                                            bodyParsers: PlayBodyParsers,
+                                            cc: ControllerComponents,
+                                            vatReturnDetailsService: VatReturnDetailsService
+                                          )(implicit val ec: ExecutionContext) extends CommonController(cc) {
+
+  def retrieve(vrn: String, fields: Option[String]): Action[AnyContent] = loggingAction.async { implicit request =>
+    logger.info(s"Retrieving VAT return details for VRN: $vrn and fields: $fields")
+    vatReturnDetailsService.retrieve(vrn).map {
+      case Some(entry) => Ok(Json.toJson(entry.vatReturnDetails))
+      case None => NotFound
+    } recover retrievalRecovery
+  }
+
+  def create(vrn: String): Action[JsValue] = loggingAction.async(bodyParsers.json) { implicit request =>
+    withJsonBody[VatReturnDetails] { vatReturnDetails =>
+      vatReturnDetailsService
+        .create(vrn, vatReturnDetails)
+        .map(entry => Ok(Json.toJson(entry.vatReturnDetails)))
+    } recover recovery
+  }
 
 }
