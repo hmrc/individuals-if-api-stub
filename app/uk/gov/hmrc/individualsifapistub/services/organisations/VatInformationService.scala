@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package unit.uk.gov.hmrc.individualsifapistub.util
+package uk.gov.hmrc.individualsifapistub.services.organisations
 
-import org.joda.time.LocalDate.parse
-import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.should.Matchers
-import uk.gov.hmrc.individualsifapistub.util.Dates
+import uk.gov.hmrc.individualsifapistub.domain.organisations.{ VatInformation, VatInformationEntry }
+import uk.gov.hmrc.individualsifapistub.repository.organisations.VatInformationRepository
 
-class DatesSpec extends AnyFlatSpec with Matchers {
+import javax.inject.Inject
+import scala.concurrent.Future
 
-  "Dates utility" should "derive an interval between two dates" in {
-    val (from, to) = (parse("2020-01-01"), parse("2020-01-02"))
-    Dates.toInterval(from, to).toString shouldBe "2020-01-01T00:00:00.000Z/2020-01-02T00:00:00.001Z"
-  }
+class VatInformationService @Inject()(repository: VatInformationRepository){
+  def retrieve(vrn: String): Future[Option[VatInformationEntry]] = repository.retrieve(vrn)
 
+  def create(vrn: String, vatInformation: VatInformation) =
+    repository.create(VatInformationEntry(vrn, vatInformation))
 }

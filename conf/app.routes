@@ -1,34 +1,42 @@
-#Individuals Income
+# Individuals Income
 GET     /individuals/income/sa/:idType/:idValue                         uk.gov.hmrc.individualsifapistub.controllers.individuals.IncomeController.retrieveSa(idType, idValue, startYear, endYear, fields: Option[String] ?= None)
 GET     /individuals/income/paye/:idType/:idValue                       uk.gov.hmrc.individualsifapistub.controllers.individuals.IncomeController.retrievePaye(idType, idValue, startDate, endDate, fields: Option[String] ?= None)
 POST    /individuals/income/sa/:idType/:idValue                         uk.gov.hmrc.individualsifapistub.controllers.individuals.IncomeController.createSa(idType, idValue, startYear: Option[String] ?= None, endYear: Option[String] ?= None, useCase: Option[String] ?= None)
 POST    /individuals/income/paye/:idType/:idValue                       uk.gov.hmrc.individualsifapistub.controllers.individuals.IncomeController.createPaye(idType, idValue, startDate: Option[String] ?= None, endDate: Option[String] ?= None, useCase: Option[String] ?= None)
-#Individuals Benefits and Credits
+# Individuals Benefits and Credits
 GET     /individuals/tax-credits/:idType/:idValue                       uk.gov.hmrc.individualsifapistub.controllers.individuals.TaxCreditsController.retrieve(idType, idValue, startDate, endDate, fields: Option[String] ?= None)
 POST    /individuals/tax-credits/:idType/:idValue                       uk.gov.hmrc.individualsifapistub.controllers.individuals.TaxCreditsController.create(idType, idValue, startDate, endDate, useCase)
 
-#Individuals Employments
+# Individuals Employments
 GET     /individuals/employment/:idType/:idValue                       uk.gov.hmrc.individualsifapistub.controllers.individuals.EmploymentsController.retrieve(idType, idValue, startDate, endDate, fields: Option[String] ?= None, filter: Option[String] ?= None)
 POST    /individuals/employment/:idType/:idValue                       uk.gov.hmrc.individualsifapistub.controllers.individuals.EmploymentsController.create(idType, idValue, startDate: Option[String] ?= None, endDate: Option[String] ?= None, useCase: Option[String] ?= None)
 
-#Individuals Details
+# Individuals Details
 GET     /individuals/details/contact/:idType/:idValue                   uk.gov.hmrc.individualsifapistub.controllers.individuals.DetailsController.retrieve(idType, idValue, fields: Option[String] ?= None)
 POST    /individuals/details/contact/:idType/:idValue                   uk.gov.hmrc.individualsifapistub.controllers.individuals.DetailsController.create(idType, idValue, useCase)
 
-#Organisations Corporation Tax Company Details
+# Organisations Corporation Tax Company Details
 GET     /organisations/corporation-tax/:crn/company/details             uk.gov.hmrc.individualsifapistub.controllers.organisations.CorporationTaxCompanyDetailsController.retrieve(crn)
 
-#Organisations Corporation Tax Return Details
+# Organisations Corporation Tax Return Details
 GET     /organisations/corporation-tax/:utr/return/details              uk.gov.hmrc.individualsifapistub.controllers.organisations.CorporationTaxReturnDetailsController.retrieve(utr, fields: Option[String] ?= None)
 POST    /organisations/corporation-tax/return/details/:utr              uk.gov.hmrc.individualsifapistub.controllers.organisations.CorporationTaxReturnDetailsController.create(utr)
 
-#Organisations Self Assessment Return Details
+# Organisations Self Assessment Return Details
 GET     /organisations/self-assessment/:utr/return/details              uk.gov.hmrc.individualsifapistub.controllers.organisations.SelfAssessmentReturnDetailController.retrieve(utr, fields: Option[String] ?= None)
 POST    /organisations/self-assessment/return/details/:utr              uk.gov.hmrc.individualsifapistub.controllers.organisations.SelfAssessmentReturnDetailController.create(utr)
 
-#Organisations Self Assessment Tax Payer
+# Organisations Self Assessment Tax Payer
 GET     /organisations/self-assessment/:utr/taxpayer/details            uk.gov.hmrc.individualsifapistub.controllers.organisations.SelfAssessmentTaxPayerController.retrieve(utr)
 
-#Organisations Get Employee Counts
+# Organisations Get Employee Counts
 POST    /organisations/employers/employee/counts                        uk.gov.hmrc.individualsifapistub.controllers.organisations.NumberOfEmployeesController.retrieve(fields: Option[String] ?= None)
 POST    /organisations/employers/employee/counts/createpayload          uk.gov.hmrc.individualsifapistub.controllers.organisations.NumberOfEmployeesController.create()
+
+# Organisations VAT Information (API#1363)
+GET     /vat/customer/vrn/:vrn/information           uk.gov.hmrc.individualsifapistub.controllers.organisations.VatInformationController.retrieve(vrn, fields: Option[String] ?= None)
+POST    /vat/customer/:vrn/matching-data             uk.gov.hmrc.individualsifapistub.controllers.organisations.VatInformationController.create(vrn)
+
+# Organisations VAT Return Details (API#1987)
+# GET     /organisations/vat/:vrn/returns-details      ???
+# POST    /organisations/vat/:vrn/returns-details      ???

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +18,14 @@ package testUtils
 
 import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
-import uk.gov.hmrc.individualsifapistub.repository.individuals.{ DetailsRepository, EmploymentRepository, IncomePayeRepository, IncomeSaRepository, TaxCreditsRepository }
-import uk.gov.hmrc.individualsifapistub.repository.organisations.{ CorporationTaxCompanyDetailsRepository, CorporationTaxReturnDetailsRepository, NumberOfEmployeesRepository, SelfAssessmentReturnDetailRepository, SelfAssessmentTaxPayerRepository }
+import uk.gov.hmrc.individualsifapistub.repository.individuals.{DetailsRepository, EmploymentRepository, IncomePayeRepository, IncomeSaRepository, TaxCreditsRepository}
+import uk.gov.hmrc.individualsifapistub.repository.organisations.{CorporationTaxCompanyDetailsRepository, CorporationTaxReturnDetailsRepository, NumberOfEmployeesRepository, SelfAssessmentReturnDetailRepository, SelfAssessmentTaxPayerRepository, VatReturnDetailsRepository}
 import uk.gov.hmrc.mongo.test.MongoSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 trait RepositoryTestHelper extends TestSupport
-                            with MongoSupport
-                            with BeforeAndAfterEach {
+  with MongoSupport
+  with BeforeAndAfterEach {
 
   override lazy val fakeApplication = buildFakeApplication(
     Configuration("mongodb.uri" -> mongoUri))
@@ -40,6 +40,7 @@ trait RepositoryTestHelper extends TestSupport
     fakeApplication.injector.instanceOf[CorporationTaxCompanyDetailsRepository],
     fakeApplication.injector.instanceOf[SelfAssessmentReturnDetailRepository],
     fakeApplication.injector.instanceOf[SelfAssessmentTaxPayerRepository],
+    fakeApplication.injector.instanceOf[VatReturnDetailsRepository],
     fakeApplication.injector.instanceOf[NumberOfEmployeesRepository]
   )
 
