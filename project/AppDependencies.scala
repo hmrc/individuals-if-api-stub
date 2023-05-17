@@ -6,11 +6,13 @@ import sbt._
 
 object AppDependencies {
 
-  val hmrc            = "uk.gov.hmrc"
-  val hmrcMongo       = "uk.gov.hmrc.mongo"
-  val akka            = "com.typesafe.akka"
-  val akkaVersion     = "2.6.20"
-  val akkaHttpVersion = "10.2.6"
+  val hmrc             = "uk.gov.hmrc"
+  val hmrcMongo        = "uk.gov.hmrc.mongo"
+  val akka             = "com.typesafe.akka"
+  val akkaVersion      = "2.6.20"
+  val akkaHttpVersion  = "10.2.6"
+  val hmrcMongoVersion = "0.73.0"
+  val bootstrapVersion = "7.8.0"
 
   val overrides = Seq(
     akka %% "akka-stream" % akkaVersion,
@@ -24,12 +26,12 @@ object AppDependencies {
 
   val compile = Seq(
     ws,
-    hmrc                %% "bootstrap-backend-play-28"  % "7.8.0",
+    hmrc                %% "bootstrap-backend-play-28"  % bootstrapVersion,
     hmrc                %% "domain"                     % "8.1.0-play-28",
     hmrc                %% "play-hal"                   % "3.2.0-play-28",
     hmrc                %% "play-hmrc-api"              % "7.1.0-play-28",
     hmrc                %% "json-encryption"            % "5.1.0-play-28",
-    hmrcMongo           %% "hmrc-mongo-play-28"         % "0.68.0",
+    hmrcMongo           %% "hmrc-mongo-play-28"         % hmrcMongoVersion,
     "com.typesafe.play" %% "play-json-joda"             % "2.9.2"
   )
 
@@ -40,7 +42,8 @@ object AppDependencies {
     "org.scalaj"             %% "scalaj-http"              % "2.4.2"             % scope,
     "org.pegdown"            % "pegdown"                   % "1.6.0"             % scope,
     "com.github.tomakehurst" % "wiremock-jre8"             % "2.27.2"            % scope,
-    hmrcMongo                %% "hmrc-mongo-test-play-28"  % "0.73.0"            % scope,
-    hmrc                     %% "service-integration-test" % "1.3.0-play-28"     % scope
+    hmrcMongo                %% "hmrc-mongo-test-play-28"  % hmrcMongoVersion    % scope,
+    hmrc                     %% "service-integration-test" % "1.3.0-play-28"     % scope,
+    hmrc                     %% "bootstrap-test-play-28"   % bootstrapVersion    % scope
   )
 }

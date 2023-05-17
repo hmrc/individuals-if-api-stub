@@ -77,12 +77,12 @@ object FieldFilter {
         val filteredFields = wantedFields.flatMap {
           case SingleField(fieldName) =>
             json \ fieldName match {
-              case JsUndefined() => None
+              case _: JsUndefined => None
               case JsDefined(value) => Some(fieldName -> (value: JsValueWrapper))
             }
           case FieldGroup(fieldName, children) =>
             json \ fieldName match {
-              case JsUndefined() => None
+              case _: JsUndefined => None
               case JsDefined(value) => Some(fieldName -> (filterFieldsInternal(children, value): JsValueWrapper))
             }
         }

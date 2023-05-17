@@ -51,7 +51,7 @@ class TaxCreditsController @Inject()(loggingAction: LoggingAction,
                idValue: String,
                startDate: String,
                endDate: String,
-               fields: Option[String]): Action[AnyContent] = loggingAction.async { implicit request =>
+               fields: Option[String]): Action[AnyContent] = loggingAction.async { _ =>
     taxCreditsService.get(idType, idValue, startDate, endDate, fields) map {
       case Some(value) => Ok(Json.toJson(value))
       case None => Ok(Json.toJson(Applications(Seq.empty)))

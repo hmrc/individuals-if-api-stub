@@ -46,7 +46,7 @@ class SelfAssessmentReturnDetailController @Inject()(
     }
   }
 
-  def retrieve(utr: String, fields: Option[String] = None): Action[AnyContent] = loggingAction.async { implicit request =>
+  def retrieve(utr: String, fields: Option[String] = None): Action[AnyContent] = loggingAction.async { _ =>
     selfAssessmentReturnDetailService.get(utr)
       .map {
         case Some(response) => Ok(FieldFilter.toFilteredJson(response, fields))

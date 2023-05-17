@@ -44,14 +44,14 @@ trait RepositoryTestHelper extends TestSupport
     fakeApplication.injector.instanceOf[NumberOfEmployeesRepository]
   )
 
-  override def beforeEach() {
+  override def beforeEach(): Unit = {
     allRepos.foreach { r =>
       await(r.collection.drop().headOption())
       await(r.ensureIndexes)
     }
   }
 
-  override def afterEach() {
+  override def afterEach(): Unit = {
     allRepos.foreach { r =>
       await(r.collection.drop().headOption())
     }

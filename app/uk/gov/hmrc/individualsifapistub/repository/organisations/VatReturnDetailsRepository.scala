@@ -25,9 +25,10 @@ import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import org.mongodb.scala.model.Indexes.ascending
 import uk.gov.hmrc.individualsifapistub.domain.DuplicateException
 
-import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import javax.inject.{ Inject, Singleton }
+import scala.concurrent.{ ExecutionContext, Future }
 
+@Singleton
 class VatReturnDetailsRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
   extends PlayMongoRepository[VatReturnDetailsEntry](
     mongoComponent = mongo,

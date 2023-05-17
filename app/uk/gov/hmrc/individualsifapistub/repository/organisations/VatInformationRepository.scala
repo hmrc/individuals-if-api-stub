@@ -25,9 +25,10 @@ import uk.gov.hmrc.individualsifapistub.domain.organisations.VatInformationEntry
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
-import javax.inject.Inject
+import javax.inject.{ Inject, Singleton }
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class VatInformationRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
   extends PlayMongoRepository[VatInformationEntry](
     mongoComponent = mongo,

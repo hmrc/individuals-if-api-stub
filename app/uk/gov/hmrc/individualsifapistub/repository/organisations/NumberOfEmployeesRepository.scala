@@ -25,9 +25,10 @@ import uk.gov.hmrc.individualsifapistub.domain.organisations.{NumberOfEmployeesE
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
-import javax.inject.Inject
+import javax.inject.{ Inject, Singleton }
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class NumberOfEmployeesRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
   extends PlayMongoRepository[NumberOfEmployeesEntry](
     mongoComponent = mongo,
@@ -60,7 +61,7 @@ class NumberOfEmployeesRepository @Inject()(mongo: MongoComponent)(implicit val 
 
     collection
       .find(equal("id", id))
-      .headOption
+      .headOption()
       .map(x => x.map(_.response))
   }
 
