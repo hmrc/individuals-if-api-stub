@@ -45,7 +45,7 @@ class DetailsController @Inject()(loggingAction: LoggingAction,
 
   def retrieve(idType: String,
                idValue: String,
-               fields: Option[String]): Action[AnyContent] = loggingAction.async { implicit request =>
+               fields: Option[String]): Action[AnyContent] = loggingAction.async { _ =>
     detailsService.get(idType, idValue, fields) map {
       case Some(value) => Ok(Json.toJson(value))
       case None =>

@@ -47,7 +47,7 @@ class CorporationTaxReturnDetailsController @Inject()(
       }
     }
 
-  def retrieve(utr: String, fields: Option[String] = None): Action[AnyContent] = loggingAction.async { implicit request =>
+  def retrieve(utr: String, fields: Option[String] = None): Action[AnyContent] = loggingAction.async { _ =>
     corporationTaxReturnDetailsService.get(utr)
       .map {
         case Some(response) => response

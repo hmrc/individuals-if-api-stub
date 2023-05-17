@@ -17,10 +17,9 @@
 package unit.uk.gov.hmrc.individualsifapistub.util.domain.individuals.income
 
 import play.api.libs.json.Json
-import uk.gov.hmrc.individualsifapistub.domain.individuals.{Deducts, SaReturnType}
-import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomeSa._
-import uk.gov.hmrc.individualsifapistub.domain.individuals.{Address, Deducts, SaIncome, SaReturnType}
+import uk.gov.hmrc.individualsifapistub.domain.individuals.{ Address, Deducts, SaIncome, SaReturnType }
+import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class SaReturnTypeSpec extends  UnitSpec {
 
@@ -38,7 +37,7 @@ class SaReturnTypeSpec extends  UnitSpec {
     Some(100.01),
     Some(100.01),
     Some(Address(Some("line1"), Some("line2"), Some("line3"), Some("line4"), None, Some("QW123QW"))),
-    Some(createValidSaIncome),
+    Some(createValidSaIncome()),
     Some(validDeducts)
   )
 
@@ -56,7 +55,7 @@ class SaReturnTypeSpec extends  UnitSpec {
     Some(100.001),
     Some(100.001),
     Some(Address(Some(""), Some(""), Some(""), Some(""), None, Some(""))),
-    Some(createValidSaIncome),
+    Some(createValidSaIncome()),
     Some(validDeducts)
   )
 

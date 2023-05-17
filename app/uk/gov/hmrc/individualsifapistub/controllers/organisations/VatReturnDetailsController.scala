@@ -33,7 +33,7 @@ class VatReturnDetailsController @Inject()(
                                             vatReturnDetailsService: VatReturnDetailsService
                                           )(implicit val ec: ExecutionContext) extends CommonController(cc) {
 
-  def retrieve(vrn: String, fields: Option[String]): Action[AnyContent] = loggingAction.async { implicit request =>
+  def retrieve(vrn: String, fields: Option[String]): Action[AnyContent] = loggingAction.async { _ =>
     logger.info(s"Retrieving VAT return details for VRN: $vrn and fields: $fields")
     vatReturnDetailsService.retrieve(vrn).map {
       case Some(entry) => Ok(Json.toJson(entry.vatReturnDetails))

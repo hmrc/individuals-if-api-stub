@@ -20,7 +20,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{ ControllerComponents, PlayBodyParsers }
 import uk.gov.hmrc.individualsifapistub.config.LoggingAction
 import uk.gov.hmrc.individualsifapistub.controllers.CommonController
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{ SelfAssessmentTaxPayer, VatInformation, VatInformationSimplified }
+import uk.gov.hmrc.individualsifapistub.domain.organisations.VatInformationSimplified
 import uk.gov.hmrc.individualsifapistub.services.organisations.VatInformationService
 
 import javax.inject.Inject
@@ -32,7 +32,7 @@ class VatInformationController @Inject()(
                                           cc: ControllerComponents,
                                           vatInformationService: VatInformationService
                                         )(implicit val ec: ExecutionContext) extends CommonController(cc) {
-  def retrieve(vrn: String, fields: Option[String]) = loggingAction.async { implicit request =>
+  def retrieve(vrn: String, fields: Option[String]) = loggingAction.async { _ =>
     logger.info(s"Retrieving VAT information for VRN: $vrn and fields: $fields")
     vatInformationService.retrieve(vrn).map {
       case Some(entry) => Ok(Json.toJson(entry.vatInformation))

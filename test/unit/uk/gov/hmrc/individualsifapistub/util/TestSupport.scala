@@ -39,7 +39,7 @@ trait TestSupport extends UnitSpec with BeforeAndAfterAll {
             | metrics.jvm = false
             |""".stripMargin
           )
-        ) ++ extraConfig)
+        ) withFallback extraConfig)
       .build()
   }
 
@@ -55,12 +55,12 @@ trait TestSupport extends UnitSpec with BeforeAndAfterAll {
 
   lazy val loggingAction = fakeApplication.injector.instanceOf[LoggingAction]
 
-  override def beforeAll() {
+  override def beforeAll(): Unit = {
     Play.start(fakeApplication)
     super.beforeAll()
   }
 
-  override def afterAll() {
+  override def afterAll(): Unit = {
     Play.stop(fakeApplication)
     super.afterAll()
   }

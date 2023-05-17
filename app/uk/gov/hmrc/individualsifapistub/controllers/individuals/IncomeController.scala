@@ -51,7 +51,7 @@ class IncomeController @Inject()(loggingAction: LoggingAction,
                  idValue: String,
                  startYear: String,
                  endYear: String,
-                 fields: Option[String]): Action[AnyContent] = loggingAction.async { implicit request =>
+                 fields: Option[String]): Action[AnyContent] = loggingAction.async { _ =>
     incomeService.getSa(idType, idValue, startYear, endYear, fields)
       .map {
         case Some(value) => value
@@ -77,7 +77,7 @@ class IncomeController @Inject()(loggingAction: LoggingAction,
                    idValue: String,
                    startDate: String,
                    endDate: String,
-                   fields: Option[String]): Action[AnyContent] = loggingAction.async { implicit request =>
+                   fields: Option[String]): Action[AnyContent] = loggingAction.async { _ =>
     incomeService.getPaye(idType, idValue, startDate, endDate, fields)
       .map {
         case Some(value) => value

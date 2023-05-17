@@ -61,7 +61,7 @@ class EmploymentsController @Inject()(loggingAction: LoggingAction,
                startDate: String,
                endDate: String,
                fields: Option[String],
-               filter: Option[String]): Action[AnyContent] = loggingAction.async { implicit request =>
+               filter: Option[String]): Action[AnyContent] = loggingAction.async { _ =>
     employmentsService
       .get(idType, idValue, startDate, endDate, fields, filter)
       .map {

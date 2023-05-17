@@ -16,8 +16,8 @@
 
 package uk.gov.hmrc.individualsifapistub.services.organisations
 
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{VatReturnDetails, VatReturnDetailsEntry}
-import uk.gov.hmrc.individualsifapistub.repository.organisations.{VatInformationRepository, VatReturnDetailsRepository}
+import uk.gov.hmrc.individualsifapistub.domain.organisations.{ VatReturnDetails, VatReturnDetailsEntry }
+import uk.gov.hmrc.individualsifapistub.repository.organisations.VatReturnDetailsRepository
 
 import javax.inject.Inject
 import scala.concurrent.Future
