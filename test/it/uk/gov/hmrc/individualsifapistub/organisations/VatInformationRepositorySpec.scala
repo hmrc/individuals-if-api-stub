@@ -48,15 +48,15 @@ class VatInformationRepositorySpec extends RepositoryTestHelper {
   }
 
   "create" should {
-    "create Return Information repsonse with a valid vrn" in {
-      val result = await(repository.create(VatInformationEntry("12345678", request)))
-      result shouldBe VatInformationEntry("12345678", request)
+    "create Return Information response with a valid vrn" in {
+      val result = await(repository.create(VatInformationEntry(vrn, request)))
+      result shouldBe VatInformationEntry(vrn, request)
     }
 
     "fail to create a duplicate" in {
-      await(repository.create(VatInformationEntry("12345678", request)))
+      await(repository.create(VatInformationEntry(vrn, request)))
       assertThrows[DuplicateException] {
-        await(repository.create(VatInformationEntry("12345678", request)))
+        await(repository.create(VatInformationEntry(vrn, request)))
       }
     }
 
@@ -69,8 +69,8 @@ class VatInformationRepositorySpec extends RepositoryTestHelper {
     }
 
     "return Some when match by id is found" in {
-      await(repository.create(VatInformationEntry("12345678", request)))
-      await(repository.retrieve("12345678")) shouldBe Some(VatInformationEntry("12345678", request))
+      await(repository.create(VatInformationEntry(vrn, request)))
+      await(repository.retrieve(vrn)) shouldBe Some(VatInformationEntry(vrn, request))
     }
   }
 

@@ -51,17 +51,14 @@ class VatInformationControllerSpec extends TestSupport with BeforeAndAfterEach {
     "return response with created status when successful" in {
       when(mockService.create(vrn, request)).thenReturn(Future.successful(serviceResponse))
 
-      val httpRequest =
-        FakeRequest()
-          .withMethod("Post")
-          .withBody(Json.toJson(request))
+      val httpRequest = FakeRequest().withMethod("Post").withBody(Json.toJson(request))
 
       val result = controller.create(vrn)(httpRequest)
 
-      result.map(x => {
+      result.map { x =>
         x.header.status shouldBe CREATED
         jsonBodyOf(x) shouldBe Json.toJson(serviceResponse)
-      })
+      }
 
     }
 
@@ -69,16 +66,11 @@ class VatInformationControllerSpec extends TestSupport with BeforeAndAfterEach {
 
       when(mockService.create(vrn, request)).thenReturn(Future.successful(serviceResponse))
 
-      val httpRequest =
-        FakeRequest()
-          .withMethod("POST")
-          .withBody(Json.parse("{}"))
+      val httpRequest = FakeRequest().withMethod("POST").withBody(Json.obj())
 
       val result = controller.create(vrn)(httpRequest)
 
-      result.map(x => {
-        x.header.status shouldBe BAD_REQUEST
-      })
+      result.map(_.header.status shouldBe BAD_REQUEST)
     }
   }
 
@@ -87,8 +79,7 @@ class VatInformationControllerSpec extends TestSupport with BeforeAndAfterEach {
       when(mockService.retrieve(vrn)).thenReturn(Future.successful(Some(serviceResponse)))
 
       val httpRequest =
-        FakeRequest()
-          .withMethod("GET")
+        FakeRequest().withMethod("GET")
 
       val result = controller.retrieve(vrn, None)(httpRequest)
       result.map(x => {
@@ -101,8 +92,7 @@ class VatInformationControllerSpec extends TestSupport with BeforeAndAfterEach {
       when(mockService.retrieve(vrn)).thenReturn(Future.failed(new Exception))
 
       val httpRequest =
-        FakeRequest()
-          .withMethod("GET")
+        FakeRequest().withMethod("GET")
 
       val result = await(controller.retrieve(vrn, None)(httpRequest))
       status(result) shouldBe INTERNAL_SERVER_ERROR

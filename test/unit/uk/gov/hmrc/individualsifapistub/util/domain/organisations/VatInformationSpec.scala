@@ -23,16 +23,10 @@ import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 class VatInformationSpec extends UnitSpec {
 
   "VatCustomerDetails reads successfully from json" in {
-    val json =
-      """
-        |{
-        |"organisationName": "Ancient Antiques"
-        |}
-        |""".stripMargin
 
-
+    val json = Json.obj("organisationName" -> "Ancient Antiques")
     val expectedResult = VatCustomerDetails("Ancient Antiques")
-    val result = Json.parse(json).validate[VatCustomerDetails]
+    val result = json.validate[VatCustomerDetails]
 
     result.isSuccess shouldBe true
     result.get shouldBe expectedResult
@@ -40,14 +34,9 @@ class VatInformationSpec extends UnitSpec {
 
   "VatCustomerDetails reads unsuccessfully from json when organisationName is incorrect" in {
 
-    val json =
-      """
-        |{
-        |"organisationName": 1
-        |}
-        |""".stripMargin
+    val json = Json.obj("organisationName" -> 1)
 
-    val result = Json.parse(json).validate[VatCustomerDetails]
+    val result = json.validate[VatCustomerDetails]
 
     result.isSuccess shouldBe false
 
@@ -55,19 +44,10 @@ class VatInformationSpec extends UnitSpec {
 
   "VatAddress reads successfully from json" in {
 
-    val json =
-      """
-        |{
-        |"line1": "VAT ADDR 1",
-        |"postCode": "SW1A 2BQ"
-        |}
-        |""".stripMargin
-
-
+    val json = Json.obj("line1" -> "VAT ADDR 1", "postCode" -> "SW1A 2BQ")
     val expectedResult = VatAddress("VAT ADDR 1", "SW1A 2BQ")
-    val result = Json.parse(json).validate[VatAddress]
-    println("JSON=" + json)
-    println("EXPECTEDS=" + expectedResult)
+    val result = json.validate[VatAddress]
+
 
     result.isSuccess shouldBe true
     result.get shouldBe expectedResult
@@ -75,30 +55,18 @@ class VatInformationSpec extends UnitSpec {
 
   "VatAddress reads unsuccessfully from json when line1 is incorrect" in {
 
-    val json =
-      """
-        |{
-        |"line1": 1,
-        |"postCode": "SW1A 2BQ"
-        |}
-        |""".stripMargin
+    val json = Json.obj("line1" -> 1, "postCode" -> "SW1A 2BQ")
 
-    val result = Json.parse(json).validate[VatAddress]
+    val result = json.validate[VatAddress]
 
     result.isSuccess shouldBe false
   }
 
   "VatAddress reads unsuccessfully from json when postCode is incorrect" in {
 
-    val json =
-      """
-        |{
-        |"line1": "VAT ADDR 1",
-        |"postCode": 1
-        |}
-        |""".stripMargin
+    val json = Json.obj("line1" -> "VAT ADDR 1", "postCode" -> 1)
 
-    val result = Json.parse(json).validate[VatAddress]
+    val result = json.validate[VatAddress]
 
     result.isSuccess shouldBe false
   }
@@ -108,9 +76,9 @@ class VatInformationSpec extends UnitSpec {
     val json =
       """
         |   {
-        |     "address" : {
-        |       "line1" : "VAT ADDR 1",
-        |       "postCode" : "SW1A 2BQ"
+        |     "address": {
+        |       "line1": "VAT ADDR 1",
+        |       "postCode": "SW1A 2BQ"
         |        }
         |   }
         |""".stripMargin
@@ -128,9 +96,9 @@ class VatInformationSpec extends UnitSpec {
     val json =
       """
         |   {
-        |     "address" : {
-        |       "line1" : 2,
-        |       "postCode" : "SW1A 2BQ"
+        |     "address": {
+        |       "line1": 2,
+        |       "postCode": "SW1A 2BQ"
         |        }
         |   }
         |""".stripMargin
@@ -145,9 +113,9 @@ class VatInformationSpec extends UnitSpec {
     val json =
       """
         |   {
-        |     "address" : {
-        |       "line1" : "VAT ADDR 1",
-        |       "postCode" : 2
+        |     "address": {
+        |       "line1": "VAT ADDR 1",
+        |       "postCode": 2
         |        }
         |   }
         |""".stripMargin
@@ -162,15 +130,15 @@ class VatInformationSpec extends UnitSpec {
     val json =
       """
         |{
-        | "customerDetails" : {
-        |   "organisationName" : "Ancient Antiques"
-        | },
-        | "PPOB" : {
-        |   "address" : {
-        |     "line1" : "VAT ADDR 1",
-        |     "postCode" : "SW1A 2BQ"
+        |   "customerDetails": {
+        |      "organisationName": "Ancient Antiques"
+        |   },
+        |   "PPOB": {
+        |      "address": {
+        |         "line1": "VAT ADDR 1",
+        |         "postCode": "SW1A 2BQ"
+        |      }
         |   }
-        | }
         |}
         |""".stripMargin
 
@@ -187,15 +155,15 @@ class VatInformationSpec extends UnitSpec {
     val json =
       """
         |{
-        | "customerDetails" : {
-        |   "organisationName" : 1
-        | },
-        | "PPOB" : {
-        |   "address" : {
-        |     "line1" : "",
-        |     "postCode" : ""
+        |   "customerDetails": {
+        |      "organisationName": 1
+        |   },
+        |   "PPOB": {
+        |      "address": {
+        |         "line1": "VAT ADDR 1",
+        |         "postCode": "SW1A 2BQ"
+        |      }
         |   }
-        | }
         |}
         |""".stripMargin
 
@@ -210,18 +178,18 @@ class VatInformationSpec extends UnitSpec {
 
     val json =
       """
-        |{"approvedInformation" :
         |{
-        | "customerDetails" : {
-        |   "organisationName" : "Ancient Antiques"
-        | },
-        | "PPOB" : {
-        |   "address" : {
-        |     "line1" : "VAT ADDR 1",
-        |     "postCode" : "SW1A 2BQ"
+        |   "approvedInformation": {
+        |      "customerDetails": {
+        |         "organisationName": "Ancient Antiques"
+        |      },
+        |      "PPOB": {
+        |         "address": {
+        |            "line1": "VAT ADDR 1",
+        |            "postCode": "SW1A 2BQ"
+        |         }
+        |      }
         |   }
-        | }
-        |}
         |}
         |""".stripMargin
 
