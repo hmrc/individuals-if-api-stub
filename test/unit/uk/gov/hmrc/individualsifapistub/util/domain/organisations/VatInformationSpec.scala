@@ -35,11 +35,8 @@ class VatInformationSpec extends UnitSpec {
   "VatCustomerDetails reads unsuccessfully from json when organisationName is incorrect" in {
 
     val json = Json.obj("organisationName" -> 1)
-
     val result = json.validate[VatCustomerDetails]
-
     result.isSuccess shouldBe false
-
   }
 
   "VatAddress reads successfully from json" in {
@@ -48,7 +45,6 @@ class VatInformationSpec extends UnitSpec {
     val expectedResult = VatAddress("VAT ADDR 1", "SW1A 2BQ")
     val result = json.validate[VatAddress]
 
-
     result.isSuccess shouldBe true
     result.get shouldBe expectedResult
   }
@@ -56,18 +52,14 @@ class VatInformationSpec extends UnitSpec {
   "VatAddress reads unsuccessfully from json when line1 is incorrect" in {
 
     val json = Json.obj("line1" -> 1, "postCode" -> "SW1A 2BQ")
-
     val result = json.validate[VatAddress]
-
     result.isSuccess shouldBe false
   }
 
   "VatAddress reads unsuccessfully from json when postCode is incorrect" in {
 
     val json = Json.obj("line1" -> "VAT ADDR 1", "postCode" -> 1)
-
     val result = json.validate[VatAddress]
-
     result.isSuccess shouldBe false
   }
 
@@ -88,7 +80,6 @@ class VatInformationSpec extends UnitSpec {
 
     result.get shouldBe expectedResult
     result.isSuccess shouldBe true
-
   }
 
   "VatPPOB reads unsuccessfully from json when address line1" in {

@@ -78,14 +78,13 @@ class VatInformationControllerSpec extends TestSupport with BeforeAndAfterEach {
     "return response when entry found by service" in {
       when(mockService.retrieve(vrn)).thenReturn(Future.successful(Some(serviceResponse)))
 
-      val httpRequest =
-        FakeRequest().withMethod("GET")
+      val httpRequest = FakeRequest().withMethod("GET")
 
       val result = controller.retrieve(vrn, None)(httpRequest)
-      result.map(x => {
+      result.map { x =>
         x.header.status shouldBe OK
         jsonBodyOf(x) shouldBe Json.toJson(serviceResponse)
-      })
+      }
     }
 
     "fails when an entry cannot be found" in {
