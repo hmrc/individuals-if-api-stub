@@ -19,7 +19,7 @@ package testUtils
 import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
 import uk.gov.hmrc.individualsifapistub.repository.individuals.{DetailsRepository, EmploymentRepository, IncomePayeRepository, IncomeSaRepository, TaxCreditsRepository}
-import uk.gov.hmrc.individualsifapistub.repository.organisations.{CorporationTaxCompanyDetailsRepository, CorporationTaxReturnDetailsRepository, NumberOfEmployeesRepository, SelfAssessmentReturnDetailRepository, SelfAssessmentTaxPayerRepository, VatReturnDetailsRepository}
+import uk.gov.hmrc.individualsifapistub.repository.organisations.{CorporationTaxCompanyDetailsRepository, CorporationTaxReturnDetailsRepository, NumberOfEmployeesRepository, SelfAssessmentReturnDetailRepository, SelfAssessmentTaxPayerRepository, VatInformationRepository, VatReturnDetailsRepository}
 import uk.gov.hmrc.mongo.test.MongoSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
@@ -41,6 +41,7 @@ trait RepositoryTestHelper extends TestSupport
     fakeApplication.injector.instanceOf[SelfAssessmentReturnDetailRepository],
     fakeApplication.injector.instanceOf[SelfAssessmentTaxPayerRepository],
     fakeApplication.injector.instanceOf[VatReturnDetailsRepository],
+    fakeApplication.injector.instanceOf[VatInformationRepository],
     fakeApplication.injector.instanceOf[NumberOfEmployeesRepository]
   )
 
