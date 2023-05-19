@@ -41,7 +41,7 @@ class VatReturnDetailsRepositorySpec extends RepositoryTestHelper {
   }
 
   "create" should {
-    "create a CT Return Details repsonse with a valid utr" in {
+    "create Return Details repsonse with a valid vrn" in {
       val result = await(repository.create(repositoryEntry))
       result shouldBe repositoryEntry
     }
