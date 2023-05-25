@@ -34,7 +34,7 @@ POST    /organisations/employers/employee/counts                        uk.gov.h
 POST    /organisations/employers/employee/counts/createpayload          uk.gov.hmrc.individualsifapistub.controllers.organisations.NumberOfEmployeesController.create()
 
 # Organisations VAT Information (API#1363)
-GET     /vat/customer/:vrn/matching-data             uk.gov.hmrc.individualsifapistub.controllers.organisations.VatInformationController.retrieve(vrn, fields: Option[String] ?= None)
+GET     /vat/customer/vrn/:vrn/information           uk.gov.hmrc.individualsifapistub.controllers.organisations.VatInformationController.retrieve(vrn, fields: Option[String] ?= None)
 POST    /vat/customer/:vrn/matching-data             uk.gov.hmrc.individualsifapistub.controllers.organisations.VatInformationController.create(vrn)
 
 # Organisations VAT Return Details (API#1987)
