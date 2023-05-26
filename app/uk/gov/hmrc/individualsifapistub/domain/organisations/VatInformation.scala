@@ -62,6 +62,14 @@ case class VatInformationSimplified(organisationName: String, addressLine1: Stri
 
 object VatInformationSimplified {
   implicit val format = Json.format[VatInformationSimplified]
+
+  def fromVatInformation(vatInformation: VatInformation): VatInformationSimplified = {
+    VatInformationSimplified(
+      vatInformation.approvedInformation.customerDetails.organisationName,
+      vatInformation.approvedInformation.PPOB.address.line1,
+      vatInformation.approvedInformation.PPOB.address.postCode
+    )
+  }
 }
 
 case class VatInformationEntry(id: String, vatInformation: VatInformation)

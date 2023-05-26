@@ -45,7 +45,7 @@ class VatReturnDetailsController @Inject()(
     withJsonBody[VatReturnDetails] { vatReturnDetails =>
       vatReturnDetailsService
         .create(vrn, vatReturnDetails)
-        .map(entry => Ok(Json.toJson(entry.vatReturnDetails)))
+        .map(_ => Created(Json.toJson(vatReturnDetails)))
     } recover recovery
   }
 
