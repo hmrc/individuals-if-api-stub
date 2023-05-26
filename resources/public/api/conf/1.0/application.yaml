@@ -1312,7 +1312,7 @@ paths:
   /individuals/integration-framework-test-support/organisations/self-assessment/return/details/{utr}:
     post:
       tags:
-        - individuals
+        - organisations
       summary: Create Self Assessment details test data for an organisation
       description: "
         \nUse this endpoint to create Self Assessment details test data for an organisation.
@@ -1465,7 +1465,7 @@ paths:
   /individuals/integration-framework-test-support/organisations/corporation-tax/return/details/{utr}:
     post:
       tags:
-        - individuals
+        - organisations
       summary: Create Corporation Tax details test data for an organisation
       description: "
         \nUse this endpoint to create Corporation Tax details test data for an organisation.
@@ -1582,7 +1582,7 @@ paths:
   /individuals/integration-framework-test-support/organisations/employers/employee/counts/createpayload:
     post:
       tags:
-        - individuals
+        - organisations
       summary: Create number of employees test data for an organisation
       description: "
        \n Use this endpoint to create number of employees test data for an organisation.
@@ -1732,6 +1732,259 @@ paths:
                 example:
                   - code: INVALID_REQUEST
       deprecated: false
+  /individuals/integration-framework-test-support/vat/customer/{vrn}/matching-data:
+    post:
+      tags:
+        - organisations
+      summary: Create VAT organisation test data
+      description: >2-
+      
+        Use this endpoint to create a VAT organisation test data.
+
+
+        The JSON payload example is provided.
+
+
+        As data is scoped, the JSON payload that you send should only contain
+        the data items specific to the use case.
+
+
+        As filtering logic does not form part of this API, it will return the
+        exact JSON that was submitted.
+
+
+        #### Authorisation
+
+
+        This endpoint is
+        [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints)
+        and requires `Authorization` header containing an OAUTH 2.0 Bearer
+        Token.
+
+
+        See also [fraud
+        prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
+      operationId: >-
+        post
+        '/individuals/integration-framework-test-support/vat/customer/{vrn}/matching-data'
+      security:
+        - applicationRestricted: []
+      parameters:
+        - name: vrn
+          in: path
+          description: VAT registration number.
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: '123456789'
+        - name: Authorization
+          in: header
+          description: OAuth 2.0 Bearer Token or server token.
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: Bearer <BEARER_TOKEN>
+        - $ref: '#/components/parameters/acceptHeader'
+        - $ref: '#/components/parameters/contentTypeHeader'
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: >-
+                    #/components/schemas/IndividualsIntegrationFrameworkTestSupportOrganisationsVatInformationRequest
+                - example:
+                    organisationName: Test Organisation
+                    addressLine1: Test address
+                    postcode: TE57 0RG
+              example:
+                organisationName: Test Organisation
+                addressLine1: Test address
+                postcode: TE57 0RG
+        required: true
+      responses:
+        '201':
+          description: The created VAT organisation data
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: >-
+                      #/components/schemas/IndividualsIntegrationFrameworkTestSupportOrganisationsVatInformationResponse
+                  - example:
+                      organisationName: Test Organisation
+                      addressLine1: Test address
+                      postcode: TE57 0RG
+                example:
+                  organisationName: Test Organisation
+                  addressLine1: Test address
+                  postcode: TE57 0RG
+        '400':
+          description: Bad Request
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/errorResponse'
+                  - example:
+                      code: INVALID_REQUEST
+              example:
+                - code: INVALID_REQUEST
+      deprecated: false
+  /individuals/integration-framework-test-support/organisations/vat/{vrn}/return-details:
+    post:
+      tags:
+        - organisations
+      summary: Create VAT return details for an organisation
+      description: >2-
+      
+        Use this endpoint to create a VAT return details test data for an organisation that has previously been created (by using "Create VAT Organisation test data" endpoint).
+
+
+        The JSON payload example is provided.
+
+
+        As data is scoped, the JSON payload that you send should only contain
+        the data items specific to the use case.
+
+
+        As filtering logic does not form part of this API, it will return the
+        exact JSON that was submitted.
+
+
+        #### Authorisation
+
+
+        This endpoint is
+        [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints)
+        and requires `Authorization` header containing an OAUTH 2.0 Bearer
+        Token.
+
+
+        See also [fraud
+        prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
+      operationId: >-
+        post
+        '/individuals/integration-framework-test-support/organisations/vat/{vrn}/return-details'
+      security:
+        - applicationRestricted: []
+      parameters:
+        - name: vrn
+          in: path
+          description: VAT registration number.
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: '123456789'
+        - name: Authorization
+          in: header
+          description: OAuth 2.0 Bearer Token or server token.
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: Bearer <BEARER_TOKEN>
+        - $ref: '#/components/parameters/acceptHeader'
+        - $ref: '#/components/parameters/contentTypeHeader'
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: >-
+                    #/components/schemas/IndividualsIntegrationFrameworkTestSupportOrganisationsVatReturnDetailsRequest
+                - example:
+                    vrn: '123456789'
+                    taxYears:
+                      - taxYear: '2021'
+                        vatReturns:
+                          - calendarMonth: 6
+                            liabilityMonth: 5
+                            numMonthsAssessed: 3
+                            box6Total: 2938.21
+                            returnType: 'Regular Return'
+                          - calendarMonth: 9
+                            liabilityMonth: 7
+                            numMonthsAssessed: 3
+                            box6Total: 1235.31
+                            returnType: 'Regular Return'
+              example:
+                vrn: '123456789'
+                taxYears:
+                  - taxYear: '2021'
+                    vatReturns:
+                      - calendarMonth: 6
+                        liabilityMonth: 5
+                        numMonthsAssessed: 3
+                        box6Total: 2938.21
+                        returnType: 'Regular Return'
+                      - calendarMonth: 9
+                        liabilityMonth: 7
+                        numMonthsAssessed: 3
+                        box6Total: 1235.31
+                        returnType: 'Regular Return'
+        required: true
+      responses:
+        '201':
+          description: The created VAT return details data
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: >-
+                      #/components/schemas/IndividualsIntegrationFrameworkTestSupportOrganisationsVatReturnDetailsResponse
+                  - example:
+                      vrn: '123456789'
+                      taxYears:
+                        - taxYear: '2021'
+                          vatReturns:
+                            - calendarMonth: 6
+                              liabilityMonth: 5
+                              numMonthsAssessed: 3
+                              box6Total: 2938.21
+                              returnType: 'Regular Return'
+                            - calendarMonth: 9
+                              liabilityMonth: 7
+                              numMonthsAssessed: 3
+                              box6Total: 1235.31
+                              returnType: 'Regular Return'
+                example:
+                  vrn: '123456789'
+                  taxYears:
+                    - taxYear: '2021'
+                      vatReturns:
+                        - calendarMonth: 6
+                          liabilityMonth: 5
+                          numMonthsAssessed: 3
+                          box6Total: 2938.21
+                          returnType: 'Regular Return'
+                        - calendarMonth: 9
+                          liabilityMonth: 7
+                          numMonthsAssessed: 3
+                          box6Total: 1235.31
+                          returnType: 'Regular Return'
+        '400':
+          description: Bad Request
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/errorResponse'
+                  - example:
+                      code: INVALID_REQUEST
+              example:
+                - code: INVALID_REQUEST
+      deprecated: false
+
 components:
   parameters:
     acceptHeader:
@@ -2477,6 +2730,48 @@ components:
             $ref: '#/components/schemas/Taxyear'
           description: Self Assessment tax returns.
       description: Organisations return details
+    IndividualsIntegrationFrameworkTestSupportOrganisationsVatInformationRequest:
+      title: >-
+        IndividualsIntegrationFrameworkTestSupportOrganisationsVatInformationRequest
+      required:
+        - organisationName
+        - addressLine1
+        - postcode
+      type: object
+      properties:
+        organisationName:
+          type: string
+          description: Name of the organisation
+          example: Test Organisation
+        addressLine1:
+          type: string
+          description: First line of the organisation's address
+          example: Test address
+        postcode:
+          type: string
+          description: Postcode of the organisation
+          example: TE57 0RG
+    IndividualsIntegrationFrameworkTestSupportOrganisationsVatInformationResponse:
+      title: >-
+        IndividualsIntegrationFrameworkTestSupportOrganisationsVatInformationResponse
+      required:
+        - organisationName
+        - addressLine1
+        - postcode
+      type: object
+      properties:
+        organisationName:
+          type: string
+          description: Name of the organisation
+          example: Test Organisation
+        addressLine1:
+          type: string
+          description: First line of the organisation's address
+          example: Test address
+        postcode:
+          type: string
+          description: Postcode of the organisation
+          example: TE57 0RG
     Paye:
       title: Paye
       type: object

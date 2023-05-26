@@ -44,7 +44,7 @@ class VatInformationController @Inject()(
     withJsonBody[VatInformationSimplified] { vatInformationSimplified =>
       vatInformationService
         .create(vrn, vatInformationSimplified.toVatInformation)
-        .map(entry => Ok(Json.toJson(entry.vatInformation)))
+        .map(entry => Created(Json.toJson(VatInformationSimplified.fromVatInformation(entry.vatInformation))))
     } recover recovery
   }
 }
