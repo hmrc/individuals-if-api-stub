@@ -2772,6 +2772,81 @@ components:
           type: string
           description: Postcode of the organisation
           example: TE57 0RG
+    IndividualsIntegrationFrameworkTestSupportOrganisationsVatReturnDetailsRequest:
+      title: >-
+        IndividualsIntegrationFrameworkTestSupportOrganisationsVatReturnDetailsRequest
+      required:
+        - vrn
+        - taxYears
+      type: object
+      properties:
+        vrn:
+          type: string
+          description: VAT registration number
+          example: 123456789
+        taxYears:
+          type: array
+          items:
+            $ref: '#/components/schemas/VatTaxYear'
+          description: List of VAT tax years.
+    IndividualsIntegrationFrameworkTestSupportOrganisationsVatReturnDetailsResponse:
+      title: >-
+        IndividualsIntegrationFrameworkTestSupportOrganisationsVatReturnDetailsResponse
+      required:
+        - vrn
+        - taxYears
+      type: object
+      properties:
+        vrn:
+          type: string
+          description: VAT registration number
+          example: 123456789
+        taxYears:
+          type: array
+          items:
+            $ref: '#/components/schemas/VatTaxYear'
+          description: List of VAT tax years.
+    VatTaxYear:
+      title: VAT Tax Years
+      type: object
+      properties:
+        taxYear:
+          type: string
+          description: VAT tax year
+          example: '2022'
+        vatReturns:
+          type: array
+          items:
+            $ref: '#/components/schemas/VatReturn'
+          description: Details about VAT returns within the same tax year.
+    VatReturn:
+      title: VAT return
+      type: object
+      properties:
+        calendarMonth:
+          type: integer
+          description: Calendar month
+          format: int32
+          example: 7
+        liabilityMonth:
+          type: integer
+          description: Liability month
+          format: int32
+          example: 6
+        numMonthsAssessed:
+          type: integer
+          description: Number of months assessed
+          format: int32
+          example: 3
+        box6Total:
+          type: number
+          description: Box6 total outputs where the return is filed
+          format: double
+          example: 123.32
+        returnType:
+          type: string
+          description: Return type
+          example: "Regular Return"
     Paye:
       title: Paye
       type: object
