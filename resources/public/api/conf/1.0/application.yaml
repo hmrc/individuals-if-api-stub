@@ -1764,9 +1764,7 @@ paths:
 
         See also [fraud
         prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
-      operationId: >-
-        post
-        '/individuals/integration-framework-test-support/vat/customer/{vrn}/matching-data'
+      operationId: post '/individuals/integration-framework-test-support/vat/customer/{vrn}/matching-data'
       security:
         - applicationRestricted: []
       parameters:
@@ -1868,9 +1866,7 @@ paths:
 
         See also [fraud
         prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
-      operationId: >-
-        post
-        '/individuals/integration-framework-test-support/organisations/vat/{vrn}/return-details'
+      operationId: post '/individuals/integration-framework-test-support/organisations/vat/{vrn}/return-details'
       security:
         - applicationRestricted: []
       parameters:
