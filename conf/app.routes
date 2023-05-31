@@ -38,5 +38,5 @@ GET     /vat/customer/vrn/:vrn/information           uk.gov.hmrc.individualsifap
 POST    /vat/customer/:vrn/matching-data             uk.gov.hmrc.individualsifapistub.controllers.organisations.VatInformationController.create(vrn)
 
 # Organisations VAT Return Details (API#1987)
-# GET     /organisations/vat/:vrn/returns-details    uk.gov.hmrc.individualsifapistub.controllers.organisations.VatReturnDetailsController.retrieve(vrn, fields: Option[String] ?= None)
-# POST    /organisations/vat/:vrn/returns-details    uk.gov.hmrc.individualsifapistub.controllers.organisations.VatReturnDetailsController.create(vrn)
+GET     /organisations/vat/:vrn/returns-details    uk.gov.hmrc.individualsifapistub.controllers.organisations.VatReturnDetailsController.retrieve(vrn, fields: Option[String] ?= None)
+POST    /organisations/vat/:vrn/returns-details    uk.gov.hmrc.individualsifapistub.controllers.organisations.VatReturnDetailsController.create(vrn)
