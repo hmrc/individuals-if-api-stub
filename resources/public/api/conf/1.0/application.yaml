@@ -1834,7 +1834,7 @@ paths:
               example:
                 - code: INVALID_REQUEST
       deprecated: false
-  /individuals/integration-framework-test-support/organisations/vat/{vrn}/return-details:
+  /individuals/integration-framework-test-support/organisations/vat/{vrn}/returns-details:
     post:
       tags:
         - organisations
@@ -1866,7 +1866,7 @@ paths:
 
         See also [fraud
         prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention/).
-      operationId: post '/individuals/integration-framework-test-support/organisations/vat/{vrn}/return-details'
+      operationId: post '/individuals/integration-framework-test-support/organisations/vat/{vrn}/returns-details'
       security:
         - applicationRestricted: []
       parameters:
