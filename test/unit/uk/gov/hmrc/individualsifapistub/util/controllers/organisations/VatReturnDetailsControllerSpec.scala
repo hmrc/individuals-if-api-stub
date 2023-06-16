@@ -20,12 +20,12 @@ import uk.gov.hmrc.individualsifapistub.services.organisations.VatReturnDetailsS
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
-import play.api.http.Status.{BAD_REQUEST, CREATED, INTERNAL_SERVER_ERROR, OK}
+import play.api.http.Status.{ BAD_REQUEST, CREATED, INTERNAL_SERVER_ERROR, NOT_FOUND, OK }
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.individualsifapistub.controllers.organisations.VatReturnDetailsController
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{VatReturn, VatReturnDetails, VatReturnDetailsEntry, VatTaxYear}
-
+import uk.gov.hmrc.individualsifapistub.domain.RecordNotFoundException
+import uk.gov.hmrc.individualsifapistub.domain.organisations.{ VatReturn, VatReturnDetails, VatReturnDetailsEntry, VatTaxYear }
 
 import scala.concurrent.Future
 
@@ -43,61 +43,54 @@ class VatReturnDetailsControllerSpec extends TestSupport {
     "return response with created status when successful" in {
       when(mockService.create(request.vrn, request)).thenReturn(Future.successful(response))
 
-      val httpRequest =
-        FakeRequest()
-          .withMethod("Post")
-          .withBody(Json.toJson(request))
+      val httpRequest = FakeRequest().withMethod("POST").withBody(Json.toJson(request))
 
       val result = controller.create(response.vatReturnDetails.vrn)(httpRequest)
 
-      result.map(x => {
+      result.map { x =>
         x.header.status shouldBe CREATED
         jsonBodyOf(x) shouldBe Json.toJson(response)
-      })
-
-    }
-
-    "fail with invalid request provided" in {
-
-      when(mockService.create(request.vrn, request)).thenReturn(Future.successful(response))
-
-      val httpRequest =
-        FakeRequest()
-          .withMethod("POST")
-          .withBody(Json.parse("{}"))
-
-      val result = controller.create(response.vatReturnDetails.vrn)(httpRequest)
-
-      result.map(x => {
-        x.header.status shouldBe BAD_REQUEST
-      })
-    }
-
-    "retrieve" should {
-      "return response when entry found by service" in {
-        when(mockService.retrieve(request.vrn)).thenReturn(Future.successful(Some(response)))
-
-        val httpRequest =
-          FakeRequest()
-            .withMethod("GET")
-
-        val result = controller.retrieve(request.vrn, None)(httpRequest)
-        result.map(x => {
-          x.header.status shouldBe OK
-          jsonBodyOf(x) shouldBe Json.toJson(response)
-        })
       }
     }
 
-    "fails when an entry cannot be found" in {
-      when(mockService.retrieve(request.vrn)).thenReturn(Future.failed(new Exception))
+    "fail with invalid request provided" in {
+      when(mockService.create(request.vrn, request)).thenReturn(Future.successful(response))
 
-      val httpRequest =
-        FakeRequest()
-          .withMethod("GET")
+      val httpRequest = FakeRequest().withMethod("POST").withBody(Json.parse("{}"))
 
-      val result = await(controller.retrieve(request.vrn, None)(httpRequest))
-      status(result) shouldBe INTERNAL_SERVER_ERROR
+      val result = controller.create(response.vatReturnDetails.vrn)(httpRequest)
+
+      result.map(_.header.status shouldBe BAD_REQUEST)
     }
+
+    "fail with 404 when a VAT record is not found" in {
+      when(mockService.create(request.vrn, request)).thenReturn(Future.failed(RecordNotFoundException("err")))
+      val httpRequest = FakeRequest().withMethod("POST").withBody(Json.toJson(request))
+      val result = controller.create(request.vrn)(httpRequest)
+      result.map(_.header.status shouldBe NOT_FOUND)
+    }
+  }
+
+  "retrieve" should {
+    "return response when entry found by service" in {
+      when(mockService.retrieve(request.vrn)).thenReturn(Future.successful(Some(response)))
+
+      val httpRequest = FakeRequest().withMethod("GET")
+
+      val result = controller.retrieve(request.vrn, None)(httpRequest)
+      result.map { x =>
+        x.header.status shouldBe OK
+        jsonBodyOf(x) shouldBe Json.toJson(response)
+      }
+    }
+  }
+
+  "fails when an entry cannot be found" in {
+    when(mockService.retrieve(request.vrn)).thenReturn(Future.failed(new Exception))
+
+    val httpRequest = FakeRequest().withMethod("GET")
+
+    val result = await(controller.retrieve(request.vrn, None)(httpRequest))
+    status(result) shouldBe INTERNAL_SERVER_ERROR
   }
 }

@@ -34,8 +34,9 @@ class ValidationException(message: String) extends RuntimeException(message)
 class InvalidNinoException extends RuntimeException
 class DuplicateException extends RuntimeException
 
-class RecordNotFoundException() extends RuntimeException
+case class RecordNotFoundException(errorMessage: String = "Record not found") extends RuntimeException
 
 case object ErrorInternalServer extends ErrorResponse(INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "Internal server error")
 case object ErrorDuplicate extends ErrorResponse(CONFLICT, "ALREADY_EXISTS", "A record already exists for this id")
 
+case class RecordNotFound(errorMessage: String) extends ErrorResponse(NOT_FOUND, "NOT_FOUND", errorMessage)
