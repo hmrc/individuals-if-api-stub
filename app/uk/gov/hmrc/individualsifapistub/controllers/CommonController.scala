@@ -131,6 +131,8 @@ abstract class CommonController(controllerComponents: ControllerComponents)
       ErrorInvalidRequest(e.getMessage).toHttpResponse
     case _: DuplicateException =>
       ErrorDuplicate.toHttpResponse
+    case e: RecordNotFoundException =>
+      RecordNotFound(e.getMessage).toHttpResponse
   }
 
   private[controllers] def retrievalRecovery: PartialFunction[Throwable, Result] = {
