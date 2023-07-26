@@ -15,6 +15,4 @@ addSbtPlugin("uk.gov.hmrc" % "sbt-distributables" % "2.2.0")
 
 addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.8.16" exclude("org.slf4j", "slf4j-simple"))
 
-addSbtPlugin("uk.gov.hmrc" % "sbt-service-manager" % "0.11.0")
-
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.9.3")

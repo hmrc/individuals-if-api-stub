@@ -1,9 +1,6 @@
 
 import sbt.Tests.{ Group, SubProcess }
 import uk.gov.hmrc.DefaultBuildSettings.{ addTestReportOption, defaultSettings, scalaSettings }
-import uk.gov.hmrc.ExternalService
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
-import uk.gov.hmrc.ServiceManagerPlugin.Keys.itDependenciesList
 
 val appName = "individuals-if-api-stub"
 val hmrc = "uk.gov.hmrc"
@@ -14,7 +11,6 @@ def intTestFilter(name: String): Boolean = name startsWith "it"
 def unitFilter(name: String): Boolean = name startsWith "unit"
 def componentFilter(name: String): Boolean = name startsWith "component"
 lazy val ComponentTest = config("component") extend Test
-lazy val externalServices = List(ExternalService("AUTH"), ExternalService("INDIVIDUALS_MATCHING_API"), ExternalService("DES"))
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(Seq(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin) ++ plugins: _*)
@@ -33,7 +29,6 @@ lazy val microservice = Project(appName, file("."))
   .settings(Compile / unmanagedResourceDirectories += baseDirectory.value / "resources")
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
-  .settings(itDependenciesList := externalServices)
   .settings(
     IntegrationTest / Keys.fork := false,
     IntegrationTest / unmanagedSourceDirectories := (IntegrationTest / baseDirectory)(base => Seq(base / "test")).value,

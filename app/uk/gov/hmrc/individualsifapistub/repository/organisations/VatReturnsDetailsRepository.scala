@@ -18,8 +18,8 @@ package uk.gov.hmrc.individualsifapistub.repository.organisations
 
 import org.mongodb.scala.MongoWriteException
 import org.mongodb.scala.model.Filters.equal
-import org.mongodb.scala.model.{IndexModel, IndexOptions}
-import uk.gov.hmrc.individualsifapistub.domain.organisations.VatReturnDetailsEntry
+import org.mongodb.scala.model.{ IndexModel, IndexOptions }
+import uk.gov.hmrc.individualsifapistub.domain.organisations.VatReturnsDetailsEntry
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import org.mongodb.scala.model.Indexes.ascending
@@ -29,16 +29,16 @@ import javax.inject.{ Inject, Singleton }
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class VatReturnDetailsRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
-  extends PlayMongoRepository[VatReturnDetailsEntry](
+class VatReturnsDetailsRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
+  extends PlayMongoRepository[VatReturnsDetailsEntry](
     mongoComponent = mongo,
-    collectionName = "vat-return-details",
-    domainFormat = VatReturnDetailsEntry.format,
+    collectionName = "vat-returns-details",
+    domainFormat = VatReturnsDetailsEntry.format,
     indexes = Seq(
       IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
     )
   ) {
-  def create(entry: VatReturnDetailsEntry): Future[VatReturnDetailsEntry] =
+  def create(entry: VatReturnsDetailsEntry): Future[VatReturnsDetailsEntry] =
     collection
       .insertOne(entry)
       .map(_ => entry)
@@ -47,7 +47,7 @@ class VatReturnDetailsRepository @Inject()(mongo: MongoComponent)(implicit val e
         case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
       }
 
-  def retrieve(vrn: String): Future[Option[VatReturnDetailsEntry]] =
+  def retrieve(vrn: String): Future[Option[VatReturnsDetailsEntry]] =
     collection
       .find(equal("id", vrn))
       .headOption()

@@ -18,16 +18,17 @@ package it.uk.gov.hmrc.individualsifapistub.organisations
 
 import testUtils.RepositoryTestHelper
 import uk.gov.hmrc.individualsifapistub.domain.DuplicateException
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{VatReturn, VatReturnDetails, VatReturnDetailsEntry, VatTaxYear}
-import uk.gov.hmrc.individualsifapistub.repository.organisations.VatReturnDetailsRepository
+import uk.gov.hmrc.individualsifapistub.domain.organisations._
+import uk.gov.hmrc.individualsifapistub.repository.organisations.VatReturnsDetailsRepository
 
-class VatReturnDetailsRepositorySpec extends RepositoryTestHelper {
+class VatReturnsDetailsRepositorySpec extends RepositoryTestHelper {
 
-  val repository = fakeApplication.injector.instanceOf[VatReturnDetailsRepository]
-  val vatReturn: List[VatReturn] = List(VatReturn(1, 10, 5, 6243, "", Some("")))
-  val vatTaxYear: List[VatTaxYear] = List(VatTaxYear("2019", vatReturn))
-  val serviceRequest: VatReturnDetails = VatReturnDetails("12345678", Some("123"), vatTaxYear)
-  val repositoryEntry: VatReturnDetailsEntry = VatReturnDetailsEntry(serviceRequest.vrn, serviceRequest)
+  val repository = fakeApplication.injector.instanceOf[VatReturnsDetailsRepository]
+  val vatPeriods: List[VatPeriod] = List(
+    VatPeriod(Some("23AG"), Some("2023-01-01"), Some("2023-01-01"), Some(5), Some(6243), Some("rt"), Some("s"))
+  )
+  val serviceRequest: VatReturnsDetails = VatReturnsDetails("12345678", Some("123"), Some("2023-01-01"), vatPeriods)
+  val repositoryEntry: VatReturnsDetailsEntry = VatReturnsDetailsEntry(serviceRequest.vrn, serviceRequest)
 
   "collection" should {
     "have a unique index on a requests utr" in {
@@ -56,12 +57,12 @@ class VatReturnDetailsRepositorySpec extends RepositoryTestHelper {
 
   "find" should {
     "return None when no id's match" in {
-      await(repository.retrieve(repositoryEntry.vatReturnDetails.vrn)) shouldBe None
+      await(repository.retrieve(repositoryEntry.vatReturnsDetails.vrn)) shouldBe None
     }
 
     "return Some when match by id is found" in {
       await(repository.create(repositoryEntry))
-      await(repository.retrieve(repositoryEntry.vatReturnDetails.vrn)) shouldBe Some(repositoryEntry)
+      await(repository.retrieve(repositoryEntry.vatReturnsDetails.vrn)) shouldBe Some(repositoryEntry)
     }
   }
 }
