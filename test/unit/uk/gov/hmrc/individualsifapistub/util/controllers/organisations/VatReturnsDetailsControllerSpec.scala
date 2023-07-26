@@ -16,7 +16,7 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.controllers.organisations
 
-import uk.gov.hmrc.individualsifapistub.services.organisations.VatReturnDetailsService
+import uk.gov.hmrc.individualsifapistub.services.organisations.VatReturnsDetailsService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
@@ -25,19 +25,20 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.individualsifapistub.controllers.organisations.VatReturnDetailsController
 import uk.gov.hmrc.individualsifapistub.domain.RecordNotFoundException
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{ VatReturn, VatReturnDetails, VatReturnDetailsEntry, VatTaxYear }
+import uk.gov.hmrc.individualsifapistub.domain.organisations.{ VatPeriod, VatReturnsDetails, VatReturnsDetailsEntry }
 
 import scala.concurrent.Future
 
-class VatReturnDetailsControllerSpec extends TestSupport {
+class VatReturnsDetailsControllerSpec extends TestSupport {
 
-  val mockService: VatReturnDetailsService = mock[VatReturnDetailsService]
+  val mockService: VatReturnsDetailsService = mock[VatReturnsDetailsService]
   val controller = new VatReturnDetailsController(loggingAction, bodyParsers, controllerComponents, mockService)
 
-  val vatReturn: List[VatReturn] = List(VatReturn(1, 10, 5, 6243, "", Some("")))
-  val vatTaxYear: List[VatTaxYear] = List(VatTaxYear("2019", vatReturn))
-  val request: VatReturnDetails = VatReturnDetails("12345678", Some("123"), vatTaxYear)
-  val response: VatReturnDetailsEntry = VatReturnDetailsEntry("id", request)
+  val vatPeriods: List[VatPeriod] = List(
+    VatPeriod(Some("23AG"), Some("2023-12-01"), Some("2023-12-31"), Some(30), Some(102), Some("ret"), Some("s"))
+  )
+  val request: VatReturnsDetails = VatReturnsDetails("12345678", Some("123"), Some("2023-12-31"), vatPeriods)
+  val response: VatReturnsDetailsEntry = VatReturnsDetailsEntry("id", request)
 
   "create" should {
     "return response with created status when successful" in {
@@ -45,7 +46,7 @@ class VatReturnDetailsControllerSpec extends TestSupport {
 
       val httpRequest = FakeRequest().withMethod("POST").withBody(Json.toJson(request))
 
-      val result = controller.create(response.vatReturnDetails.vrn)(httpRequest)
+      val result = controller.create(response.vatReturnsDetails.vrn)(httpRequest)
 
       result.map { x =>
         x.header.status shouldBe CREATED
@@ -58,7 +59,7 @@ class VatReturnDetailsControllerSpec extends TestSupport {
 
       val httpRequest = FakeRequest().withMethod("POST").withBody(Json.parse("{}"))
 
-      val result = controller.create(response.vatReturnDetails.vrn)(httpRequest)
+      val result = controller.create(response.vatReturnsDetails.vrn)(httpRequest)
 
       result.map(_.header.status shouldBe BAD_REQUEST)
     }

@@ -21,26 +21,27 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AsyncWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.individualsifapistub.domain.RecordNotFoundException
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{ VatAddress, VatApprovedInformation, VatCustomerDetails, VatInformation, VatInformationEntry, VatPPOB, VatReturn, VatReturnDetails, VatReturnDetailsEntry, VatTaxYear }
-import uk.gov.hmrc.individualsifapistub.repository.organisations.{ VatInformationRepository, VatReturnDetailsRepository }
-import uk.gov.hmrc.individualsifapistub.services.organisations.VatReturnDetailsService
+import uk.gov.hmrc.individualsifapistub.domain.organisations._
+import uk.gov.hmrc.individualsifapistub.repository.organisations.{ VatInformationRepository, VatReturnsDetailsRepository }
+import uk.gov.hmrc.individualsifapistub.services.organisations.VatReturnsDetailsService
 
 import scala.concurrent.Future
 
-class VatReturnDetailsServiceSpec extends AsyncWordSpec with Matchers with MockitoSugar {
+class VatReturnsDetailsServiceSpec extends AsyncWordSpec with Matchers with MockitoSugar {
 
-  val mockRepository: VatReturnDetailsRepository = mock[VatReturnDetailsRepository]
+  val mockRepository: VatReturnsDetailsRepository = mock[VatReturnsDetailsRepository]
   val mockVatInformationRepository: VatInformationRepository = mock[VatInformationRepository]
-  val service = new VatReturnDetailsService(mockRepository, mockVatInformationRepository)
+  val service = new VatReturnsDetailsService(mockRepository, mockVatInformationRepository)
 
   val vatEntry: VatInformationEntry = VatInformationEntry(
     "1",
     VatInformation(VatApprovedInformation(VatCustomerDetails("H"), VatPPOB(VatAddress("l1", "p"))))
   )
-  val vatReturn: List[VatReturn] = List(VatReturn(1, 10, 5, 6243, "", Some("")))
-  val vatTaxYear: List[VatTaxYear] = List(VatTaxYear("2019", vatReturn))
-  val serviceRequest: VatReturnDetails = VatReturnDetails("12345678", Some("123"), vatTaxYear)
-  val repositoryRequest: VatReturnDetailsEntry = VatReturnDetailsEntry(serviceRequest.vrn, serviceRequest)
+  val vatPeriods: List[VatPeriod] = List(
+    VatPeriod(Some("23AA"), Some("2023-01-01"), Some("2023-01-31"), Some(30), Some(6243), Some("rt"), Some("s"))
+  )
+  val serviceRequest: VatReturnsDetails = VatReturnsDetails("12345678", Some("123"), Some("2023-01-31"), vatPeriods)
+  val repositoryRequest: VatReturnsDetailsEntry = VatReturnsDetailsEntry(serviceRequest.vrn, serviceRequest)
 
   "create" should {
     "return response when creating" in {

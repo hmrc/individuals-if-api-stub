@@ -1898,34 +1898,42 @@ paths:
                     #/components/schemas/IndividualsIntegrationFrameworkTestSupportOrganisationsVatReturnDetailsRequest
                 - example:
                     vrn: '123456789'
-                    taxYears:
-                      - taxYear: '2021'
-                        vatReturns:
-                          - calendarMonth: 6
-                            liabilityMonth: 5
-                            numMonthsAssessed: 3
-                            box6Total: 2938.21
-                            returnType: 'Regular Return'
-                          - calendarMonth: 9
-                            liabilityMonth: 7
-                            numMonthsAssessed: 3
-                            box6Total: 1235.31
-                            returnType: 'Regular Return'
+                    appDate: '20230101'
+                    extractDate: '2023-06-30'
+                    vatPeriods:
+                      - periodKey: '23AG'
+                        billingPeriodFromDate: '2023-07-01'
+                        billingPeriodToDate: '2023-07-31'
+                        numDaysAssessed: 30
+                        box6Total: 2938.21
+                        returnType: 'Central Assessment'
+                        source: 'ADR(ETMP)'
+                      - periodKey: '23AA'
+                        billingPeriodFromDate: '2023-04-01'
+                        billingPeriodToDate: '2023-06-30'
+                        numDaysAssessed: 91
+                        box6Total: 600.00
+                        returnType: 'Regular Return'
+                        source: 'ADR(ETMP)'
               example:
                 vrn: '123456789'
-                taxYears:
-                  - taxYear: '2021'
-                    vatReturns:
-                      - calendarMonth: 6
-                        liabilityMonth: 5
-                        numMonthsAssessed: 3
-                        box6Total: 2938.21
-                        returnType: 'Regular Return'
-                      - calendarMonth: 9
-                        liabilityMonth: 7
-                        numMonthsAssessed: 3
-                        box6Total: 1235.31
-                        returnType: 'Regular Return'
+                appDate: '20230101'
+                extractDate: '2023-06-30'
+                vatPeriods:
+                  - periodKey: '23AG'
+                    billingPeriodFromDate: '2023-07-01'
+                    billingPeriodToDate: '2023-07-31'
+                    numDaysAssessed: 30
+                    box6Total: 2938.21
+                    returnType: 'Central Assessment'
+                    source: 'ADR(ETMP)'
+                  - periodKey: '23AA'
+                    billingPeriodFromDate: '2023-04-01'
+                    billingPeriodToDate: '2023-06-30'
+                    numDaysAssessed: 91
+                    box6Total: 600.00
+                    returnType: 'Regular Return'
+                    source: 'ADR(ETMP)'
         required: true
       responses:
         '201':
@@ -1939,34 +1947,42 @@ paths:
                       #/components/schemas/IndividualsIntegrationFrameworkTestSupportOrganisationsVatReturnDetailsResponse
                   - example:
                       vrn: '123456789'
-                      taxYears:
-                        - taxYear: '2021'
-                          vatReturns:
-                            - calendarMonth: 6
-                              liabilityMonth: 5
-                              numMonthsAssessed: 3
-                              box6Total: 2938.21
-                              returnType: 'Regular Return'
-                            - calendarMonth: 9
-                              liabilityMonth: 7
-                              numMonthsAssessed: 3
-                              box6Total: 1235.31
-                              returnType: 'Regular Return'
+                      appDate: '20230101'
+                      extractDate: '2023-06-30'
+                      vatPeriods:
+                        - periodKey: '23AG'
+                          billingPeriodFromDate: '2023-07-01'
+                          billingPeriodToDate: '2023-07-31'
+                          numDaysAssessed: 30
+                          box6Total: 2938.21
+                          returnType: 'Central Assessment'
+                          source: 'ADR(ETMP)'
+                        - periodKey: '23AA'
+                          billingPeriodFromDate: '2023-04-01'
+                          billingPeriodToDate: '2023-06-30'
+                          numDaysAssessed: 91
+                          box6Total: 600.00
+                          returnType: 'Regular Return'
+                          source: 'ADR(ETMP)'
                 example:
                   vrn: '123456789'
-                  taxYears:
-                    - taxYear: '2021'
-                      vatReturns:
-                        - calendarMonth: 6
-                          liabilityMonth: 5
-                          numMonthsAssessed: 3
-                          box6Total: 2938.21
-                          returnType: 'Regular Return'
-                        - calendarMonth: 9
-                          liabilityMonth: 7
-                          numMonthsAssessed: 3
-                          box6Total: 1235.31
-                          returnType: 'Regular Return'
+                  appDate: '20230101'
+                  extractDate: '2023-06-30'
+                  vatPeriods:
+                    - periodKey: '23AG'
+                      billingPeriodFromDate: '2023-07-01'
+                      billingPeriodToDate: '2023-07-31'
+                      numDaysAssessed: 30
+                      box6Total: 2938.21
+                      returnType: 'Central Assessment'
+                      source: 'ADR(ETMP)'
+                    - periodKey: '23AA'
+                      billingPeriodFromDate: '2023-04-01'
+                      billingPeriodToDate: '2023-06-30'
+                      numDaysAssessed: 91
+                      box6Total: 600.00
+                      returnType: 'Regular Return'
+                      source: 'ADR(ETMP)'
         '400':
           description: Bad Request
           headers: {}
@@ -2773,18 +2789,28 @@ components:
         IndividualsIntegrationFrameworkTestSupportOrganisationsVatReturnDetailsRequest
       required:
         - vrn
-        - taxYears
+        - appDate
+        - extractDate
+        - vatPeriods
       type: object
       properties:
         vrn:
           type: string
           description: VAT registration number
           example: 123456789
-        taxYears:
+        appDate:
+          type: string
+          description: Application date
+          example: 20230101
+        extractDate:
+          type: string
+          description: Data extract date
+          example: 2023-06-23
+        vatPeriods:
           type: array
           items:
-            $ref: '#/components/schemas/VatTaxYear'
-          description: List of VAT tax years.
+            $ref: '#/components/schemas/VatPeriod'
+          description: List of VAT periods.
     IndividualsIntegrationFrameworkTestSupportOrganisationsVatReturnDetailsResponse:
       title: >-
         IndividualsIntegrationFrameworkTestSupportOrganisationsVatReturnDetailsResponse
@@ -2800,49 +2826,40 @@ components:
         taxYears:
           type: array
           items:
-            $ref: '#/components/schemas/VatTaxYear'
+            $ref: '#/components/schemas/VatPeriod'
           description: List of VAT tax years.
-    VatTaxYear:
-      title: VAT Tax Years
+    VatPeriod:
+      title: VAT Period
       type: object
       properties:
-        taxYear:
+        periodKey:
           type: string
-          description: VAT tax year
-          example: '2022'
-        vatReturns:
-          type: array
-          items:
-            $ref: '#/components/schemas/VatReturn'
-          description: Details about VAT returns within the same tax year.
-    VatReturn:
-      title: VAT return
-      type: object
-      properties:
-        calendarMonth:
+          description: Period key
+          example: '23AD'
+        billingPeriodFromDate:
+          type: string
+          description: Billing period from date.
+          example: '2023-04-01'
+        billingPeriodToDate:
+          type: string
+          description: Billing period to date.
+          example: '2023-07-01'
+        numDaysAssessed:
           type: integer
-          description: Calendar month
-          format: int32
-          example: 7
-        liabilityMonth:
-          type: integer
-          description: Liability month
-          format: int32
-          example: 6
-        numMonthsAssessed:
-          type: integer
-          description: Number of months assessed
-          format: int32
-          example: 3
+          description: Number of days assessed.
+          example: 30
         box6Total:
           type: number
           description: Box6 total outputs where the return is filed
-          format: double
           example: 123.32
         returnType:
           type: string
           description: Return type
-          example: "Regular Return"
+          example: 'Regular Return'
+        source:
+          type: string
+          description: Source
+          example: 'ADR(ETMP)'
     Paye:
       title: Paye
       type: object

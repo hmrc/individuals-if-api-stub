@@ -16,21 +16,21 @@
 
 package uk.gov.hmrc.individualsifapistub.services.organisations
 
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{ VatReturnDetails, VatReturnDetailsEntry }
-import uk.gov.hmrc.individualsifapistub.repository.organisations.{ VatInformationRepository, VatReturnDetailsRepository }
+import uk.gov.hmrc.individualsifapistub.domain.organisations.{ VatReturnsDetails, VatReturnsDetailsEntry }
+import uk.gov.hmrc.individualsifapistub.repository.organisations.{ VatInformationRepository, VatReturnsDetailsRepository }
 import uk.gov.hmrc.individualsifapistub.domain.RecordNotFoundException
 
 import javax.inject.Inject
 import scala.concurrent.{ ExecutionContext, Future }
 
-class VatReturnDetailsService @Inject()(repository: VatReturnDetailsRepository,
-                                        vatInformationRepository: VatInformationRepository)
-                                       (implicit ec: ExecutionContext) {
-  def retrieve(vrn: String): Future[Option[VatReturnDetailsEntry]] = repository.retrieve(vrn)
+class VatReturnsDetailsService @Inject()(repository: VatReturnsDetailsRepository,
+                                         vatInformationRepository: VatInformationRepository)
+                                        (implicit ec: ExecutionContext) {
+  def retrieve(vrn: String): Future[Option[VatReturnsDetailsEntry]] = repository.retrieve(vrn)
 
-  def create(vrn: String, vatReturnDetails: VatReturnDetails): Future[VatReturnDetailsEntry] = {
+  def create(vrn: String, vatReturnDetails: VatReturnsDetails): Future[VatReturnsDetailsEntry] = {
     vatInformationRepository.retrieve(vrn).flatMap {
-      case Some(_) => repository.create(VatReturnDetailsEntry(vrn, vatReturnDetails))
+      case Some(_) => repository.create(VatReturnsDetailsEntry(vrn, vatReturnDetails))
       case None => Future.failed(RecordNotFoundException(s"VAT organisation with VRN $vrn does not exist"))
     }
   }
