@@ -25,7 +25,7 @@ case class VatPeriod(
                       numDaysAssessed: Option[Int],
                       box6Total: Option[Double],
                       returnType: Option[String],
-                      source: Option[String]
+                      source: Option[String],
                     )
 
 object VatPeriod {

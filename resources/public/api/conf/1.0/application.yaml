@@ -2816,18 +2816,28 @@ components:
         IndividualsIntegrationFrameworkTestSupportOrganisationsVatReturnDetailsResponse
       required:
         - vrn
-        - taxYears
+        - appDate
+        - extractDate
+        - vatPeriods
       type: object
       properties:
         vrn:
           type: string
           description: VAT registration number
           example: 123456789
-        taxYears:
+        appDate:
+          type: string
+          description: Application date
+          example: 20230101
+        extractDate:
+          type: string
+          description: Data extract date
+          example: 2023-06-23
+        vatPeriods:
           type: array
           items:
             $ref: '#/components/schemas/VatPeriod'
-          description: List of VAT tax years.
+          description: List of VAT periods.
     VatPeriod:
       title: VAT Period
       type: object

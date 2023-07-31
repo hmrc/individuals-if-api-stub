@@ -36,7 +36,7 @@ class VatInformationController @Inject()(
     logger.info(s"Retrieving VAT information for VRN: $vrn and fields: $fields")
     vatInformationService.retrieve(vrn).map {
       case Some(entry) => Ok(Json.toJson(entry.vatInformation))
-      case None => NotFound
+      case None => NotFound("NO_DATA_FOUND")
     } recover retrievalRecovery
   }
 
