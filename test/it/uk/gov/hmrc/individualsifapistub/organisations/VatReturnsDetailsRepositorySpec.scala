@@ -21,6 +21,9 @@ import uk.gov.hmrc.individualsifapistub.domain.DuplicateException
 import uk.gov.hmrc.individualsifapistub.domain.organisations._
 import uk.gov.hmrc.individualsifapistub.repository.organisations.VatReturnsDetailsRepository
 
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
+
 class VatReturnsDetailsRepositorySpec extends RepositoryTestHelper {
 
   val repository = fakeApplication.injector.instanceOf[VatReturnsDetailsRepository]
@@ -28,7 +31,9 @@ class VatReturnsDetailsRepositorySpec extends RepositoryTestHelper {
     VatPeriod(Some("23AG"), Some("2023-01-01"), Some("2023-01-01"), Some(5), Some(6243), Some("rt"), Some("s"))
   )
   val serviceRequest: VatReturnsDetails = VatReturnsDetails("12345678", Some("123"), Some("2023-01-01"), vatPeriods)
-  val repositoryEntry: VatReturnsDetailsEntry = VatReturnsDetailsEntry(serviceRequest.vrn, serviceRequest)
+  val repositoryEntry: VatReturnsDetailsEntry = VatReturnsDetailsEntry(
+    serviceRequest.vrn, serviceRequest, LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)
+  )
 
   "collection" should {
     "have a unique index on a requests utr" in {

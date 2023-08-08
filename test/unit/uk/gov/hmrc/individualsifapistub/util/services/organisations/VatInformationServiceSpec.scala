@@ -25,18 +25,21 @@ import uk.gov.hmrc.individualsifapistub.domain.organisations.{VatAddress, VatApp
 import uk.gov.hmrc.individualsifapistub.repository.organisations.VatInformationRepository
 import uk.gov.hmrc.individualsifapistub.services.organisations.VatInformationService
 import org.scalatest.wordspec.FixtureAsyncWordSpec
+import uk.gov.hmrc.individualsifapistub.util.DateTimeProvider
 
+import java.time.LocalDateTime
 import scala.concurrent.Future
 
 class VatInformationServiceSpec extends FixtureAsyncWordSpec with Matchers with MockitoSugar {
 
   override def withFixture(test: OneArgAsyncTest): FutureOutcome = {
     val mockRepository: VatInformationRepository = mock[VatInformationRepository]
-    val service = new VatInformationService(mockRepository)
-    test.apply(Fixture(mockRepository, service))
+    val timeProvider: DateTimeProvider = mock[DateTimeProvider]
+    val service = new VatInformationService(mockRepository, timeProvider)
+    test.apply(Fixture(mockRepository, service, timeProvider))
   }
 
-  case class Fixture(repo: VatInformationRepository, service: VatInformationService)
+  case class Fixture(repo: VatInformationRepository, service: VatInformationService, timeProvider: DateTimeProvider)
 
   override type FixtureParam = Fixture
 
@@ -47,34 +50,34 @@ class VatInformationServiceSpec extends FixtureAsyncWordSpec with Matchers with 
   val vatApprovedInformation: VatApprovedInformation = VatApprovedInformation(customerDetails, vatPPOB)
   val request: VatInformation = VatInformation(vatApprovedInformation)
 
-  val repositoryRequest: VatInformationEntry = VatInformationEntry(vrn, request)
+  val repositoryRequest: VatInformationEntry = VatInformationEntry(vrn, request, LocalDateTime.now())
 
   "create" should {
-    "return response when creating" in { case Fixture(repo, service) =>
+    "return response when creating" in { case Fixture(repo, service, timeProvider) =>
+      when(timeProvider.now()).thenReturn(repositoryRequest.createdAt)
       when(repo.create(repositoryRequest)).thenReturn(Future.successful(repositoryRequest))
       val result = service.create(vrn, request)
       result.map(x => x shouldBe repositoryRequest)
     }
 
-    "throw error when repository fails to create" in { case Fixture(repo, service) =>
-
+    "throw error when repository fails to create" in { case Fixture(repo, service, timeProvider) =>
+      when(timeProvider.now()).thenReturn(repositoryRequest.createdAt)
       when(repo.create(repositoryRequest)).thenReturn(Future.failed(new Exception()))
       recoverToSucceededIf[Exception] {
         service.create(vrn, request)
       }
-
     }
 
   }
 
   "retrieve" should {
-    "return found item if it exists" in { case Fixture(repo, service) =>
+    "return found item if it exists" in { case Fixture(repo, service, _) =>
       when(repo.retrieve(vrn)).thenReturn(Future.successful(Some(repositoryRequest)))
       val result = service.retrieve(vrn)
       result.map(x => x shouldBe Some(repositoryRequest))
     }
 
-    "return None if item does not exists" in { case Fixture(repo, service) =>
+    "return None if item does not exists" in { case Fixture(repo, service, _) =>
       when(repo.retrieve(vrn)).thenReturn(Future.successful(None))
       val result = service.retrieve(vrn)
       result.map(x => x shouldBe None)
