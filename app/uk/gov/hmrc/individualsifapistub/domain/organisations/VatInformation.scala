@@ -16,7 +16,10 @@
 
 package uk.gov.hmrc.individualsifapistub.domain.organisations
 
-import play.api.libs.json.Json
+import play.api.libs.json.{ Format, Json, OFormat }
+import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
+
+import java.time.LocalDateTime
 
 
 case class VatCustomerDetails(organisationName: String)
@@ -72,8 +75,9 @@ object VatInformationSimplified {
   }
 }
 
-case class VatInformationEntry(id: String, vatInformation: VatInformation)
+case class VatInformationEntry(id: String, vatInformation: VatInformation, createdAt: LocalDateTime)
 
 object VatInformationEntry {
-  implicit val format = Json.format[VatInformationEntry]
+  private implicit val localDateTimeFormat: Format[LocalDateTime] = MongoJavatimeFormats.localDateTimeFormat
+  implicit val format: OFormat[VatInformationEntry] = Json.format[VatInformationEntry]
 }

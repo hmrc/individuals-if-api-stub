@@ -18,15 +18,16 @@ package uk.gov.hmrc.individualsifapistub.repository.organisations
 
 import org.mongodb.scala.MongoWriteException
 import org.mongodb.scala.model.Filters.equal
-import org.mongodb.scala.model.{ IndexModel, IndexOptions }
+import org.mongodb.scala.model.{IndexModel, IndexOptions}
 import uk.gov.hmrc.individualsifapistub.domain.organisations.VatReturnsDetailsEntry
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import org.mongodb.scala.model.Indexes.ascending
 import uk.gov.hmrc.individualsifapistub.domain.DuplicateException
 
-import javax.inject.{ Inject, Singleton }
-import scala.concurrent.{ ExecutionContext, Future }
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.duration.DAYS
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class VatReturnsDetailsRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
@@ -35,7 +36,8 @@ class VatReturnsDetailsRepository @Inject()(mongo: MongoComponent)(implicit val 
     collectionName = "vat-returns-details",
     domainFormat = VatReturnsDetailsEntry.format,
     indexes = Seq(
-      IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
+      IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true)),
+      IndexModel(ascending("createdAt"), IndexOptions().background(true).expireAfter(1, DAYS))
     )
   ) {
   def create(entry: VatReturnsDetailsEntry): Future[VatReturnsDetailsEntry] =

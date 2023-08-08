@@ -22,31 +22,36 @@ import org.scalatest.wordspec.AsyncWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.individualsifapistub.domain.RecordNotFoundException
 import uk.gov.hmrc.individualsifapistub.domain.organisations._
-import uk.gov.hmrc.individualsifapistub.repository.organisations.{ VatInformationRepository, VatReturnsDetailsRepository }
+import uk.gov.hmrc.individualsifapistub.repository.organisations.{VatInformationRepository, VatReturnsDetailsRepository}
 import uk.gov.hmrc.individualsifapistub.services.organisations.VatReturnsDetailsService
+import uk.gov.hmrc.individualsifapistub.util.DateTimeProvider
 
+import java.time.LocalDateTime
 import scala.concurrent.Future
 
 class VatReturnsDetailsServiceSpec extends AsyncWordSpec with Matchers with MockitoSugar {
 
   val mockRepository: VatReturnsDetailsRepository = mock[VatReturnsDetailsRepository]
   val mockVatInformationRepository: VatInformationRepository = mock[VatInformationRepository]
-  val service = new VatReturnsDetailsService(mockRepository, mockVatInformationRepository)
+  val timeProvider: DateTimeProvider = mock[DateTimeProvider]
+  val service = new VatReturnsDetailsService(mockRepository, mockVatInformationRepository, timeProvider)
 
   val vatEntry: VatInformationEntry = VatInformationEntry(
     "1",
-    VatInformation(VatApprovedInformation(VatCustomerDetails("H"), VatPPOB(VatAddress("l1", "p"))))
+    VatInformation(VatApprovedInformation(VatCustomerDetails("H"), VatPPOB(VatAddress("l1", "p")))),
+    LocalDateTime.now()
   )
   val vatPeriods: List[VatPeriod] = List(
     VatPeriod(Some("23AA"), Some("2023-01-01"), Some("2023-01-31"), Some(30), Some(6243), Some("rt"), Some("s"))
   )
   val serviceRequest: VatReturnsDetails = VatReturnsDetails("12345678", Some("123"), Some("2023-01-31"), vatPeriods)
-  val repositoryRequest: VatReturnsDetailsEntry = VatReturnsDetailsEntry(serviceRequest.vrn, serviceRequest)
+  val repositoryRequest: VatReturnsDetailsEntry = VatReturnsDetailsEntry(serviceRequest.vrn, serviceRequest, LocalDateTime.now())
 
   "create" should {
     "return response when creating" in {
       when(mockVatInformationRepository.retrieve(serviceRequest.vrn)).thenReturn(Future.successful(Some(vatEntry)))
       when(mockRepository.create(repositoryRequest)).thenReturn(Future.successful(repositoryRequest))
+      when(timeProvider.now()).thenReturn(repositoryRequest.createdAt)
       val result = service.create(serviceRequest.vrn, serviceRequest)
       result.map(x => x shouldBe repositoryRequest)
     }

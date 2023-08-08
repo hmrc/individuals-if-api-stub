@@ -19,13 +19,15 @@ package it.uk.gov.hmrc.individualsifapistub.organisations
 
 import testUtils.RepositoryTestHelper
 import uk.gov.hmrc.individualsifapistub.domain.DuplicateException
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{VatAddress, VatApprovedInformation, VatCustomerDetails, VatInformation, VatInformationEntry, VatPPOB}
+import uk.gov.hmrc.individualsifapistub.domain.organisations._
 import uk.gov.hmrc.individualsifapistub.repository.organisations.VatInformationRepository
+
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 
 class VatInformationRepositorySpec extends RepositoryTestHelper {
   val repository = fakeApplication.injector.instanceOf[VatInformationRepository]
-
 
   val vrn = "12345678"
   val customerDetails: VatCustomerDetails = VatCustomerDetails("Ancient Antiques")
@@ -34,7 +36,7 @@ class VatInformationRepositorySpec extends RepositoryTestHelper {
   val vatApprovedInformation: VatApprovedInformation = VatApprovedInformation(customerDetails, vatPPOB)
   val request: VatInformation = VatInformation(vatApprovedInformation)
 
-  val repositoryEntry: VatInformationEntry = VatInformationEntry(vrn, request)
+  val repositoryEntry: VatInformationEntry = VatInformationEntry(vrn, request, LocalDateTime.now())
 
   "collection" should {
     "have a unique index on a requests utr" in {
@@ -49,19 +51,18 @@ class VatInformationRepositorySpec extends RepositoryTestHelper {
 
   "create" should {
     "create Return Information response with a valid vrn" in {
-      val result = await(repository.create(VatInformationEntry(vrn, request)))
-      result shouldBe VatInformationEntry(vrn, request)
+      val input = VatInformationEntry(vrn, request, LocalDateTime.now())
+      val result = await(repository.create(input))
+      result shouldBe input
     }
 
     "fail to create a duplicate" in {
-      await(repository.create(VatInformationEntry(vrn, request)))
+      await(repository.create(VatInformationEntry(vrn, request, LocalDateTime.now())))
       assertThrows[DuplicateException] {
-        await(repository.create(VatInformationEntry(vrn, request)))
+        await(repository.create(VatInformationEntry(vrn, request, LocalDateTime.now())))
       }
     }
-
   }
-
 
   "find" should {
     "return None when no id's match" in {
@@ -69,8 +70,9 @@ class VatInformationRepositorySpec extends RepositoryTestHelper {
     }
 
     "return Some when match by id is found" in {
-      await(repository.create(VatInformationEntry(vrn, request)))
-      await(repository.retrieve(vrn)) shouldBe Some(VatInformationEntry(vrn, request))
+      val entry = VatInformationEntry(vrn, request, LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS))
+      await(repository.create(entry))
+      await(repository.retrieve(vrn)) shouldBe Some(entry)
     }
   }
 

@@ -27,6 +27,7 @@ import uk.gov.hmrc.individualsifapistub.controllers.organisations.VatReturnDetai
 import uk.gov.hmrc.individualsifapistub.domain.RecordNotFoundException
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{ VatPeriod, VatReturnsDetails, VatReturnsDetailsEntry }
 
+import java.time.LocalDateTime
 import scala.concurrent.Future
 
 class VatReturnsDetailsControllerSpec extends TestSupport {
@@ -38,7 +39,7 @@ class VatReturnsDetailsControllerSpec extends TestSupport {
     VatPeriod(Some("23AG"), Some("2023-12-01"), Some("2023-12-31"), Some(30), Some(102), Some("ret"), Some("s"))
   )
   val request: VatReturnsDetails = VatReturnsDetails("12345678", Some("123"), Some("2023-12-31"), vatPeriods)
-  val response: VatReturnsDetailsEntry = VatReturnsDetailsEntry("id", request)
+  val response: VatReturnsDetailsEntry = VatReturnsDetailsEntry("id", request, LocalDateTime.now())
 
   "create" should {
     "return response with created status when successful" in {

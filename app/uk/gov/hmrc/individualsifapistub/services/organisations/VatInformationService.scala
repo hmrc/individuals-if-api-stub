@@ -16,15 +16,16 @@
 
 package uk.gov.hmrc.individualsifapistub.services.organisations
 
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{ VatInformation, VatInformationEntry }
+import uk.gov.hmrc.individualsifapistub.domain.organisations.{VatInformation, VatInformationEntry}
 import uk.gov.hmrc.individualsifapistub.repository.organisations.VatInformationRepository
+import uk.gov.hmrc.individualsifapistub.util.DateTimeProvider
 
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class VatInformationService @Inject()(repository: VatInformationRepository){
+class VatInformationService @Inject()(repository: VatInformationRepository, dateTimeProvider: DateTimeProvider) {
   def retrieve(vrn: String): Future[Option[VatInformationEntry]] = repository.retrieve(vrn)
 
   def create(vrn: String, vatInformation: VatInformation) =
-    repository.create(VatInformationEntry(vrn, vatInformation))
+    repository.create(VatInformationEntry(vrn, vatInformation, dateTimeProvider.now()))
 }

@@ -25,7 +25,8 @@ import uk.gov.hmrc.individualsifapistub.domain.organisations.VatInformationEntry
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.duration.DAYS
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -35,7 +36,8 @@ class VatInformationRepository @Inject()(mongo: MongoComponent)(implicit val ec:
     collectionName = "vat-information",
     domainFormat = VatInformationEntry.format,
     indexes = Seq(
-      IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
+      IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true)),
+      IndexModel(ascending("createdAt"), IndexOptions().background(true).expireAfter(1, DAYS))
     )
   ) {
   def create(entry: VatInformationEntry): Future[VatInformationEntry] =
