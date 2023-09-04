@@ -37,7 +37,7 @@ class VatInformationRepository @Inject()(mongo: MongoComponent)(implicit val ec:
     domainFormat = VatInformationEntry.format,
     indexes = Seq(
       IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true)),
-      IndexModel(ascending("createdAt"), IndexOptions().background(true).expireAfter(1, DAYS))
+      IndexModel(ascending("createdAt"), IndexOptions().background(true).expireAfter(14, DAYS))
     )
   ) {
   def create(entry: VatInformationEntry): Future[VatInformationEntry] =
