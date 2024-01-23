@@ -22,7 +22,6 @@ lazy val microservice = Project(appName, file("."))
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test(),
     Test / testOptions := Seq(Tests.Filter(unitFilter)),
     retrieveManaged := true,
-    update / evictionWarningOptions := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
     routesGenerator := InjectedRoutesGenerator
   )
   .settings(Compile / unmanagedResourceDirectories += baseDirectory.value / "resources")
