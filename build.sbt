@@ -18,7 +18,6 @@ lazy val microservice = Project(appName, file("."))
   .settings(scalacOptions += "-Wconf:src=routes/.*:s")
   .settings(defaultSettings(): _*)
   .settings(
-    dependencyOverrides ++= AppDependencies.overrides,
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test(),
     Test / testOptions := Seq(Tests.Filter(unitFilter)),
     retrieveManaged := true,
