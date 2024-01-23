@@ -3,9 +3,6 @@ import sbt.Tests.{ Group, SubProcess }
 import uk.gov.hmrc.DefaultBuildSettings.{ addTestReportOption, defaultSettings, scalaSettings }
 
 val appName = "individuals-if-api-stub"
-val hmrc = "uk.gov.hmrc"
-lazy val playSettings: Seq[Setting[_]] = Seq(routesImport ++= Seq("uk.gov.hmrc.domain._", "uk.gov.hmrc.individualsifapistub.domain._", "uk.gov.hmrc.individualsifapistub.Binders._"))
-lazy val plugins: Seq[Plugins] = Seq.empty
 
 def intTestFilter(name: String): Boolean = name startsWith "it"
 def unitFilter(name: String): Boolean = name startsWith "unit"
@@ -13,10 +10,12 @@ def componentFilter(name: String): Boolean = name startsWith "component"
 lazy val ComponentTest = config("component") extend Test
 
 lazy val microservice = Project(appName, file("."))
-  .enablePlugins(Seq(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin) ++ plugins: _*)
-  .settings(playSettings: _*)
+  .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
+  .settings(onLoadMessage := "")
+  .settings(routesImport ++= Seq("uk.gov.hmrc.domain._", "uk.gov.hmrc.individualsifapistub.domain._", "uk.gov.hmrc.individualsifapistub.Binders._"))
   .settings(scalaSettings: _*)
   .settings(scalaVersion := "2.13.8")
+  .settings(scalacOptions += "-Wconf:src=routes/.*:s")
   .settings(defaultSettings(): _*)
   .settings(
     dependencyOverrides ++= AppDependencies.overrides,
