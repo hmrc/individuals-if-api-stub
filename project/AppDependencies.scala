@@ -1,28 +1,13 @@
-import play.core.PlayVersion
-import play.core.PlayVersion.current
-import play.sbt.PlayImport._
-import sbt.Keys.libraryDependencies
-import sbt._
+import play.sbt.PlayImport.*
+import sbt.*
 
 object AppDependencies {
 
   val hmrc             = "uk.gov.hmrc"
   val hmrcMongo        = "uk.gov.hmrc.mongo"
-  val akka             = "com.typesafe.akka"
-  val akkaVersion      = "2.6.20"
   val akkaHttpVersion  = "10.2.6"
   val hmrcMongoVersion = "0.73.0"
-  val bootstrapVersion = "7.8.0"
-
-  val overrides = Seq(
-    akka %% "akka-stream" % akkaVersion,
-    akka %% "akka-protobuf" % akkaVersion,
-    akka %% "akka-slf4j" % akkaVersion,
-    akka %% "akka-actor" % akkaVersion,
-    akka %% "akka-actor-typed" % akkaVersion,
-    akka %% "akka-serialization-jackson" % akkaVersion,
-    akka %% "akka-http-core" % akkaHttpVersion
-  )
+  val bootstrapVersion = "7.23.0"
 
   val compile = Seq(
     ws,

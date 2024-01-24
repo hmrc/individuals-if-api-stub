@@ -3,9 +3,6 @@ import sbt.Tests.{ Group, SubProcess }
 import uk.gov.hmrc.DefaultBuildSettings.{ addTestReportOption, defaultSettings, scalaSettings }
 
 val appName = "individuals-if-api-stub"
-val hmrc = "uk.gov.hmrc"
-lazy val playSettings: Seq[Setting[_]] = Seq(routesImport ++= Seq("uk.gov.hmrc.domain._", "uk.gov.hmrc.individualsifapistub.domain._", "uk.gov.hmrc.individualsifapistub.Binders._"))
-lazy val plugins: Seq[Plugins] = Seq.empty
 
 def intTestFilter(name: String): Boolean = name startsWith "it"
 def unitFilter(name: String): Boolean = name startsWith "unit"
@@ -13,17 +10,17 @@ def componentFilter(name: String): Boolean = name startsWith "component"
 lazy val ComponentTest = config("component") extend Test
 
 lazy val microservice = Project(appName, file("."))
-  .enablePlugins(Seq(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin) ++ plugins: _*)
-  .settings(playSettings: _*)
+  .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
+  .settings(onLoadMessage := "")
+  .settings(routesImport ++= Seq("uk.gov.hmrc.domain._", "uk.gov.hmrc.individualsifapistub.domain._", "uk.gov.hmrc.individualsifapistub.Binders._"))
   .settings(scalaSettings: _*)
   .settings(scalaVersion := "2.13.8")
+  .settings(scalacOptions += "-Wconf:src=routes/.*:s")
   .settings(defaultSettings(): _*)
   .settings(
-    dependencyOverrides ++= AppDependencies.overrides,
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test(),
     Test / testOptions := Seq(Tests.Filter(unitFilter)),
     retrieveManaged := true,
-    update / evictionWarningOptions := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
     routesGenerator := InjectedRoutesGenerator
   )
   .settings(Compile / unmanagedResourceDirectories += baseDirectory.value / "resources")
@@ -48,6 +45,9 @@ lazy val microservice = Project(appName, file("."))
   )
   .settings(PlayKeys.playDefaultPort := 8443)
   .settings(majorVersion := 0)
+  // Suppress logging of successful tests
+  .settings(Test / testOptions -= Tests.Argument("-o", "-u", "target/test-reports", "-h", "target/test-reports/html-report"))
+  .settings(Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oNCHPQR", "-u", "target/test-reports", "-h", "target/test-reports/html-report"))
 
 def oneForkedJvmPerTest(tests: Seq[TestDefinition]) = {
   tests.map { test =>
