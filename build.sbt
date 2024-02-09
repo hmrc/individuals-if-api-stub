@@ -54,3 +54,5 @@ def oneForkedJvmPerTest(tests: Seq[TestDefinition]) = {
     new Group(test.name, Seq(test), SubProcess(ForkOptions().withRunJVMOptions(Vector(s"-Dtest.name=${ test.name }"))))
   }
 }
+
+ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always

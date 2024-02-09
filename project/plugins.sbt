@@ -15,3 +15,5 @@ addSbtPlugin("uk.gov.hmrc" % "sbt-distributables" % "2.2.0")
 addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.8.20" exclude("org.slf4j", "slf4j-simple"))
 
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.9.3")
+
+ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
