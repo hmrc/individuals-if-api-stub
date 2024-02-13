@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.individualsifapistub.repository.individuals
 
-import org.joda.time.Interval
 import org.mongodb.scala.MongoWriteException
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.Indexes.ascending
@@ -30,7 +29,7 @@ import uk.gov.hmrc.individualsifapistub.util.Dates
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
-import java.time.{Instant, LocalDate, ZoneId}
+import java.time.ZoneId
 import java.util.UUID
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -117,7 +116,7 @@ class IncomePayeRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
     logger.info(s"Fetch income paye for cache key: $id")
 
     val interval = Dates.toInterval(startDate, Option(endDate).filter(_.nonEmpty))
-    val query = queryPaye(id, idValue, interval)
+    val query = queryPaye(id, idValue)
     collection
       .find(query)
       .toFuture()
@@ -131,29 +130,16 @@ class IncomePayeRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
       }
   }
 
-  private def queryPaye(id: String, idValue: String, interval: Interval) =
+  private def queryPaye(id: String, idValue: String) =
     or(
       idBasedSearch(id),
-      deepSearch(idValue, interval)
+      deepSearch(idValue)
     )
 
   // legacy search
   private def idBasedSearch(id: String) = regex("id", s"^$id/")
 
-  // deep search with nino and paymentDate range
-  private def deepSearch(idValue: String, interval: Interval) =
-    and(
-      equal(s"idValue", idValue),
-      elemMatch(
-        "incomePaye.paye",
-        and(
-          gte("paymentDate", toJavaLocalDate(interval.getStart.toLocalDate)),
-          lte("paymentDate", toJavaLocalDate(interval.getEnd.toLocalDate))
-        )
-      )
-    )
-
-  private def toJavaLocalDate(jodaLocalDate: org.joda.time.LocalDate): LocalDate = {
-      Instant.ofEpochMilli(jodaLocalDate.toDate.getTime).atZone(ZoneId.systemDefault()).toLocalDate
-  }
+  // deep search with nino
+  private def deepSearch(idValue: String) =
+    and(equal(s"idValue", idValue))
 }
