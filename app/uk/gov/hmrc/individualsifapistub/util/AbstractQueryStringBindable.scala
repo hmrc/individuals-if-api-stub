@@ -19,10 +19,9 @@ package uk.gov.hmrc.individualsifapistub.util
 import play.api.libs.json.Json
 import play.api.mvc.QueryStringBindable
 import uk.gov.hmrc.individualsifapistub.domain.ErrorInvalidRequest
-import uk.gov.hmrc.individualsifapistub.domain.individuals.JsonFormatters.errorInvalidRequestFormat
 
 trait AbstractQueryStringBindable[T] extends QueryStringBindable[T] {
-  protected def errorResponse(message: String) = {
+  protected def errorResponse(message: String): String = {
     Json.toJson(ErrorInvalidRequest(message)).toString
   }
 }

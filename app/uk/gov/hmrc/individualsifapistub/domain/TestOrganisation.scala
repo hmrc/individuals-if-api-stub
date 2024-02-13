@@ -16,12 +16,29 @@
 
 package uk.gov.hmrc.individualsifapistub.domain
 
+import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.domain.{EmpRef, SaUtr}
 
 case class TestAddress(line1: String, line2: String, postcode: String)
 
+object TestAddress {
+  implicit val format: OFormat[TestAddress] = Json.format
+}
+
 case class TestOrganisationDetails(name: String, address: TestAddress)
+
+object TestOrganisationDetails {
+  implicit val format: OFormat[TestOrganisationDetails] = Json.format
+}
 
 case class TestOrganisation(empRef: Option[EmpRef], ctUtr: Option[String], crn: Option[String], organisationDetails: TestOrganisationDetails)
 
+object TestOrganisation {
+  implicit val format: OFormat[TestOrganisation] = Json.format
+}
+
 case class TestIndividual(saUtr: Option[SaUtr], taxpayerType: Option[String] = None, organisationDetails: Option[TestOrganisationDetails] = None)
+
+object TestIndividual {
+  implicit val format: OFormat[TestIndividual] = Json.format
+}

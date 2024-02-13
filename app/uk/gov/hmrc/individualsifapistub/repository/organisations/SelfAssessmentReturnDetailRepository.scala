@@ -29,7 +29,7 @@ import javax.inject.{ Inject, Singleton }
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SelfAssessmentReturnDetailRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
+class SelfAssessmentReturnDetailRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext)
   extends PlayMongoRepository[SelfAssessmentReturnDetailEntry](
     mongoComponent = mongo,
     collectionName = "self-assessment-return-details",

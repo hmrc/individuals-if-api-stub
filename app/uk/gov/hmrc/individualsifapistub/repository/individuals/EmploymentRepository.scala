@@ -19,39 +19,35 @@ package uk.gov.hmrc.individualsifapistub.repository.individuals
 import org.mongodb.scala.MongoWriteException
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.Indexes.ascending
-import org.mongodb.scala.model.{ IndexModel, IndexOptions }
-import play.api.Logger
+import org.mongodb.scala.model.{IndexModel, IndexOptions}
+import play.api.Logging
 import play.api.libs.json.Json
 import uk.gov.hmrc.individualsifapistub.domain._
-import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{ Nino, Trn }
-import uk.gov.hmrc.individualsifapistub.domain.individuals.{ Employment, EmploymentDetail, EmploymentEntry, Employments, IdType, Identifier }
+import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{Nino, Trn}
+import uk.gov.hmrc.individualsifapistub.domain.individuals._
 import uk.gov.hmrc.individualsifapistub.util.Dates
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
 import java.time.{LocalDate, ZoneId}
 import java.util.UUID
-import javax.inject.{ Inject, Singleton }
-import scala.concurrent.{ ExecutionContext, Future }
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
+class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext)
   extends PlayMongoRepository[EmploymentEntry](collectionName = "employment",
     mongoComponent = mongo,
-    domainFormat = employmentEntryFormat,
+    domainFormat = EmploymentEntry.format,
     indexes = Seq(
       IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
-  )) {
-
-  private val logger: Logger = Logger(getClass)
-
+    )) with Logging {
   def create(idType: String,
              idValue: String,
              startDate: Option[String],
              endDate: Option[String],
              useCase: Option[String],
              employments: Employments): Future[Employments] = {
-
     val useCaseMap = Map(
       "LAA-C1" -> "LAA-C1_LAA-C2",
       "LAA-C2" -> "LAA-C1_LAA-C2",
@@ -95,7 +91,6 @@ class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
                       endDateStr: String,
                       fields: Option[String],
                       filter: Option[String]): Future[Option[Employments]] = {
-
     val fieldsMap = Map(
       "employments(employment(endDate,startDate))" -> "LAA-C1_LAA-C2",
       "employments(employer(name),employment(endDate,startDate))" -> "LAA-C3_LSANI-C1_LSANI-C3",

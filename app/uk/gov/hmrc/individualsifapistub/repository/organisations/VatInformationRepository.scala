@@ -30,7 +30,7 @@ import scala.concurrent.duration.DAYS
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class VatInformationRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
+class VatInformationRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext)
   extends PlayMongoRepository[VatInformationEntry](
     mongoComponent = mongo,
     collectionName = "vat-information",
@@ -48,7 +48,6 @@ class VatInformationRepository @Inject()(mongo: MongoComponent)(implicit val ec:
       .recover {
         case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
       }
-
 
   def retrieve(vrn: String): Future[Option[VatInformationEntry]] =
     collection

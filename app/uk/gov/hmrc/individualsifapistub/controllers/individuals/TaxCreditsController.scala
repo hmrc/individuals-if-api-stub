@@ -21,7 +21,6 @@ import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
 import uk.gov.hmrc.individualsifapistub.config.LoggingAction
 import uk.gov.hmrc.individualsifapistub.controllers.CommonController
 import uk.gov.hmrc.individualsifapistub.domain.individuals.Applications
-import uk.gov.hmrc.individualsifapistub.domain.individuals.TaxCredits.applicationsFormat
 import uk.gov.hmrc.individualsifapistub.services.individuals.TaxCreditsService
 
 import javax.inject.{Inject, Singleton}

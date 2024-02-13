@@ -20,11 +20,10 @@ import org.mongodb.scala.MongoWriteException
 import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.model.Indexes.ascending
 import org.mongodb.scala.model.{IndexModel, IndexOptions}
-import play.api.Logger
+import play.api.Logging
 import play.api.libs.json.Json
 import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{Nino, Trn}
-import uk.gov.hmrc.individualsifapistub.domain.individuals.TaxCredits.taxCreditsEntryFormat
 import uk.gov.hmrc.individualsifapistub.domain.individuals._
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
@@ -33,25 +32,21 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TaxCreditsRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
+class TaxCreditsRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext)
   extends PlayMongoRepository[TaxCreditsEntry](
     mongoComponent = mongo,
     collectionName = "taxCredits",
-    domainFormat = TaxCredits.taxCreditsEntryFormat,
+    domainFormat = TaxCreditsEntry.format,
     indexes = Seq(
       IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
     )
-  ) {
-
-  private val logger: Logger = Logger(getClass)
-
+  ) with Logging {
   def create(idType: String,
              idValue: String,
              startDate: String,
              endDate: String,
              useCase: String,
              applications: Applications): Future[Applications] = {
-
     val useCaseMap = Map(
       "LAA-C1-working-tax-credit" -> "LAA-C1_LAA-C2_LAA-C3_working-tax-credit",
       "LAA-C2-working-tax-credit" -> "LAA-C1_LAA-C2_LAA-C3_working-tax-credit",
@@ -86,7 +81,6 @@ class TaxCreditsRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
       .recover {
         case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
       }
-
   }
 
   def findByIdAndType(idType: String,
@@ -94,7 +88,6 @@ class TaxCreditsRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
                       startDate: String,
                       endDate: String,
                       fields: Option[String]): Future[Option[Applications]] = {
-
     def fieldsMap = Map(
       "applications(awards(childTaxCredit(childCareAmount),payProfCalcDate,payments(amount,endDate,frequency,startDate,postedDate,tcType),totalEntitlement,workingTaxCredit(amount,paidYTD)))" ->
         "LAA-C1_LAA-C2_LAA-C3_working-tax-credit",
@@ -124,6 +117,5 @@ class TaxCreditsRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
       .find(equal("id", id))
       .headOption()
       .map(_.map(entry => Applications(entry.applications)))
-
   }
 }

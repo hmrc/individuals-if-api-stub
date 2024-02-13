@@ -30,7 +30,7 @@ import scala.concurrent.duration.DAYS
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class VatReturnsDetailsRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
+class VatReturnsDetailsRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext)
   extends PlayMongoRepository[VatReturnsDetailsEntry](
     mongoComponent = mongo,
     collectionName = "vat-returns-details",

@@ -29,11 +29,11 @@ import javax.inject.{ Inject, Singleton }
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class NumberOfEmployeesRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
+class NumberOfEmployeesRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext)
   extends PlayMongoRepository[NumberOfEmployeesEntry](
     mongoComponent = mongo,
     collectionName = "number-of-employees",
-    domainFormat = NumberOfEmployeesEntry.numberOfEmployeesFormat,
+    domainFormat = NumberOfEmployeesEntry.format,
     indexes = Seq(
       IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
     )

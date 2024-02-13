@@ -28,7 +28,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.controllers.individuals.DetailsController
 import uk.gov.hmrc.individualsifapistub.domain._
-import uk.gov.hmrc.individualsifapistub.domain.individuals.JsonFormatters._
 import uk.gov.hmrc.individualsifapistub.domain.individuals._
 import uk.gov.hmrc.individualsifapistub.repository.individuals.DetailsRepository
 import uk.gov.hmrc.individualsifapistub.services.individuals.DetailsService

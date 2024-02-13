@@ -29,11 +29,11 @@ import javax.inject.{ Inject, Singleton }
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CorporationTaxCompanyDetailsRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
+class CorporationTaxCompanyDetailsRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext)
   extends PlayMongoRepository[CTCompanyDetailsEntry](
     mongoComponent = mongo,
     collectionName = "corporation-tax-company-details",
-    domainFormat = CTCompanyDetailsEntry.ctCompanyDetailsEntryFormat,
+    domainFormat = CTCompanyDetailsEntry.format,
     indexes = Seq(
       IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
     )
@@ -58,5 +58,4 @@ class CorporationTaxCompanyDetailsRepository @Inject()(mongo: MongoComponent)(im
       .headOption()
       .map(x => x.map(_.response))
   }
-
 }

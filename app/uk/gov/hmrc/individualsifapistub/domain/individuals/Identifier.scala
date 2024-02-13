@@ -16,11 +16,9 @@
 
 package uk.gov.hmrc.individualsifapistub.domain.individuals
 
-import play.api.libs.functional.syntax.{unlift, _}
-import play.api.libs.json.Reads._
-import play.api.libs.json._
-
-import scala.util.matching.Regex
+import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
+import play.api.libs.json.Reads.pattern
+import play.api.libs.json.{Format, JsPath}
 
 case class Identifier(nino: Option[String],
                       trn: Option[String],
@@ -30,13 +28,12 @@ case class Identifier(nino: Option[String],
                      )
 
 object Identifier {
-
-  val ninoPattern: Regex =
+  private val ninoPattern =
     "^((?!(BG|GB|KN|NK|NT|TN|ZZ)|(D|F|I|Q|U|V)[A-Z]|[A-Z](D|F|I|O|Q|U|V))[A-Z]{2})[0-9]{6}[A-D\\s]?$".r
 
-  val trnPattern: Regex = "^[0-9]{8}$".r
+  private val trnPattern = "^[0-9]{8}$".r
 
-  implicit val idFormat: Format[Identifier] = Format(
+  implicit val format: Format[Identifier] = Format(
     (
       (JsPath \ "nino").readNullable[String](pattern(ninoPattern, "InvalidNino")) and
       (JsPath \ "trn").readNullable[String](pattern(trnPattern, "InvalidTrn")) and

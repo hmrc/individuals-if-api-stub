@@ -19,40 +19,36 @@ package uk.gov.hmrc.individualsifapistub.repository.individuals
 import org.mongodb.scala.MongoWriteException
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.Indexes.ascending
-import org.mongodb.scala.model.{ IndexModel, IndexOptions }
-import play.api.Logger
+import org.mongodb.scala.model.{IndexModel, IndexOptions}
+import play.api.{Logger, Logging}
 import play.api.libs.json.Json
 import uk.gov.hmrc.individualsifapistub.domain._
-import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{ Nino, Trn }
-import uk.gov.hmrc.individualsifapistub.domain.individuals.{ IdType, Identifier, IncomeSa, IncomeSaEntry, SaTaxYearEntry }
+import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{Nino, Trn}
+import uk.gov.hmrc.individualsifapistub.domain.individuals.{IdType, Identifier, IncomeSa, IncomeSaEntry, SaTaxYearEntry}
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
 import java.util.UUID
-import javax.inject.{ Inject, Singleton }
-import scala.concurrent.{ ExecutionContext, Future }
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomeSaRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
+class IncomeSaRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext)
   extends PlayMongoRepository[IncomeSaEntry](
     mongoComponent = mongo,
     collectionName = "incomeSa",
-    domainFormat = incomeSaEntryFormat,
+    domainFormat = IncomeSaEntry.format,
     indexes = Seq(
       IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true)),
       IndexModel(ascending("idValue"), IndexOptions().name("idValue").unique(false).background(true))
     )
-  ) {
-
-  private val logger: Logger = Logger(getClass)
-
+  ) with Logging {
   def create(idType: String,
              idValue: String,
              startYear: Option[String],
              endYear: Option[String],
              useCase: Option[String],
              request: IncomeSa): Future[IncomeSa] = {
-
     val useCaseMap = Map(
       "HMCTS-C2" -> "HMCTS-C2_HMCTS-C3",
       "HMCTS-C3" -> "HMCTS-C2_HMCTS-C3",
@@ -81,7 +77,6 @@ class IncomeSaRepository @Inject()(mongo: MongoComponent)(implicit val ec: Execu
       .recover {
         case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
       }
-
   }
 
   def findByTypeAndId(idType: String,
@@ -89,7 +84,6 @@ class IncomeSaRepository @Inject()(mongo: MongoComponent)(implicit val ec: Execu
                       startYear: String,
                       endYear: String,
                       fields: Option[String]): Future[Option[IncomeSa]] = {
-
     logger.info(s"IncomeSaRepository - findByTypeAndId: fields: $fields")
 
     val fieldsMap = Map(
@@ -156,5 +150,4 @@ class IncomeSaRepository @Inject()(mongo: MongoComponent)(implicit val ec: Execu
         )
       )
     )
-
 }

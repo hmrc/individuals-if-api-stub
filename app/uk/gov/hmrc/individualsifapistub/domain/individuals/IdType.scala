@@ -17,7 +17,6 @@
 package uk.gov.hmrc.individualsifapistub.domain.individuals
 
 object IdType {
-
     sealed trait IdTypeEnum
 
     case object Nino extends IdTypeEnum {

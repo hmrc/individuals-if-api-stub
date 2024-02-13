@@ -20,8 +20,8 @@ import org.mongodb.scala.MongoWriteException
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.Indexes.ascending
 import org.mongodb.scala.model.{IndexModel, IndexOptions}
-import play.api.Logger
-import play.api.libs.json._
+import play.api.Logging
+import play.api.libs.json.Json
 import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{Nino, Trn}
 import uk.gov.hmrc.individualsifapistub.domain.individuals.{IdType, Identifier, IncomePaye, IncomePayeEntry}
@@ -35,24 +35,21 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomePayeRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
+class IncomePayeRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext)
   extends PlayMongoRepository[IncomePayeEntry](
     mongoComponent = mongo,
     collectionName = "incomePaye",
-    domainFormat = incomePayeEntryFormat,
+    domainFormat = IncomePayeEntry.format,
     indexes = Seq(
       IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true)),
       IndexModel(ascending("idValue"), IndexOptions().background(true))
-  )) {
-  private val logger: Logger = Logger(getClass)
-
+    )) with Logging {
   def create(idType: String,
              idValue: String,
              startDate: Option[String],
              endDate: Option[String],
              useCase: Option[String],
              request: IncomePaye): Future[IncomePaye] = {
-
     val useCaseMap = Map(
       "HMCTS-C2" -> "HMCTS-C2_HMCTS-C3",
       "HMCTS-C3" -> "HMCTS-C2_HMCTS-C3",
@@ -80,7 +77,6 @@ class IncomePayeRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
       .recover {
         case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
       }
-
   }
 
   def findByTypeAndId(idType: String,
@@ -88,7 +84,6 @@ class IncomePayeRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
                       startDate: String,
                       endDate: String,
                       fields: Option[String]): Future[Option[IncomePaye]] = {
-
     val fieldsMap = Map(
       "paye(employeeNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4,ytd1,ytd2,ytd3,ytd4),employeePensionContribs(notPaid,notPaidYTD,paid,paidYTD),grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),monthlyPeriodNumber,paidHoursWorked,payFrequency,paymentDate,statutoryPayYTD(adoption,maternity,parentalBereavement,paternity),taxDeductedOrRefunded,taxYear,taxablePay,taxablePayToDate,totalEmployerNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4,ytd1,ytd2,ytd3,ytd4),totalTaxToDate,weeklyPeriodNumber)" -> "LAA-C1",
       "paye(dednsFromNetPay,grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),monthlyPeriodNumber,paidHoursWorked,payFrequency,paymentDate,statutoryPayYTD(adoption,maternity,parentalBereavement,paternity),taxYear,taxablePayToDate,totalTaxToDate,weeklyPeriodNumber)" -> "LAA-C2",

@@ -28,7 +28,6 @@ import uk.gov.hmrc.individualsifapistub.controllers.organisations.SelfAssessment
 import uk.gov.hmrc.individualsifapistub.domain.{TestAddress, TestIndividual, TestOrganisationDetails}
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{Address, SelfAssessmentTaxPayer, TaxPayerDetails}
 import uk.gov.hmrc.individualsifapistub.domain.organisations.SelfAssessmentTaxPayer._
-import uk.gov.hmrc.individualsifapistub.domain.individuals.JsonFormatters._
 import uk.gov.hmrc.individualsifapistub.services.organisations.SelfAssessmentTaxPayerService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 

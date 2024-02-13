@@ -19,23 +19,16 @@ package uk.gov.hmrc.individualsifapistub.domain.organisations
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
+import uk.gov.hmrc.individualsifapistub.domain.organisations.SelfAssessmentReturnDetail.{datePattern, taxPayerTypePattern, taxSolvencyStatusValidator, utrPattern}
 
 import scala.util.matching.Regex
 
 case class TaxYear(taxYear: String, businessSalesTurnover: Double)
-case class CreateSelfAssessmentReturnDetailRequest(utr: String, startDate: String, taxPayerType: String, taxSolvencyStatus: String, taxYears: Seq[TaxYear])
-case class SelfAssessmentReturnDetailResponse(utr: String, startDate: String, taxPayerType: String, taxSolvencyStatus: String, taxYears: Seq[TaxYear])
 
-object SelfAssessmentReturnDetail {
+object TaxYear {
+  private val taxYearPattern = "^20[0-9]{2}$".r
 
-  val taxYearPattern: Regex = "^20[0-9]{2}$".r
-  val utrPattern: Regex = "^[0-9]{10}$".r
-  val taxPayerTypePattern: Regex = "^[A-Z][a-zA-Z]{3,24}$".r
-  val datePattern: Regex = "^(((19|20)([2468][048]|[13579][26]|0[48])|2000)[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)[-](0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-](0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}[-]02[-](0[1-9]|1[0-9]|2[0-8])))$".r
-
-  def taxSolvencyStatusValidator(value: String): Boolean = value == "S" || value == "I"
-
-  implicit val taxYearFormat: Format[TaxYear] = Format(
+  implicit val format: Format[TaxYear] = Format(
     (
       (JsPath \ "taxyear").read[String](pattern(taxYearPattern, "Tax Year is in the incorrect Format")) and
         (JsPath \ "businessSalesTurnover").read[Double]
@@ -45,9 +38,12 @@ object SelfAssessmentReturnDetail {
         (JsPath \ "businessSalesTurnover").write[Double]
       )(unlift(TaxYear.unapply))
   )
+}
 
+case class CreateSelfAssessmentReturnDetailRequest(utr: String, startDate: String, taxPayerType: String, taxSolvencyStatus: String, taxYears: Seq[TaxYear])
 
-  implicit val createSelfAssessmentRequestFormat: Format[CreateSelfAssessmentReturnDetailRequest] = Format(
+object CreateSelfAssessmentReturnDetailRequest {
+  implicit val format: Format[CreateSelfAssessmentReturnDetailRequest] = Format(
     (
       (JsPath \ "utr").read[String](pattern(utrPattern, "UTR pattern is incorrect")) and
         (JsPath \ "startDate").read[String](pattern(datePattern, "Date pattern is incorrect")) and
@@ -63,8 +59,12 @@ object SelfAssessmentReturnDetail {
         (JsPath \ "taxyears").write[Seq[TaxYear]]
       )(unlift(CreateSelfAssessmentReturnDetailRequest.unapply))
   )
+}
 
-  implicit val selfAssessmentResponseFormat: Format[SelfAssessmentReturnDetailResponse] = Format(
+case class SelfAssessmentReturnDetailResponse(utr: String, startDate: String, taxPayerType: String, taxSolvencyStatus: String, taxYears: Seq[TaxYear])
+
+object SelfAssessmentReturnDetailResponse {
+  implicit val format: Format[SelfAssessmentReturnDetailResponse] = Format(
     (
       (JsPath \ "utr").read[String](pattern(utrPattern, "UTR pattern is incorrect")) and
         (JsPath \ "startDate").read[String](pattern(datePattern, "Date pattern is incorrect")) and
@@ -82,8 +82,16 @@ object SelfAssessmentReturnDetail {
   )
 }
 
+object SelfAssessmentReturnDetail {
+  val utrPattern: Regex = "^[0-9]{10}$".r
+  val taxPayerTypePattern: Regex = "^[A-Z][a-zA-Z]{3,24}$".r
+  val datePattern: Regex = "^(((19|20)([2468][048]|[13579][26]|0[48])|2000)[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)[-](0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-](0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}[-]02[-](0[1-9]|1[0-9]|2[0-8])))$".r
+
+  def taxSolvencyStatusValidator(value: String): Boolean = value == "S" || value == "I"
+}
+
 case class SelfAssessmentReturnDetailEntry(id: String, response: SelfAssessmentReturnDetailResponse)
+
 object SelfAssessmentReturnDetailEntry {
-  import SelfAssessmentReturnDetail._
-  implicit val format = Json.format[SelfAssessmentReturnDetailEntry]
+  implicit val format: OFormat[SelfAssessmentReturnDetailEntry] = Json.format[SelfAssessmentReturnDetailEntry]
 }

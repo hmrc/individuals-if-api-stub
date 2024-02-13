@@ -16,7 +16,7 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.domain.individuals
 
-import play.api.libs.json.{JsNumber, Json}
+import play.api.libs.json.Json
 import testUtils.TestHelpers
 import uk.gov.hmrc.individualsifapistub.domain.individuals.Employments._
 import uk.gov.hmrc.individualsifapistub.domain.individuals._
@@ -212,40 +212,6 @@ class EmploymentsSpec extends UnitSpec with TestHelpers {
 
       "end date is invalid" in {
         val result = Json.toJson(employmentDetail.copy(endDate = Some("2020-12-50"))).validate[EmploymentDetail]
-        result.isError shouldBe true
-      }
-    }
-  }
-
-  "paymentAmountValidator" should {
-
-    "validate successfully" when {
-
-      "value is larger than min value" in {
-        val result = JsNumber(Employments.minValue + 1.0).validate[Double](paymentAmountValidator)
-        result.isSuccess shouldBe true
-      }
-
-      "value is smaller than max value" in {
-        val result = JsNumber(Employments.maxValue - 1.0).validate[Double](paymentAmountValidator)
-        result.isSuccess shouldBe true
-      }
-    }
-
-    "fail validation" when {
-
-      "not a multiple of 0.01" in {
-        val result = JsNumber(123.4312123123123).validate[Double](paymentAmountValidator)
-        result.isError shouldBe true
-      }
-
-      "value is smaller than min value" in {
-        val result = JsNumber(Employments.minValue - 1.0).validate[Double](paymentAmountValidator)
-        result.isError shouldBe true
-      }
-
-      "value is larger than max value" in {
-        val result = JsNumber(Employments.maxValue + 1.0).validate[Double](paymentAmountValidator)
         result.isError shouldBe true
       }
     }

@@ -19,7 +19,6 @@ package uk.gov.hmrc.individualsifapistub.connector
 import play.api.Logger
 import uk.gov.hmrc.domain.{ EmpRef, Nino }
 import uk.gov.hmrc.http.{ HeaderCarrier, HttpClient, NotFoundException }
-import uk.gov.hmrc.individualsifapistub.domain.individuals.JsonFormatters._
 import uk.gov.hmrc.individualsifapistub.domain.{ TestIndividual, TestOrganisation }
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 

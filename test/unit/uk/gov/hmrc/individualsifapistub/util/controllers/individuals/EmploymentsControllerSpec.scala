@@ -66,8 +66,6 @@ class EmploymentsControllerSpec extends TestSupport {
   val useCase = "TEST"
   val fields = "some(values)"
 
-  implicit val cerFormat = Employments.createEmploymentEntryFormat
-
   val employment =
       Employment(
         employer = Some(Employer(

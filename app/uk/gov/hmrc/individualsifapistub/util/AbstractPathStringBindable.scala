@@ -19,16 +19,14 @@ package uk.gov.hmrc.individualsifapistub.util
 import play.api.libs.json.Json
 import play.api.mvc.PathBindable
 import uk.gov.hmrc.individualsifapistub.domain.ErrorInvalidRequest
-import uk.gov.hmrc.individualsifapistub.domain.individuals.JsonFormatters.errorInvalidRequestFormat
 
 import scala.util.Try
 
 trait AbstractPathStringBindable[T] extends PathBindable[T] {
-  protected def errorResponse(message: String) = {
+  protected def errorResponse(message: String): String = {
     Json.toJson(ErrorInvalidRequest(message)).toString
   }
 
   def bind[A](message: String, function: => A): Either[String, A] =
     Try(Right(function)) getOrElse Left(errorResponse(message))
-
 }

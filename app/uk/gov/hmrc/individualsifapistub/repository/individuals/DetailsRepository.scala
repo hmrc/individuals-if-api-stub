@@ -20,7 +20,7 @@ import org.mongodb.scala.MongoWriteException
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.Indexes.ascending
 import org.mongodb.scala.model.{IndexModel, IndexOptions}
-import play.api.Logger
+import play.api.Logging
 import play.api.libs.json.Json
 import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{Nino, Trn}
@@ -32,23 +32,19 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class DetailsRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
+class DetailsRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext)
   extends PlayMongoRepository[DetailsResponse](
     mongoComponent = mongo,
     collectionName = "details",
-    domainFormat = JsonFormatters.detailsResponseFormat,
+    domainFormat = DetailsResponse.format,
     indexes = Seq(
       IndexModel(ascending("details"), IndexOptions().name("id").unique(true).background(true))
     )
-  ) {
-
-  private val logger: Logger = Logger(getClass)
-
+  ) with Logging {
   def create(idType: String,
              idValue: String,
              useCase: String,
              createDetailsRequest: CreateDetailsRequest): Future[DetailsResponseNoId] = {
-
     val useCaseMap = Map(
       "LAA-C3-residences" -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
       "LAA-C4-residences" -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
@@ -84,13 +80,11 @@ class DetailsRepository @Inject()(mongo: MongoComponent)(implicit val ec: Execut
       .recover {
         case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
       }
-
   }
 
   def findByIdAndType(idType: String,
                       idValue: String,
                       fields: Option[String]): Future[Option[DetailsResponse]] = {
-
     def fieldsMap = Map(
       "residences(address(line1,line2,line3,line4,line5,postcode),noLongerUsed,type)" -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
       "contactDetails(code,detail,type)" -> "LAA-C4_HMCTS-C4-contact-details"
