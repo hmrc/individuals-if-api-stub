@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.individualsifapistub.repository.individuals
 
-import org.joda.time.LocalDate
 import org.mongodb.scala.MongoWriteException
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.Indexes.ascending
@@ -28,13 +27,12 @@ import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{ Nino, Trn }
 import uk.gov.hmrc.individualsifapistub.domain.individuals.{ Employment, EmploymentDetail, EmploymentEntry, Employments, IdType, Identifier }
 import uk.gov.hmrc.individualsifapistub.util.Dates
 import uk.gov.hmrc.mongo.MongoComponent
-import uk.gov.hmrc.mongo.play.json.formats.MongoJodaFormats
-import uk.gov.hmrc.mongo.play.json.{ Codecs, PlayMongoRepository }
+import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
+import java.time.{LocalDate, ZoneId}
 import java.util.UUID
 import javax.inject.{ Inject, Singleton }
 import scala.concurrent.{ ExecutionContext, Future }
-
 
 @Singleton
 class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
@@ -43,9 +41,7 @@ class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
     domainFormat = employmentEntryFormat,
     indexes = Seq(
       IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
-    ),
-    extraCodecs = Seq(Codecs.playFormatCodec(MongoJodaFormats.localDateFormat))
-  ) {
+  )) {
 
   private val logger: Logger = Logger(getClass)
 
@@ -133,8 +129,8 @@ class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
 
     logger.info(s"Fetch employments for cache key: $id")
 
-    val startDate = Dates.asDate(startDateStr)
-    val endDate = Dates.asDate(endDateStr)
+    val startDate = Dates.asLocalDate(startDateStr)
+    val endDate = Dates.asLocalDate(endDateStr)
     collection
       .find(deepSearch(idValue))
       .toFuture()
@@ -148,7 +144,7 @@ class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
               val interval = Dates.toInterval(startDate, endDate)
               val payments = employments
                 .flatMap(_.payments.getOrElse(Seq.empty))
-                .filter(payment => payment.date.exists(date => interval.contains(date.toDateTimeAtStartOfDay)))
+                .filter(payment => payment.date.exists(date => interval.contains(date.atStartOfDay(ZoneId.systemDefault()).toInstant.toEpochMilli)))
               if(payments.nonEmpty || employmentDateOverlaps(employmentDetail, startDate, endDate))
                 Some(Employment(employer, employerRef, employmentDetail, payments.headOption.map(_ => payments)))
               else

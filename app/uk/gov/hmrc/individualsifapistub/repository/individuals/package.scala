@@ -16,16 +16,16 @@
 
 package uk.gov.hmrc.individualsifapistub.repository
 
-import org.joda.time.LocalDate
 import uk.gov.hmrc.individualsifapistub.domain.individuals._
-import uk.gov.hmrc.mongo.play.json.formats.MongoJodaFormats
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
+import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
+
+import java.time.LocalDate
 
 package object individuals {
-
-  import MongoJodaFormats.Implicits._
-
+  implicit val dateTimeFormat: Format[LocalDate] = MongoJavatimeFormats.localDateFormat
+  
   implicit val employeeNicsFormat = Json.format[EmployeeNics]
   implicit val employeePensionContribsFormat = Json.format[EmployeePensionContribs]
   implicit val benefitsFormat = Json.format[Benefits]
@@ -59,7 +59,7 @@ package object individuals {
         (JsPath \ "grossEarningsForNICs").readNullable[GrossEarningsForNics] and
         (JsPath \ "totalEmployerNICs").readNullable[TotalEmployerNics] and
         JsPath.readNullable[AdditionalFields]
-      ) (PayeEntry.apply _),
+    )(PayeEntry.apply _),
     (
       (JsPath \ "taxCode").writeNullable[String] and
         (JsPath \ "paidHoursWorked").writeNullable[String] and
@@ -83,7 +83,7 @@ package object individuals {
         (JsPath \ "grossEarningsForNICs").writeNullable[GrossEarningsForNics] and
         (JsPath \ "totalEmployerNICs").writeNullable[TotalEmployerNics] and
         JsPath.writeNullable[AdditionalFields]
-      ) (unlift(PayeEntry.unapply))
+    )(unlift(PayeEntry.unapply))
   )
 
   implicit val incomePayeFormat: Format[IncomePaye] = Format(
@@ -96,12 +96,12 @@ package object individuals {
       (JsPath \ "id").read[String] and
         (JsPath \ "incomePaye").read[IncomePaye] and
         (JsPath \ "idValue").read[String]
-      ) (IncomePayeEntry.apply _),
+    )(IncomePayeEntry.apply _),
     (
       (JsPath \ "id").write[String] and
         (JsPath \ "incomePaye").write[IncomePaye] and
         (JsPath \ "idValue").write[String]
-      ) (unlift(IncomePayeEntry.unapply))
+    )(unlift(IncomePayeEntry.unapply))
   )
 
   // SA

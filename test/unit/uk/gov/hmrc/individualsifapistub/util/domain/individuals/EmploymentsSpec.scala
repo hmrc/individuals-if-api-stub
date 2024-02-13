@@ -16,12 +16,13 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.domain.individuals
 
-import org.joda.time.LocalDate
-import play.api.libs.json.{ JsNumber, Json }
+import play.api.libs.json.{JsNumber, Json}
 import testUtils.TestHelpers
 import uk.gov.hmrc.individualsifapistub.domain.individuals.Employments._
 import uk.gov.hmrc.individualsifapistub.domain.individuals._
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
+
+import java.time.LocalDate
 
 class EmploymentsSpec extends UnitSpec with TestHelpers {
 

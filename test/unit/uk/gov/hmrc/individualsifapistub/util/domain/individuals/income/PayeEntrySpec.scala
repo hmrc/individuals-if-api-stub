@@ -16,11 +16,12 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.domain.individuals.income
 
-import org.joda.time.LocalDate
 import play.api.libs.json.Json
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomePaye._
 import uk.gov.hmrc.individualsifapistub.domain.individuals._
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
+
+import java.time.LocalDate
 
 class PayeEntrySpec extends UnitSpec {
 

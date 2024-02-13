@@ -16,7 +16,6 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.services.individuals
 
-import org.joda.time.LocalDate
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
@@ -30,6 +29,7 @@ import uk.gov.hmrc.individualsifapistub.services.individuals.EmploymentsService
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class EmploymentsServiceSpec extends TestSupport {

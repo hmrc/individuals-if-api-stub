@@ -16,10 +16,11 @@
 
 package it.uk.gov.hmrc.individualsifapistub.individuals
 
-import org.joda.time.LocalDate
 import testUtils.RepositoryTestHelper
 import uk.gov.hmrc.individualsifapistub.domain.individuals._
 import uk.gov.hmrc.individualsifapistub.repository.individuals.EmploymentRepository
+
+import java.time.LocalDate
 
 class EmploymentRepositorySpec extends RepositoryTestHelper {
 

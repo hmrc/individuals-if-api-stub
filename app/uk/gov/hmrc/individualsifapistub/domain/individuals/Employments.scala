@@ -16,12 +16,11 @@
 
 package uk.gov.hmrc.individualsifapistub.domain.individuals
 
-import org.joda.time.LocalDate
-import play.api.libs.functional.syntax.{ unlift, _ }
+import play.api.libs.functional.syntax.{unlift, _}
 import play.api.libs.json.Reads._
 import play.api.libs.json._
-import JsonFormatters._
 
+import java.time.LocalDate
 import scala.util.matching.Regex
 
 case class Employer(name: Option[String], address: Option[Address], districtNumber: Option[String], schemeRef: Option[String])

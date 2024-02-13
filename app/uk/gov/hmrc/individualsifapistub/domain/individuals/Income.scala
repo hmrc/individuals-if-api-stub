@@ -16,12 +16,12 @@
 
 package uk.gov.hmrc.individualsifapistub.domain.individuals
 
-import org.joda.time.LocalDate
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomeSa._
-import JsonFormatters._
+
+import java.time.LocalDate
 
 case class StudentLoan(
                         planType: Option[String],

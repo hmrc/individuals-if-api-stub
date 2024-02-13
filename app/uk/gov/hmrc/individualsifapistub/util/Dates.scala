@@ -16,20 +16,26 @@
 
 package uk.gov.hmrc.individualsifapistub.util
 
-import org.joda.time.{ Interval, LocalDate }
+import org.joda.time.Interval
+
+import java.time.temporal.ChronoUnit
+import java.time.{LocalDate, ZoneId}
 
 object Dates {
 
-  def asDate(string: String) = LocalDate.parse(string)
+  private def asJodaLocalDate(string: String) = org.joda.time.LocalDate.parse(string)
 
-  def asString(date: LocalDate) = date.toString("yyyy-MM-dd")
+  def asLocalDate(string: String): LocalDate = LocalDate.parse(string)
 
   def toInterval(from: String, to: String): Interval =
-    toInterval(asDate(from), asDate(to))
+    toInterval(asJodaLocalDate(from), asJodaLocalDate(to))
 
-  def toInterval(from: LocalDate, to: LocalDate): Interval =
+  def toInterval(from: org.joda.time.LocalDate, to: org.joda.time.LocalDate): Interval =
     new Interval(from.toDate.getTime, to.toDateTimeAtStartOfDay.plusMillis(1).toDate.getTime)
 
+  def toInterval(from: java.time.LocalDate, to: java.time.LocalDate): Interval =
+    new Interval(from.atStartOfDay(ZoneId.systemDefault()).toInstant.toEpochMilli, to.atStartOfDay(ZoneId.systemDefault()).plus(1, ChronoUnit.MILLIS).toInstant.toEpochMilli)
+
   def toInterval(from: String, to: Option[String]): Interval =
-    toInterval(asDate(from), to.map(asDate).getOrElse(LocalDate.now))
+    toInterval(asJodaLocalDate(from), to.map(asJodaLocalDate).getOrElse(org.joda.time.LocalDate.now))
 }

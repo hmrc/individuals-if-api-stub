@@ -16,24 +16,24 @@
 
 package uk.gov.hmrc.individualsifapistub.repository.individuals
 
-import org.joda.time.{ Interval, LocalTime }
+import org.joda.time.Interval
 import org.mongodb.scala.MongoWriteException
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.Indexes.ascending
-import org.mongodb.scala.model.{ IndexModel, IndexOptions }
+import org.mongodb.scala.model.{IndexModel, IndexOptions}
 import play.api.Logger
 import play.api.libs.json._
 import uk.gov.hmrc.individualsifapistub.domain._
-import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{ Nino, Trn }
-import uk.gov.hmrc.individualsifapistub.domain.individuals.{ IdType, Identifier, IncomePaye, IncomePayeEntry }
+import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{Nino, Trn}
+import uk.gov.hmrc.individualsifapistub.domain.individuals.{IdType, Identifier, IncomePaye, IncomePayeEntry}
 import uk.gov.hmrc.individualsifapistub.util.Dates
 import uk.gov.hmrc.mongo.MongoComponent
-import uk.gov.hmrc.mongo.play.json.formats.MongoJodaFormats
-import uk.gov.hmrc.mongo.play.json.{ Codecs, PlayMongoRepository }
+import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
+import java.time.{Instant, LocalDate, ZoneId}
 import java.util.UUID
-import javax.inject.{ Inject, Singleton }
-import scala.concurrent.{ ExecutionContext, Future }
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class IncomePayeRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
@@ -44,10 +44,7 @@ class IncomePayeRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
     indexes = Seq(
       IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true)),
       IndexModel(ascending("idValue"), IndexOptions().background(true))
-    ),
-    extraCodecs = Seq(Codecs.playFormatCodec(MongoJodaFormats.localDateFormat))
-  ) {
-
+  )) {
   private val logger: Logger = Logger(getClass)
 
   def create(idType: String,
@@ -129,7 +126,7 @@ class IncomePayeRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
         case nonEmpty =>
           val payeEntries = nonEmpty
             .flatMap(_.incomePaye.paye.getOrElse(Seq.empty))
-            .filter(payeEntry => payeEntry.paymentDate.forall(pd => interval.contains(pd.toDateTime(LocalTime.MIDNIGHT))))
+            .filter(payeEntry => payeEntry.paymentDate.forall(pd => interval.contains(pd.atStartOfDay(ZoneId.systemDefault()).toInstant.toEpochMilli)))
           Some(IncomePaye(Some(payeEntries)))
       }
   }
@@ -150,9 +147,13 @@ class IncomePayeRepository @Inject()(mongo: MongoComponent)(implicit val ec: Exe
       elemMatch(
         "incomePaye.paye",
         and(
-          gte("paymentDate", interval.getStart.toLocalDate),
-          lte("paymentDate", interval.getEnd.toLocalDate)
+          gte("paymentDate", toJavaLocalDate(interval.getStart.toLocalDate)),
+          lte("paymentDate", toJavaLocalDate(interval.getEnd.toLocalDate))
         )
       )
     )
+
+  private def toJavaLocalDate(jodaLocalDate: org.joda.time.LocalDate): LocalDate = {
+      Instant.ofEpochMilli(jodaLocalDate.toDate.getTime).atZone(ZoneId.systemDefault()).toLocalDate
+  }
 }

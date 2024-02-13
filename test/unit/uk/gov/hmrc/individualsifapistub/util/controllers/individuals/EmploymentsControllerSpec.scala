@@ -16,11 +16,10 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.controllers.individuals
 
-import org.joda.time.LocalDate
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
-import play.api.http.Status.{ BAD_REQUEST, CREATED, OK }
+import play.api.http.Status.{BAD_REQUEST, CREATED, OK}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.SaUtr
@@ -29,13 +28,14 @@ import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.controllers.individuals.EmploymentsController
 import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.Employments._
-import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{ Nino, Trn }
+import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{Nino, Trn}
 import uk.gov.hmrc.individualsifapistub.domain.individuals._
 import uk.gov.hmrc.individualsifapistub.repository.individuals.EmploymentRepository
 import uk.gov.hmrc.individualsifapistub.services.individuals.EmploymentsService
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class EmploymentsControllerSpec extends TestSupport {

@@ -16,8 +16,9 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.testUtils
 
-import org.joda.time.LocalDate
 import uk.gov.hmrc.individualsifapistub.domain.individuals.{AdditionalFields, Benefits, EmployeeNics, EmployeePensionContribs, GrossEarningsForNics, PayeEntry, PostGradLoan, StatutoryPayYTD, StudentLoan, TotalEmployerNics}
+
+import java.time.LocalDate
 
 trait IncomePayeHelpers {
   def createValidPayeEntry() = {
