@@ -25,9 +25,9 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.controllers.organisations.SelfAssessmentTaxPayerController
-import uk.gov.hmrc.individualsifapistub.domain.{TestAddress, TestIndividual, TestOrganisationDetails}
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{Address, SelfAssessmentTaxPayer, TaxPayerDetails}
 import uk.gov.hmrc.individualsifapistub.domain.organisations.SelfAssessmentTaxPayer._
+import uk.gov.hmrc.individualsifapistub.domain.organisations.{Address, SelfAssessmentTaxPayer, TaxPayerDetails}
+import uk.gov.hmrc.individualsifapistub.domain.{TestAddress, TestIndividual, TestOrganisationDetails}
 import uk.gov.hmrc.individualsifapistub.services.organisations.SelfAssessmentTaxPayerService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 

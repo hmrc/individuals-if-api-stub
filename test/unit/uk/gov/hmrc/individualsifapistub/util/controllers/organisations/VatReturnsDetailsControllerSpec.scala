@@ -16,16 +16,16 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.controllers.organisations
 
-import uk.gov.hmrc.individualsifapistub.services.organisations.VatReturnsDetailsService
-import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
-import play.api.http.Status.{ BAD_REQUEST, CREATED, INTERNAL_SERVER_ERROR, NOT_FOUND, OK }
+import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.individualsifapistub.controllers.organisations.VatReturnDetailsController
 import uk.gov.hmrc.individualsifapistub.domain.RecordNotFoundException
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{ VatPeriod, VatReturnsDetails, VatReturnsDetailsEntry }
+import uk.gov.hmrc.individualsifapistub.domain.organisations.{VatPeriod, VatReturnsDetails, VatReturnsDetailsEntry}
+import uk.gov.hmrc.individualsifapistub.services.organisations.VatReturnsDetailsService
+import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 import java.time.LocalDateTime
 import scala.concurrent.Future

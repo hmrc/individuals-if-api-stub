@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.individualsifapistub.services.organisations
 
+import uk.gov.hmrc.individualsifapistub.domain.RecordNotFoundException
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{VatReturnsDetails, VatReturnsDetailsEntry}
 import uk.gov.hmrc.individualsifapistub.repository.organisations.{VatInformationRepository, VatReturnsDetailsRepository}
-import uk.gov.hmrc.individualsifapistub.domain.RecordNotFoundException
 import uk.gov.hmrc.individualsifapistub.util.DateTimeProvider
 
 import javax.inject.Inject

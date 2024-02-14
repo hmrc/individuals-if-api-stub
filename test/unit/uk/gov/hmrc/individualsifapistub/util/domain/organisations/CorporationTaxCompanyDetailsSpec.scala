@@ -18,9 +18,9 @@ package unit.uk.gov.hmrc.individualsifapistub.util.domain.organisations
 
 import play.api.libs.json.Json
 import uk.gov.hmrc.domain.EmpRef
-import uk.gov.hmrc.individualsifapistub.domain.{TestAddress, TestOrganisation, TestOrganisationDetails}
 import uk.gov.hmrc.individualsifapistub.domain.organisations.CorporationTaxCompanyDetails._
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{Address, CorporationTaxCompanyDetails, Name, NameAddressDetails}
+import uk.gov.hmrc.individualsifapistub.domain.{TestAddress, TestOrganisation, TestOrganisationDetails}
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class CorporationTaxCompanyDetailsSpec extends UnitSpec {

@@ -18,12 +18,12 @@ package uk.gov.hmrc.individualsifapistub.repository.organisations
 
 import org.mongodb.scala.MongoWriteException
 import org.mongodb.scala.model.Filters.equal
+import org.mongodb.scala.model.Indexes.ascending
 import org.mongodb.scala.model.{IndexModel, IndexOptions}
+import uk.gov.hmrc.individualsifapistub.domain.DuplicateException
 import uk.gov.hmrc.individualsifapistub.domain.organisations.VatReturnsDetailsEntry
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
-import org.mongodb.scala.model.Indexes.ascending
-import uk.gov.hmrc.individualsifapistub.domain.DuplicateException
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.DAYS

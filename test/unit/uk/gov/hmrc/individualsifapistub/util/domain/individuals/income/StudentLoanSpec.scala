@@ -17,9 +17,8 @@
 package unit.uk.gov.hmrc.individualsifapistub.util.domain.individuals.income
 
 import play.api.libs.json.Json
-import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
-import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomePaye._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.StudentLoan
+import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class StudentLoanSpec extends UnitSpec {
   val validStudentLoan = StudentLoan(Some("01"),Some(100), Some(100))

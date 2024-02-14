@@ -20,11 +20,11 @@ import org.mongodb.scala.MongoWriteException
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.Indexes.ascending
 import org.mongodb.scala.model.{IndexModel, IndexOptions}
-import play.api.{Logger, Logging}
+import play.api.Logging
 import play.api.libs.json.Json
 import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{Nino, Trn}
-import uk.gov.hmrc.individualsifapistub.domain.individuals.{IdType, Identifier, IncomeSa, IncomeSaEntry, SaTaxYearEntry}
+import uk.gov.hmrc.individualsifapistub.domain.individuals._
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 

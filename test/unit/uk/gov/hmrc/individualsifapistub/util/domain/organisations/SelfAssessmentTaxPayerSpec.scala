@@ -18,9 +18,9 @@ package unit.uk.gov.hmrc.individualsifapistub.util.domain.organisations
 
 import play.api.libs.json.Json
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.individualsifapistub.domain.{TestAddress, TestIndividual, TestOrganisationDetails}
 import uk.gov.hmrc.individualsifapistub.domain.organisations.SelfAssessmentTaxPayer._
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{Address, SelfAssessmentTaxPayer, TaxPayerDetails}
+import uk.gov.hmrc.individualsifapistub.domain.{TestAddress, TestIndividual, TestOrganisationDetails}
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class SelfAssessmentTaxPayerSpec extends UnitSpec {

@@ -17,7 +17,7 @@
 package uk.gov.hmrc.individualsifapistub.util
 
 import play.api.libs.json.Json.JsValueWrapper
-import play.api.libs.json.{ JsArray, JsDefined, JsUndefined, JsValue, Json, Writes }
+import play.api.libs.json._
 
 import scala.annotation.tailrec
 

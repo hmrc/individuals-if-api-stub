@@ -20,11 +20,11 @@ package unit.uk.gov.hmrc.individualsifapistub.util.services.organisations
 import org.mockito.Mockito.when
 import org.scalatest.FutureOutcome
 import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.FixtureAsyncWordSpec
 import org.scalatestplus.mockito.MockitoSugar
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{VatAddress, VatApprovedInformation, VatCustomerDetails, VatInformation, VatInformationEntry, VatPPOB}
+import uk.gov.hmrc.individualsifapistub.domain.organisations._
 import uk.gov.hmrc.individualsifapistub.repository.organisations.VatInformationRepository
 import uk.gov.hmrc.individualsifapistub.services.organisations.VatInformationService
-import org.scalatest.wordspec.FixtureAsyncWordSpec
 import uk.gov.hmrc.individualsifapistub.util.DateTimeProvider
 
 import java.time.LocalDateTime

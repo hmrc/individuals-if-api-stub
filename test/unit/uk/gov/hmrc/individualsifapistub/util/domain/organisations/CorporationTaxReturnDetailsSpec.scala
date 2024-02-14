@@ -18,7 +18,6 @@ package unit.uk.gov.hmrc.individualsifapistub.util.domain.organisations
 
 import play.api.libs.json.Json
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{AccountingPeriod, CorporationTaxReturnDetailsResponse, CreateCorporationTaxReturnDetailsRequest}
-import uk.gov.hmrc.individualsifapistub.domain.organisations.CorporationTaxReturnDetails._
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class CorporationTaxReturnDetailsSpec extends UnitSpec {

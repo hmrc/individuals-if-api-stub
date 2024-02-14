@@ -26,9 +26,9 @@ import uk.gov.hmrc.domain.EmpRef
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.controllers.organisations.CorporationTaxCompanyDetailsController
-import uk.gov.hmrc.individualsifapistub.domain.{TestAddress, TestOrganisation, TestOrganisationDetails}
 import uk.gov.hmrc.individualsifapistub.domain.organisations.CorporationTaxCompanyDetails._
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{Address, CorporationTaxCompanyDetails, Name, NameAddressDetails}
+import uk.gov.hmrc.individualsifapistub.domain.{TestAddress, TestOrganisation, TestOrganisationDetails}
 import uk.gov.hmrc.individualsifapistub.repository.organisations.CorporationTaxCompanyDetailsRepository
 import uk.gov.hmrc.individualsifapistub.services.organisations.CorporationTaxCompanyDetailsService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport

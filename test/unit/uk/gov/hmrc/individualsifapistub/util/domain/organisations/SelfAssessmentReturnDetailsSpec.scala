@@ -18,7 +18,6 @@ package unit.uk.gov.hmrc.individualsifapistub.util.domain.organisations
 
 import play.api.libs.json.Json
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{CreateSelfAssessmentReturnDetailRequest, TaxYear}
-import uk.gov.hmrc.individualsifapistub.domain.organisations.SelfAssessmentReturnDetail._
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class SelfAssessmentReturnDetailsSpec extends UnitSpec {

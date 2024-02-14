@@ -17,8 +17,7 @@
 package unit.uk.gov.hmrc.individualsifapistub.util.domain.organisations
 
 import play.api.libs.json.Json
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{NumberOfEmployeesRequest, NumberOfEmployeeCounts, NumberOfEmployeeReferences, NumberOfEmployeesResponse}
-import uk.gov.hmrc.individualsifapistub.domain.organisations.NumberOfEmployees._
+import uk.gov.hmrc.individualsifapistub.domain.organisations.{NumberOfEmployeeCounts, NumberOfEmployeeReferences, NumberOfEmployeesRequest, NumberOfEmployeesResponse}
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class NumberOfEmployeesSpec extends UnitSpec {

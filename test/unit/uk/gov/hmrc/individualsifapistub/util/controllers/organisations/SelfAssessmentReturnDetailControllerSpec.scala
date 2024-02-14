@@ -23,7 +23,6 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.individualsifapistub.controllers.organisations.SelfAssessmentReturnDetailController
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{CreateSelfAssessmentReturnDetailRequest, SelfAssessmentReturnDetailResponse, TaxYear}
-import uk.gov.hmrc.individualsifapistub.domain.organisations.SelfAssessmentReturnDetail._
 import uk.gov.hmrc.individualsifapistub.services.organisations.SelfAssessmentReturnDetailService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 

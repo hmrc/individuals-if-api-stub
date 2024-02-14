@@ -17,7 +17,7 @@
 package unit.uk.gov.hmrc.individualsifapistub.util.domain.organisations
 
 import play.api.libs.json.Json
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{VatAddress, VatApprovedInformation, VatCustomerDetails, VatInformation, VatPPOB}
+import uk.gov.hmrc.individualsifapistub.domain.organisations._
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class VatInformationSpec extends UnitSpec {

@@ -16,12 +16,11 @@
 
 package uk.gov.hmrc.individualsifapistub.controllers.organisations
 
-import play.api.libs.json.{ JsValue, Json }
-import play.api.mvc.{ Action, AnyContent, ControllerComponents, PlayBodyParsers }
+import play.api.libs.json.{JsValue, Json}
+import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
 import uk.gov.hmrc.individualsifapistub.config.LoggingAction
 import uk.gov.hmrc.individualsifapistub.controllers.CommonController
 import uk.gov.hmrc.individualsifapistub.domain.organisations.CreateSelfAssessmentReturnDetailRequest
-import uk.gov.hmrc.individualsifapistub.domain.organisations.SelfAssessmentReturnDetail._
 import uk.gov.hmrc.individualsifapistub.services.organisations.SelfAssessmentReturnDetailService
 import uk.gov.hmrc.individualsifapistub.util.FieldFilter
 

@@ -17,9 +17,8 @@
 package unit.uk.gov.hmrc.individualsifapistub.util.domain.individuals.income
 
 import play.api.libs.json.Json
-import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
-import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomeSa._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.SaIncome
+import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class SaIncomeSpec extends UnitSpec {
 

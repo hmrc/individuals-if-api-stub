@@ -22,7 +22,6 @@ import play.api.http.Status.{BAD_REQUEST, CREATED, OK}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.individualsifapistub.controllers.organisations.CorporationTaxReturnDetailsController
-import uk.gov.hmrc.individualsifapistub.domain.organisations.CorporationTaxReturnDetails._
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{AccountingPeriod, CorporationTaxReturnDetailsResponse, CreateCorporationTaxReturnDetailsRequest}
 import uk.gov.hmrc.individualsifapistub.services.organisations.CorporationTaxReturnDetailsService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport

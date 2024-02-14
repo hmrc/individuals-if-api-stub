@@ -25,7 +25,7 @@ import uk.gov.hmrc.individualsifapistub.domain.organisations.{CTReturnDetailsEnt
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton

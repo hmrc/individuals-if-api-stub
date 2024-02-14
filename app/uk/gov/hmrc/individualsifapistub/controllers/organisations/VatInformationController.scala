@@ -17,7 +17,7 @@
 package uk.gov.hmrc.individualsifapistub.controllers.organisations
 
 import play.api.libs.json.Json
-import play.api.mvc.{ ControllerComponents, PlayBodyParsers }
+import play.api.mvc.{ControllerComponents, PlayBodyParsers}
 import uk.gov.hmrc.individualsifapistub.config.LoggingAction
 import uk.gov.hmrc.individualsifapistub.controllers.CommonController
 import uk.gov.hmrc.individualsifapistub.domain.organisations.VatInformationSimplified

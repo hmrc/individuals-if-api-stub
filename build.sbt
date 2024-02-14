@@ -1,6 +1,6 @@
 
-import sbt.Tests.{ Group, SubProcess }
-import uk.gov.hmrc.DefaultBuildSettings.{ addTestReportOption, defaultSettings, scalaSettings }
+import sbt.Tests.{Group, SubProcess}
+import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, defaultSettings, scalaSettings}
 
 val appName = "individuals-if-api-stub"
 

@@ -16,11 +16,11 @@
 
 package uk.gov.hmrc.individualsifapistub.controllers
 
-import play.api.{Configuration, Logger}
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND}
 import play.api.libs.json._
 import play.api.mvc.Results.{BadRequest, NotFound, Status}
 import play.api.mvc.{ControllerComponents, Request, RequestHeader, Result}
+import play.api.{Configuration, Logger}
 import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{Nino, Trn}
 import uk.gov.hmrc.individualsifapistub.domain.individuals.Identifier._
@@ -29,9 +29,9 @@ import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import uk.gov.hmrc.play.bootstrap.backend.http.{ErrorResponse, JsonErrorHandler}
 import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
-import javax.inject.Inject
 
-import collection.Seq
+import javax.inject.Inject
+import scala.collection.Seq
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 

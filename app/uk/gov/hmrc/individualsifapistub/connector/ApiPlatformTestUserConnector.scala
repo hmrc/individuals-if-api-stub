@@ -17,13 +17,13 @@
 package uk.gov.hmrc.individualsifapistub.connector
 
 import play.api.Logger
-import uk.gov.hmrc.domain.{ EmpRef, Nino }
-import uk.gov.hmrc.http.{ HeaderCarrier, HttpClient, NotFoundException }
-import uk.gov.hmrc.individualsifapistub.domain.{ TestIndividual, TestOrganisation }
+import uk.gov.hmrc.domain.{EmpRef, Nino}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, NotFoundException}
+import uk.gov.hmrc.individualsifapistub.domain.{TestIndividual, TestOrganisation}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-import javax.inject.{ Inject, Singleton }
-import scala.concurrent.{ ExecutionContext, Future }
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ApiPlatformTestUserConnector @Inject()(http: HttpClient, servicesConfig: ServicesConfig)(implicit ec: ExecutionContext) {

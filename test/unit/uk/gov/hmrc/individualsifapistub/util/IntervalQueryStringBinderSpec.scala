@@ -18,10 +18,10 @@ package unit.uk.gov.hmrc.individualsifapistub.util
 
 import org.joda.time.LocalDateTime.parse
 import org.joda.time.{Interval, LocalDateTime}
-import org.scalatest.prop.TableDrivenPropertyChecks
+import org.scalatest.EitherValues
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-import org.scalatest.EitherValues
+import org.scalatest.prop.TableDrivenPropertyChecks
 import uk.gov.hmrc.individualsifapistub.util.{Dates, IntervalQueryStringBinder}
 
 class IntervalQueryStringBinderSpec extends AnyFlatSpec with Matchers with EitherValues {

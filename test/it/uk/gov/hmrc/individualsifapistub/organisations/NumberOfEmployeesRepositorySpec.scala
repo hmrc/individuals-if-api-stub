@@ -18,7 +18,7 @@ package it.uk.gov.hmrc.individualsifapistub.organisations
 
 import testUtils.RepositoryTestHelper
 import uk.gov.hmrc.individualsifapistub.domain.DuplicateException
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{NumberOfEmployeeCounts, NumberOfEmployeeReferences, NumberOfEmployeeReferencesRequest, NumberOfEmployeesRequest, NumberOfEmployeesResponse}
+import uk.gov.hmrc.individualsifapistub.domain.organisations._
 import uk.gov.hmrc.individualsifapistub.repository.organisations.NumberOfEmployeesRepository
 
 class NumberOfEmployeesRepositorySpec extends RepositoryTestHelper {
