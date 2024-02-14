@@ -24,6 +24,7 @@ import uk.gov.hmrc.individualsifapistub.domain.DuplicateException
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{CreateSelfAssessmentReturnDetailRequest, SelfAssessmentReturnDetailEntry, SelfAssessmentReturnDetailResponse}
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
+import uk.gov.hmrc.play.http.logging.Mdc.preservingMdc
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,7 +39,6 @@ class SelfAssessmentReturnDetailRepository @Inject()(mongo: MongoComponent)(impl
         IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
       )
     ) {
-
   def create(request: CreateSelfAssessmentReturnDetailRequest): Future[SelfAssessmentReturnDetailResponse] = {
     val response = SelfAssessmentReturnDetailResponse(
       request.utr,
@@ -48,19 +48,22 @@ class SelfAssessmentReturnDetailRepository @Inject()(mongo: MongoComponent)(impl
       request.taxYears)
     val entry = SelfAssessmentReturnDetailEntry(request.utr, response)
 
-    collection
-      .insertOne(entry)
-      .map(_ => response)
-      .head()
-      .recover {
-        case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
-      }
+    preservingMdc {
+      collection
+        .insertOne(entry)
+        .map(_ => response)
+        .head()
+        .recover {
+          case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
+        }
+    }
   }
 
   def find(utr: String): Future[Option[SelfAssessmentReturnDetailResponse]] =
-    collection
-      .find(equal("id", utr))
-      .headOption()
-      .map(x => x.map(_.response))
-
+    preservingMdc {
+      collection
+        .find(equal("id", utr))
+        .headOption()
+        .map(x => x.map(_.response))
+    }
 }

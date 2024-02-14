@@ -24,6 +24,7 @@ import uk.gov.hmrc.individualsifapistub.domain.DuplicateException
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{CTCompanyDetailsEntry, CorporationTaxCompanyDetails}
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
+import uk.gov.hmrc.play.http.logging.Mdc.preservingMdc
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,24 +39,27 @@ class CorporationTaxCompanyDetailsRepository @Inject()(mongo: MongoComponent)(im
         IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
       )
     ) {
-
   def create(request: CorporationTaxCompanyDetails): Future[CorporationTaxCompanyDetails] = {
     val response =
       CorporationTaxCompanyDetails(request.utr, request.crn, request.registeredDetails, request.communicationDetails)
     val entry = CTCompanyDetailsEntry(request.crn, response)
 
-    collection
-      .insertOne(entry)
-      .map(_ => response)
-      .head()
-      .recover {
-        case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
-      }
+    preservingMdc {
+      collection
+        .insertOne(entry)
+        .map(_ => response)
+        .head()
+        .recover {
+          case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
+        }
+    }
   }
 
   def find(crn: String): Future[Option[CorporationTaxCompanyDetails]] =
-    collection
-      .find(equal("id", crn))
-      .headOption()
-      .map(x => x.map(_.response))
+    preservingMdc {
+      collection
+        .find(equal("id", crn))
+        .headOption()
+        .map(x => x.map(_.response))
+    }
 }

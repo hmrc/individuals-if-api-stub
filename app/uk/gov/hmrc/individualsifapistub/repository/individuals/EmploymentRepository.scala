@@ -28,6 +28,7 @@ import uk.gov.hmrc.individualsifapistub.domain.individuals._
 import uk.gov.hmrc.individualsifapistub.util.Dates
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
+import uk.gov.hmrc.play.http.logging.Mdc.preservingMdc
 
 import java.time.{LocalDate, ZoneId}
 import java.util.UUID
@@ -80,13 +81,15 @@ class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit ec: Executi
 
     logger.info(s"Insert for cache key: $id - Employments: ${Json.toJson(employments.employments)}")
 
-    collection
-      .insertOne(EmploymentEntry(id, employments.employments, Some(idValue)))
-      .map(_ => employments)
-      .head()
-      .recover {
-        case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
-      }
+    preservingMdc {
+      collection
+        .insertOne(EmploymentEntry(id, employments.employments, Some(idValue)))
+        .map(_ => employments)
+        .head()
+        .recover {
+          case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
+        }
+    }
   }
 
   def findByIdAndType(
@@ -142,43 +145,46 @@ class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit ec: Executi
 
     val startDate = Dates.asLocalDate(startDateStr)
     val endDate = Dates.asLocalDate(endDateStr)
-    collection
-      .find(deepSearch(idValue))
-      .toFuture()
-      .map { employmentEntries =>
-        val filterByEmployerRef = filter.exists(_.contains("employerRef"))
-        val employments = employmentEntries
-          .flatMap(entry => entry.employments)
-          .groupBy(employment => (employment.employer, employment.employerRef, employment.employment))
-          .flatMap {
-            case ((employer, employerRef, employmentDetail), employments) =>
-              if (!filterByEmployerRef || (employerRef.nonEmpty && filter.exists(_.contains(employerRef.mkString)))) {
-                val interval = Dates.toInterval(startDate, endDate)
-                val payments = employments
-                  .flatMap(_.payments.getOrElse(Seq.empty))
-                  .filter(payment =>
-                    payment.date.exists(date =>
-                      interval.contains(date.atStartOfDay(ZoneId.systemDefault()).toInstant.toEpochMilli)))
-                if (payments.nonEmpty || employmentDateOverlaps(employmentDetail, startDate, endDate))
-                  Some(Employment(employer, employerRef, employmentDetail, payments.headOption.map(_ => payments)))
-                else
-                  None
-              } else
-                None
-          }
-          .toSeq
 
-        employments.headOption.map(_ => Employments(employments))
-      }
-      .flatMap {
-        case result @ Some(_) =>
-          Future.successful(result)
-        case None =>
-          collection
-            .find(idBasedSearch(id))
-            .headOption()
-            .map(_.map(entry => Employments(entry.employments)))
-      }
+    preservingMdc {
+      collection
+        .find(deepSearch(idValue))
+        .toFuture()
+        .map { employmentEntries =>
+          val filterByEmployerRef = filter.exists(_.contains("employerRef"))
+          val employments = employmentEntries
+            .flatMap(entry => entry.employments)
+            .groupBy(employment => (employment.employer, employment.employerRef, employment.employment))
+            .flatMap {
+              case ((employer, employerRef, employmentDetail), employments) =>
+                if (!filterByEmployerRef || (employerRef.nonEmpty && filter.exists(_.contains(employerRef.mkString)))) {
+                  val interval = Dates.toInterval(startDate, endDate)
+                  val payments = employments
+                    .flatMap(_.payments.getOrElse(Seq.empty))
+                    .filter(payment =>
+                      payment.date.exists(date =>
+                        interval.contains(date.atStartOfDay(ZoneId.systemDefault()).toInstant.toEpochMilli)))
+                  if (payments.nonEmpty || employmentDateOverlaps(employmentDetail, startDate, endDate))
+                    Some(Employment(employer, employerRef, employmentDetail, payments.headOption.map(_ => payments)))
+                  else
+                    None
+                } else
+                  None
+            }
+            .toSeq
+
+          employments.headOption.map(_ => Employments(employments))
+        }
+        .flatMap {
+          case result @ Some(_) =>
+            Future.successful(result)
+          case None =>
+            collection
+              .find(idBasedSearch(id))
+              .headOption()
+              .map(_.map(entry => Employments(entry.employments)))
+        }
+    }
   }
 
   // legacy search

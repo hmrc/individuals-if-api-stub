@@ -27,6 +27,7 @@ import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{Nino, Trn}
 import uk.gov.hmrc.individualsifapistub.domain.individuals._
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
+import uk.gov.hmrc.play.http.logging.Mdc.preservingMdc
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -76,13 +77,15 @@ class TaxCreditsRepository @Inject()(mongo: MongoComponent)(implicit ec: Executi
 
     logger.info(s"Insert for cache key: $id - Tax Credits: ${Json.toJson(entry)}")
 
-    collection
-      .insertOne(entry)
-      .map(_ => applications)
-      .head()
-      .recover {
-        case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
-      }
+    preservingMdc {
+      collection
+        .insertOne(entry)
+        .map(_ => applications)
+        .head()
+        .recover {
+          case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
+        }
+    }
   }
 
   def findByIdAndType(
@@ -126,9 +129,11 @@ class TaxCreditsRepository @Inject()(mongo: MongoComponent)(implicit ec: Executi
 
     logger.info(s"Fetch tax credits for cache key: $id")
 
-    collection
-      .find(equal("id", id))
-      .headOption()
-      .map(_.map(entry => Applications(entry.applications)))
+    preservingMdc {
+      collection
+        .find(equal("id", id))
+        .headOption()
+        .map(_.map(entry => Applications(entry.applications)))
+    }
   }
 }

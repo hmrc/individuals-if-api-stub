@@ -27,6 +27,7 @@ import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{Nino, Trn}
 import uk.gov.hmrc.individualsifapistub.domain.individuals._
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
+import uk.gov.hmrc.play.http.logging.Mdc.preservingMdc
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -74,13 +75,15 @@ class DetailsRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionC
 
     logger.info(s"Insert for cache key: $id - Details: ${Json.toJson(detailsResponse)}")
 
-    collection
-      .insertOne(detailsResponse)
-      .map(_ => DetailsResponseNoId(detailsResponse.contactDetails, detailsResponse.residences))
-      .head()
-      .recover {
-        case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
-      }
+    preservingMdc {
+      collection
+        .insertOne(detailsResponse)
+        .map(_ => DetailsResponseNoId(detailsResponse.contactDetails, detailsResponse.residences))
+        .head()
+        .recover {
+          case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
+        }
+    }
   }
 
   def findByIdAndType(idType: String, idValue: String, fields: Option[String]): Future[Option[DetailsResponse]] = {
@@ -113,6 +116,8 @@ class DetailsRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionC
 
     logger.info(s"Fetch details for cache key: $id")
 
-    collection.find(equal("details", id)).headOption()
+    preservingMdc {
+      collection.find(equal("details", id)).headOption()
+    }
   }
 }

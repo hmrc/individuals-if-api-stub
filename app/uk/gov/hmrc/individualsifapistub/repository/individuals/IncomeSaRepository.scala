@@ -27,6 +27,7 @@ import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{Nino, Trn}
 import uk.gov.hmrc.individualsifapistub.domain.individuals._
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
+import uk.gov.hmrc.play.http.logging.Mdc.preservingMdc
 
 import java.util.UUID
 import javax.inject.{Inject, Singleton}
@@ -72,13 +73,15 @@ class IncomeSaRepository @Inject()(mongo: MongoComponent)(implicit ec: Execution
 
     logger.info(s"Insert for cache key: $id - Income sa: ${Json.toJson(incomeSaRecord)}")
 
-    collection
-      .insertOne(incomeSaRecord)
-      .map(_ => incomeSaRecord.incomeSa)
-      .head()
-      .recover {
-        case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
-      }
+    preservingMdc {
+      collection
+        .insertOne(incomeSaRecord)
+        .map(_ => incomeSaRecord.incomeSa)
+        .head()
+        .recover {
+          case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
+        }
+    }
   }
 
   def findByTypeAndId(
@@ -126,27 +129,29 @@ class IncomeSaRepository @Inject()(mongo: MongoComponent)(implicit ec: Execution
 
     logger.info(s"Fetch income sa for cache key: $id")
 
-    collection
-      .find(
-        deepSearch(
-          idValue,
-          Option(startYear).filter(_.nonEmpty).map(_.toInt).getOrElse(1000),
-          Option(endYear).filter(_.nonEmpty).map(_.toInt).getOrElse(3000)
+    preservingMdc {
+      collection
+        .find(
+          deepSearch(
+            idValue,
+            Option(startYear).filter(_.nonEmpty).map(_.toInt).getOrElse(1000),
+            Option(endYear).filter(_.nonEmpty).map(_.toInt).getOrElse(3000)
+          )
         )
-      )
-      .map(_.incomeSa.sa.getOrElse(Seq.empty))
-      .foldLeft(Seq.empty[SaTaxYearEntry])(_ ++ _)
-      .toFuture()
-      .flatMap {
-        case entries if entries.nonEmpty =>
-          Future.successful(Some(IncomeSa(Some(entries))))
-        case _ =>
-          // fallback to legacy search
-          collection
-            .find(idBasedSearch(id))
-            .headOption()
-            .map(_.map(_.incomeSa))
-      }
+        .map(_.incomeSa.sa.getOrElse(Seq.empty))
+        .foldLeft(Seq.empty[SaTaxYearEntry])(_ ++ _)
+        .toFuture()
+        .flatMap {
+          case entries if entries.nonEmpty =>
+            Future.successful(Some(IncomeSa(Some(entries))))
+          case _ =>
+            // fallback to legacy search
+            collection
+              .find(idBasedSearch(id))
+              .headOption()
+              .map(_.map(_.incomeSa))
+        }
+    }
   }
 
   private def idBasedSearch(id: String) = regex("id", s"^$id")

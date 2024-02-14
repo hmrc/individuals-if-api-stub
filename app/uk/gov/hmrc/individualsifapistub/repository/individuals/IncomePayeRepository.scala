@@ -28,6 +28,7 @@ import uk.gov.hmrc.individualsifapistub.domain.individuals.{IdType, Identifier, 
 import uk.gov.hmrc.individualsifapistub.util.Dates
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
+import uk.gov.hmrc.play.http.logging.Mdc.preservingMdc
 
 import java.time.ZoneId
 import java.util.UUID
@@ -73,13 +74,15 @@ class IncomePayeRepository @Inject()(mongo: MongoComponent)(implicit ec: Executi
 
     logger.info(s"Insert for cache key: $id - Income paye: ${Json.toJson(incomePayeEntry)}")
 
-    collection
-      .insertOne(incomePayeEntry)
-      .map(_ => incomePayeEntry.incomePaye)
-      .head()
-      .recover {
-        case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
-      }
+    preservingMdc {
+      collection
+        .insertOne(incomePayeEntry)
+        .map(_ => incomePayeEntry.incomePaye)
+        .head()
+        .recover {
+          case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
+        }
+    }
   }
 
   def findByTypeAndId(
@@ -126,19 +129,22 @@ class IncomePayeRepository @Inject()(mongo: MongoComponent)(implicit ec: Executi
 
     val interval = Dates.toInterval(startDate, Option(endDate).filter(_.nonEmpty))
     val query = queryPaye(id, idValue)
-    collection
-      .find(query)
-      .toFuture()
-      .map {
-        case Seq() => None
-        case nonEmpty =>
-          val payeEntries = nonEmpty
-            .flatMap(_.incomePaye.paye.getOrElse(Seq.empty))
-            .filter(payeEntry =>
-              payeEntry.paymentDate.forall(pd =>
-                interval.contains(pd.atStartOfDay(ZoneId.systemDefault()).toInstant.toEpochMilli)))
-          Some(IncomePaye(Some(payeEntries)))
-      }
+
+    preservingMdc {
+      collection
+        .find(query)
+        .toFuture()
+        .map {
+          case Seq() => None
+          case nonEmpty =>
+            val payeEntries = nonEmpty
+              .flatMap(_.incomePaye.paye.getOrElse(Seq.empty))
+              .filter(payeEntry =>
+                payeEntry.paymentDate.forall(pd =>
+                  interval.contains(pd.atStartOfDay(ZoneId.systemDefault()).toInstant.toEpochMilli)))
+            Some(IncomePaye(Some(payeEntries)))
+        }
+    }
   }
 
   private def queryPaye(id: String, idValue: String) =

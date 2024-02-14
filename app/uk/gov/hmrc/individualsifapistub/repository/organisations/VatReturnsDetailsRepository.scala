@@ -24,6 +24,7 @@ import uk.gov.hmrc.individualsifapistub.domain.DuplicateException
 import uk.gov.hmrc.individualsifapistub.domain.organisations.VatReturnsDetailsEntry
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
+import uk.gov.hmrc.play.http.logging.Mdc.preservingMdc
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.DAYS
@@ -41,16 +42,20 @@ class VatReturnsDetailsRepository @Inject()(mongo: MongoComponent)(implicit ec: 
       )
     ) {
   def create(entry: VatReturnsDetailsEntry): Future[VatReturnsDetailsEntry] =
-    collection
-      .insertOne(entry)
-      .map(_ => entry)
-      .head()
-      .recover {
-        case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
-      }
+    preservingMdc {
+      collection
+        .insertOne(entry)
+        .map(_ => entry)
+        .head()
+        .recover {
+          case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
+        }
+    }
 
   def retrieve(vrn: String): Future[Option[VatReturnsDetailsEntry]] =
-    collection
-      .find(equal("id", vrn))
-      .headOption()
+    preservingMdc {
+      collection
+        .find(equal("id", vrn))
+        .headOption()
+    }
 }
