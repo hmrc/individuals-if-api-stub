@@ -28,9 +28,7 @@ import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-class ApiPlatformTestUserConnectorSpec
-    extends TestSupport
-    with BeforeAndAfterEach {
+class ApiPlatformTestUserConnectorSpec extends TestSupport with BeforeAndAfterEach {
 
   val stubPort = sys.env.getOrElse("WIREMOCK", "11121").toInt
   val stubHost = "localhost"
@@ -40,9 +38,7 @@ class ApiPlatformTestUserConnectorSpec
     Some(empRef),
     None,
     None,
-    TestOrganisationDetails(
-      "Disney Inc",
-      TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")))
+    TestOrganisationDetails("Disney Inc", TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")))
 
   val nino = Nino("AB123456A")
   val utr = SaUtr("2432552635")
@@ -50,10 +46,11 @@ class ApiPlatformTestUserConnectorSpec
   val testIndividual = TestIndividual(
     saUtr = Some(utr),
     taxpayerType = Some("Individual"),
-    organisationDetails = Some(TestOrganisationDetails(
-      name = "Barry Barryson",
-      address = TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")
-    ))
+    organisationDetails = Some(
+      TestOrganisationDetails(
+        name = "Barry Barryson",
+        address = TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")
+      ))
   )
 
   val http: HttpClient = fakeApplication.injector.instanceOf[HttpClient]
@@ -75,9 +72,8 @@ class ApiPlatformTestUserConnectorSpec
     configureFor(stubHost, stubPort)
   }
 
-  override def afterEach(): Unit = {
+  override def afterEach(): Unit =
     wireMockServer.stop()
-  }
 
   "get organisation by empRef" should {
 
@@ -121,8 +117,7 @@ class ApiPlatformTestUserConnectorSpec
         get(urlEqualTo(s"/organisations/empref/${empRef.encodedValue}"))
           .willReturn(aResponse().withStatus(BAD_REQUEST)))
 
-      intercept[BadRequestException](
-        await(underTest.getOrganisationByEmpRef(empRef)))
+      intercept[BadRequestException](await(underTest.getOrganisationByEmpRef(empRef)))
     }
   }
 
@@ -134,18 +129,17 @@ class ApiPlatformTestUserConnectorSpec
           .willReturn(
             aResponse()
               .withStatus(OK)
-              .withBody(
-                s"""{
-                   |"saUtr": "${utr.value}",
-                   |"taxpayerType": "Individual",
-                   |"organisationDetails": {
-                   |  "name": "Barry Barryson",
-                   |  "address": {
-                   |    "line1": "Capital Tower",
-                   |    "line2": "Aberdeen",
-                   |    "postcode": "SW1 4DQ"
-                   |  }
-                   |}}""".stripMargin)))
+              .withBody(s"""{
+                           |"saUtr": "${utr.value}",
+                           |"taxpayerType": "Individual",
+                           |"organisationDetails": {
+                           |  "name": "Barry Barryson",
+                           |  "address": {
+                           |    "line1": "Capital Tower",
+                           |    "line2": "Aberdeen",
+                           |    "postcode": "SW1 4DQ"
+                           |  }
+                           |}}""".stripMargin)))
 
       val result = await(underTest.getIndividualByNino(nino))
 
@@ -167,8 +161,7 @@ class ApiPlatformTestUserConnectorSpec
         get(urlEqualTo(s"/individuals/nino/$nino"))
           .willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR)))
 
-      intercept[BadRequestException](
-        await(underTest.getOrganisationByEmpRef(empRef)))
+      intercept[BadRequestException](await(underTest.getOrganisationByEmpRef(empRef)))
     }
 
   }

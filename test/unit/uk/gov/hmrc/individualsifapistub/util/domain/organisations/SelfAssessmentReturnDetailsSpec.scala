@@ -64,7 +64,8 @@ class SelfAssessmentReturnDetailsSpec extends UnitSpec {
         |  "taxyears": []
         |}""".stripMargin
 
-    val expectedResult = CreateSelfAssessmentReturnDetailRequest("1234567890", "2015-04-21", "Individual", "S", Seq.empty)
+    val expectedResult =
+      CreateSelfAssessmentReturnDetailRequest("1234567890", "2015-04-21", "Individual", "S", Seq.empty)
 
     val result = Json.parse(json).validate[CreateSelfAssessmentReturnDetailRequest]
 
@@ -135,6 +136,5 @@ class SelfAssessmentReturnDetailsSpec extends UnitSpec {
 
     result.isSuccess shouldBe false
   }
-
 
 }

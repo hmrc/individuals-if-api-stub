@@ -21,7 +21,7 @@ import uk.gov.hmrc.individualsifapistub.domain.DuplicateException
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{AccountingPeriod, CorporationTaxReturnDetailsResponse, CreateCorporationTaxReturnDetailsRequest}
 import uk.gov.hmrc.individualsifapistub.repository.organisations.CorporationTaxReturnDetailsRepository
 
-class CorporationTaxReturnDetailsRepositorySpec extends RepositoryTestHelper  {
+class CorporationTaxReturnDetailsRepositorySpec extends RepositoryTestHelper {
 
   val repository = fakeApplication.injector.instanceOf[CorporationTaxReturnDetailsRepository]
   val accountingPeriods = Seq(AccountingPeriod("2018-04-06", "2018-10-05", 38390))
@@ -30,11 +30,11 @@ class CorporationTaxReturnDetailsRepositorySpec extends RepositoryTestHelper  {
 
   "collection" should {
     "have a unique index on a requests utr" in {
-      repository.indexes.find{ i =>
+      repository.indexes.find { i =>
         i.getOptions.getName.contains("id") &&
-          i.getKeys.toBsonDocument.getFirstKey == "id" &&
-          i.getOptions.isBackground &&
-          i.getOptions.isUnique
+        i.getKeys.toBsonDocument.getFirstKey == "id" &&
+        i.getOptions.isBackground &&
+        i.getOptions.isUnique
       } should not be None
     }
 

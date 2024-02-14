@@ -30,19 +30,24 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CorporationTaxReturnDetailsRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext)
-  extends PlayMongoRepository[CTReturnDetailsEntry](
-    mongoComponent = mongo,
-    collectionName = "corporation-tax-return-details",
-    domainFormat = CTReturnDetailsEntry.format,
-    indexes = Seq(
-      IndexModel(
-        ascending("id"), IndexOptions().name("id").unique(true).background(true)
+    extends PlayMongoRepository[CTReturnDetailsEntry](
+      mongoComponent = mongo,
+      collectionName = "corporation-tax-return-details",
+      domainFormat = CTReturnDetailsEntry.format,
+      indexes = Seq(
+        IndexModel(
+          ascending("id"),
+          IndexOptions().name("id").unique(true).background(true)
+        )
       )
-    )
-  ) {
+    ) {
 
   def create(request: CreateCorporationTaxReturnDetailsRequest): Future[CorporationTaxReturnDetailsResponse] = {
-    val response = CorporationTaxReturnDetailsResponse(request.utr, request.taxpayerStartDate, request.taxSolvencyStatus, request.accountingPeriods)
+    val response = CorporationTaxReturnDetailsResponse(
+      request.utr,
+      request.taxpayerStartDate,
+      request.taxSolvencyStatus,
+      request.accountingPeriods)
     val entry = CTReturnDetailsEntry(request.utr, response)
 
     collection
@@ -54,10 +59,9 @@ class CorporationTaxReturnDetailsRepository @Inject()(mongo: MongoComponent)(imp
       }
   }
 
-  def find(utr: String): Future[Option[CorporationTaxReturnDetailsResponse]] = {
+  def find(utr: String): Future[Option[CorporationTaxReturnDetailsResponse]] =
     collection
       .find(equal("id", utr))
       .headOption()
       .map(x => x.map(_.response))
-  }
 }

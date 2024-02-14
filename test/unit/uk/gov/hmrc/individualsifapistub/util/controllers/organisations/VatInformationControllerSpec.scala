@@ -43,10 +43,8 @@ class VatInformationControllerSpec extends TestSupport with BeforeAndAfterEach {
   val request: VatInformation = VatInformation(vatApprovedInformation)
   val serviceResponse: VatInformationEntry = VatInformationEntry("id", request, LocalDateTime.now())
 
-
-  override def afterEach(): Unit = {
+  override def afterEach(): Unit =
     clearInvocations(mockService)
-  }
 
   "create" should {
     "return response with created status when successful" in {

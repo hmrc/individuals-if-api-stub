@@ -59,27 +59,26 @@ class SaIncomeSpec extends UnitSpec {
   "Sa Income" should {
     "Write To Json" in {
       val result = Json.toJson(validSaIncome)
-      val expectedJson = Json.parse(
-        """
-          |{
-          |  "selfAssessment" : 100,
-          |  "allEmployments" : 100,
-          |  "ukInterest" : 100,
-          |  "foreignDivs" : 100,
-          |  "ukDivsAndInterest" : 100,
-          |  "partnerships" : 100,
-          |  "pensions" : 100,
-          |  "selfEmployment" : 100,
-          |  "trusts" : 100,
-          |  "ukProperty" : 100,
-          |  "foreign" : 100,
-          |  "lifePolicies" : 100,
-          |  "shares" : 100,
-          |  "other" : 100
-          |}
-          |""".stripMargin)
+      val expectedJson = Json.parse("""
+                                      |{
+                                      |  "selfAssessment" : 100,
+                                      |  "allEmployments" : 100,
+                                      |  "ukInterest" : 100,
+                                      |  "foreignDivs" : 100,
+                                      |  "ukDivsAndInterest" : 100,
+                                      |  "partnerships" : 100,
+                                      |  "pensions" : 100,
+                                      |  "selfEmployment" : 100,
+                                      |  "trusts" : 100,
+                                      |  "ukProperty" : 100,
+                                      |  "foreign" : 100,
+                                      |  "lifePolicies" : 100,
+                                      |  "shares" : 100,
+                                      |  "other" : 100
+                                      |}
+                                      |""".stripMargin)
 
-        result shouldBe expectedJson
+      result shouldBe expectedJson
     }
 
     "Validate successfully when SA Income is valid" in {

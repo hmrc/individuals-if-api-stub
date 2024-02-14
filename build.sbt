@@ -1,4 +1,3 @@
-
 import sbt.Tests.{Group, SubProcess}
 import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, defaultSettings, scalaSettings}
 
@@ -12,7 +11,14 @@ lazy val ComponentTest = config("component") extend Test
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
   .settings(onLoadMessage := "")
-  .settings(routesImport ++= Seq("uk.gov.hmrc.domain._", "uk.gov.hmrc.individualsifapistub.domain._", "uk.gov.hmrc.individualsifapistub.Binders._"))
+  .settings(scalafmtOnCompile := true)
+  .settings(
+    routesImport ++= Seq(
+      "uk.gov.hmrc.domain._",
+      "uk.gov.hmrc.individualsifapistub.domain._",
+      "uk.gov.hmrc.individualsifapistub.Binders._"
+    )
+  )
   .settings(scalaSettings: _*)
   .settings(scalaVersion := "2.13.8")
   .settings(scalacOptions += "-Wconf:src=routes/.*:s")
@@ -29,7 +35,8 @@ lazy val microservice = Project(appName, file("."))
   .settings(
     IntegrationTest / Keys.fork := false,
     IntegrationTest / unmanagedSourceDirectories := (IntegrationTest / baseDirectory)(base => Seq(base / "test")).value,
-    IntegrationTest / unmanagedResourceDirectories := (IntegrationTest / baseDirectory)(base => Seq(base / "test/resources")).value,
+    IntegrationTest / unmanagedResourceDirectories := (IntegrationTest / baseDirectory)(base =>
+      Seq(base / "test/resources")).value,
     IntegrationTest / testOptions := Seq(Tests.Filter(intTestFilter)),
     addTestReportOption(IntegrationTest, "int-test-reports"),
     IntegrationTest / testGrouping := oneForkedJvmPerTest((IntegrationTest / definedTests).value),
@@ -46,13 +53,23 @@ lazy val microservice = Project(appName, file("."))
   .settings(PlayKeys.playDefaultPort := 8443)
   .settings(majorVersion := 0)
   // Suppress logging of successful tests
-  .settings(Test / testOptions -= Tests.Argument("-o", "-u", "target/test-reports", "-h", "target/test-reports/html-report"))
-  .settings(Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oNCHPQR", "-u", "target/test-reports", "-h", "target/test-reports/html-report"))
+  .settings(
+    Test / testOptions -= Tests.Argument("-o", "-u", "target/test-reports", "-h", "target/test-reports/html-report")
+  )
+  .settings(
+    Test / testOptions += Tests.Argument(
+      TestFrameworks.ScalaTest,
+      "-oNCHPQR",
+      "-u",
+      "target/test-reports",
+      "-h",
+      "target/test-reports/html-report"
+    )
+  )
 
-def oneForkedJvmPerTest(tests: Seq[TestDefinition]) = {
+def oneForkedJvmPerTest(tests: Seq[TestDefinition]) =
   tests.map { test =>
-    new Group(test.name, Seq(test), SubProcess(ForkOptions().withRunJVMOptions(Vector(s"-Dtest.name=${ test.name }"))))
+    new Group(test.name, Seq(test), SubProcess(ForkOptions().withRunJVMOptions(Vector(s"-Dtest.name=${test.name}"))))
   }
-}
 
 ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always

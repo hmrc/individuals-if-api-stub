@@ -21,8 +21,8 @@ import uk.gov.hmrc.individualsifapistub.domain.individuals.StudentLoan
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class StudentLoanSpec extends UnitSpec {
-  val validStudentLoan = StudentLoan(Some("01"),Some(100), Some(100))
-  val invalidStudentLoan = StudentLoan(Some("NotValid"),Some(99999 + 1), Some(-1))
+  val validStudentLoan = StudentLoan(Some("01"), Some(100), Some(100))
+  val invalidStudentLoan = StudentLoan(Some("NotValid"), Some(99999 + 1), Some(-1))
 
   "Student Loan" should {
     "WriteToJson" in {
@@ -38,7 +38,7 @@ class StudentLoanSpec extends UnitSpec {
 
       val result = Json.toJson(validStudentLoan)
 
-      result shouldBe(expectedJson)
+      result shouldBe (expectedJson)
     }
 
     "Validate successfully when given a valid Student Loan" in {

@@ -60,7 +60,6 @@ class CorporationTaxCompanyDetailsSpec extends UnitSpec {
     result.get shouldBe expectedResult
   }
 
-
   "NameAddressDetails reads from JSON unsuccessfully when address field is incorrect" in {
     val json =
       """
@@ -141,23 +140,22 @@ class CorporationTaxCompanyDetailsSpec extends UnitSpec {
       Some(empRef),
       Some("0123456789"),
       Some("123456789"),
-      TestOrganisationDetails(
-        "Disney Inc",
-        TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")))
+      TestOrganisationDetails("Disney Inc", TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")))
 
     val expectedResult = CorporationTaxCompanyDetails(
       "0123456789",
       "123456789",
-      Some(NameAddressDetails(
-        Name("Disney Inc", ""),
-        Address(
-          Some("Capital Tower"),
-          Some("Aberdeen"),
-          None,
-          None,
-          Some("SW1 4DQ")
-        )
-      )),
+      Some(
+        NameAddressDetails(
+          Name("Disney Inc", ""),
+          Address(
+            Some("Capital Tower"),
+            Some("Aberdeen"),
+            None,
+            None,
+            Some("SW1 4DQ")
+          )
+        )),
       None
     )
 

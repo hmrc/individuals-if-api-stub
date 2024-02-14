@@ -34,7 +34,10 @@ object Dates {
     new Interval(from.toDate.getTime, to.toDateTimeAtStartOfDay.plusMillis(1).toDate.getTime)
 
   def toInterval(from: java.time.LocalDate, to: java.time.LocalDate): Interval =
-    new Interval(from.atStartOfDay(ZoneId.systemDefault()).toInstant.toEpochMilli, to.atStartOfDay(ZoneId.systemDefault()).plus(1, ChronoUnit.MILLIS).toInstant.toEpochMilli)
+    new Interval(
+      from.atStartOfDay(ZoneId.systemDefault()).toInstant.toEpochMilli,
+      to.atStartOfDay(ZoneId.systemDefault()).plus(1, ChronoUnit.MILLIS).toInstant.toEpochMilli
+    )
 
   def toInterval(from: String, to: Option[String]): Interval =
     toInterval(asJodaLocalDate(from), to.map(asJodaLocalDate).getOrElse(org.joda.time.LocalDate.now))

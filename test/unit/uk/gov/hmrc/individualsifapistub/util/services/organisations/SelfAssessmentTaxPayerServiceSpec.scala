@@ -31,11 +31,8 @@ class SelfAssessmentTaxPayerServiceSpec extends AsyncWordSpec with Matchers with
   val mockRepository = mock[SelfAssessmentTaxPayerRepository]
   val service = new SelfAssessmentTaxPayerService(mockRepository)
 
-  val exampleAddress = Address(Some("Alfie House"),
-    Some("Main Street"),
-    Some("Birmingham"),
-    Some("West midlands"),
-    Some("B14 6JH"))
+  val exampleAddress =
+    Address(Some("Alfie House"), Some("Main Street"), Some("Birmingham"), Some("West midlands"), Some("B14 6JH"))
 
   val taxPayerDetails = Seq(TaxPayerDetails("John Smith II", Some("Registered"), exampleAddress))
   val request = SelfAssessmentTaxPayer("1234567890", "Individual", taxPayerDetails)

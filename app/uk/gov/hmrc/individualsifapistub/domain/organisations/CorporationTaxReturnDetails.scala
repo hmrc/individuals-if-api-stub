@@ -26,67 +26,80 @@ import scala.util.matching.Regex
 case class AccountingPeriod(apStartDate: String, apEndDate: String, turnover: Int)
 
 object AccountingPeriod {
-  private val apDatePattern = "^(((19|20)([2468][048]|[13579][26]|0[48])|2000)[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)[-](0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-](0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}[-]02[-](0[1-9]|1[0-9]|2[0-8])))$".r
+  private val apDatePattern =
+    "^(((19|20)([2468][048]|[13579][26]|0[48])|2000)[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)[-](0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-](0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}[-]02[-](0[1-9]|1[0-9]|2[0-8])))$".r
 
   implicit val format: Format[AccountingPeriod] = Format[AccountingPeriod](
     (
       (JsPath \ "apStartDate").read[String](pattern(apDatePattern, "apStartDate not in correct format")) and
         (JsPath \ "apEndDate").read[String](pattern(apDatePattern, "apEndDate not in correct format")) and
         (JsPath \ "turnover").read[Int]
-      )(AccountingPeriod.apply _),
+    )(AccountingPeriod.apply _),
     (
       (JsPath \ "apStartDate").write[String] and
         (JsPath \ "apEndDate").write[String] and
         (JsPath \ "turnover").write[Int]
-      )(unlift(AccountingPeriod.unapply))
+    )(unlift(AccountingPeriod.unapply))
   )
 }
 
-case class CreateCorporationTaxReturnDetailsRequest(utr: String, taxpayerStartDate: String, taxSolvencyStatus: String, accountingPeriods: Seq[AccountingPeriod])
+case class CreateCorporationTaxReturnDetailsRequest(
+  utr: String,
+  taxpayerStartDate: String,
+  taxSolvencyStatus: String,
+  accountingPeriods: Seq[AccountingPeriod])
 
 object CreateCorporationTaxReturnDetailsRequest {
-  implicit val format: Format[CreateCorporationTaxReturnDetailsRequest] = Format[CreateCorporationTaxReturnDetailsRequest](
-    (
-      (JsPath \ "utr").read[String](pattern(utrPattern, "Invalid UTR format")) and
-        (JsPath \ "taxpayerStartDate").read[String](pattern(taxpayerStartDatePattern, "Invalid taxpayer start date")) and
-        (JsPath \ "taxSolvencyStatus").read[String](verifying(validTaxSolvencyStatus)) and
-        (JsPath \ "accountingPeriods").read[Seq[AccountingPeriod]]
+  implicit val format: Format[CreateCorporationTaxReturnDetailsRequest] =
+    Format[CreateCorporationTaxReturnDetailsRequest](
+      (
+        (JsPath \ "utr").read[String](pattern(utrPattern, "Invalid UTR format")) and
+          (JsPath \ "taxpayerStartDate")
+            .read[String](pattern(taxpayerStartDatePattern, "Invalid taxpayer start date")) and
+          (JsPath \ "taxSolvencyStatus").read[String](verifying(validTaxSolvencyStatus)) and
+          (JsPath \ "accountingPeriods").read[Seq[AccountingPeriod]]
       )(CreateCorporationTaxReturnDetailsRequest.apply _),
-    (
-      (JsPath \ "utr").write[String] and
-        (JsPath \ "taxpayerStartDate").write[String] and
-        (JsPath \ "taxSolvencyStatus").write[String] and
-        (JsPath \ "accountingPeriods").write[Seq[AccountingPeriod]]
+      (
+        (JsPath \ "utr").write[String] and
+          (JsPath \ "taxpayerStartDate").write[String] and
+          (JsPath \ "taxSolvencyStatus").write[String] and
+          (JsPath \ "accountingPeriods").write[Seq[AccountingPeriod]]
       )(unlift(CreateCorporationTaxReturnDetailsRequest.unapply))
-  )
+    )
 }
 
-case class CorporationTaxReturnDetailsResponse(utr: String, taxpayerStartDate: String, taxSolvencyStatus: String, accountingPeriods: Seq[AccountingPeriod])
+case class CorporationTaxReturnDetailsResponse(
+  utr: String,
+  taxpayerStartDate: String,
+  taxSolvencyStatus: String,
+  accountingPeriods: Seq[AccountingPeriod])
 
 object CorporationTaxReturnDetailsResponse {
   implicit val format: Format[CorporationTaxReturnDetailsResponse] = Format[CorporationTaxReturnDetailsResponse](
     (
       (JsPath \ "utr").read[String](pattern(utrPattern, "Invalid UTR format")) and
-        (JsPath \ "taxpayerStartDate").read[String](pattern(taxpayerStartDatePattern, "Invalid taxpayer start date")) and
+        (JsPath \ "taxpayerStartDate")
+          .read[String](pattern(taxpayerStartDatePattern, "Invalid taxpayer start date")) and
         (JsPath \ "taxSolvencyStatus").read[String](verifying(validTaxSolvencyStatus)) and
         (JsPath \ "accountingPeriods").read[Seq[AccountingPeriod]]
-      )(CorporationTaxReturnDetailsResponse.apply _),
+    )(CorporationTaxReturnDetailsResponse.apply _),
     (
       (JsPath \ "utr").write[String] and
         (JsPath \ "taxpayerStartDate").write[String] and
         (JsPath \ "taxSolvencyStatus").write[String] and
         (JsPath \ "accountingPeriods").write[Seq[AccountingPeriod]]
-      )(unlift(CorporationTaxReturnDetailsResponse.unapply))
+    )(unlift(CorporationTaxReturnDetailsResponse.unapply))
   )
 }
 
 object CorporationTaxReturnDetails {
   var utrPattern: Regex = "^[0-9]{10}$".r
-  val taxpayerStartDatePattern: Regex = "^(((19|20)([2468][048]|[13579][26]|0[48])|2000)[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)[-](0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-](0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}[-]02[-](0[1-9]|1[0-9]|2[0-8])))$".r
+  val taxpayerStartDatePattern: Regex =
+    "^(((19|20)([2468][048]|[13579][26]|0[48])|2000)[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)[-](0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-](0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}[-]02[-](0[1-9]|1[0-9]|2[0-8])))$".r
   def validTaxSolvencyStatus(value: String): Boolean = Seq("V", "S", "I", "A").contains(value)
 }
 
-case class CTReturnDetailsEntry(id: String, response :CorporationTaxReturnDetailsResponse)
+case class CTReturnDetailsEntry(id: String, response: CorporationTaxReturnDetailsResponse)
 
 object CTReturnDetailsEntry {
   implicit val format: OFormat[CTReturnDetailsEntry] = Json.format[CTReturnDetailsEntry]

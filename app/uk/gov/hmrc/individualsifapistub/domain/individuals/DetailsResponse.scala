@@ -28,60 +28,61 @@ object ContactDetail {
       (JsPath \ "code").read[Int](min[Int](1).keepAnd(max[Int](9999))) and
         (JsPath \ "type").read[String](minLength[String](1).keepAnd(maxLength[String](35))) and
         (JsPath \ "detail").read[String](minLength[String](3).keepAnd(maxLength[String](72)))
-      )(ContactDetail.apply _),
+    )(ContactDetail.apply _),
     (
       (JsPath \ "code").write[Int] and
         (JsPath \ "type").write[String] and
         (JsPath \ "detail").write[String]
-      )(unlift(ContactDetail.unapply))
+    )(unlift(ContactDetail.unapply))
   )
 }
 
 case class Address(
-                    line1: Option[String],
-                    line2: Option[String],
-                    line3: Option[String],
-                    line4: Option[String],
-                    line5: Option[String] = None,
-                    postcode: Option[String]
-                  )
+  line1: Option[String],
+  line2: Option[String],
+  line3: Option[String],
+  line4: Option[String],
+  line5: Option[String] = None,
+  postcode: Option[String]
+)
 
 object Address {
-    implicit val format: Format[Address] = Format(
-        (
-            (JsPath \ "line1").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
-                (JsPath \ "line2").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
-                (JsPath \ "line3").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
-                (JsPath \ "line4").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
-                (JsPath \ "line5").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
-                (JsPath \ "postcode").readNullable[String](minLength[String](0) keepAnd maxLength[String](10))
-              ) (Address.apply _),
-        (
-            (JsPath \ "line1").writeNullable[String] and
-                (JsPath \ "line2").writeNullable[String] and
-                (JsPath \ "line3").writeNullable[String] and
-                (JsPath \ "line4").writeNullable[String] and
-                (JsPath \ "line5").writeNullable[String] and
-                (JsPath \ "postcode").writeNullable[String]
-              ) (unlift(Address.unapply))
-        )
+  implicit val format: Format[Address] = Format(
+    (
+      (JsPath \ "line1").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
+        (JsPath \ "line2").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
+        (JsPath \ "line3").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
+        (JsPath \ "line4").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
+        (JsPath \ "line5").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
+        (JsPath \ "postcode").readNullable[String](minLength[String](0) keepAnd maxLength[String](10))
+    )(Address.apply _),
+    (
+      (JsPath \ "line1").writeNullable[String] and
+        (JsPath \ "line2").writeNullable[String] and
+        (JsPath \ "line3").writeNullable[String] and
+        (JsPath \ "line4").writeNullable[String] and
+        (JsPath \ "line5").writeNullable[String] and
+        (JsPath \ "postcode").writeNullable[String]
+    )(unlift(Address.unapply))
+  )
 }
 
-case class Residence(statusCode: Option[String] = None,
-                     status: Option[String] = None,
-                     typeCode: Option[Int] = None,
-                     residenceType: Option[String] = None,
-                     deliveryInfo: Option[String] = None,
-                     retLetterServ: Option[String] = None,
-                     addressCode: Option[String] = None,
-                     addressType: Option[String] = None,
-                     address: Option[Address] = None,
-                     houseId: Option[String] = None,
-                     homeCountry: Option[String] = None,
-                     otherCountry: Option[String] = None,
-                     deadLetterOfficeDate: Option[String] = None,
-                     startDateTime: Option[String] = None,
-                     noLongerUsed: Option[String] = None)
+case class Residence(
+  statusCode: Option[String] = None,
+  status: Option[String] = None,
+  typeCode: Option[Int] = None,
+  residenceType: Option[String] = None,
+  deliveryInfo: Option[String] = None,
+  retLetterServ: Option[String] = None,
+  addressCode: Option[String] = None,
+  addressType: Option[String] = None,
+  address: Option[Address] = None,
+  houseId: Option[String] = None,
+  homeCountry: Option[String] = None,
+  otherCountry: Option[String] = None,
+  deadLetterOfficeDate: Option[String] = None,
+  startDateTime: Option[String] = None,
+  noLongerUsed: Option[String] = None)
 
 object Residence {
   private val statusCodePattern = "^[1-9]$".r
@@ -107,7 +108,7 @@ object Residence {
         (JsPath \ "deadLetterOfficeDate").readNullable[String](pattern(datePattern, "Date is invalid")) and
         (JsPath \ "startDateTime").readNullable[String] and
         (JsPath \ "noLongerUsed").readNullable[String](minLength[String](1) andKeep maxLength[String](1))
-      )(Residence.apply _),
+    )(Residence.apply _),
     (
       (JsPath \ "statusCode").writeNullable[String] and
         (JsPath \ "status").writeNullable[String] and
@@ -124,11 +125,14 @@ object Residence {
         (JsPath \ "deadLetterOfficeDate").writeNullable[String] and
         (JsPath \ "startDateTime").writeNullable[String] and
         (JsPath \ "noLongerUsed").writeNullable[String]
-      )(unlift(Residence.unapply))
+    )(unlift(Residence.unapply))
   )
 }
 
-case class DetailsResponse(details: String, contactDetails: Option[Seq[ContactDetail]], residences: Option[Seq[Residence]])
+case class DetailsResponse(
+  details: String,
+  contactDetails: Option[Seq[ContactDetail]],
+  residences: Option[Seq[Residence]])
 
 object DetailsResponse {
   implicit val format: Format[DetailsResponse] = Format(
@@ -136,12 +140,12 @@ object DetailsResponse {
       (JsPath \ "details").read[String] and
         (JsPath \ "contactDetails").readNullable[Seq[ContactDetail]] and
         (JsPath \ "residence").readNullable[Seq[Residence]]
-      )(DetailsResponse.apply _),
+    )(DetailsResponse.apply _),
     (
       (JsPath \ "details").write[String] and
         (JsPath \ "contactDetails").writeNullable[Seq[ContactDetail]] and
         (JsPath \ "residence").writeNullable[Seq[Residence]]
-      )(unlift(DetailsResponse.unapply))
+    )(unlift(DetailsResponse.unapply))
   )
 }
 

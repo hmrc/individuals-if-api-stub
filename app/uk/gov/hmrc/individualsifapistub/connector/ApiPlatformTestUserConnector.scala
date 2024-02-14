@@ -26,17 +26,18 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ApiPlatformTestUserConnector @Inject()(http: HttpClient, servicesConfig: ServicesConfig)(implicit ec: ExecutionContext) {
+class ApiPlatformTestUserConnector @Inject()(http: HttpClient, servicesConfig: ServicesConfig)(
+  implicit ec: ExecutionContext) {
 
   val logger: Logger = Logger(getClass)
 
   val serviceUrl = servicesConfig.baseUrl("api-platform-test-user")
 
   def getOrganisationByEmpRef(empRef: EmpRef)(implicit hc: HeaderCarrier): Future[Option[TestOrganisation]] = {
-    http.GET[TestOrganisation](s"$serviceUrl/organisations/empref/${ empRef.encodedValue }") map (Some(_))
+    http.GET[TestOrganisation](s"$serviceUrl/organisations/empref/${empRef.encodedValue}") map (Some(_))
   } recover {
     case e: NotFoundException =>
-      logger.warn(s"unable to retrieve employer with empRef: ${ empRef.value }. ${ e.getMessage }")
+      logger.warn(s"unable to retrieve employer with empRef: ${empRef.value}. ${e.getMessage}")
       None
   }
 
@@ -44,7 +45,7 @@ class ApiPlatformTestUserConnector @Inject()(http: HttpClient, servicesConfig: S
     http.GET[TestOrganisation](s"$serviceUrl/organisations/crn/$crn") map (Some(_))
   } recover {
     case e: NotFoundException =>
-      logger.warn(s"unable to retrieve organisation with crn: $crn. ${ e.getMessage }")
+      logger.warn(s"unable to retrieve organisation with crn: $crn. ${e.getMessage}")
       None
   }
 
@@ -52,18 +53,18 @@ class ApiPlatformTestUserConnector @Inject()(http: HttpClient, servicesConfig: S
     http.GET[TestIndividual](s"$serviceUrl/organisations/sautr/$utr") map (Some(_))
   } recover {
     case e: NotFoundException =>
-      logger.warn(s"unable to retrieve organisation with utr: $utr. ${ e.getMessage }")
+      logger.warn(s"unable to retrieve organisation with utr: $utr. ${e.getMessage}")
       None
   }
 
   def getIndividualByNino(nino: Nino)(implicit hc: HeaderCarrier): Future[TestIndividual] = {
-    http.GET[TestIndividual](s"$serviceUrl/individuals/nino/${ nino.value }")
+    http.GET[TestIndividual](s"$serviceUrl/individuals/nino/${nino.value}")
   } recover {
     case e: NotFoundException =>
-      logger.warn(s"unable to retrieve individual with nino: ${ nino.value }. ${ e.getMessage }")
+      logger.warn(s"unable to retrieve individual with nino: ${nino.value}. ${e.getMessage}")
       throw new NotFoundException(e.getMessage)
     case ex: Exception =>
-      logger.warn(s"getIndividualByNino failed: ${ nino.value }. ${ ex.getMessage }")
+      logger.warn(s"getIndividualByNino failed: ${nino.value}. ${ex.getMessage}")
       throw new Exception(ex.getMessage)
   }
 }

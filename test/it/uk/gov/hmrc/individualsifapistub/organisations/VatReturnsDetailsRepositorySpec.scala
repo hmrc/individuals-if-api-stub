@@ -32,16 +32,18 @@ class VatReturnsDetailsRepositorySpec extends RepositoryTestHelper {
   )
   val serviceRequest: VatReturnsDetails = VatReturnsDetails("12345678", Some("123"), Some("2023-01-01"), vatPeriods)
   val repositoryEntry: VatReturnsDetailsEntry = VatReturnsDetailsEntry(
-    serviceRequest.vrn, serviceRequest, LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)
+    serviceRequest.vrn,
+    serviceRequest,
+    LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)
   )
 
   "collection" should {
     "have a unique index on a requests utr" in {
       repository.indexes.find { i =>
         i.getOptions.getName.contains("id") &&
-          i.getKeys.toBsonDocument.getFirstKey == "id" &&
-          i.getOptions.isBackground &&
-          i.getOptions.isUnique
+        i.getKeys.toBsonDocument.getFirstKey == "id" &&
+        i.getOptions.isBackground &&
+        i.getOptions.isUnique
       } should not be None
     }
   }

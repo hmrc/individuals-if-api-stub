@@ -46,8 +46,7 @@ class TaxCreditsControllerSpec extends TestSupport {
     val mockTaxCreditsService = new TaxCreditsService(taxCreditsRepo, apiPlatformTestUserConnector, servicesConfig)
     val underTest = new TaxCreditsController(loggingAction, bodyParsers, controllerComponents, mockTaxCreditsService)
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
-      thenReturn(Future.successful(testIndividual))
+    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).thenReturn(Future.successful(testIndividual))
   }
 
   val application: Application = Application(
@@ -81,9 +80,8 @@ class TaxCreditsControllerSpec extends TestSupport {
         Future.successful(request)
       )
 
-      val result = await(underTest.create(idType, idValue, startDate, endDate, useCase)(
-        fakeRequest.withBody(Json.toJson(request)))
-      )
+      val result = await(
+        underTest.create(idType, idValue, startDate, endDate, useCase)(fakeRequest.withBody(Json.toJson(request))))
 
       status(result) shouldBe CREATED
 
@@ -93,16 +91,15 @@ class TaxCreditsControllerSpec extends TestSupport {
 
     "Fail when an invalid nino is provided" in new Setup {
 
-      when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
-        thenReturn(Future.failed(new RecordNotFoundException))
+      when(apiPlatformTestUserConnector.getIndividualByNino(any())(any()))
+        .thenReturn(Future.failed(new RecordNotFoundException))
 
       when(mockTaxCreditsService.create(idType, idValue, startDate, endDate, useCase, request)).thenReturn(
         Future.successful(request)
       )
 
-      val result = await(underTest.create(idType, idValue, startDate, endDate, useCase)(
-        fakeRequest.withBody(Json.toJson("")))
-      )
+      val result =
+        await(underTest.create(idType, idValue, startDate, endDate, useCase)(fakeRequest.withBody(Json.toJson(""))))
 
       status(result) shouldBe BAD_REQUEST
 
@@ -114,9 +111,8 @@ class TaxCreditsControllerSpec extends TestSupport {
         Future.successful(request)
       )
 
-      val response = await(underTest.create(idType, idValue, startDate, endDate, useCase)(
-        fakeRequest.withBody(Json.toJson("")))
-      )
+      val response =
+        await(underTest.create(idType, idValue, startDate, endDate, useCase)(fakeRequest.withBody(Json.toJson(""))))
 
       status(response) shouldBe BAD_REQUEST
 

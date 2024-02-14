@@ -20,7 +20,7 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.individualsifapistub.domain.individuals.{Address, Deducts, SaIncome, SaReturnType}
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
-class SaReturnTypeSpec extends  UnitSpec {
+class SaReturnTypeSpec extends UnitSpec {
 
   val validSaReturnType = SaReturnType(
     Some("1234567890"),
@@ -61,50 +61,49 @@ class SaReturnTypeSpec extends  UnitSpec {
   "SaReturnType" should {
     "Write to Json" in {
       val result = Json.toJson(validSaReturnType)
-      val expectedJson = Json.parse(
-        """
-          |{
-          |  "utr": "1234567890",
-          |  "caseStartDate": "2020-01-01",
-          |  "receivedDate": "2020-01-01",
-          |  "businessDescription": "This is a business description",
-          |  "telephoneNumber": "12345678901",
-          |  "busStartDate": "2020-01-01",
-          |  "busEndDate": "2020-01-30",
-          |  "totalTaxPaid": 100.01,
-          |  "totalNIC": 100.01,
-          |  "turnover": 100.01,
-          |  "otherBusIncome": 100.01,
-          |  "tradingIncomeAllowance": 100.01,
-          |  "address": {
-          |    "line1": "line1",
-          |    "line2": "line2",
-          |    "line3": "line3",
-          |    "line4": "line4",
-          |    "postcode": "QW123QW"
-          |  },
-          |  "income": {
-          |    "selfAssessment": 100,
-          |    "allEmployments": 100,
-          |    "ukInterest": 100,
-          |    "foreignDivs": 100,
-          |    "ukDivsAndInterest": 100,
-          |    "partnerships": 100,
-          |    "pensions": 100,
-          |    "selfEmployment": 100,
-          |    "trusts": 100,
-          |    "ukProperty": 100,
-          |    "foreign": 100,
-          |    "lifePolicies": 100,
-          |    "shares": 100,
-          |    "other": 100
-          |  },
-          |  "deducts": {
-          |    "totalBusExpenses": 200,
-          |    "totalDisallowBusExp": 200
-          |  }
-          |}
-          |""".stripMargin)
+      val expectedJson = Json.parse("""
+                                      |{
+                                      |  "utr": "1234567890",
+                                      |  "caseStartDate": "2020-01-01",
+                                      |  "receivedDate": "2020-01-01",
+                                      |  "businessDescription": "This is a business description",
+                                      |  "telephoneNumber": "12345678901",
+                                      |  "busStartDate": "2020-01-01",
+                                      |  "busEndDate": "2020-01-30",
+                                      |  "totalTaxPaid": 100.01,
+                                      |  "totalNIC": 100.01,
+                                      |  "turnover": 100.01,
+                                      |  "otherBusIncome": 100.01,
+                                      |  "tradingIncomeAllowance": 100.01,
+                                      |  "address": {
+                                      |    "line1": "line1",
+                                      |    "line2": "line2",
+                                      |    "line3": "line3",
+                                      |    "line4": "line4",
+                                      |    "postcode": "QW123QW"
+                                      |  },
+                                      |  "income": {
+                                      |    "selfAssessment": 100,
+                                      |    "allEmployments": 100,
+                                      |    "ukInterest": 100,
+                                      |    "foreignDivs": 100,
+                                      |    "ukDivsAndInterest": 100,
+                                      |    "partnerships": 100,
+                                      |    "pensions": 100,
+                                      |    "selfEmployment": 100,
+                                      |    "trusts": 100,
+                                      |    "ukProperty": 100,
+                                      |    "foreign": 100,
+                                      |    "lifePolicies": 100,
+                                      |    "shares": 100,
+                                      |    "other": 100
+                                      |  },
+                                      |  "deducts": {
+                                      |    "totalBusExpenses": 200,
+                                      |    "totalDisallowBusExp": 200
+                                      |  }
+                                      |}
+                                      |""".stripMargin)
 
       result shouldBe expectedJson
     }
@@ -121,7 +120,7 @@ class SaReturnTypeSpec extends  UnitSpec {
 
   }
 
-  private def createValidSaIncome() = {
+  private def createValidSaIncome() =
     SaIncome(
       Some(100.0),
       Some(100.0),
@@ -138,7 +137,6 @@ class SaReturnTypeSpec extends  UnitSpec {
       Some(100.0),
       Some(100.0)
     )
-  }
 
   private def validDeducts = Deducts(
     Some(200.0),

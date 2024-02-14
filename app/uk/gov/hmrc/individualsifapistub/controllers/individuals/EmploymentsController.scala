@@ -28,45 +28,44 @@ import uk.gov.hmrc.individualsifapistub.util.FieldFilter
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class EmploymentsController @Inject()(loggingAction: LoggingAction,
-                                      bodyParser: PlayBodyParsers,
-                                      cc: ControllerComponents,
-                                      employmentsService: EmploymentsService)
-                                     (implicit val ec: ExecutionContext) extends CommonController(cc) {
+class EmploymentsController @Inject()(
+  loggingAction: LoggingAction,
+  bodyParser: PlayBodyParsers,
+  cc: ControllerComponents,
+  employmentsService: EmploymentsService)(implicit val ec: ExecutionContext)
+    extends CommonController(cc) {
 
-
-  def create(idType: String,
-             idValue: String,
-             startDate: Option[String],
-             endDate: Option[String],
-             useCase: Option[String]): Action[JsValue] = {
+  def create(
+    idType: String,
+    idValue: String,
+    startDate: Option[String],
+    endDate: Option[String],
+    useCase: Option[String]): Action[JsValue] =
     loggingAction.async(bodyParser.json) { implicit request =>
-
-      withJsonBodyAndValidId[Employments](idType, idValue, startDate, endDate, useCase) {
-        jsonBody =>
-          employmentsService.create(
-            idType,
-            idValue,
-            startDate,
-            endDate,
-            useCase,
-            jsonBody
-          ) map (e => Created(Json.toJson(e)))
+      withJsonBodyAndValidId[Employments](idType, idValue, startDate, endDate, useCase) { jsonBody =>
+        employmentsService.create(
+          idType,
+          idValue,
+          startDate,
+          endDate,
+          useCase,
+          jsonBody
+        ) map (e => Created(Json.toJson(e)))
       } recover recovery
     }
-  }
 
-  def retrieve(idType: String,
-               idValue: String,
-               startDate: String,
-               endDate: String,
-               fields: Option[String],
-               filter: Option[String]): Action[AnyContent] = loggingAction.async { _ =>
+  def retrieve(
+    idType: String,
+    idValue: String,
+    startDate: String,
+    endDate: String,
+    fields: Option[String],
+    filter: Option[String]): Action[AnyContent] = loggingAction.async { _ =>
     employmentsService
       .get(idType, idValue, startDate, endDate, fields, filter)
       .map {
         case Some(value) => value
-        case None => Employments(Seq.empty)
+        case None        => Employments(Seq.empty)
       }
       .map { employments =>
         Ok(FieldFilter.toFilteredJson(employments, fields))

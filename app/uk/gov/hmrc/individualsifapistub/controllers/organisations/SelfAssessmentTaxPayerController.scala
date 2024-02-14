@@ -29,28 +29,28 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class SelfAssessmentTaxPayerController @Inject()(
-                                                       loggingAction: LoggingAction,
-                                                       bodyParsers: PlayBodyParsers,
-                                                       cc: ControllerComponents,
-                                                       selfAssessmentTaxPayerService: SelfAssessmentTaxPayerService,
-                                                       testUserConnector: ApiPlatformTestUserConnector)
-                                                     (implicit val ec: ExecutionContext)
-  extends CommonController(cc) {
+  loggingAction: LoggingAction,
+  bodyParsers: PlayBodyParsers,
+  cc: ControllerComponents,
+  selfAssessmentTaxPayerService: SelfAssessmentTaxPayerService,
+  testUserConnector: ApiPlatformTestUserConnector)(implicit val ec: ExecutionContext)
+    extends CommonController(cc) {
 
-  def create(utr: String): Action[JsValue] = {
+  def create(utr: String): Action[JsValue] =
     loggingAction.async(bodyParsers.json) { implicit request =>
       withJsonBody[SelfAssessmentTaxPayer] { body =>
-        selfAssessmentTaxPayerService.create(body).map(
-          x => Created(Json.toJson(x))
-        ) recover recovery
+        selfAssessmentTaxPayerService
+          .create(body)
+          .map(
+            x => Created(Json.toJson(x))
+          ) recover recovery
       }
     }
-  }
 
   def retrieve(utr: String): Action[AnyContent] = loggingAction.async { implicit request =>
     testUserConnector.getOrganisationBySaUtr(utr).map {
       case Some(response) => Ok(Json.toJson(SelfAssessmentTaxPayer.fromApiPlatformTestUser(response)))
-      case None => NotFound
+      case None           => NotFound
     } recover retrievalRecovery
   }
 }

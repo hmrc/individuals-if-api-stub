@@ -36,45 +36,49 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext)
-  extends PlayMongoRepository[EmploymentEntry](collectionName = "employment",
-    mongoComponent = mongo,
-    domainFormat = EmploymentEntry.format,
-    indexes = Seq(
-      IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
-    )) with Logging {
-  def create(idType: String,
-             idValue: String,
-             startDate: Option[String],
-             endDate: Option[String],
-             useCase: Option[String],
-             employments: Employments): Future[Employments] = {
+    extends PlayMongoRepository[EmploymentEntry](
+      collectionName = "employment",
+      mongoComponent = mongo,
+      domainFormat = EmploymentEntry.format,
+      indexes = Seq(
+        IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
+      )
+    ) with Logging {
+  def create(
+    idType: String,
+    idValue: String,
+    startDate: Option[String],
+    endDate: Option[String],
+    useCase: Option[String],
+    employments: Employments): Future[Employments] = {
     val useCaseMap = Map(
-      "LAA-C1" -> "LAA-C1_LAA-C2",
-      "LAA-C2" -> "LAA-C1_LAA-C2",
-      "LAA-C3" -> "LAA-C3_LSANI-C1_LSANI-C3",
+      "LAA-C1"   -> "LAA-C1_LAA-C2",
+      "LAA-C2"   -> "LAA-C1_LAA-C2",
+      "LAA-C3"   -> "LAA-C3_LSANI-C1_LSANI-C3",
       "LSANI-C1" -> "LAA-C3_LSANI-C1_LSANI-C3",
       "LSANI-C3" -> "LAA-C3_LSANI-C1_LSANI-C3",
       "HMCTS-C2" -> "HMCTS-C2_HMCTS-C3",
       "HMCTS-C3" -> "HMCTS-C2_HMCTS-C3",
-      "HO-RP2" -> "HO-RP2",
-      "HO-ECP" -> "HO-ECP",
-      "HO-V2" -> "HO-V2"
+      "HO-RP2"   -> "HO-RP2",
+      "HO-ECP"   -> "HO-ECP",
+      "HO-V2"    -> "HO-V2"
     )
 
     val ident = IdType.parse(idType) match {
       case Nino => Identifier(Some(idValue), None, startDate, endDate, useCase)
-      case Trn => Identifier(None, Some(idValue), startDate, endDate, useCase)
+      case Trn  => Identifier(None, Some(idValue), startDate, endDate, useCase)
     }
 
     val filterKey = useCase match {
       case Some("HO-RP2") => convertToFilterKey(employments)
-      case _ => ""
+      case _              => ""
     }
 
     val tag = useCaseMap.getOrElse(useCase.mkString, useCase.mkString)
-    val id = s"${ ident.nino.getOrElse(ident.trn.get) }-${startDate.mkString}-${ endDate.mkString }-$tag$filterKey-${ UUID.randomUUID() }"
+    val id =
+      s"${ident.nino.getOrElse(ident.trn.get)}-${startDate.mkString}-${endDate.mkString}-$tag$filterKey-${UUID.randomUUID()}"
 
-    logger.info(s"Insert for cache key: $id - Employments: ${ Json.toJson(employments.employments) }")
+    logger.info(s"Insert for cache key: $id - Employments: ${Json.toJson(employments.employments)}")
 
     collection
       .insertOne(EmploymentEntry(id, employments.employments, Some(idValue)))
@@ -85,33 +89,45 @@ class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit ec: Executi
       }
   }
 
-  def findByIdAndType(idType: String,
-                      idValue: String,
-                      startDateStr: String,
-                      endDateStr: String,
-                      fields: Option[String],
-                      filter: Option[String]): Future[Option[Employments]] = {
+  def findByIdAndType(
+    idType: String,
+    idValue: String,
+    startDateStr: String,
+    endDateStr: String,
+    fields: Option[String],
+    filter: Option[String]): Future[Option[Employments]] = {
     val fieldsMap = Map(
-      "employments(employment(endDate,startDate))" -> "LAA-C1_LAA-C2",
-      "employments(employer(name),employment(endDate,startDate))" -> "LAA-C3_LSANI-C1_LSANI-C3",
-      "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employment(endDate,startDate))" -> "LAA-C4",
-      "employments(employment(endDate))" -> "HMCTS-C2_HMCTS-C3",
-      "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employerRef,employment(endDate,startDate))" -> "HMCTS-C4",
-      "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employment(startDate))" -> "NICTSEJO-C4",
-      "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employerRef,employment(endDate,payFrequency,startDate),payments(date,paidTaxablePay))" -> "HO-ECP",
+      "employments(employment(endDate,startDate))"                                                                                                                                -> "LAA-C1_LAA-C2",
+      "employments(employer(name),employment(endDate,startDate))"                                                                                                                 -> "LAA-C3_LSANI-C1_LSANI-C3",
+      "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employment(endDate,startDate))"                                                                 -> "LAA-C4",
+      "employments(employment(endDate))"                                                                                                                                          -> "HMCTS-C2_HMCTS-C3",
+      "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employerRef,employment(endDate,startDate))"                                                     -> "HMCTS-C4",
+      "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employment(startDate))"                                                                         -> "NICTSEJO-C4",
+      "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employerRef,employment(endDate,payFrequency,startDate),payments(date,paidTaxablePay))"          -> "HO-ECP",
       "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employerRef,employment(endDate,payFrequency,startDate),payments(date,paidTaxablePay))_filtered" -> "HO-RP2",
-      "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employerRef,employment(endDate,payFrequency,startDate))" -> "HO-V2"
+      "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employerRef,employment(endDate,payFrequency,startDate))"                                        -> "HO-V2"
     )
 
-    val useCase: Option[String] = fields.flatMap(value => fieldsMap.get(value + (if (filter.isDefined) "_filtered" else "")))
+    val useCase: Option[String] =
+      fields.flatMap(value => fieldsMap.get(value + (if (filter.isDefined) "_filtered" else "")))
 
     val ident = IdType.parse(idType) match {
-      case Nino => Identifier(
-        Some(idValue), None, Some(startDateStr), Some(endDateStr), useCase
-      )
-      case Trn => Identifier(
-        None, Some(idValue), Some(startDateStr), Some(endDateStr), useCase
-      )
+      case Nino =>
+        Identifier(
+          Some(idValue),
+          None,
+          Some(startDateStr),
+          Some(endDateStr),
+          useCase
+        )
+      case Trn =>
+        Identifier(
+          None,
+          Some(idValue),
+          Some(startDateStr),
+          Some(endDateStr),
+          useCase
+        )
     }
 
     val mappedUseCase = if (filter.isDefined) {
@@ -120,7 +136,7 @@ class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit ec: Executi
       useCase
     }
 
-    val id = s"${ ident.nino.getOrElse(ident.trn.get) }-$startDateStr-$endDateStr-${ mappedUseCase.getOrElse("TEST") }"
+    val id = s"${ident.nino.getOrElse(ident.trn.get)}-$startDateStr-$endDateStr-${mappedUseCase.getOrElse("TEST")}"
 
     logger.info(s"Fetch employments for cache key: $id")
 
@@ -134,19 +150,21 @@ class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit ec: Executi
         val employments = employmentEntries
           .flatMap(entry => entry.employments)
           .groupBy(employment => (employment.employer, employment.employerRef, employment.employment))
-          .flatMap { case ((employer, employerRef, employmentDetail), employments) =>
-            if(!filterByEmployerRef || (employerRef.nonEmpty && filter.exists(_.contains(employerRef.mkString)))) {
-              val interval = Dates.toInterval(startDate, endDate)
-              val payments = employments
-                .flatMap(_.payments.getOrElse(Seq.empty))
-                .filter(payment => payment.date.exists(date => interval.contains(date.atStartOfDay(ZoneId.systemDefault()).toInstant.toEpochMilli)))
-              if(payments.nonEmpty || employmentDateOverlaps(employmentDetail, startDate, endDate))
-                Some(Employment(employer, employerRef, employmentDetail, payments.headOption.map(_ => payments)))
-              else
+          .flatMap {
+            case ((employer, employerRef, employmentDetail), employments) =>
+              if (!filterByEmployerRef || (employerRef.nonEmpty && filter.exists(_.contains(employerRef.mkString)))) {
+                val interval = Dates.toInterval(startDate, endDate)
+                val payments = employments
+                  .flatMap(_.payments.getOrElse(Seq.empty))
+                  .filter(payment =>
+                    payment.date.exists(date =>
+                      interval.contains(date.atStartOfDay(ZoneId.systemDefault()).toInstant.toEpochMilli)))
+                if (payments.nonEmpty || employmentDateOverlaps(employmentDetail, startDate, endDate))
+                  Some(Employment(employer, employerRef, employmentDetail, payments.headOption.map(_ => payments)))
+                else
+                  None
+              } else
                 None
-            }
-            else
-              None
           }
           .toSeq
 
@@ -174,11 +192,13 @@ class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit ec: Executi
   }
 
   // this is a workaround to make sure that an employment overlaps the queried time interval
-  private def employmentDateOverlaps(employmentDetail: Option[EmploymentDetail], startDate: LocalDate, endDate: LocalDate): Boolean = {
+  private def employmentDateOverlaps(
+    employmentDetail: Option[EmploymentDetail],
+    startDate: LocalDate,
+    endDate: LocalDate): Boolean =
     employmentDetail.exists { detail =>
       val employmentInterval = Dates.toInterval(detail.startDate.getOrElse("1900-01-01"), detail.endDate)
       val queryInterval = Dates.toInterval(startDate, endDate)
       queryInterval.overlaps(employmentInterval)
     }
-  }
 }

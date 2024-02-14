@@ -51,26 +51,24 @@ object VatInformation {
 }
 
 case class VatInformationSimplified(organisationName: String, addressLine1: String, postcode: String) {
-  def toVatInformation: VatInformation = {
+  def toVatInformation: VatInformation =
     VatInformation(
       VatApprovedInformation(
         VatCustomerDetails(organisationName),
         VatPPOB(VatAddress(addressLine1, postcode))
       )
     )
-  }
 }
 
 object VatInformationSimplified {
   implicit val format: OFormat[VatInformationSimplified] = Json.format[VatInformationSimplified]
 
-  def fromVatInformation(vatInformation: VatInformation): VatInformationSimplified = {
+  def fromVatInformation(vatInformation: VatInformation): VatInformationSimplified =
     VatInformationSimplified(
       vatInformation.approvedInformation.customerDetails.organisationName,
       vatInformation.approvedInformation.PPOB.address.line1,
       vatInformation.approvedInformation.PPOB.address.postCode
     )
-  }
 }
 
 case class VatInformationEntry(id: String, vatInformation: VatInformation, createdAt: LocalDateTime)

@@ -45,11 +45,11 @@ class TaxCreditsRepositorySpec extends RepositoryTestHelper {
 
     "have a unique index on nino and trn" in {
 
-      repository.indexes.find{ i =>
+      repository.indexes.find { i =>
         i.getOptions.getName.contains("id") &&
-          i.getKeys.toBsonDocument.getFirstKey == "id" &&
-          i.getOptions.isBackground &&
-          i.getOptions.isUnique
+        i.getKeys.toBsonDocument.getFirstKey == "id" &&
+        i.getOptions.isBackground &&
+        i.getOptions.isUnique
       } should not be None
     }
 

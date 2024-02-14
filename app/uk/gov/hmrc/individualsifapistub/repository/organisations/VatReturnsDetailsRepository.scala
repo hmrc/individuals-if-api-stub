@@ -31,15 +31,15 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class VatReturnsDetailsRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext)
-  extends PlayMongoRepository[VatReturnsDetailsEntry](
-    mongoComponent = mongo,
-    collectionName = "vat-returns-details",
-    domainFormat = VatReturnsDetailsEntry.format,
-    indexes = Seq(
-      IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true)),
-      IndexModel(ascending("createdAt"), IndexOptions().background(true).expireAfter(14, DAYS))
-    )
-  ) {
+    extends PlayMongoRepository[VatReturnsDetailsEntry](
+      mongoComponent = mongo,
+      collectionName = "vat-returns-details",
+      domainFormat = VatReturnsDetailsEntry.format,
+      indexes = Seq(
+        IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true)),
+        IndexModel(ascending("createdAt"), IndexOptions().background(true).expireAfter(14, DAYS))
+      )
+    ) {
   def create(entry: VatReturnsDetailsEntry): Future[VatReturnsDetailsEntry] =
     collection
       .insertOne(entry)

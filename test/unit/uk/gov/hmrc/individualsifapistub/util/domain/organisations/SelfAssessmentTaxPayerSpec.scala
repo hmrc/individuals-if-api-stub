@@ -151,25 +151,27 @@ class SelfAssessmentTaxPayerSpec extends UnitSpec {
     val testIndividual = TestIndividual(
       saUtr = Some(utr),
       taxpayerType = Some("Individual"),
-      organisationDetails = Some(TestOrganisationDetails(
-        name = "Barry Barryson",
-        address = TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")
-      ))
+      organisationDetails = Some(
+        TestOrganisationDetails(
+          name = "Barry Barryson",
+          address = TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")
+        ))
     )
 
     val expectedResult = SelfAssessmentTaxPayer(
       utr.utr,
       "Individual",
-      Seq(TaxPayerDetails(
-        "Barry Barryson",
-        None,
-        Address(
-          Some("Capital Tower"),
-          Some("Aberdeen"),
+      Seq(
+        TaxPayerDetails(
+          "Barry Barryson",
           None,
-          None,
-          Some("SW1 4DQ")
-      )))
+          Address(
+            Some("Capital Tower"),
+            Some("Aberdeen"),
+            None,
+            None,
+            Some("SW1 4DQ")
+          )))
     )
 
     val result = SelfAssessmentTaxPayer.fromApiPlatformTestUser(testIndividual)

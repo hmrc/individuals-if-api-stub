@@ -21,7 +21,7 @@ import uk.gov.hmrc.individualsifapistub.domain.individuals._
 import java.time.LocalDate
 
 trait IncomePayeHelpers {
-  def createValidPayeEntry() = {
+  def createValidPayeEntry() =
     PayeEntry(
       Some("K971"),
       Some("36"),
@@ -46,9 +46,8 @@ trait IncomePayeHelpers {
       Some(createValidTotalEmployerNics()),
       Some(createValidAdditionalFields())
     )
-  }
 
-  def createValidPayeHOV2FieldsEntry() = {
+  def createValidPayeHOV2FieldsEntry() =
     PayeEntry(
       None,
       None,
@@ -73,9 +72,8 @@ trait IncomePayeHelpers {
       None,
       None
     )
-  }
 
-  private def createValidEmployeeNics() = {
+  private def createValidEmployeeNics() =
     EmployeeNics(
       Some(15797.45),
       Some(13170.69),
@@ -86,9 +84,9 @@ trait IncomePayeHelpers {
       Some(110849.27),
       Some(162081.23)
     )
-  }
 
-  private def createValidEmployeePensionContribs() = EmployeePensionContribs(Some(169731.51), Some(173987.07), Some(822317.49), Some(818841.65))
+  private def createValidEmployeePensionContribs() =
+    EmployeePensionContribs(Some(169731.51), Some(173987.07), Some(822317.49), Some(818841.65))
 
   private def createValidBenefits() = Benefits(Some(506328.1), Some(246594.83))
 

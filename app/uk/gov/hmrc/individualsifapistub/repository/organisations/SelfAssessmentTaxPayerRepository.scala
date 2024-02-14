@@ -30,14 +30,14 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SelfAssessmentTaxPayerRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext)
-  extends PlayMongoRepository[SATaxPayerEntry](
-    mongoComponent = mongo,
-    collectionName = "self-assessment-tax-payer",
-    domainFormat = SATaxPayerEntry.format,
-    indexes = Seq(
-      IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
-    )
-  ) {
+    extends PlayMongoRepository[SATaxPayerEntry](
+      mongoComponent = mongo,
+      collectionName = "self-assessment-tax-payer",
+      domainFormat = SATaxPayerEntry.format,
+      indexes = Seq(
+        IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
+      )
+    ) {
 
   def create(request: SelfAssessmentTaxPayer): Future[SelfAssessmentTaxPayer] = {
     val response = SelfAssessmentTaxPayer(request.utr, request.taxPayerType, request.taxPayerDetails)

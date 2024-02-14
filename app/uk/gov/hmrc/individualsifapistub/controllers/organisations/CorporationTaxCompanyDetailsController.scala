@@ -29,28 +29,28 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class CorporationTaxCompanyDetailsController @Inject()(
-                                                       loggingAction: LoggingAction,
-                                                       bodyParsers: PlayBodyParsers,
-                                                       cc: ControllerComponents,
-                                                       corporationTaxCompanyDetailsService: CorporationTaxCompanyDetailsService,
-                                                       testUserConnector: ApiPlatformTestUserConnector)
-                                                      (implicit val ec: ExecutionContext)
-  extends CommonController(cc) {
+  loggingAction: LoggingAction,
+  bodyParsers: PlayBodyParsers,
+  cc: ControllerComponents,
+  corporationTaxCompanyDetailsService: CorporationTaxCompanyDetailsService,
+  testUserConnector: ApiPlatformTestUserConnector)(implicit val ec: ExecutionContext)
+    extends CommonController(cc) {
 
-  def create(crn: String): Action[JsValue] = {
+  def create(crn: String): Action[JsValue] =
     loggingAction.async(bodyParsers.json) { implicit request =>
       withJsonBody[CorporationTaxCompanyDetails] { body =>
-        corporationTaxCompanyDetailsService.create(body).map(
-          x => Created(Json.toJson(x))
-        ) recover recovery
+        corporationTaxCompanyDetailsService
+          .create(body)
+          .map(
+            x => Created(Json.toJson(x))
+          ) recover recovery
       }
     }
-  }
 
   def retrieve(crn: String): Action[AnyContent] = loggingAction.async { implicit request =>
     testUserConnector.getOrganisationByCrn(crn).map {
       case Some(response) => Ok(Json.toJson(CorporationTaxCompanyDetails.fromApiPlatformTestUser(response)))
-      case None => NotFound
+      case None           => NotFound
     } recover retrievalRecovery
   }
 }

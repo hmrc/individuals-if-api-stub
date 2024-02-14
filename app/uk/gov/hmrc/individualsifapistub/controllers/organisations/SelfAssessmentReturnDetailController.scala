@@ -28,28 +28,29 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class SelfAssessmentReturnDetailController @Inject()(
-                                                      loggingAction: LoggingAction,
-                                                      bodyParsers: PlayBodyParsers,
-                                                      cc: ControllerComponents,
-                                                      selfAssessmentReturnDetailService: SelfAssessmentReturnDetailService)
-                                                    (implicit val ec: ExecutionContext)
-  extends CommonController(cc) {
+  loggingAction: LoggingAction,
+  bodyParsers: PlayBodyParsers,
+  cc: ControllerComponents,
+  selfAssessmentReturnDetailService: SelfAssessmentReturnDetailService)(implicit val ec: ExecutionContext)
+    extends CommonController(cc) {
 
-  def create(utr: String): Action[JsValue] = {
+  def create(utr: String): Action[JsValue] =
     loggingAction.async(bodyParsers.json) { implicit request =>
       withJsonBody[CreateSelfAssessmentReturnDetailRequest] { body =>
-        selfAssessmentReturnDetailService.create(body).map(
-          x => Created(Json.toJson(x))
-        ) recover recovery
+        selfAssessmentReturnDetailService
+          .create(body)
+          .map(
+            x => Created(Json.toJson(x))
+          ) recover recovery
       }
     }
-  }
 
   def retrieve(utr: String, fields: Option[String] = None): Action[AnyContent] = loggingAction.async { _ =>
-    selfAssessmentReturnDetailService.get(utr)
+    selfAssessmentReturnDetailService
+      .get(utr)
       .map {
         case Some(response) => Ok(FieldFilter.toFilteredJson(response, fields))
-        case None => NotFound
+        case None           => NotFound
       }
       .recover(recovery)
   }

@@ -22,12 +22,9 @@ import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomePaye
 import uk.gov.hmrc.individualsifapistub.repository.individuals.IncomePayeRepository
 import unit.uk.gov.hmrc.individualsifapistub.util.testUtils.IncomePayeHelpers
 
-class IncomePayeRepositorySpec
-    extends RepositoryTestHelper
-    with IncomePayeHelpers {
+class IncomePayeRepositorySpec extends RepositoryTestHelper with IncomePayeHelpers {
 
-  override lazy val fakeApplication = buildFakeApplication(
-    Configuration("mongodb.uri" -> mongoUri))
+  override lazy val fakeApplication = buildFakeApplication(Configuration("mongodb.uri" -> mongoUri))
 
   val repository = fakeApplication.injector.instanceOf[IncomePayeRepository]
 
@@ -45,11 +42,11 @@ class IncomePayeRepositorySpec
 
     "have a unique index on nino and trn" in {
 
-      repository.indexes.find{ i =>
+      repository.indexes.find { i =>
         i.getOptions.getName.contains("id") &&
-          i.getKeys.toBsonDocument.getFirstKey == "id" &&
-          i.getOptions.isBackground &&
-          i.getOptions.isUnique
+        i.getKeys.toBsonDocument.getFirstKey == "id" &&
+        i.getOptions.isBackground &&
+        i.getOptions.isUnique
       } should not be None
     }
 

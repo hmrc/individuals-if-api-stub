@@ -32,15 +32,18 @@ object NumberOfEmployeeCounts {
     (
       (JsPath \ "dateTaken").read[String](pattern(dateTakenPattern, "Invalid dateTaken format")) and
         (JsPath \ "employeeCount").read[Int]
-      )(NumberOfEmployeeCounts.apply _),
+    )(NumberOfEmployeeCounts.apply _),
     (
       (JsPath \ "dateTaken").write[String] and
         (JsPath \ "employeeCount").write[Int]
-      )(unlift(NumberOfEmployeeCounts.unapply))
+    )(unlift(NumberOfEmployeeCounts.unapply))
   )
 }
 
-case class NumberOfEmployeeReferences(districtNumber: String, payeReference: String, counts: Seq[NumberOfEmployeeCounts])
+case class NumberOfEmployeeReferences(
+  districtNumber: String,
+  payeReference: String,
+  counts: Seq[NumberOfEmployeeCounts])
 
 object NumberOfEmployeeReferences {
   implicit val format: Format[NumberOfEmployeeReferences] = Format(
@@ -48,12 +51,12 @@ object NumberOfEmployeeReferences {
       (JsPath \ "districtNumber").read[String](pattern(districtNumberPattern, "District number is invalid")) and
         (JsPath \ "payeReference").read[String](pattern(payeRefPattern, "payeReference is invalid")) and
         (JsPath \ "counts").read[Seq[NumberOfEmployeeCounts]]
-      )(NumberOfEmployeeReferences.apply _),
+    )(NumberOfEmployeeReferences.apply _),
     (
       (JsPath \ "districtNumber").write[String] and
         (JsPath \ "payeReference").write[String] and
         (JsPath \ "counts").write[Seq[NumberOfEmployeeCounts]]
-      )(unlift(NumberOfEmployeeReferences.unapply))
+    )(unlift(NumberOfEmployeeReferences.unapply))
   )
 }
 
@@ -64,15 +67,18 @@ object NumberOfEmployeeReferencesRequest {
     (
       (JsPath \ "districtNumber").read[String](pattern(districtNumberPattern, "District number is invalid")) and
         (JsPath \ "payeReference").read[String](pattern(payeRefPattern, "payeReference is invalid"))
-      )(NumberOfEmployeeReferencesRequest.apply _),
+    )(NumberOfEmployeeReferencesRequest.apply _),
     (
       (JsPath \ "districtNumber").write[String] and
         (JsPath \ "payeReference").write[String]
-      )(unlift(NumberOfEmployeeReferencesRequest.unapply))
+    )(unlift(NumberOfEmployeeReferencesRequest.unapply))
   )
 }
 
-case class NumberOfEmployeesRequest(startDate: String, endDate: String, references: Seq[NumberOfEmployeeReferencesRequest])
+case class NumberOfEmployeesRequest(
+  startDate: String,
+  endDate: String,
+  references: Seq[NumberOfEmployeeReferencesRequest])
 
 object NumberOfEmployeesRequest {
   implicit val format: Format[NumberOfEmployeesRequest] = Format(
@@ -80,12 +86,12 @@ object NumberOfEmployeesRequest {
       (JsPath \ "startDate").read[String](pattern(datePattern, "startDate is invalid")) and
         (JsPath \ "endDate").read[String](pattern(datePattern, "endDate is invalid")) and
         (JsPath \ "references").read[Seq[NumberOfEmployeeReferencesRequest]]
-      )(NumberOfEmployeesRequest.apply _),
+    )(NumberOfEmployeesRequest.apply _),
     (
       (JsPath \ "startDate").write[String] and
         (JsPath \ "endDate").write[String] and
         (JsPath \ "references").write[Seq[NumberOfEmployeeReferencesRequest]]
-      )(unlift(NumberOfEmployeesRequest.unapply))
+    )(unlift(NumberOfEmployeesRequest.unapply))
   )
 }
 
@@ -97,23 +103,24 @@ object NumberOfEmployeesResponse {
       (JsPath \ "startDate").read[String](pattern(datePattern, "startDate is invalid")) and
         (JsPath \ "endDate").read[String](pattern(datePattern, "endDate is invalid")) and
         (JsPath \ "references").read[Seq[NumberOfEmployeeReferences]]
-      )(NumberOfEmployeesResponse.apply _),
+    )(NumberOfEmployeesResponse.apply _),
     (
       (JsPath \ "startDate").write[String] and
         (JsPath \ "endDate").write[String] and
         (JsPath \ "references").write[Seq[NumberOfEmployeeReferences]]
-      )(unlift(NumberOfEmployeesResponse.unapply))
+    )(unlift(NumberOfEmployeesResponse.unapply))
   )
 }
 
 object NumberOfEmployees {
   val districtNumberPattern: Regex = "^[0-9]{3}$".r
   val payeRefPattern: Regex = "^[a-zA-Z0-9]{1,10}$".r
-  val datePattern: Regex = "^(((19|20)([2468][048]|[13579][26]|0[48])|2000)[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)[-](0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-](0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}[-]02[-](0[1-9]|1[0-9]|2[0-8])))$".r
+  val datePattern: Regex =
+    "^(((19|20)([2468][048]|[13579][26]|0[48])|2000)[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)[-](0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-](0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}[-]02[-](0[1-9]|1[0-9]|2[0-8])))$".r
 }
 
 case class NumberOfEmployeesEntry(id: String, response: NumberOfEmployeesResponse)
 
-object NumberOfEmployeesEntry{
+object NumberOfEmployeesEntry {
   implicit val format: OFormat[NumberOfEmployeesEntry] = Json.format[NumberOfEmployeesEntry]
 }

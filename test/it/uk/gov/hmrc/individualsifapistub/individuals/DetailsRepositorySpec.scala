@@ -30,7 +30,8 @@ class DetailsRepositorySpec extends RepositoryTestHelper with TestHelpers {
   val fields = "some(values)"
 
   val request = CreateDetailsRequest(
-    Some(Seq(ContactDetail(9, "MOBILE TELEPHONE", "07123 987654"), ContactDetail(9, "MOBILE TELEPHONE", "07123 987655"))),
+    Some(
+      Seq(ContactDetail(9, "MOBILE TELEPHONE", "07123 987654"), ContactDetail(9, "MOBILE TELEPHONE", "07123 987655"))),
     None
   )
 
@@ -41,9 +42,9 @@ class DetailsRepositorySpec extends RepositoryTestHelper with TestHelpers {
       repository.indexes
         .find { i =>
           i.getOptions.getName.contains("id") &&
-            i.getKeys.toBsonDocument.getFirstKey == "details" &&
-            i.getOptions.isBackground &&
-            i.getOptions.isUnique
+          i.getKeys.toBsonDocument.getFirstKey == "details" &&
+          i.getOptions.isBackground &&
+          i.getOptions.isUnique
         } should not be None
     }
 

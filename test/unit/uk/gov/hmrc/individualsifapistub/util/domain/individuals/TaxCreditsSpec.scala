@@ -83,18 +83,18 @@ class TaxCreditsSpec extends UnitSpec with TestHelpers {
     "read from JSON successfully" in {
 
       val paymentsJson: String = """{
-       |  "periodStartDate" : "2012-12-12",
-       |  "periodEndDate" : "2012-12-12",
-       |  "startDate" : "2012-12-12",
-       |  "endDate" : "2012-12-12",
-       |  "status" : "A",
-       |  "postedDate" : "2012-12-12",
-       |  "nextDueDate" : "2012-12-12",
-       |  "frequency" : 12,
-       |  "tcType" : "ETC",
-       |  "amount" : 1234134123,
-       |  "method" : "R"
-       |}""".stripMargin
+                                   |  "periodStartDate" : "2012-12-12",
+                                   |  "periodEndDate" : "2012-12-12",
+                                   |  "startDate" : "2012-12-12",
+                                   |  "endDate" : "2012-12-12",
+                                   |  "status" : "A",
+                                   |  "postedDate" : "2012-12-12",
+                                   |  "nextDueDate" : "2012-12-12",
+                                   |  "frequency" : 12,
+                                   |  "tcType" : "ETC",
+                                   |  "amount" : 1234134123,
+                                   |  "method" : "R"
+                                   |}""".stripMargin
 
       val result = Json.parse(paymentsJson).validate[Payments]
       result.isSuccess shouldBe true
@@ -153,7 +153,7 @@ class TaxCreditsSpec extends UnitSpec with TestHelpers {
 
     "read from JSON successfully" in {
 
-      val childTaxCreditJson:String =
+      val childTaxCreditJson: String =
         """
           |{
           |  "childCareAmount" : 12345,
@@ -174,24 +174,26 @@ class TaxCreditsSpec extends UnitSpec with TestHelpers {
     "fail validation" when {
 
       "not a multiple of 0.01" in {
-        val result = Json.toJson(validChildTaxCredit.copy(childCareAmount = Some(123.4312123123123))).validate[ChildTaxCredit]
+        val result =
+          Json.toJson(validChildTaxCredit.copy(childCareAmount = Some(123.4312123123123))).validate[ChildTaxCredit]
         result.isError shouldBe true
       }
-
 
       "value is smaller than min value" in {
-        val result = Json.toJson(validChildTaxCredit.copy(childCareAmount = Some(TaxCredits.minPaymentValue - 1.0))).validate[ChildTaxCredit]
+        val result = Json
+          .toJson(validChildTaxCredit.copy(childCareAmount = Some(TaxCredits.minPaymentValue - 1.0)))
+          .validate[ChildTaxCredit]
         result.isError shouldBe true
       }
 
-
       "value is larger than max value" in {
-        val result = Json.toJson(validChildTaxCredit.copy(childCareAmount = Some(TaxCredits.maxPaymentValue + 1.0))).validate[ChildTaxCredit]
+        val result = Json
+          .toJson(validChildTaxCredit.copy(childCareAmount = Some(TaxCredits.maxPaymentValue + 1.0)))
+          .validate[ChildTaxCredit]
         result.isError shouldBe true
       }
     }
   }
-
 
   "WorkTaxCredit" should {
     "write to JSON successfully" in {
@@ -265,7 +267,6 @@ class TaxCreditsSpec extends UnitSpec with TestHelpers {
       result.get shouldBe validAwards
     }
   }
-
 
   "Application" should {
     "write to JSON successfully" in {

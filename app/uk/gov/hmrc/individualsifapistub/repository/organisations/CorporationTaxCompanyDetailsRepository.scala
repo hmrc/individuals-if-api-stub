@@ -30,17 +30,18 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CorporationTaxCompanyDetailsRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext)
-  extends PlayMongoRepository[CTCompanyDetailsEntry](
-    mongoComponent = mongo,
-    collectionName = "corporation-tax-company-details",
-    domainFormat = CTCompanyDetailsEntry.format,
-    indexes = Seq(
-      IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
-    )
-  ) {
+    extends PlayMongoRepository[CTCompanyDetailsEntry](
+      mongoComponent = mongo,
+      collectionName = "corporation-tax-company-details",
+      domainFormat = CTCompanyDetailsEntry.format,
+      indexes = Seq(
+        IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
+      )
+    ) {
 
   def create(request: CorporationTaxCompanyDetails): Future[CorporationTaxCompanyDetails] = {
-    val response = CorporationTaxCompanyDetails(request.utr, request.crn, request.registeredDetails, request.communicationDetails)
+    val response =
+      CorporationTaxCompanyDetails(request.utr, request.crn, request.registeredDetails, request.communicationDetails)
     val entry = CTCompanyDetailsEntry(request.crn, response)
 
     collection
@@ -52,10 +53,9 @@ class CorporationTaxCompanyDetailsRepository @Inject()(mongo: MongoComponent)(im
       }
   }
 
-  def find(crn: String): Future[Option[CorporationTaxCompanyDetails]] = {
+  def find(crn: String): Future[Option[CorporationTaxCompanyDetails]] =
     collection
       .find(equal("id", crn))
       .headOption()
       .map(x => x.map(_.response))
-  }
 }

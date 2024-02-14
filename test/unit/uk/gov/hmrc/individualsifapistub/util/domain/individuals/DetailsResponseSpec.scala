@@ -47,9 +47,9 @@ class DetailsResponseSpec extends UnitSpec with TestHelpers {
   )
 
   val invalidNinoDetails = Identifier(Some("QWERTYUIOP"), None, Some(startDate), Some(endDate), Some(useCase))
-  val invalidTrnDetails = Identifier(None, Some("QWERTYUIOP"),Some(startDate), Some(endDate), Some(useCase))
+  val invalidTrnDetails = Identifier(None, Some("QWERTYUIOP"), Some(startDate), Some(endDate), Some(useCase))
   val invalidContactDetail = ContactDetail(-42, "abcdefghijklmnopqrstuvwxyz0123456789", "a")
-  val invalidResidence = Residence(residenceType =  Some(""), address = generateAddress(2))
+  val invalidResidence = Residence(residenceType = Some(""), address = generateAddress(2))
   val invalidDetailsResponse = DetailsResponse(
     idTrn,
     Some(Seq(invalidContactDetail)),
@@ -59,28 +59,26 @@ class DetailsResponseSpec extends UnitSpec with TestHelpers {
   "Details" should {
     "Write to JSON when only nino provided" in {
       val result = Json.toJson(ninoDetails)
-      val expectedJson = Json.parse(
-        """
-          |{
-          |  "nino":"XH123456A",
-          |  "from":"2020-01-01",
-          |  "to":"2020-21-31",
-          |  "useCase":"TEST"
-          |}
+      val expectedJson = Json.parse("""
+                                      |{
+                                      |  "nino":"XH123456A",
+                                      |  "from":"2020-01-01",
+                                      |  "to":"2020-21-31",
+                                      |  "useCase":"TEST"
+                                      |}
         """.stripMargin)
       result shouldBe expectedJson
     }
 
     "Write to JSON when only trn provided" in {
       val result = Json.toJson(trnDetails)
-      val expectedJson = Json.parse(
-        """
-          |{
-          |  "trn":"12345678",
-          |  "from":"2020-01-01",
-          |  "to":"2020-21-31",
-          |  "useCase":"TEST"
-          |}
+      val expectedJson = Json.parse("""
+                                      |{
+                                      |  "trn":"12345678",
+                                      |  "from":"2020-01-01",
+                                      |  "to":"2020-21-31",
+                                      |  "useCase":"TEST"
+                                      |}
         """.stripMargin)
 
       result shouldBe expectedJson
@@ -111,13 +109,12 @@ class DetailsResponseSpec extends UnitSpec with TestHelpers {
   "Contact details" should {
     "Write to JSON" in {
       val result = Json.toJson(contactDetail1)
-      val expectedJson = Json.parse(
-        """
-          |{
-          |  "code" : 9,
-          |  "type" : "MOBILE TELEPHONE",
-          |  "detail" : "07123 987654"
-          |}"""".stripMargin)
+      val expectedJson = Json.parse("""
+                                      |{
+                                      |  "code" : 9,
+                                      |  "type" : "MOBILE TELEPHONE",
+                                      |  "detail" : "07123 987654"
+                                      |}"""".stripMargin)
 
       result shouldBe expectedJson
     }
@@ -136,19 +133,18 @@ class DetailsResponseSpec extends UnitSpec with TestHelpers {
   "Residence details" should {
     "Write to JSON" in {
       val result = Json.toJson(residence1)
-      val expectedJson = Json.parse(
-        """
-          |{
-          |  "type" : "BASE",
-          |  "address" : {
-          |      "line1" : "line1-2",
-          |      "line2" : "line2-2",
-          |      "line3" : "line3-2",
-          |      "line4" : "line4-2",
-          |      "line5" : "line5-2",
-          |      "postcode" : "QW122QW"
-          |  }
-          |}
+      val expectedJson = Json.parse("""
+                                      |{
+                                      |  "type" : "BASE",
+                                      |  "address" : {
+                                      |      "line1" : "line1-2",
+                                      |      "line2" : "line2-2",
+                                      |      "line3" : "line3-2",
+                                      |      "line4" : "line4-2",
+                                      |      "line5" : "line5-2",
+                                      |      "postcode" : "QW122QW"
+                                      |  }
+                                      |}
         """.stripMargin)
 
       result shouldBe expectedJson
@@ -169,46 +165,45 @@ class DetailsResponseSpec extends UnitSpec with TestHelpers {
   "Details Response" should {
     "Write to JSON" in {
       val result = Json.toJson(response)
-      val expectedJson = Json.parse(
-        """
-          |  {
-          |    "details" : "XH123456A-2020-01-01-2020-21-31-TEST",
-          |     "contactDetails" : [
-          |       {
-          |         "code" : 9,
-          |         "type" : "MOBILE TELEPHONE",
-          |         "detail" : "07123 987654"
-          |       },
-          |       {
-          |         "code" : 9,
-          |         "type" : "MOBILE TELEPHONE",
-          |         "detail" : "07123 987654"
-          |       }
-          |     ],
-          |     "residence" : [
-          |       {
-          |         "type" : "BASE",
-          |         "address" : {
-          |           "line1" : "line1-2",
-          |           "line2" : "line2-2",
-          |           "line3" : "line3-2",
-          |           "line4" : "line4-2",
-          |           "line5" : "line5-2",
-          |           "postcode" : "QW122QW"
-          |          }
-          |        },
-          |        {
-          |          "type" : "NOMINATED",
-          |          "address" : {
-          |            "line1" : "line1-1",
-          |            "line2" : "line2-1",
-          |            "line3" : "line3-1",
-          |            "line4" : "line4-1",
-          |            "line5" : "line5-1",
-          |            "postcode" : "QW121QW"
-          |          }
-          |        } ]
-          |      }""".stripMargin)
+      val expectedJson = Json.parse("""
+                                      |  {
+                                      |    "details" : "XH123456A-2020-01-01-2020-21-31-TEST",
+                                      |     "contactDetails" : [
+                                      |       {
+                                      |         "code" : 9,
+                                      |         "type" : "MOBILE TELEPHONE",
+                                      |         "detail" : "07123 987654"
+                                      |       },
+                                      |       {
+                                      |         "code" : 9,
+                                      |         "type" : "MOBILE TELEPHONE",
+                                      |         "detail" : "07123 987654"
+                                      |       }
+                                      |     ],
+                                      |     "residence" : [
+                                      |       {
+                                      |         "type" : "BASE",
+                                      |         "address" : {
+                                      |           "line1" : "line1-2",
+                                      |           "line2" : "line2-2",
+                                      |           "line3" : "line3-2",
+                                      |           "line4" : "line4-2",
+                                      |           "line5" : "line5-2",
+                                      |           "postcode" : "QW122QW"
+                                      |          }
+                                      |        },
+                                      |        {
+                                      |          "type" : "NOMINATED",
+                                      |          "address" : {
+                                      |            "line1" : "line1-1",
+                                      |            "line2" : "line2-1",
+                                      |            "line3" : "line3-1",
+                                      |            "line4" : "line4-1",
+                                      |            "line5" : "line5-1",
+                                      |            "postcode" : "QW121QW"
+                                      |          }
+                                      |        } ]
+                                      |      }""".stripMargin)
 
       result shouldBe expectedJson
     }

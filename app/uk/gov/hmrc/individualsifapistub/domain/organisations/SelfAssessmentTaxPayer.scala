@@ -22,12 +22,12 @@ import play.api.libs.json.{Format, JsPath, Json, OFormat}
 import uk.gov.hmrc.individualsifapistub.domain.{TestIndividual, TestOrganisationDetails}
 
 case class Address(
-                    line1: Option[String],
-                    line2: Option[String],
-                    line3: Option[String],
-                    line4: Option[String],
-                    postcode: Option[String]
-                  )
+  line1: Option[String],
+  line2: Option[String],
+  line3: Option[String],
+  line4: Option[String],
+  postcode: Option[String]
+)
 
 object Address {
   implicit val format: Format[Address] = Format(
@@ -37,14 +37,14 @@ object Address {
         (JsPath \ "line3").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
         (JsPath \ "line4").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
         (JsPath \ "postcode").readNullable[String](minLength[String](0) keepAnd maxLength[String](10))
-      )(Address.apply _),
+    )(Address.apply _),
     (
       (JsPath \ "line1").writeNullable[String] and
         (JsPath \ "line2").writeNullable[String] and
         (JsPath \ "line3").writeNullable[String] and
         (JsPath \ "line4").writeNullable[String] and
         (JsPath \ "postcode").writeNullable[String]
-      )(unlift(Address.unapply))
+    )(unlift(Address.unapply))
   )
 }
 
@@ -56,42 +56,38 @@ object TaxPayerDetails {
   implicit val format: Format[TaxPayerDetails] = Format(
     (
       (JsPath \ "name").read[String] and
-        (JsPath \ "addressType").readNullable[String](pattern(addressTypePattern, "Address Type does not fit expected pattern")) and
+        (JsPath \ "addressType")
+          .readNullable[String](pattern(addressTypePattern, "Address Type does not fit expected pattern")) and
         (JsPath \ "address").read[Address]
-      )(TaxPayerDetails.apply _),
+    )(TaxPayerDetails.apply _),
     (
       (JsPath \ "name").write[String] and
         (JsPath \ "addressType").writeNullable[String] and
         (JsPath \ "address").write[Address]
-      )(unlift(TaxPayerDetails.unapply))
+    )(unlift(TaxPayerDetails.unapply))
   )
 }
 
 case class SelfAssessmentTaxPayer(utr: String, taxPayerType: String, taxPayerDetails: Seq[TaxPayerDetails])
 
 object SelfAssessmentTaxPayer {
-  def fromApiPlatformTestUser(testUser: TestIndividual): SelfAssessmentTaxPayer  = SelfAssessmentTaxPayer(
+  def fromApiPlatformTestUser(testUser: TestIndividual): SelfAssessmentTaxPayer = SelfAssessmentTaxPayer(
     testUser.saUtr.map(_.utr).mkString,
     testUser.taxpayerType.mkString,
     taxPayerDetails = Seq(fromOrganisationDetails(testUser.organisationDetails))
   )
 
-  private def fromOrganisationDetails(taxpayerDetails: Option[TestOrganisationDetails]) = {
+  private def fromOrganisationDetails(taxpayerDetails: Option[TestOrganisationDetails]) =
     taxpayerDetails match {
       case Some(value) =>
         TaxPayerDetails(
           name = value.name,
-          address = Address(
-            Some(value.address.line1),
-            Some(value.address.line2),
-            None,
-            None,
-            Some(value.address.postcode)),
+          address =
+            Address(Some(value.address.line1), Some(value.address.line2), None, None, Some(value.address.postcode)),
           addressType = None
         )
-      case None =>throw new Exception("taxpayerDetails are required for this operation")
+      case None => throw new Exception("taxpayerDetails are required for this operation")
     }
-  }
 
   private val utrPattern = "^[0-9]{10}$".r
   private val taxPayerTypePattern = "^[A-Z][a-zA-Z]{3,24}$".r
@@ -101,12 +97,12 @@ object SelfAssessmentTaxPayer {
       (JsPath \ "utr").read[String](pattern(utrPattern, "UTR pattern is incorrect")) and
         (JsPath \ "taxpayerType").read[String](pattern(taxPayerTypePattern, "Invalid taxpayer type")) and
         (JsPath \ "taxpayerDetails").read[Seq[TaxPayerDetails]]
-      )(SelfAssessmentTaxPayer.apply _),
+    )(SelfAssessmentTaxPayer.apply _),
     (
       (JsPath \ "utr").write[String] and
         (JsPath \ "taxpayerType").write[String] and
         (JsPath \ "taxpayerDetails").write[Seq[TaxPayerDetails]]
-      )(unlift(SelfAssessmentTaxPayer.unapply))
+    )(unlift(SelfAssessmentTaxPayer.unapply))
   )
 }
 

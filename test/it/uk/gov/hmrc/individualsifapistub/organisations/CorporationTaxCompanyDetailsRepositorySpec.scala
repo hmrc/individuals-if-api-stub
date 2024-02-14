@@ -21,32 +21,30 @@ import uk.gov.hmrc.individualsifapistub.domain.DuplicateException
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{Address, CorporationTaxCompanyDetails, Name, NameAddressDetails}
 import uk.gov.hmrc.individualsifapistub.repository.organisations.CorporationTaxCompanyDetailsRepository
 
-class CorporationTaxCompanyDetailsRepositorySpec extends RepositoryTestHelper  {
+class CorporationTaxCompanyDetailsRepositorySpec extends RepositoryTestHelper {
 
   val repository = fakeApplication.injector.instanceOf[CorporationTaxCompanyDetailsRepository]
 
-  val address = Address(
-                        Some("Alfie House"),
-                        Some("Main Street"),
-                        Some("Manchester"),
-                        Some("Londonberry"),
-                        Some("LN1 1AG"))
+  val address =
+    Address(Some("Alfie House"), Some("Main Street"), Some("Manchester"), Some("Londonberry"), Some("LN1 1AG"))
 
   val name = Name("Waitrose", "And Partners")
 
   val registeredDetails = NameAddressDetails(name, address)
   val communicationDetails = NameAddressDetails(name, address)
 
-  val request = CorporationTaxCompanyDetails("1234567890", "12345678", Some(registeredDetails), Some(communicationDetails))
-  val response = CorporationTaxCompanyDetails("1234567890", "12345678", Some(registeredDetails), Some(communicationDetails))
+  val request =
+    CorporationTaxCompanyDetails("1234567890", "12345678", Some(registeredDetails), Some(communicationDetails))
+  val response =
+    CorporationTaxCompanyDetails("1234567890", "12345678", Some(registeredDetails), Some(communicationDetails))
 
   "collection" should {
     "have a unique index on a request's crn" in {
-      repository.indexes.find{ i =>
+      repository.indexes.find { i =>
         i.getOptions.getName.contains("id") &&
-          i.getKeys.toBsonDocument.getFirstKey == "id" &&
-          i.getOptions.isBackground &&
-          i.getOptions.isUnique
+        i.getKeys.toBsonDocument.getFirstKey == "id" &&
+        i.getOptions.isBackground &&
+        i.getOptions.isUnique
       } should not be None
     }
 

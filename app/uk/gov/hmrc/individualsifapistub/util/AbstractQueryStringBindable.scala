@@ -21,7 +21,6 @@ import play.api.mvc.QueryStringBindable
 import uk.gov.hmrc.individualsifapistub.domain.ErrorInvalidRequest
 
 trait AbstractQueryStringBindable[T] extends QueryStringBindable[T] {
-  protected def errorResponse(message: String): String = {
+  protected def errorResponse(message: String): String =
     Json.toJson(ErrorInvalidRequest(message)).toString
-  }
 }

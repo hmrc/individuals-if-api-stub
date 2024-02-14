@@ -27,33 +27,31 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class TaxCreditsController @Inject()(loggingAction: LoggingAction,
-                                     bodyParsers: PlayBodyParsers,
-                                     cc: ControllerComponents,
-                                     taxCreditsService: TaxCreditsService)
-                                    (implicit val ec: ExecutionContext) extends CommonController(cc) {
+class TaxCreditsController @Inject()(
+  loggingAction: LoggingAction,
+  bodyParsers: PlayBodyParsers,
+  cc: ControllerComponents,
+  taxCreditsService: TaxCreditsService)(implicit val ec: ExecutionContext)
+    extends CommonController(cc) {
 
-  def create(idType: String,
-             idValue: String,
-             startDate: String,
-             endDate: String,
-             useCase: String): Action[JsValue] = {
+  def create(idType: String, idValue: String, startDate: String, endDate: String, useCase: String): Action[JsValue] =
     loggingAction.async(bodyParsers.json) { implicit request =>
-      withJsonBodyAndValidId[Applications](idType, idValue, Some(startDate), Some(endDate), Some(useCase)) { applications =>
-        taxCreditsService.create(idType, idValue, startDate, endDate, useCase, applications) map (
-          e => Created(Json.toJson(e)))
+      withJsonBodyAndValidId[Applications](idType, idValue, Some(startDate), Some(endDate), Some(useCase)) {
+        applications =>
+          taxCreditsService.create(idType, idValue, startDate, endDate, useCase, applications) map (e =>
+            Created(Json.toJson(e)))
       } recover recovery
     }
-  }
 
-  def retrieve(idType: String,
-               idValue: String,
-               startDate: String,
-               endDate: String,
-               fields: Option[String]): Action[AnyContent] = loggingAction.async { _ =>
+  def retrieve(
+    idType: String,
+    idValue: String,
+    startDate: String,
+    endDate: String,
+    fields: Option[String]): Action[AnyContent] = loggingAction.async { _ =>
     taxCreditsService.get(idType, idValue, startDate, endDate, fields) map {
       case Some(value) => Ok(Json.toJson(value))
-      case None => Ok(Json.toJson(Applications(Seq.empty)))
+      case None        => Ok(Json.toJson(Applications(Seq.empty)))
     } recover recovery
   }
 }

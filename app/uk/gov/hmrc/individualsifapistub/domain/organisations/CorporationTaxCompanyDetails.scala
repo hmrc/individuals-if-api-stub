@@ -28,11 +28,11 @@ object Name {
     (
       (JsPath \ "name1").read[String] and
         (JsPath \ "name2").read[String]
-      )(Name.apply _),
+    )(Name.apply _),
     (
       (JsPath \ "name1").write[String] and
         (JsPath \ "name2").write[String]
-      )(unlift(Name.unapply))
+    )(unlift(Name.unapply))
   )
 }
 
@@ -43,21 +43,25 @@ object NameAddressDetails {
     (
       (JsPath \ "name").read[Name] and
         (JsPath \ "address").read[Address]
-      )(NameAddressDetails.apply _),
+    )(NameAddressDetails.apply _),
     (
       (JsPath \ "name").write[Name] and
         (JsPath \ "address").write[Address]
-      )(unlift(NameAddressDetails.unapply))
+    )(unlift(NameAddressDetails.unapply))
   )
 }
 
-case class CorporationTaxCompanyDetails(utr: String, crn: String, registeredDetails: Option[NameAddressDetails], communicationDetails: Option[NameAddressDetails])
+case class CorporationTaxCompanyDetails(
+  utr: String,
+  crn: String,
+  registeredDetails: Option[NameAddressDetails],
+  communicationDetails: Option[NameAddressDetails])
 
 object CorporationTaxCompanyDetails {
   private val utrPattern = "^[0-9]{10}$".r
   private val crnPattern = "^[A-Z0-9]{1,10}$".r
 
-  def fromApiPlatformTestUser(testUser: TestOrganisation): CorporationTaxCompanyDetails  = CorporationTaxCompanyDetails(
+  def fromApiPlatformTestUser(testUser: TestOrganisation): CorporationTaxCompanyDetails = CorporationTaxCompanyDetails(
     testUser.ctUtr.mkString,
     testUser.crn.mkString,
     registeredDetails = Some(fromOrganisationDetails(testUser.organisationDetails)),
@@ -80,17 +84,17 @@ object CorporationTaxCompanyDetails {
         (JsPath \ "crn").read[String](pattern(crnPattern, "Inavlid CRN format")) and
         (JsPath \ "registeredDetails").readNullable[NameAddressDetails] and
         (JsPath \ "communicationDetails").readNullable[NameAddressDetails]
-      )(CorporationTaxCompanyDetails.apply _),
+    )(CorporationTaxCompanyDetails.apply _),
     (
       (JsPath \ "utr").write[String] and
         (JsPath \ "crn").write[String] and
         (JsPath \ "registeredDetails").writeNullable[NameAddressDetails] and
         (JsPath \ "communicationDetails").writeNullable[NameAddressDetails]
-      )(unlift(CorporationTaxCompanyDetails.unapply))
+    )(unlift(CorporationTaxCompanyDetails.unapply))
   )
 }
 
-case class CTCompanyDetailsEntry(id: String, response :CorporationTaxCompanyDetails)
+case class CTCompanyDetailsEntry(id: String, response: CorporationTaxCompanyDetails)
 
 object CTCompanyDetailsEntry {
   implicit val format: OFormat[CTCompanyDetailsEntry] = Json.format[CTCompanyDetailsEntry]

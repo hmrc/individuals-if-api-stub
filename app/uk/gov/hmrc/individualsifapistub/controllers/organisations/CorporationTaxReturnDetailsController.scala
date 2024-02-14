@@ -28,29 +28,31 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class CorporationTaxReturnDetailsController @Inject()(
-                                                       loggingAction: LoggingAction,
-                                                       bodyParsers: PlayBodyParsers,
-                                                       cc: ControllerComponents,
-                                                       corporationTaxReturnDetailsService: CorporationTaxReturnDetailsService)
-                                                     (implicit val ec: ExecutionContext)
-  extends CommonController(cc) {
+  loggingAction: LoggingAction,
+  bodyParsers: PlayBodyParsers,
+  cc: ControllerComponents,
+  corporationTaxReturnDetailsService: CorporationTaxReturnDetailsService)(implicit val ec: ExecutionContext)
+    extends CommonController(cc) {
 
   val emptyResponse = CorporationTaxReturnDetailsResponse("", "", "", Seq.empty)
 
   def create(utr: String): Action[JsValue] =
     loggingAction.async(bodyParsers.json) { implicit request =>
       withJsonBody[CreateCorporationTaxReturnDetailsRequest] { body =>
-        corporationTaxReturnDetailsService.create(body).map(
-          x => Created(Json.toJson(x))
-        ) recover recovery
+        corporationTaxReturnDetailsService
+          .create(body)
+          .map(
+            x => Created(Json.toJson(x))
+          ) recover recovery
       }
     }
 
   def retrieve(utr: String, fields: Option[String] = None): Action[AnyContent] = loggingAction.async { _ =>
-    corporationTaxReturnDetailsService.get(utr)
+    corporationTaxReturnDetailsService
+      .get(utr)
       .map {
         case Some(response) => response
-        case None => emptyResponse
+        case None           => emptyResponse
       }
       .map(response => Ok(FieldFilter.toFilteredJson(response, fields)))
       .recover(recovery)

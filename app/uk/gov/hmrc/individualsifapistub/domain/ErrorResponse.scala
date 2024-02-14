@@ -20,10 +20,7 @@ import play.api.http.Status._
 import play.api.libs.json._
 import play.api.mvc.{Result, Results}
 
-sealed abstract class ErrorResponse(
-                                     val httpStatusCode: Int,
-                                     val errorCode: String,
-                                     val message: String) {
+sealed abstract class ErrorResponse(val httpStatusCode: Int, val errorCode: String, val message: String) {
 
   def toHttpResponse: Result = Results.Status(httpStatusCode)(Json.toJson(this))
 }
@@ -53,7 +50,8 @@ class DuplicateException extends RuntimeException
 
 case class RecordNotFoundException(errorMessage: String = "Record not found") extends RuntimeException
 
-case object ErrorInternalServer extends ErrorResponse(INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "Internal server error")
+case object ErrorInternalServer
+    extends ErrorResponse(INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "Internal server error")
 
 case object ErrorDuplicate extends ErrorResponse(CONFLICT, "ALREADY_EXISTS", "A record already exists for this id")
 

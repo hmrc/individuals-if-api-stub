@@ -54,8 +54,7 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
       saUtr = Some(utr)
     )
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
-      thenReturn(Future.successful(testIndividual))
+    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).thenReturn(Future.successful(testIndividual))
   }
 
   val idType = "nino"
@@ -66,8 +65,8 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
   val endYear = "2020"
   val useCase = "TEST"
   val fields = "paye(employerPayeRef,monthlyPeriodNumber,paymentDate,taxablePay,weeklyPeriodNumber)"
-  val saFields = "sa(taxYear,income,returnList(utr,caseStartDate,receivedDate,businessDescription,telephoneNumber,busStartDate,busEndDate,totalTaxPaid,totalNIC,turnover,otherBusIncome,tradingIncomeAllowance,address(line1,line2,line3,line4,postcode),income(selfAssessment,allEmployments,ukInterest,foreignDivs,ukDivsAndInterest,partnerships,pensions,selfEmployment,trusts,ukProperty,foreign,lifePolicies,shares,other),deducts(totalBusExpenses,totalDisallowBusExp)))"
-
+  val saFields =
+    "sa(taxYear,income,returnList(utr,caseStartDate,receivedDate,businessDescription,telephoneNumber,busStartDate,busEndDate,totalTaxPaid,totalNIC,turnover,otherBusIncome,tradingIncomeAllowance,address(line1,line2,line3,line4,postcode),income(selfAssessment,allEmployments,ukInterest,foreignDivs,ukDivsAndInterest,partnerships,pensions,selfEmployment,trusts,ukProperty,foreign,lifePolicies,shares,other),deducts(totalBusExpenses,totalDisallowBusExp)))"
 
   val innerSaValue = Seq(createValidSaTaxYearEntry(), createValidSaTaxYearEntry())
   val incomeSaResponse = IncomeSa(Some(innerSaValue))
@@ -84,13 +83,14 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
 
       "Successfully create a SA record and return the SA as response" in new Setup {
 
-        when(incomeService.createSa(idType, idValue, Some(startYear), Some(endYear), Some(useCase), incomeSaResponse)).thenReturn(
-          Future.successful(incomeSaResponse)
-        )
+        when(incomeService.createSa(idType, idValue, Some(startYear), Some(endYear), Some(useCase), incomeSaResponse))
+          .thenReturn(
+            Future.successful(incomeSaResponse)
+          )
 
-        val result = await(underTest.createSa(idType, idValue, Some(startYear), Some(endYear), Some(useCase))(
-          fakeRequest.withBody(Json.toJson(incomeSaResponse)))
-        )
+        val result = await(
+          underTest.createSa(idType, idValue, Some(startYear), Some(endYear), Some(useCase))(
+            fakeRequest.withBody(Json.toJson(incomeSaResponse))))
 
         status(result) shouldBe CREATED
         jsonBodyOf(result) shouldBe Json.toJson(incomeSaResponse)
@@ -99,31 +99,33 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
 
       "Fail when an invalid nino is provided" in new Setup {
 
-        when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
-          thenReturn(Future.failed(new RecordNotFoundException))
+        when(apiPlatformTestUserConnector.getIndividualByNino(any())(any()))
+          .thenReturn(Future.failed(new RecordNotFoundException))
 
-        when(incomeService.createSa(idType, idValue, Some(startYear), Some(endYear), Some(useCase), incomeSaResponse)).thenReturn(
-          Future.successful(incomeSaResponse)
-        )
+        when(incomeService.createSa(idType, idValue, Some(startYear), Some(endYear), Some(useCase), incomeSaResponse))
+          .thenReturn(
+            Future.successful(incomeSaResponse)
+          )
 
         assertThrows[Exception] {
-          await(underTest.createSa(idType, idValue, Some(startYear), Some(endYear), Some(useCase))(
-            fakeRequest.withBody(Json.toJson("")))
-          )
+          await(
+            underTest.createSa(idType, idValue, Some(startYear), Some(endYear), Some(useCase))(
+              fakeRequest.withBody(Json.toJson(""))))
         }
 
       }
 
       "Fails to create SaIncome when a request is not provided" in new Setup {
 
-        when(incomeService.createSa(idType, idValue, Some(startYear), Some(endYear), Some(useCase), incomeSaResponse)).thenReturn(
-          Future.successful(incomeSaResponse)
-        )
+        when(incomeService.createSa(idType, idValue, Some(startYear), Some(endYear), Some(useCase), incomeSaResponse))
+          .thenReturn(
+            Future.successful(incomeSaResponse)
+          )
 
         assertThrows[Exception] {
-          await(underTest.createSa(idType, idValue, Some(startYear), Some(endYear), Some(useCase))(
-            fakeRequest.withBody(Json.toJson("")))
-          )
+          await(
+            underTest.createSa(idType, idValue, Some(startYear), Some(endYear), Some(useCase))(
+              fakeRequest.withBody(Json.toJson(""))))
         }
 
       }
@@ -137,7 +139,7 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
           Future.successful(Some(incomeSaResponse))
         )
 
-        val result = await{
+        val result = await {
           underTest.retrieveSa(idType, idValue, startYear, endYear, Some(saFields))(fakeRequest)
         }
 
@@ -166,13 +168,15 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
 
       "Successfully create a PAYE record and return the PAYE as response" in new Setup {
 
-        when(incomeService.createPaye(idType, idValue, Some(startDate), Some(endDate), Some(useCase), incomePayeResponse)).thenReturn(
-          Future.successful(incomePayeResponse)
-        )
+        when(
+          incomeService.createPaye(idType, idValue, Some(startDate), Some(endDate), Some(useCase), incomePayeResponse))
+          .thenReturn(
+            Future.successful(incomePayeResponse)
+          )
 
-        val result = await(underTest.createPaye(idType, idValue, Some(startDate), Some(endDate), Some(useCase))(
-          fakeRequest.withBody(Json.toJson(incomePayeResponse)))
-        )
+        val result = await(
+          underTest.createPaye(idType, idValue, Some(startDate), Some(endDate), Some(useCase))(
+            fakeRequest.withBody(Json.toJson(incomePayeResponse))))
 
         status(result) shouldBe CREATED
 
@@ -182,14 +186,16 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
 
       "Fails to create PayeIncome when a request is not provided" in new Setup {
 
-        when(incomeService.createPaye(idType, idValue, Some(startDate), Some(endDate), Some(useCase), incomePayeResponse)).thenReturn(
-          Future.successful(incomePayeResponse)
-        )
+        when(
+          incomeService.createPaye(idType, idValue, Some(startDate), Some(endDate), Some(useCase), incomePayeResponse))
+          .thenReturn(
+            Future.successful(incomePayeResponse)
+          )
 
         assertThrows[Exception] {
-          await(underTest.createPaye(idType, idValue, Some(startDate), Some(endDate), Some(useCase))(
-            fakeRequest.withBody(Json.toJson("")))
-          )
+          await(
+            underTest.createPaye(idType, idValue, Some(startDate), Some(endDate), Some(useCase))(
+              fakeRequest.withBody(Json.toJson(""))))
         }
       }
 

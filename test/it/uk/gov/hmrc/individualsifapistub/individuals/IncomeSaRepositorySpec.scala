@@ -22,9 +22,7 @@ import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomeSa
 import uk.gov.hmrc.individualsifapistub.repository.individuals.IncomeSaRepository
 import unit.uk.gov.hmrc.individualsifapistub.util.testUtils.IncomeSaHelpers
 
-class IncomeSaRepositorySpec
-  extends RepositoryTestHelper
-    with IncomeSaHelpers {
+class IncomeSaRepositorySpec extends RepositoryTestHelper with IncomeSaHelpers {
 
   override lazy val fakeApplication = buildFakeApplication(
     Configuration("mongodb.uri" -> mongoUri)
@@ -48,9 +46,9 @@ class IncomeSaRepositorySpec
 
       repository.indexes.find { i =>
         i.getOptions.getName.contains("id") &&
-          i.getKeys.toBsonDocument.getFirstKey == "id" &&
-          i.getOptions.isBackground &&
-          i.getOptions.isUnique
+        i.getKeys.toBsonDocument.getFirstKey == "id" &&
+        i.getOptions.isBackground &&
+        i.getOptions.isUnique
       } should not be None
     }
 
@@ -85,7 +83,6 @@ class IncomeSaRepositorySpec
       result shouldBe Some(request)
     }
   }
-
 
   "find by id when type is trn" should {
 

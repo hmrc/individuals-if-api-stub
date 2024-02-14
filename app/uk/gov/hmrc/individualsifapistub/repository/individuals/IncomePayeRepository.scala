@@ -36,39 +36,42 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class IncomePayeRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext)
-  extends PlayMongoRepository[IncomePayeEntry](
-    mongoComponent = mongo,
-    collectionName = "incomePaye",
-    domainFormat = IncomePayeEntry.format,
-    indexes = Seq(
-      IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true)),
-      IndexModel(ascending("idValue"), IndexOptions().background(true))
-    )) with Logging {
-  def create(idType: String,
-             idValue: String,
-             startDate: Option[String],
-             endDate: Option[String],
-             useCase: Option[String],
-             request: IncomePaye): Future[IncomePaye] = {
+    extends PlayMongoRepository[IncomePayeEntry](
+      mongoComponent = mongo,
+      collectionName = "incomePaye",
+      domainFormat = IncomePayeEntry.format,
+      indexes = Seq(
+        IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true)),
+        IndexModel(ascending("idValue"), IndexOptions().background(true))
+      )
+    ) with Logging {
+  def create(
+    idType: String,
+    idValue: String,
+    startDate: Option[String],
+    endDate: Option[String],
+    useCase: Option[String],
+    request: IncomePaye): Future[IncomePaye] = {
     val useCaseMap = Map(
       "HMCTS-C2" -> "HMCTS-C2_HMCTS-C3",
       "HMCTS-C3" -> "HMCTS-C2_HMCTS-C3",
       "LSANI-C1" -> "LSANI-C1_LSANI-C3",
       "LSANI-C3" -> "LSANI-C1_LSANI-C3",
-      "HO-V2" -> "HO-V2"
+      "HO-V2"    -> "HO-V2"
     )
 
     val ident = IdType.parse(idType) match {
       case Nino => Identifier(Some(idValue), None, startDate, endDate, useCase)
-      case Trn => Identifier(None, Some(idValue), startDate, endDate, useCase)
+      case Trn  => Identifier(None, Some(idValue), startDate, endDate, useCase)
     }
 
     val tag = useCaseMap.getOrElse(useCase.mkString, useCase.mkString)
-    val id = s"${ ident.nino.getOrElse(ident.trn.get) }-${ startDate.mkString }-${ endDate.mkString }-$tag-${ UUID.randomUUID() }"
+    val id =
+      s"${ident.nino.getOrElse(ident.trn.get)}-${startDate.mkString}-${endDate.mkString}-$tag-${UUID.randomUUID()}"
 
     val incomePayeEntry = IncomePayeEntry(id, request, idValue)
 
-    logger.info(s"Insert for cache key: $id - Income paye: ${ Json.toJson(incomePayeEntry) }")
+    logger.info(s"Insert for cache key: $id - Income paye: ${Json.toJson(incomePayeEntry)}")
 
     collection
       .insertOne(incomePayeEntry)
@@ -79,34 +82,45 @@ class IncomePayeRepository @Inject()(mongo: MongoComponent)(implicit ec: Executi
       }
   }
 
-  def findByTypeAndId(idType: String,
-                      idValue: String,
-                      startDate: String,
-                      endDate: String,
-                      fields: Option[String]): Future[Option[IncomePaye]] = {
+  def findByTypeAndId(
+    idType: String,
+    idValue: String,
+    startDate: String,
+    endDate: String,
+    fields: Option[String]): Future[Option[IncomePaye]] = {
     val fieldsMap = Map(
-      "paye(employeeNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4,ytd1,ytd2,ytd3,ytd4),employeePensionContribs(notPaid,notPaidYTD,paid,paidYTD),grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),monthlyPeriodNumber,paidHoursWorked,payFrequency,paymentDate,statutoryPayYTD(adoption,maternity,parentalBereavement,paternity),taxDeductedOrRefunded,taxYear,taxablePay,taxablePayToDate,totalEmployerNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4,ytd1,ytd2,ytd3,ytd4),totalTaxToDate,weeklyPeriodNumber)" -> "LAA-C1",
-      "paye(dednsFromNetPay,grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),monthlyPeriodNumber,paidHoursWorked,payFrequency,paymentDate,statutoryPayYTD(adoption,maternity,parentalBereavement,paternity),taxYear,taxablePayToDate,totalTaxToDate,weeklyPeriodNumber)" -> "LAA-C2",
-      "paye(employeeNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4,ytd1,ytd2,ytd3,ytd4),grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),monthlyPeriodNumber,paidHoursWorked,payFrequency,paymentDate,statutoryPayYTD(adoption,maternity,parentalBereavement,paternity),taxCode,taxDeductedOrRefunded,taxYear,taxablePay,taxablePayToDate,totalEmployerNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4,ytd1,ytd2,ytd3,ytd4),totalTaxToDate,weeklyPeriodNumber)" -> "LAA-C3",
-      "paye(grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),paymentDate,payroll(id))" -> "LAA-C4",
-      "paye(employee(hasPartner),employeePensionContribs(notPaid,notPaidYTD,paid,paidYTD),grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),payFrequency,paymentDate,taxablePay)" -> "HMCTS-C2_HMCTS-C3",
-      "paye(employeePensionContribs(notPaid,notPaidYTD,paid,paidYTD),employerPayeRef,grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),paymentDate,payroll(id),taxablePay)" -> "HMCTS-C4",
+      "paye(employeeNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4,ytd1,ytd2,ytd3,ytd4),employeePensionContribs(notPaid,notPaidYTD,paid,paidYTD),grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),monthlyPeriodNumber,paidHoursWorked,payFrequency,paymentDate,statutoryPayYTD(adoption,maternity,parentalBereavement,paternity),taxDeductedOrRefunded,taxYear,taxablePay,taxablePayToDate,totalEmployerNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4,ytd1,ytd2,ytd3,ytd4),totalTaxToDate,weeklyPeriodNumber)"                              -> "LAA-C1",
+      "paye(dednsFromNetPay,grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),monthlyPeriodNumber,paidHoursWorked,payFrequency,paymentDate,statutoryPayYTD(adoption,maternity,parentalBereavement,paternity),taxYear,taxablePayToDate,totalTaxToDate,weeklyPeriodNumber)"                                                                                                                                                                                                                                                                                         -> "LAA-C2",
+      "paye(employeeNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4,ytd1,ytd2,ytd3,ytd4),grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),monthlyPeriodNumber,paidHoursWorked,payFrequency,paymentDate,statutoryPayYTD(adoption,maternity,parentalBereavement,paternity),taxCode,taxDeductedOrRefunded,taxYear,taxablePay,taxablePayToDate,totalEmployerNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4,ytd1,ytd2,ytd3,ytd4),totalTaxToDate,weeklyPeriodNumber)"                                                                               -> "LAA-C3",
+      "paye(grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),paymentDate,payroll(id))"                                                                                                                                                                                                                                                                                                                                                                                                                                                                           -> "LAA-C4",
+      "paye(employee(hasPartner),employeePensionContribs(notPaid,notPaidYTD,paid,paidYTD),grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),payFrequency,paymentDate,taxablePay)"                                                                                                                                                                                                                                                                                                                                                                                 -> "HMCTS-C2_HMCTS-C3",
+      "paye(employeePensionContribs(notPaid,notPaidYTD,paid,paidYTD),employerPayeRef,grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),paymentDate,payroll(id),taxablePay)"                                                                                                                                                                                                                                                                                                                                                                                       -> "HMCTS-C4",
       "paye(dednsFromNetPay,employee(hasPartner),employeeNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4,ytd1,ytd2,ytd3,ytd4),employeePensionContribs(notPaid,notPaidYTD,paid,paidYTD),grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),monthlyPeriodNumber,payFrequency,paymentDate,statutoryPayYTD(adoption,maternity,parentalBereavement,paternity),taxCode,taxDeductedOrRefunded,taxYear,taxablePay,taxablePayToDate,totalEmployerNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4,ytd1,ytd2,ytd3,ytd4),totalTaxToDate,weeklyPeriodNumber)" -> "LSANI-C1_LSANI-C3",
-      "paye(employeeNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4,ytd1,ytd2,ytd3,ytd4),employeePensionContribs(notPaid,notPaidYTD,paid,paidYTD),grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),paymentDate,payroll(id),statutoryPayYTD(adoption,maternity,paternity),taxDeductedOrRefunded,taxablePay,totalEmployerNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4,ytd1,ytd2,ytd3,ytd4))" -> "NICTSEJO-C4",
-      "paye(employerPayeRef,monthlyPeriodNumber,paymentDate,taxablePay,weeklyPeriodNumber)" -> "HO-V2"
+      "paye(employeeNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4,ytd1,ytd2,ytd3,ytd4),employeePensionContribs(notPaid,notPaidYTD,paid,paidYTD),grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),paymentDate,payroll(id),statutoryPayYTD(adoption,maternity,paternity),taxDeductedOrRefunded,taxablePay,totalEmployerNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4,ytd1,ytd2,ytd3,ytd4))"                                                                                                                                                  -> "NICTSEJO-C4",
+      "paye(employerPayeRef,monthlyPeriodNumber,paymentDate,taxablePay,weeklyPeriodNumber)"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               -> "HO-V2"
     )
 
     val ident = IdType.parse(idType) match {
-      case Nino => Identifier(
-        Some(idValue), None, Some(startDate), Some(endDate), fields.flatMap(value => fieldsMap.get(value))
-      )
-      case Trn => Identifier(
-        None, Some(idValue), Some(startDate), Some(endDate), fields.flatMap(value => fieldsMap.get(value))
-      )
+      case Nino =>
+        Identifier(
+          Some(idValue),
+          None,
+          Some(startDate),
+          Some(endDate),
+          fields.flatMap(value => fieldsMap.get(value))
+        )
+      case Trn =>
+        Identifier(
+          None,
+          Some(idValue),
+          Some(startDate),
+          Some(endDate),
+          fields.flatMap(value => fieldsMap.get(value))
+        )
     }
 
     val tag = fields.flatMap(value => fieldsMap.get(value)).getOrElse("TEST")
-    val id = s"${ ident.nino.getOrElse(ident.trn.get) }-$startDate-$endDate-$tag"
+    val id = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$tag"
 
     logger.info(s"Fetch income paye for cache key: $id")
 
@@ -120,7 +134,9 @@ class IncomePayeRepository @Inject()(mongo: MongoComponent)(implicit ec: Executi
         case nonEmpty =>
           val payeEntries = nonEmpty
             .flatMap(_.incomePaye.paye.getOrElse(Seq.empty))
-            .filter(payeEntry => payeEntry.paymentDate.forall(pd => interval.contains(pd.atStartOfDay(ZoneId.systemDefault()).toInstant.toEpochMilli)))
+            .filter(payeEntry =>
+              payeEntry.paymentDate.forall(pd =>
+                interval.contains(pd.atStartOfDay(ZoneId.systemDefault()).toInstant.toEpochMilli)))
           Some(IncomePaye(Some(payeEntries)))
       }
   }

@@ -30,14 +30,14 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class NumberOfEmployeesRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext)
-  extends PlayMongoRepository[NumberOfEmployeesEntry](
-    mongoComponent = mongo,
-    collectionName = "number-of-employees",
-    domainFormat = NumberOfEmployeesEntry.format,
-    indexes = Seq(
-      IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
-    )
-  ) {
+    extends PlayMongoRepository[NumberOfEmployeesEntry](
+      mongoComponent = mongo,
+      collectionName = "number-of-employees",
+      domainFormat = NumberOfEmployeesEntry.format,
+      indexes = Seq(
+        IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
+      )
+    ) {
 
   def create(request: NumberOfEmployeesResponse): Future[NumberOfEmployeesResponse] = {
     val id = s"${request.startDate}-${request.endDate}-" +

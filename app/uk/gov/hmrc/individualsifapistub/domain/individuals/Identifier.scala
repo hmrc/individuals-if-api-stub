@@ -20,12 +20,12 @@ import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
 import play.api.libs.json.Reads.pattern
 import play.api.libs.json.{Format, JsPath}
 
-case class Identifier(nino: Option[String],
-                      trn: Option[String],
-                      from: Option[String],
-                      to: Option[String],
-                      useCase: Option[String]
-                     )
+case class Identifier(
+  nino: Option[String],
+  trn: Option[String],
+  from: Option[String],
+  to: Option[String],
+  useCase: Option[String])
 
 object Identifier {
   private val ninoPattern =
@@ -36,19 +36,17 @@ object Identifier {
   implicit val format: Format[Identifier] = Format(
     (
       (JsPath \ "nino").readNullable[String](pattern(ninoPattern, "InvalidNino")) and
-      (JsPath \ "trn").readNullable[String](pattern(trnPattern, "InvalidTrn")) and
-      (JsPath \ "from").readNullable[String] and
-      (JsPath \ "to").readNullable[String] and
-      (JsPath \ "useCase").readNullable[String]
+        (JsPath \ "trn").readNullable[String](pattern(trnPattern, "InvalidTrn")) and
+        (JsPath \ "from").readNullable[String] and
+        (JsPath \ "to").readNullable[String] and
+        (JsPath \ "useCase").readNullable[String]
     )(Identifier.apply _),
     (
       (JsPath \ "nino").writeNullable[String] and
-      (JsPath \ "trn").writeNullable[String] and
-      (JsPath \ "from").writeNullable[String] and
-      (JsPath \ "to").writeNullable[String] and
-      (JsPath \ "useCase").writeNullable[String]
+        (JsPath \ "trn").writeNullable[String] and
+        (JsPath \ "from").writeNullable[String] and
+        (JsPath \ "to").writeNullable[String] and
+        (JsPath \ "useCase").writeNullable[String]
     )(unlift(Identifier.unapply))
   )
 }
-
-

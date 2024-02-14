@@ -27,17 +27,18 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class VatReturnDetailsController @Inject()(
-                                            loggingAction: LoggingAction,
-                                            bodyParsers: PlayBodyParsers,
-                                            cc: ControllerComponents,
-                                            vatReturnsDetailsService: VatReturnsDetailsService
-                                          )(implicit val ec: ExecutionContext) extends CommonController(cc) {
+  loggingAction: LoggingAction,
+  bodyParsers: PlayBodyParsers,
+  cc: ControllerComponents,
+  vatReturnsDetailsService: VatReturnsDetailsService
+)(implicit val ec: ExecutionContext)
+    extends CommonController(cc) {
 
   def retrieve(vrn: String, fields: Option[String]): Action[AnyContent] = loggingAction.async { _ =>
     logger.info(s"Retrieving VAT return details for VRN: $vrn and fields: $fields")
     vatReturnsDetailsService.retrieve(vrn).map {
       case Some(entry) => Ok(Json.toJson(entry.vatReturnsDetails))
-      case None => NotFound("NO_VAT_RETURNS_DETAIL_FOUND")
+      case None        => NotFound("NO_VAT_RETURNS_DETAIL_FOUND")
     } recover retrievalRecovery
   }
 

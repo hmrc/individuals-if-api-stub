@@ -30,17 +30,22 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SelfAssessmentReturnDetailRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext)
-  extends PlayMongoRepository[SelfAssessmentReturnDetailEntry](
-    mongoComponent = mongo,
-    collectionName = "self-assessment-return-details",
-    domainFormat = SelfAssessmentReturnDetailEntry.format,
-    indexes = Seq(
-      IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
-    )
-  ) {
+    extends PlayMongoRepository[SelfAssessmentReturnDetailEntry](
+      mongoComponent = mongo,
+      collectionName = "self-assessment-return-details",
+      domainFormat = SelfAssessmentReturnDetailEntry.format,
+      indexes = Seq(
+        IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
+      )
+    ) {
 
   def create(request: CreateSelfAssessmentReturnDetailRequest): Future[SelfAssessmentReturnDetailResponse] = {
-    val response = SelfAssessmentReturnDetailResponse(request.utr, request.startDate, request.taxPayerType, request.taxSolvencyStatus, request.taxYears)
+    val response = SelfAssessmentReturnDetailResponse(
+      request.utr,
+      request.startDate,
+      request.taxPayerType,
+      request.taxSolvencyStatus,
+      request.taxYears)
     val entry = SelfAssessmentReturnDetailEntry(request.utr, response)
 
     collection
@@ -52,11 +57,10 @@ class SelfAssessmentReturnDetailRepository @Inject()(mongo: MongoComponent)(impl
       }
   }
 
-  def find(utr: String): Future[Option[SelfAssessmentReturnDetailResponse]] = {
+  def find(utr: String): Future[Option[SelfAssessmentReturnDetailResponse]] =
     collection
       .find(equal("id", utr))
       .headOption()
       .map(x => x.map(_.response))
-  }
 
 }

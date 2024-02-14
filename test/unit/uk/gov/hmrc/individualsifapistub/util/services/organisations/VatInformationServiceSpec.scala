@@ -16,7 +16,6 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.services.organisations
 
-
 import org.mockito.Mockito.when
 import org.scalatest.FutureOutcome
 import org.scalatest.matchers.should.Matchers
@@ -53,34 +52,38 @@ class VatInformationServiceSpec extends FixtureAsyncWordSpec with Matchers with 
   val repositoryRequest: VatInformationEntry = VatInformationEntry(vrn, request, LocalDateTime.now())
 
   "create" should {
-    "return response when creating" in { case Fixture(repo, service, timeProvider) =>
-      when(timeProvider.now()).thenReturn(repositoryRequest.createdAt)
-      when(repo.create(repositoryRequest)).thenReturn(Future.successful(repositoryRequest))
-      val result = service.create(vrn, request)
-      result.map(x => x shouldBe repositoryRequest)
+    "return response when creating" in {
+      case Fixture(repo, service, timeProvider) =>
+        when(timeProvider.now()).thenReturn(repositoryRequest.createdAt)
+        when(repo.create(repositoryRequest)).thenReturn(Future.successful(repositoryRequest))
+        val result = service.create(vrn, request)
+        result.map(x => x shouldBe repositoryRequest)
     }
 
-    "throw error when repository fails to create" in { case Fixture(repo, service, timeProvider) =>
-      when(timeProvider.now()).thenReturn(repositoryRequest.createdAt)
-      when(repo.create(repositoryRequest)).thenReturn(Future.failed(new Exception()))
-      recoverToSucceededIf[Exception] {
-        service.create(vrn, request)
-      }
+    "throw error when repository fails to create" in {
+      case Fixture(repo, service, timeProvider) =>
+        when(timeProvider.now()).thenReturn(repositoryRequest.createdAt)
+        when(repo.create(repositoryRequest)).thenReturn(Future.failed(new Exception()))
+        recoverToSucceededIf[Exception] {
+          service.create(vrn, request)
+        }
     }
 
   }
 
   "retrieve" should {
-    "return found item if it exists" in { case Fixture(repo, service, _) =>
-      when(repo.retrieve(vrn)).thenReturn(Future.successful(Some(repositoryRequest)))
-      val result = service.retrieve(vrn)
-      result.map(x => x shouldBe Some(repositoryRequest))
+    "return found item if it exists" in {
+      case Fixture(repo, service, _) =>
+        when(repo.retrieve(vrn)).thenReturn(Future.successful(Some(repositoryRequest)))
+        val result = service.retrieve(vrn)
+        result.map(x => x shouldBe Some(repositoryRequest))
     }
 
-    "return None if item does not exists" in { case Fixture(repo, service, _) =>
-      when(repo.retrieve(vrn)).thenReturn(Future.successful(None))
-      val result = service.retrieve(vrn)
-      result.map(x => x shouldBe None)
+    "return None if item does not exists" in {
+      case Fixture(repo, service, _) =>
+        when(repo.retrieve(vrn)).thenReturn(Future.successful(None))
+        val result = service.retrieve(vrn)
+        result.map(x => x shouldBe None)
     }
   }
 

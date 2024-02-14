@@ -32,14 +32,13 @@ class NumberOfEmployeesRepositorySpec extends RepositoryTestHelper {
   val getReference = NumberOfEmployeeReferencesRequest("456", "RT882d")
   val getRequest = NumberOfEmployeesRequest("2019-10-01", "2020-04-05", Seq(getReference))
 
-
   "collection" should {
     "have a unique index on a requests utr" in {
-      repository.indexes.find{ i =>
+      repository.indexes.find { i =>
         i.getOptions.getName.contains("id") &&
-          i.getKeys.toBsonDocument.getFirstKey == "id" &&
-          i.getOptions.isBackground &&
-          i.getOptions.isUnique
+        i.getKeys.toBsonDocument.getFirstKey == "id" &&
+        i.getOptions.isBackground &&
+        i.getOptions.isUnique
       } should not be None
     }
 

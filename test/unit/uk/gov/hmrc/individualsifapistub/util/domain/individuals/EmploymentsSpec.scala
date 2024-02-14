@@ -277,21 +277,21 @@ class EmploymentsSpec extends UnitSpec with TestHelpers {
   }
 
   "Employments" should {
-    "write to JSON successfully"  when {
+    "write to JSON successfully" when {
       "employments is not empty" in {
-        val result = Json.toJson( Employments(Seq(employment))).validate[Employments]
+        val result = Json.toJson(Employments(Seq(employment))).validate[Employments]
         result.isSuccess shouldBe true
       }
 
       "employments is empty" in {
-        val result = Json.toJson( Employments(Seq())).validate[Employments]
+        val result = Json.toJson(Employments(Seq())).validate[Employments]
         result.isSuccess shouldBe true
       }
     }
 
     "read from JSON successfully" in {
 
-      val employmentsJson:String =
+      val employmentsJson: String =
         """
           |{
           |  "employments" : [ {

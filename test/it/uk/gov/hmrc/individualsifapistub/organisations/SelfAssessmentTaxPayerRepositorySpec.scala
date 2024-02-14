@@ -21,15 +21,12 @@ import uk.gov.hmrc.individualsifapistub.domain.DuplicateException
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{Address, SelfAssessmentTaxPayer, TaxPayerDetails}
 import uk.gov.hmrc.individualsifapistub.repository.organisations.SelfAssessmentTaxPayerRepository
 
-class SelfAssessmentTaxPayerRepositorySpec extends RepositoryTestHelper  {
+class SelfAssessmentTaxPayerRepositorySpec extends RepositoryTestHelper {
 
   val repository = fakeApplication.injector.instanceOf[SelfAssessmentTaxPayerRepository]
 
-  val exampleAddress = Address(Some("Alfie House"),
-                        Some("Main Street"),
-                        Some("Birmingham"),
-                        Some("West midlands"),
-                        Some("B14 6JH"))
+  val exampleAddress =
+    Address(Some("Alfie House"), Some("Main Street"), Some("Birmingham"), Some("West midlands"), Some("B14 6JH"))
 
   val taxPayerDetails = Seq(TaxPayerDetails("John Smith II", Some("Registered"), exampleAddress))
   val request = SelfAssessmentTaxPayer("1234567890", "Individual", taxPayerDetails)
@@ -37,11 +34,11 @@ class SelfAssessmentTaxPayerRepositorySpec extends RepositoryTestHelper  {
 
   "collection" should {
     "have a unique index on a requests utr" in {
-      repository.indexes.find{ i =>
+      repository.indexes.find { i =>
         i.getOptions.getName.contains("id") &&
-          i.getKeys.toBsonDocument.getFirstKey == "id" &&
-          i.getOptions.isBackground &&
-          i.getOptions.isUnique
+        i.getKeys.toBsonDocument.getFirstKey == "id" &&
+        i.getOptions.isBackground &&
+        i.getOptions.isUnique
       } should not be None
     }
 

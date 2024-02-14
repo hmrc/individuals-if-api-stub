@@ -32,15 +32,20 @@ object TaxYear {
     (
       (JsPath \ "taxyear").read[String](pattern(taxYearPattern, "Tax Year is in the incorrect Format")) and
         (JsPath \ "businessSalesTurnover").read[Double]
-      )(TaxYear.apply _),
+    )(TaxYear.apply _),
     (
       (JsPath \ "taxyear").write[String] and
         (JsPath \ "businessSalesTurnover").write[Double]
-      )(unlift(TaxYear.unapply))
+    )(unlift(TaxYear.unapply))
   )
 }
 
-case class CreateSelfAssessmentReturnDetailRequest(utr: String, startDate: String, taxPayerType: String, taxSolvencyStatus: String, taxYears: Seq[TaxYear])
+case class CreateSelfAssessmentReturnDetailRequest(
+  utr: String,
+  startDate: String,
+  taxPayerType: String,
+  taxSolvencyStatus: String,
+  taxYears: Seq[TaxYear])
 
 object CreateSelfAssessmentReturnDetailRequest {
   implicit val format: Format[CreateSelfAssessmentReturnDetailRequest] = Format(
@@ -50,18 +55,23 @@ object CreateSelfAssessmentReturnDetailRequest {
         (JsPath \ "taxpayerType").read[String](pattern(taxPayerTypePattern, "Invalid taxpayer type")) and
         (JsPath \ "taxSolvencyStatus").read[String](verifying(taxSolvencyStatusValidator)) and
         (JsPath \ "taxyears").read[Seq[TaxYear]]
-      )(CreateSelfAssessmentReturnDetailRequest.apply _),
+    )(CreateSelfAssessmentReturnDetailRequest.apply _),
     (
       (JsPath \ "utr").write[String] and
         (JsPath \ "startDate").write[String] and
         (JsPath \ "taxpayerType").write[String] and
         (JsPath \ "taxSolvencyStatus").write[String] and
         (JsPath \ "taxyears").write[Seq[TaxYear]]
-      )(unlift(CreateSelfAssessmentReturnDetailRequest.unapply))
+    )(unlift(CreateSelfAssessmentReturnDetailRequest.unapply))
   )
 }
 
-case class SelfAssessmentReturnDetailResponse(utr: String, startDate: String, taxPayerType: String, taxSolvencyStatus: String, taxYears: Seq[TaxYear])
+case class SelfAssessmentReturnDetailResponse(
+  utr: String,
+  startDate: String,
+  taxPayerType: String,
+  taxSolvencyStatus: String,
+  taxYears: Seq[TaxYear])
 
 object SelfAssessmentReturnDetailResponse {
   implicit val format: Format[SelfAssessmentReturnDetailResponse] = Format(
@@ -71,21 +81,22 @@ object SelfAssessmentReturnDetailResponse {
         (JsPath \ "taxpayerType").read[String](pattern(taxPayerTypePattern, "Invalid taxpayer type")) and
         (JsPath \ "taxSolvencyStatus").read[String](verifying(taxSolvencyStatusValidator)) and
         (JsPath \ "taxyears").read[Seq[TaxYear]]
-      )(SelfAssessmentReturnDetailResponse.apply _),
+    )(SelfAssessmentReturnDetailResponse.apply _),
     (
       (JsPath \ "utr").write[String] and
         (JsPath \ "startDate").write[String] and
         (JsPath \ "taxpayerType").write[String] and
         (JsPath \ "taxSolvencyStatus").write[String] and
         (JsPath \ "taxyears").write[Seq[TaxYear]]
-      )(unlift(SelfAssessmentReturnDetailResponse.unapply))
+    )(unlift(SelfAssessmentReturnDetailResponse.unapply))
   )
 }
 
 object SelfAssessmentReturnDetail {
   val utrPattern: Regex = "^[0-9]{10}$".r
   val taxPayerTypePattern: Regex = "^[A-Z][a-zA-Z]{3,24}$".r
-  val datePattern: Regex = "^(((19|20)([2468][048]|[13579][26]|0[48])|2000)[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)[-](0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-](0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}[-]02[-](0[1-9]|1[0-9]|2[0-8])))$".r
+  val datePattern: Regex =
+    "^(((19|20)([2468][048]|[13579][26]|0[48])|2000)[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)[-](0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-](0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}[-]02[-](0[1-9]|1[0-9]|2[0-8])))$".r
 
   def taxSolvencyStatusValidator(value: String): Boolean = value == "S" || value == "I"
 }

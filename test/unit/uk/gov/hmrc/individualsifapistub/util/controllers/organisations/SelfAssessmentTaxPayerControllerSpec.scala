@@ -38,13 +38,11 @@ class SelfAssessmentTaxPayerControllerSpec extends TestSupport {
   val mockService = mock[SelfAssessmentTaxPayerService]
   val mockConnector = mock[ApiPlatformTestUserConnector]
 
-  val controller = new SelfAssessmentTaxPayerController(loggingAction, bodyParsers, controllerComponents, mockService, mockConnector)
+  val controller =
+    new SelfAssessmentTaxPayerController(loggingAction, bodyParsers, controllerComponents, mockService, mockConnector)
 
-  val exampleAddress = Address(Some("Alfie House"),
-    Some("Main Street"),
-    Some("Birmingham"),
-    Some("West midlands"),
-    Some("B14 6JH"))
+  val exampleAddress =
+    Address(Some("Alfie House"), Some("Main Street"), Some("Birmingham"), Some("West midlands"), Some("B14 6JH"))
 
   val utr = SaUtr("2432552635")
 
@@ -53,10 +51,11 @@ class SelfAssessmentTaxPayerControllerSpec extends TestSupport {
   val testIndividual = TestIndividual(
     saUtr = Some(utr),
     taxpayerType = Some("Individual"),
-    organisationDetails = Some(TestOrganisationDetails(
-      name = "Barry Barryson",
-      address = TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")
-    ))
+    organisationDetails = Some(
+      TestOrganisationDetails(
+        name = "Barry Barryson",
+        address = TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")
+      ))
   )
 
   "create" should {
