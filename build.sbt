@@ -3,8 +3,6 @@ import uk.gov.hmrc.DefaultBuildSettings.addTestReportOption
 
 val appName = "individuals-if-api-stub"
 
-lazy val ComponentTest = config("component") extend Test
-
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
@@ -35,14 +33,6 @@ lazy val microservice = Project(appName, file("."))
     addTestReportOption(IntegrationTest, "int-test-reports"),
     IntegrationTest / testGrouping := oneForkedJvmPerTest((IntegrationTest / definedTests).value),
     IntegrationTest / parallelExecution := false
-  )
-  .configs(ComponentTest)
-  .settings(inConfig(ComponentTest)(Defaults.testSettings) *)
-  .settings(
-    ComponentTest / testOptions := Seq(Tests.Filter(_ startsWith "component")),
-    ComponentTest / unmanagedSourceDirectories := (ComponentTest / baseDirectory)(base => Seq(base / "test")).value,
-    ComponentTest / testGrouping := oneForkedJvmPerTest((ComponentTest / definedTests).value),
-    ComponentTest / parallelExecution := false
   )
   .settings(PlayKeys.playDefaultPort := 8443)
   .settings(majorVersion := 0)
