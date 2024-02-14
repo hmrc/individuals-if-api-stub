@@ -10,6 +10,7 @@ lazy val ComponentTest = config("component") extend Test
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
+  .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .settings(onLoadMessage := "")
   .settings(scalafmtOnCompile := true)
   .settings(
