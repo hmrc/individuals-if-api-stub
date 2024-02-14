@@ -94,7 +94,7 @@ class EmploymentsServiceSpec extends TestSupport {
           )))
       )
 
-    implicit val hc = HeaderCarrier()
+    implicit val hc: HeaderCarrier = HeaderCarrier()
     val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
 
     val employments = Employments(Seq(employment))

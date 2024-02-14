@@ -55,7 +55,7 @@ class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePaye
       saUtr = Some(utr)
     )
 
-    implicit val hc = HeaderCarrier()
+    implicit val hc: HeaderCarrier = HeaderCarrier()
     val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
 
     val mockSelfAssessmentRepository = mock[IncomeSaRepository]

@@ -59,7 +59,7 @@ class DetailsServiceSpec extends TestSupport with TestHelpers {
           Residence(residenceType = Some("NOMINATED"), address = generateAddress(1))))
     )
 
-    implicit val hc = HeaderCarrier()
+    implicit val hc: HeaderCarrier = HeaderCarrier()
     val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
 
     val mockDetailsRepository = mock[DetailsRepository]

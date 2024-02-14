@@ -38,7 +38,7 @@ import scala.concurrent.Future
 class TaxCreditsControllerSpec extends TestSupport {
 
   trait Setup {
-    implicit val hc = HeaderCarrier()
+    implicit val hc: HeaderCarrier = HeaderCarrier()
     val fakeRequest = FakeRequest()
     val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
     val taxCreditsRepo = mock[TaxCreditsRepository]

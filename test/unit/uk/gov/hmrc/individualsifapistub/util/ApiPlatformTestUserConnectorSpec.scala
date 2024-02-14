@@ -29,7 +29,6 @@ import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 class ApiPlatformTestUserConnectorSpec extends TestSupport with BeforeAndAfterEach {
-
   val stubPort = sys.env.getOrElse("WIREMOCK", "11121").toInt
   val stubHost = "localhost"
   val wireMockServer = new WireMockServer(wireMockConfig().port(stubPort))
@@ -59,7 +58,7 @@ class ApiPlatformTestUserConnectorSpec extends TestSupport with BeforeAndAfterEa
     fakeApplication.injector.instanceOf[ServicesConfig]
 
   trait Setup {
-    implicit val hc = HeaderCarrier()
+    implicit val hc: HeaderCarrier = HeaderCarrier()
 
     val underTest =
       new ApiPlatformTestUserConnector(http, serviceConfig) {

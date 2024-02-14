@@ -56,7 +56,7 @@ class TaxCreditsServiceSpec extends TestSupport {
       None
     )
 
-    implicit val hc = HeaderCarrier()
+    implicit val hc: HeaderCarrier = HeaderCarrier()
     val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
 
     val request = Applications(Seq(application))

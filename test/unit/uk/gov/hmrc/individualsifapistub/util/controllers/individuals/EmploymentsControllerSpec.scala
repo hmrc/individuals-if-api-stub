@@ -41,7 +41,7 @@ import scala.concurrent.Future
 class EmploymentsControllerSpec extends TestSupport {
 
   trait Setup {
-    implicit val hc = HeaderCarrier()
+    implicit val hc: HeaderCarrier = HeaderCarrier()
     val fakeRequest = FakeRequest()
     val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
     val employmentsRepo = mock[EmploymentRepository]

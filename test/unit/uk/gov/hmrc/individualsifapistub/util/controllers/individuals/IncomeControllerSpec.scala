@@ -39,7 +39,7 @@ import scala.concurrent.Future
 class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomePayeHelpers {
 
   trait Setup {
-    implicit val hc = HeaderCarrier()
+    implicit val hc: HeaderCarrier = HeaderCarrier()
     val fakeRequest = FakeRequest()
     val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
     val incomePayeRepo = mock[IncomePayeRepository]
