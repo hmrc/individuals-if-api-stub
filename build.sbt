@@ -1,15 +1,12 @@
 import sbt.Tests.{Group, SubProcess}
-import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, defaultSettings, scalaSettings}
+import uk.gov.hmrc.DefaultBuildSettings.addTestReportOption
 
 val appName = "individuals-if-api-stub"
 
-def intTestFilter(name: String): Boolean = name startsWith "it"
-def unitFilter(name: String): Boolean = name startsWith "unit"
-def componentFilter(name: String): Boolean = name startsWith "component"
 lazy val ComponentTest = config("component") extend Test
 
 lazy val microservice = Project(appName, file("."))
-  .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
+  .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .settings(onLoadMessage := "")
   .settings(scalafmtOnCompile := true)
@@ -20,33 +17,29 @@ lazy val microservice = Project(appName, file("."))
       "uk.gov.hmrc.individualsifapistub.Binders._"
     )
   )
-  .settings(scalaSettings: _*)
   .settings(scalaVersion := "2.13.8")
   .settings(scalacOptions += "-Wconf:src=routes/.*:s")
-  .settings(defaultSettings(): _*)
   .settings(
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test(),
-    Test / testOptions := Seq(Tests.Filter(unitFilter)),
-    retrieveManaged := true,
-    routesGenerator := InjectedRoutesGenerator
+    Test / testOptions := Seq(Tests.Filter(_ startsWith "unit"))
   )
   .settings(Compile / unmanagedResourceDirectories += baseDirectory.value / "resources")
   .configs(IntegrationTest)
-  .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
+  .settings(inConfig(IntegrationTest)(Defaults.itSettings) *)
   .settings(
     IntegrationTest / Keys.fork := false,
     IntegrationTest / unmanagedSourceDirectories := (IntegrationTest / baseDirectory)(base => Seq(base / "test")).value,
     IntegrationTest / unmanagedResourceDirectories := (IntegrationTest / baseDirectory)(base =>
       Seq(base / "test/resources")).value,
-    IntegrationTest / testOptions := Seq(Tests.Filter(intTestFilter)),
+    IntegrationTest / testOptions := Seq(Tests.Filter(_ startsWith "it")),
     addTestReportOption(IntegrationTest, "int-test-reports"),
     IntegrationTest / testGrouping := oneForkedJvmPerTest((IntegrationTest / definedTests).value),
     IntegrationTest / parallelExecution := false
   )
   .configs(ComponentTest)
-  .settings(inConfig(ComponentTest)(Defaults.testSettings): _*)
+  .settings(inConfig(ComponentTest)(Defaults.testSettings) *)
   .settings(
-    ComponentTest / testOptions := Seq(Tests.Filter(componentFilter)),
+    ComponentTest / testOptions := Seq(Tests.Filter(_ startsWith "component")),
     ComponentTest / unmanagedSourceDirectories := (ComponentTest / baseDirectory)(base => Seq(base / "test")).value,
     ComponentTest / testGrouping := oneForkedJvmPerTest((ComponentTest / definedTests).value),
     ComponentTest / parallelExecution := false
