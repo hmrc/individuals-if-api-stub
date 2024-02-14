@@ -18,17 +18,14 @@ package testUtils
 
 import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
-import uk.gov.hmrc.individualsifapistub.repository.individuals.{DetailsRepository, EmploymentRepository, IncomePayeRepository, IncomeSaRepository, TaxCreditsRepository}
-import uk.gov.hmrc.individualsifapistub.repository.organisations.{CorporationTaxCompanyDetailsRepository, CorporationTaxReturnDetailsRepository, NumberOfEmployeesRepository, SelfAssessmentReturnDetailRepository, SelfAssessmentTaxPayerRepository, VatInformationRepository, VatReturnsDetailsRepository}
+import uk.gov.hmrc.individualsifapistub.repository.individuals._
+import uk.gov.hmrc.individualsifapistub.repository.organisations._
 import uk.gov.hmrc.mongo.test.MongoSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
-trait RepositoryTestHelper extends TestSupport
-  with MongoSupport
-  with BeforeAndAfterEach {
+trait RepositoryTestHelper extends TestSupport with MongoSupport with BeforeAndAfterEach {
 
-  override lazy val fakeApplication = buildFakeApplication(
-    Configuration("mongodb.uri" -> mongoUri))
+  override lazy val fakeApplication = buildFakeApplication(Configuration("mongodb.uri" -> mongoUri))
 
   lazy private val allRepos = Seq(
     fakeApplication.injector.instanceOf[TaxCreditsRepository],
@@ -45,16 +42,14 @@ trait RepositoryTestHelper extends TestSupport
     fakeApplication.injector.instanceOf[NumberOfEmployeesRepository]
   )
 
-  override def beforeEach(): Unit = {
+  override def beforeEach(): Unit =
     allRepos.foreach { r =>
       await(r.collection.drop().headOption())
       await(r.ensureIndexes)
     }
-  }
 
-  override def afterEach(): Unit = {
+  override def afterEach(): Unit =
     allRepos.foreach { r =>
       await(r.collection.drop().headOption())
     }
-  }
 }

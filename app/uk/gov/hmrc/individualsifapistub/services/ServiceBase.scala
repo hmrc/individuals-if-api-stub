@@ -25,12 +25,10 @@ import javax.inject.Inject
 
 class ServiceBase @Inject()(apiPlatformTestUserConnector: ApiPlatformTestUserConnector) {
 
-  def verifyNino(idType: String, idValue: String)
-                (implicit hc: HeaderCarrier) = {
+  def verifyNino(idType: String, idValue: String)(implicit hc: HeaderCarrier) =
     IdType.parse(idType) match {
       case IdType.Nino => apiPlatformTestUserConnector.getIndividualByNino(Nino(idValue))
       case _           => throw new BadRequestException("Invalid National Insurance Number")
     }
-  }
 
 }

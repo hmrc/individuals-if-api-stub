@@ -24,7 +24,8 @@ import scala.concurrent.Future
 
 class CorporationTaxReturnDetailsService @Inject()(repository: CorporationTaxReturnDetailsRepository) {
 
-  def create(request: CreateCorporationTaxReturnDetailsRequest): Future[CorporationTaxReturnDetailsResponse] = repository.create(request)
+  def create(request: CreateCorporationTaxReturnDetailsRequest): Future[CorporationTaxReturnDetailsResponse] =
+    repository.create(request)
 
   def get(utr: String): Future[Option[CorporationTaxReturnDetailsResponse]] = repository.find(utr)
 }

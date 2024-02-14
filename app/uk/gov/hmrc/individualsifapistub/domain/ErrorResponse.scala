@@ -17,26 +17,42 @@
 package uk.gov.hmrc.individualsifapistub.domain
 
 import play.api.http.Status._
-import play.api.libs.json.Json
+import play.api.libs.json._
 import play.api.mvc.{Result, Results}
-import uk.gov.hmrc.individualsifapistub.domain.individuals.JsonFormatters._
 
-sealed abstract class ErrorResponse(
-                                     val httpStatusCode: Int,
-                                     val errorCode: String,
-                                     val message: String) {
+sealed abstract class ErrorResponse(val httpStatusCode: Int, val errorCode: String, val message: String) {
 
   def toHttpResponse: Result = Results.Status(httpStatusCode)(Json.toJson(this))
 }
 
+object ErrorResponse {
+  implicit val writes: Writes[ErrorResponse] = new Writes[ErrorResponse] {
+    def writes(e: ErrorResponse): JsValue = Json.obj("code" -> e.errorCode, "message" -> e.message)
+  }
+}
+
 case class ErrorInvalidRequest(errorMessage: String) extends ErrorResponse(BAD_REQUEST, "INVALID_REQUEST", errorMessage)
+
+object ErrorInvalidRequest {
+  implicit val format: Format[ErrorInvalidRequest] = new Format[ErrorInvalidRequest] {
+    def reads(json: JsValue): JsResult[ErrorInvalidRequest] = JsSuccess(
+      ErrorInvalidRequest((json \ "message").as[String])
+    )
+
+    def writes(error: ErrorInvalidRequest): JsValue =
+      Json.obj("code" -> error.errorCode, "message" -> error.message)
+  }
+}
+
 class ValidationException(message: String) extends RuntimeException(message)
-class InvalidNinoException extends RuntimeException
+
 class DuplicateException extends RuntimeException
 
 case class RecordNotFoundException(errorMessage: String = "Record not found") extends RuntimeException
 
-case object ErrorInternalServer extends ErrorResponse(INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "Internal server error")
+case object ErrorInternalServer
+    extends ErrorResponse(INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "Internal server error")
+
 case object ErrorDuplicate extends ErrorResponse(CONFLICT, "ALREADY_EXISTS", "A record already exists for this id")
 
 case class RecordNotFound(errorMessage: String) extends ErrorResponse(NOT_FOUND, "NOT_FOUND", errorMessage)

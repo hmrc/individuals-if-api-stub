@@ -17,27 +17,26 @@
 package unit.uk.gov.hmrc.individualsifapistub.util.domain.individuals.income
 
 import play.api.libs.json.Json
-import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
-import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomeSa._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.Address
+import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class AddressSpec extends UnitSpec {
 
   val validAddress = Address(Some("line1"), Some("line2"), Some("line3"), Some("line4"), None, Some("QW123QW"))
-  val invalidAddress = Address(Some("line1"), Some("line2"), Some("line3"), Some("line4"), None, Some("1234567891011121314151617181920"))
+  val invalidAddress =
+    Address(Some("line1"), Some("line2"), Some("line3"), Some("line4"), None, Some("1234567891011121314151617181920"))
 
   "Address" should {
     "Write to Json" in {
-      val expectedJson = Json.parse(
-        """
-          |{
-          |   "line1":"line1",
-          |   "line2":"line2",
-          |   "line3":"line3",
-          |   "line4":"line4",
-          |   "postcode":"QW123QW"
-          |}
-          |""".stripMargin)
+      val expectedJson = Json.parse("""
+                                      |{
+                                      |   "line1":"line1",
+                                      |   "line2":"line2",
+                                      |   "line3":"line3",
+                                      |   "line4":"line4",
+                                      |   "postcode":"QW123QW"
+                                      |}
+                                      |""".stripMargin)
 
       val result = Json.toJson(validAddress)
 

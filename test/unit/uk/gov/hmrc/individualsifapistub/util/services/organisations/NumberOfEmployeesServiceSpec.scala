@@ -20,7 +20,7 @@ import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AsyncWordSpec
 import org.scalatestplus.mockito.MockitoSugar
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{NumberOfEmployeeCounts, NumberOfEmployeeReferences, NumberOfEmployeeReferencesRequest, NumberOfEmployeesRequest, NumberOfEmployeesResponse}
+import uk.gov.hmrc.individualsifapistub.domain.organisations._
 import uk.gov.hmrc.individualsifapistub.repository.organisations.NumberOfEmployeesRepository
 import uk.gov.hmrc.individualsifapistub.services.organisations.NumberOfEmployeesService
 

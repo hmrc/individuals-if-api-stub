@@ -24,34 +24,38 @@ import uk.gov.hmrc.individualsifapistub.domain.DuplicateException
 import uk.gov.hmrc.individualsifapistub.domain.organisations.VatInformationEntry
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
+import uk.gov.hmrc.play.http.logging.Mdc.preservingMdc
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.DAYS
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class VatInformationRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
-  extends PlayMongoRepository[VatInformationEntry](
-    mongoComponent = mongo,
-    collectionName = "vat-information",
-    domainFormat = VatInformationEntry.format,
-    indexes = Seq(
-      IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true)),
-      IndexModel(ascending("createdAt"), IndexOptions().background(true).expireAfter(14, DAYS))
-    )
-  ) {
+class VatInformationRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext)
+    extends PlayMongoRepository[VatInformationEntry](
+      mongoComponent = mongo,
+      collectionName = "vat-information",
+      domainFormat = VatInformationEntry.format,
+      indexes = Seq(
+        IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true)),
+        IndexModel(ascending("createdAt"), IndexOptions().background(true).expireAfter(14, DAYS))
+      )
+    ) {
   def create(entry: VatInformationEntry): Future[VatInformationEntry] =
-    collection
-      .insertOne(entry)
-      .map(_ => entry)
-      .head()
-      .recover {
-        case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
-      }
-
+    preservingMdc {
+      collection
+        .insertOne(entry)
+        .map(_ => entry)
+        .head()
+        .recover {
+          case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
+        }
+    }
 
   def retrieve(vrn: String): Future[Option[VatInformationEntry]] =
-    collection
-      .find(equal("id", vrn))
-      .headOption()
+    preservingMdc {
+      collection
+        .find(equal("id", vrn))
+        .headOption()
+    }
 }

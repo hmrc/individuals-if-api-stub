@@ -16,7 +16,7 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.testUtils
 
-import uk.gov.hmrc.individualsifapistub.domain.individuals.{Address, Deducts, SaIncome, SaReturnType, SaTaxYearEntry}
+import uk.gov.hmrc.individualsifapistub.domain.individuals._
 
 trait IncomeSaHelpers {
   def createValidSaTaxYearEntry() = {

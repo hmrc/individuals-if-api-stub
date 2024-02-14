@@ -31,21 +31,18 @@ class CorporationTaxCompanyDetailsServiceSpec extends AsyncWordSpec with Matcher
   val mockRepository = mock[CorporationTaxCompanyDetailsRepository]
   val service = new CorporationTaxCompanyDetailsService(mockRepository)
 
-  val address = Address(
-    Some("Alfie House"),
-    Some("Main Street"),
-    Some("Manchester"),
-    Some("Londonberry"),
-    Some("LN1 1AG"))
+  val address =
+    Address(Some("Alfie House"), Some("Main Street"), Some("Manchester"), Some("Londonberry"), Some("LN1 1AG"))
 
   val name = Name("Waitrose", "And Partners")
 
   val registeredDetails = NameAddressDetails(name, address)
   val communicationDetails = NameAddressDetails(name, address)
 
-  val request = CorporationTaxCompanyDetails("1234567890", "12345678", Some(registeredDetails), Some(communicationDetails))
-  val response = CorporationTaxCompanyDetails("1234567890", "12345678", Some(registeredDetails), Some(communicationDetails))
-
+  val request =
+    CorporationTaxCompanyDetails("1234567890", "12345678", Some(registeredDetails), Some(communicationDetails))
+  val response =
+    CorporationTaxCompanyDetails("1234567890", "12345678", Some(registeredDetails), Some(communicationDetails))
 
   "create" should {
     "return response when creating" in {

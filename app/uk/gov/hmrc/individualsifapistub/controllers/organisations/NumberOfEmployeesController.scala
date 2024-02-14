@@ -16,12 +16,11 @@
 
 package uk.gov.hmrc.individualsifapistub.controllers.organisations
 
-import play.api.libs.json.{ JsValue, Json }
-import play.api.mvc.{ Action, ControllerComponents, PlayBodyParsers }
+import play.api.libs.json.{JsValue, Json}
+import play.api.mvc.{Action, ControllerComponents, PlayBodyParsers}
 import uk.gov.hmrc.individualsifapistub.config.LoggingAction
 import uk.gov.hmrc.individualsifapistub.controllers.CommonController
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{ NumberOfEmployeesRequest, NumberOfEmployeesResponse }
-import uk.gov.hmrc.individualsifapistub.domain.organisations.NumberOfEmployees._
+import uk.gov.hmrc.individualsifapistub.domain.organisations.{NumberOfEmployeesRequest, NumberOfEmployeesResponse}
 import uk.gov.hmrc.individualsifapistub.services.organisations.NumberOfEmployeesService
 import uk.gov.hmrc.individualsifapistub.util.FieldFilter
 
@@ -29,34 +28,37 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class NumberOfEmployeesController @Inject()(
-                                             loggingAction: LoggingAction,
-                                             bodyParsers: PlayBodyParsers,
-                                             cc: ControllerComponents,
-                                             numberOfEmployeesService: NumberOfEmployeesService)
-                                           (implicit val ec: ExecutionContext)
-  extends CommonController(cc) {
+  loggingAction: LoggingAction,
+  bodyParsers: PlayBodyParsers,
+  cc: ControllerComponents,
+  numberOfEmployeesService: NumberOfEmployeesService)(implicit val ec: ExecutionContext)
+    extends CommonController(cc) {
 
   val emptyResponse = NumberOfEmployeesResponse("", "", Seq.empty)
 
   def create(): Action[JsValue] =
     loggingAction.async(bodyParsers.json) { implicit request =>
       withJsonBody[NumberOfEmployeesResponse] { body =>
-        numberOfEmployeesService.create(body).map(
-          x => Created(Json.toJson(x))
-        ) recover recovery
+        numberOfEmployeesService
+          .create(body)
+          .map(
+            x => Created(Json.toJson(x))
+          ) recover recovery
       }
     }
 
-  def retrieve(fields: Option[String] = None): Action[JsValue] = loggingAction.async(bodyParsers.json) { implicit request =>
-    withJsonBody[NumberOfEmployeesRequest] { body =>
-      numberOfEmployeesService.get(body)
-        .map {
-          case Some(response) => response
-          case None => emptyResponse
-        }
-        .map(response => Ok(FieldFilter.toFilteredJson(response, fields)))
-        .recover(recovery)
-    }
+  def retrieve(fields: Option[String] = None): Action[JsValue] = loggingAction.async(bodyParsers.json) {
+    implicit request =>
+      withJsonBody[NumberOfEmployeesRequest] { body =>
+        numberOfEmployeesService
+          .get(body)
+          .map {
+            case Some(response) => response
+            case None           => emptyResponse
+          }
+          .map(response => Ok(FieldFilter.toFilteredJson(response, fields)))
+          .recover(recovery)
+      }
   }
 
 }

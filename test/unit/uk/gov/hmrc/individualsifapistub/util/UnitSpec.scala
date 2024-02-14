@@ -16,19 +16,19 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util
 
-import java.nio.charset.Charset
 import akka.stream.Materializer
 import akka.util.ByteString
-import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import play.api.inject.guice.GuiceableModule
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 
-import scala.language.postfixOps
+import java.nio.charset.Charset
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.{Duration, FiniteDuration, _}
 import scala.concurrent.{Await, Future}
+import scala.language.postfixOps
 
 trait UnitSpec extends AnyWordSpec with Matchers {
 
@@ -44,14 +44,11 @@ trait UnitSpec extends AnyWordSpec with Matchers {
   def status(of: Future[Result])(implicit timeout: Duration): Int =
     status(Await.result(of, timeout))
 
-  def jsonBodyOf(result: Result)(implicit mat: Materializer): JsValue = {
+  def jsonBodyOf(result: Result)(implicit mat: Materializer): JsValue =
     Json.parse(bodyOf(result))
-  }
 
-  def jsonBodyOf(resultF: Future[Result])(
-      implicit mat: Materializer): Future[JsValue] = {
+  def jsonBodyOf(resultF: Future[Result])(implicit mat: Materializer): Future[JsValue] =
     resultF.map(jsonBodyOf)
-  }
 
   def bodyOf(result: Result)(implicit mat: Materializer): String = {
     val bodyBytes: ByteString = await(result.body.consumeData)
@@ -63,14 +60,13 @@ trait UnitSpec extends AnyWordSpec with Matchers {
     bodyBytes.decodeString(Charset.defaultCharset().name)
   }
 
-  def bodyOf(resultF: Future[Result])(
-      implicit mat: Materializer): Future[String] = {
+  def bodyOf(resultF: Future[Result])(implicit mat: Materializer): Future[String] =
     resultF.map(bodyOf)
-  }
 
-  case class ExternalService(serviceName: String,
-                             runFrom: String = "SNAPSHOT_JAR",
-                             classifier: Option[String] = None,
-                             version: Option[String] = None)
+  case class ExternalService(
+    serviceName: String,
+    runFrom: String = "SNAPSHOT_JAR",
+    classifier: Option[String] = None,
+    version: Option[String] = None)
 
 }

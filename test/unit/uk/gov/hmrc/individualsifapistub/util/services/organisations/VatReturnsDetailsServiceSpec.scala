@@ -45,7 +45,8 @@ class VatReturnsDetailsServiceSpec extends AsyncWordSpec with Matchers with Mock
     VatPeriod(Some("23AA"), Some("2023-01-01"), Some("2023-01-31"), Some(30), Some(6243), Some("rt"), Some("s"))
   )
   val serviceRequest: VatReturnsDetails = VatReturnsDetails("12345678", Some("123"), Some("2023-01-31"), vatPeriods)
-  val repositoryRequest: VatReturnsDetailsEntry = VatReturnsDetailsEntry(serviceRequest.vrn, serviceRequest, LocalDateTime.now())
+  val repositoryRequest: VatReturnsDetailsEntry =
+    VatReturnsDetailsEntry(serviceRequest.vrn, serviceRequest, LocalDateTime.now())
 
   "create" should {
     "return response when creating" in {

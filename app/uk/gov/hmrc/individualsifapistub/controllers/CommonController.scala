@@ -16,11 +16,11 @@
 
 package uk.gov.hmrc.individualsifapistub.controllers
 
-import play.api.{Configuration, Logger}
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND}
 import play.api.libs.json._
 import play.api.mvc.Results.{BadRequest, NotFound, Status}
 import play.api.mvc.{ControllerComponents, Request, RequestHeader, Result}
+import play.api.{Configuration, Logger}
 import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{Nino, Trn}
 import uk.gov.hmrc.individualsifapistub.domain.individuals.Identifier._
@@ -29,23 +29,19 @@ import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import uk.gov.hmrc.play.bootstrap.backend.http.{ErrorResponse, JsonErrorHandler}
 import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
-import javax.inject.Inject
 
-import collection.Seq
+import javax.inject.Inject
+import scala.collection.Seq
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
-class CustomErrorHandler @Inject()( configuration: Configuration,
-                                    auditConnector: AuditConnector,
-                                    httpAuditEvent: HttpAuditEvent )
-                                  ( implicit ec: ExecutionContext ) extends JsonErrorHandler( auditConnector,
-                                                                                              httpAuditEvent,
-                                                                                              configuration ) {
+class CustomErrorHandler @Inject()(
+  configuration: Configuration,
+  auditConnector: AuditConnector,
+  httpAuditEvent: HttpAuditEvent)(implicit ec: ExecutionContext)
+    extends JsonErrorHandler(auditConnector, httpAuditEvent, configuration) {
 
-
-  override def onClientError( request: RequestHeader,
-                              statusCode: Int,
-                              message: String ): Future[Result] = {
+  override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
 
     val newMessage = Try {
       Json.parse(message).\\("message").mkString(",").replaceAll("\"", "")
@@ -57,18 +53,11 @@ class CustomErrorHandler @Inject()( configuration: Configuration,
     statusCode match {
       case NOT_FOUND =>
         Future.successful(
-          NotFound(
-            Json.toJson(
-              ErrorResponse(NOT_FOUND,
-                            "URI not found",
-                            requested = Some(request.path)))))
+          NotFound(Json.toJson(ErrorResponse(NOT_FOUND, "URI not found", requested = Some(request.path)))))
       case BAD_REQUEST =>
-        Future.successful(
-          BadRequest(Json.toJson(ErrorResponse(BAD_REQUEST, newMessage))))
+        Future.successful(BadRequest(Json.toJson(ErrorResponse(BAD_REQUEST, newMessage))))
       case _ =>
-        Future.successful(
-          Status(statusCode)(
-            Json.toJson(ErrorResponse(statusCode, newMessage))))
+        Future.successful(Status(statusCode)(Json.toJson(ErrorResponse(statusCode, newMessage))))
     }
   }
 }
@@ -78,33 +67,25 @@ abstract class CommonController(controllerComponents: ControllerComponents)
 
   protected val logger: Logger = play.api.Logger(getClass)
 
-  override protected def withJsonBody[T](f: (T) => Future[Result])(
-      implicit request: Request[JsValue],
-      m: Manifest[T],
-      reads: Reads[T]): Future[Result] = {
+  override protected def withJsonBody[T](
+    f: (T) => Future[Result])(implicit request: Request[JsValue], m: Manifest[T], reads: Reads[T]): Future[Result] =
     Try(request.body.validate[T]) match {
       case Success(JsSuccess(payload, _)) => f(payload)
       case Success(JsError(errs)) =>
-        Future.successful(
-          ErrorInvalidRequest(s"${fieldName(errs)} is required").toHttpResponse)
+        Future.successful(ErrorInvalidRequest(s"${fieldName(errs)} is required").toHttpResponse)
       case Failure(e) if e.isInstanceOf[ValidationException] =>
         Future.successful(ErrorInvalidRequest(e.getMessage).toHttpResponse)
       case Failure(_) =>
-        Future.successful(
-          ErrorInvalidRequest("Unable to process request").toHttpResponse)
+        Future.successful(ErrorInvalidRequest("Unable to process request").toHttpResponse)
     }
-  }
 
-  protected def withJsonBodyAndValidId[T](idType: String,
-                                          id: String,
-                                          from: Option[String],
-                                          to: Option[String],
-                                          useCase:
-                                          Option[String])
-                                         (f: (T) => Future[Result])(
-    implicit request: Request[JsValue],
-    m: Manifest[T],
-    reads: Reads[T]): Future[Result] = {
+  protected def withJsonBodyAndValidId[T](
+    idType: String,
+    id: String,
+    from: Option[String],
+    to: Option[String],
+    useCase: Option[String])(
+    f: (T) => Future[Result])(implicit request: Request[JsValue], m: Manifest[T], reads: Reads[T]): Future[Result] =
     Try(IdType.parse(idType)) match {
       case Failure(e) => Future.successful(ErrorInvalidRequest(e.getLocalizedMessage).toHttpResponse)
       case Success(idType) =>
@@ -112,15 +93,15 @@ abstract class CommonController(controllerComponents: ControllerComponents)
           case Nino => Json.toJson(Identifier(Some(id), None, from, to, useCase))
           case Trn  => Json.toJson(Identifier(None, Some(id), from, to, useCase))
         }).validate[Identifier] match {
-          case JsError(errs) => Future.successful(ErrorInvalidRequest(s"${errs.head._1.toString()} is invalid").toHttpResponse)
+          case JsError(errs) =>
+            Future.successful(ErrorInvalidRequest(s"${errs.head._1.toString()} is invalid").toHttpResponse)
           case JsSuccess(_, _) => withJsonBody(f)
         }
     }
-  }
 
   private def fieldName[T](errs: Seq[(JsPath, Seq[JsonValidationError])]) = {
     val e = errs.head._1.toString()
-    if(!e.isEmpty)
+    if (!e.isEmpty)
       e.substring(1)
     else
       e

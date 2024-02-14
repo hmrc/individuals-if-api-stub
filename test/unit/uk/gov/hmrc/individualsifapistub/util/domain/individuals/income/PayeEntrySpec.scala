@@ -16,11 +16,11 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.domain.individuals.income
 
-import org.joda.time.LocalDate
 import play.api.libs.json.Json
-import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomePaye._
 import uk.gov.hmrc.individualsifapistub.domain.individuals._
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
+
+import java.time.LocalDate
 
 class PayeEntrySpec extends UnitSpec {
 
@@ -169,7 +169,7 @@ class PayeEntrySpec extends UnitSpec {
     }
   }
 
-  private def createValidEmployeeNics() = {
+  private def createValidEmployeeNics() =
     EmployeeNics(
       Some(15797.45),
       Some(13170.69),
@@ -180,9 +180,9 @@ class PayeEntrySpec extends UnitSpec {
       Some(110849.27),
       Some(162081.23)
     )
-  }
 
-  private def createValidEmployeePensionContribs() = EmployeePensionContribs(Some(169731.51), Some(173987.07), Some(822317.49), Some(818841.65))
+  private def createValidEmployeePensionContribs() =
+    EmployeePensionContribs(Some(169731.51), Some(173987.07), Some(822317.49), Some(818841.65))
 
   private def createValidBenefits() = Benefits(Some(506328.1), Some(246594.83))
 

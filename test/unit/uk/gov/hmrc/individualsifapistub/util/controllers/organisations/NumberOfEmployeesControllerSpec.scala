@@ -22,8 +22,7 @@ import play.api.http.Status.{BAD_REQUEST, CREATED, OK}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.individualsifapistub.controllers.organisations.NumberOfEmployeesController
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{NumberOfEmployeeCounts, NumberOfEmployeeReferences, NumberOfEmployeeReferencesRequest, NumberOfEmployeesRequest, NumberOfEmployeesResponse}
-import uk.gov.hmrc.individualsifapistub.domain.organisations.NumberOfEmployees._
+import uk.gov.hmrc.individualsifapistub.domain.organisations._
 import uk.gov.hmrc.individualsifapistub.services.organisations.NumberOfEmployeesService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 

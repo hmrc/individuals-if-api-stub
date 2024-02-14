@@ -26,32 +26,31 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class TaxCreditsService @Inject()(repository: TaxCreditsRepository,
-                                  apiPlatformTestUserConnector: ApiPlatformTestUserConnector,
-                                  servicesConfig: ServicesConfig) extends ServiceBase(apiPlatformTestUserConnector) {
+class TaxCreditsService @Inject()(
+  repository: TaxCreditsRepository,
+  apiPlatformTestUserConnector: ApiPlatformTestUserConnector,
+  servicesConfig: ServicesConfig)
+    extends ServiceBase(apiPlatformTestUserConnector) {
 
-  def create(idType: String,
-             idValue: String,
-             startDate: String,
-             endDate: String,
-             useCase: String,
-             applications: Applications)
-            (implicit ec: ExecutionContext,
-             hc: HeaderCarrier): Future[Applications] = {
-
+  def create(
+    idType: String,
+    idValue: String,
+    startDate: String,
+    endDate: String,
+    useCase: String,
+    applications: Applications)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Applications] =
     if (servicesConfig.getConfBool("verifyNino", true)) {
       verifyNino(idType, idValue) flatMap { _ =>
         repository.create(idType, idValue, startDate, endDate, useCase, applications)
       }
     } else
       repository.create(idType, idValue, startDate, endDate, useCase, applications)
-  }
 
-  def get(idType: String,
-          idValue: String,
-          startDate: String,
-          endDate: String,
-          fields: Option[String]): Future[Option[Applications]] = {
+  def get(
+    idType: String,
+    idValue: String,
+    startDate: String,
+    endDate: String,
+    fields: Option[String]): Future[Option[Applications]] =
     repository.findByIdAndType(idType, idValue, startDate, endDate, fields)
-  }
 }

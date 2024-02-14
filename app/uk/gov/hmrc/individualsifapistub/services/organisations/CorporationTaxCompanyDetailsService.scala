@@ -16,10 +16,10 @@
 
 package uk.gov.hmrc.individualsifapistub.services.organisations
 
-import javax.inject.Inject
 import uk.gov.hmrc.individualsifapistub.domain.organisations.CorporationTaxCompanyDetails
 import uk.gov.hmrc.individualsifapistub.repository.organisations.CorporationTaxCompanyDetailsRepository
 
+import javax.inject.Inject
 import scala.concurrent.Future
 
 class CorporationTaxCompanyDetailsService @Inject()(repository: CorporationTaxCompanyDetailsRepository) {

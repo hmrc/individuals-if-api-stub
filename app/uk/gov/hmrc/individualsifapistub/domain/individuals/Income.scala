@@ -16,12 +16,13 @@
 
 package uk.gov.hmrc.individualsifapistub.domain.individuals
 
-import org.joda.time.LocalDate
-import play.api.libs.functional.syntax._
-import play.api.libs.json.Reads._
-import play.api.libs.json._
-import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomeSa._
-import JsonFormatters._
+import play.api.libs.functional.syntax.{toApplicativeOps, toFunctionalBuilderOps, unlift}
+import play.api.libs.json.Reads.{maxLength, minLength, pattern, verifying}
+import play.api.libs.json.{Format, JsPath, Reads}
+import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomePaye.paymentAmountValidator
+import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomeSa.{payeWholeUnitsPaymentTypeValidator, payeWholeUnitsPositivePaymentTypeValidator}
+
+import java.time.LocalDate
 
 case class StudentLoan(
                         planType: Option[String],
@@ -29,12 +30,56 @@ case class StudentLoan(
                         repaymentsYTD: Option[Int]
                       )
 
+object StudentLoan {
+  private val studentLoanPlanTypePattern = "^(01|02)$".r
+
+  implicit val format: Format[StudentLoan] = Format(
+    (
+      (JsPath \ "planType").readNullable[String]
+        (pattern(studentLoanPlanTypePattern, "Invalid student loan plan type")) and
+        (JsPath \ "repaymentsInPayPeriod").readNullable[Int](verifying(payeWholeUnitsPaymentTypeValidator)) and
+        (JsPath \ "repaymentsYTD").readNullable[Int](verifying(payeWholeUnitsPositivePaymentTypeValidator))
+      ) (StudentLoan.apply _),
+    (
+      (JsPath \ "planType").writeNullable[String] and
+        (JsPath \ "repaymentsInPayPeriod").writeNullable[Int] and
+        (JsPath \ "repaymentsYTD").writeNullable[Int]
+      ) (unlift(StudentLoan.unapply))
+  )
+}
+
 case class PostGradLoan(
                          repaymentsInPayPeriod: Option[Int],
                          repaymentsYtd: Option[Int]
                        )
 
+object PostGradLoan {
+  implicit val format: Format[PostGradLoan] = Format(
+    (
+      (JsPath \ "repaymentsInPayPeriod").readNullable[Int](verifying(payeWholeUnitsPaymentTypeValidator)) and
+        (JsPath \ "repaymentsYTD").readNullable[Int](verifying(payeWholeUnitsPositivePaymentTypeValidator))
+      ) (PostGradLoan.apply _),
+    (
+      (JsPath \ "repaymentsInPayPeriod").writeNullable[Int] and
+        (JsPath \ "repaymentsYTD").writeNullable[Int]
+      ) (unlift(PostGradLoan.unapply))
+  )
+}
+
 case class Benefits(taxedViaPayroll: Option[Double], taxedViaPayrollYtd: Option[Double])
+
+object Benefits {
+  implicit val format: Format[Benefits] = Format(
+    (
+      (JsPath \ "taxedViaPayroll").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "taxedViaPayrollYTD").readNullable[Double](verifying(paymentAmountValidator))
+      ) (Benefits.apply _),
+    (
+      (JsPath \ "taxedViaPayroll").writeNullable[Double] and
+        (JsPath \ "taxedViaPayrollYTD").writeNullable[Double]
+      ) (unlift(Benefits.unapply))
+  )
+}
 
 case class EmployeePensionContribs(
                                     paidYtd: Option[Double],
@@ -43,6 +88,23 @@ case class EmployeePensionContribs(
                                     notPaid: Option[Double]
                                   )
 
+object EmployeePensionContribs {
+  implicit val format: Format[EmployeePensionContribs] = Format(
+    (
+      (JsPath \ "paidYTD").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "notPaidYTD").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "paid").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "notPaid").readNullable[Double](verifying(paymentAmountValidator))
+      ) (EmployeePensionContribs.apply _),
+    (
+      (JsPath \ "paidYTD").writeNullable[Double] and
+        (JsPath \ "notPaidYTD").writeNullable[Double] and
+        (JsPath \ "paid").writeNullable[Double] and
+        (JsPath \ "notPaid").writeNullable[Double]
+      ) (unlift(EmployeePensionContribs.unapply))
+  )
+}
+
 case class GrossEarningsForNics(
                                  inPayPeriod1: Option[Double],
                                  inPayPeriod2: Option[Double],
@@ -50,10 +112,40 @@ case class GrossEarningsForNics(
                                  inPayPeriod4: Option[Double]
                                )
 
+object GrossEarningsForNics {
+  implicit val format: Format[GrossEarningsForNics] = Format(
+    (
+      (JsPath \ "inPayPeriod1").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "inPayPeriod2").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "inPayPeriod3").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "inPayPeriod4").readNullable[Double](verifying(paymentAmountValidator))
+      ) (GrossEarningsForNics.apply _),
+    (
+      (JsPath \ "inPayPeriod1").writeNullable[Double] and
+        (JsPath \ "inPayPeriod2").writeNullable[Double] and
+        (JsPath \ "inPayPeriod3").writeNullable[Double] and
+        (JsPath \ "inPayPeriod4").writeNullable[Double]
+      ) (unlift(GrossEarningsForNics.unapply))
+  )
+}
+
 case class AdditionalFields(
                              employeeHasPartner: Option[Boolean],
                              payrollId: Option[String]
                            )
+
+object AdditionalFields {
+  implicit val format: Format[AdditionalFields] = Format(
+    (
+      (JsPath \ "employee" \ "hasPartner").readNullable[Boolean] and
+        (JsPath \ "payroll" \ "id").readNullable[String]
+      ) (AdditionalFields.apply _),
+    (
+      (JsPath \ "employee" \ "hasPartner").writeNullable[Boolean] and
+        (JsPath \ "payroll" \ "id").writeNullable[String]
+      ) (unlift(AdditionalFields.unapply))
+  )
+}
 
 case class TotalEmployerNics(
                               inPayPeriod1: Option[Double],
@@ -66,6 +158,31 @@ case class TotalEmployerNics(
                               ytd4: Option[Double]
                             )
 
+object TotalEmployerNics {
+  implicit val format: Format[TotalEmployerNics] = Format(
+    (
+      (JsPath \ "inPayPeriod1").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "inPayPeriod2").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "inPayPeriod3").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "inPayPeriod4").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "ytd1").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "ytd2").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "ytd3").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "ytd4").readNullable[Double](verifying(paymentAmountValidator))
+      ) (TotalEmployerNics.apply _),
+    (
+      (JsPath \ "inPayPeriod1").writeNullable[Double] and
+        (JsPath \ "inPayPeriod2").writeNullable[Double] and
+        (JsPath \ "inPayPeriod3").writeNullable[Double] and
+        (JsPath \ "inPayPeriod4").writeNullable[Double] and
+        (JsPath \ "ytd1").writeNullable[Double] and
+        (JsPath \ "ytd2").writeNullable[Double] and
+        (JsPath \ "ytd3").writeNullable[Double] and
+        (JsPath \ "ytd4").writeNullable[Double]
+      ) (unlift(TotalEmployerNics.unapply))
+  )
+}
+
 case class EmployeeNics(
                          inPayPeriod1: Option[Double],
                          inPayPeriod2: Option[Double],
@@ -77,12 +194,54 @@ case class EmployeeNics(
                          ytd4: Option[Double]
                        )
 
+object EmployeeNics {
+  implicit val format: Format[EmployeeNics] = Format(
+    (
+      (JsPath \ "inPayPeriod1").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "inPayPeriod2").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "inPayPeriod3").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "inPayPeriod4").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "ytd1").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "ytd2").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "ytd3").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "ytd4").readNullable[Double](verifying(paymentAmountValidator))
+      ) (EmployeeNics.apply _),
+    (
+      (JsPath \ "inPayPeriod1").writeNullable[Double] and
+        (JsPath \ "inPayPeriod2").writeNullable[Double] and
+        (JsPath \ "inPayPeriod3").writeNullable[Double] and
+        (JsPath \ "inPayPeriod4").writeNullable[Double] and
+        (JsPath \ "ytd1").writeNullable[Double] and
+        (JsPath \ "ytd2").writeNullable[Double] and
+        (JsPath \ "ytd3").writeNullable[Double] and
+        (JsPath \ "ytd4").writeNullable[Double]
+      ) (unlift(EmployeeNics.unapply))
+  )
+}
+
 case class StatutoryPayYTD(
                             maternity: Option[Double],
                             paternity: Option[Double],
                             adoption: Option[Double],
                             parentalBereavement: Option[Double]
                           )
+
+object StatutoryPayYTD {
+  implicit val format: Format[StatutoryPayYTD] = Format(
+    (
+      (JsPath \ "maternity").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "paternity").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "adoption").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "parentalBereavement").readNullable[Double](verifying(paymentAmountValidator))
+      ) (StatutoryPayYTD.apply _),
+    (
+      (JsPath \ "maternity").writeNullable[Double] and
+        (JsPath \ "paternity").writeNullable[Double] and
+        (JsPath \ "adoption").writeNullable[Double] and
+        (JsPath \ "parentalBereavement").writeNullable[Double]
+      ) (unlift(StatutoryPayYTD.unapply))
+  )
+}
 
 case class PayeEntry(
                       taxCode: Option[String],
@@ -109,405 +268,21 @@ case class PayeEntry(
                       additionalFields: Option[AdditionalFields]
                     )
 
-case class SaIncome(
-                     selfAssessment: Option[Double],
-                     allEmployments: Option[Double],
-                     ukInterest: Option[Double],
-                     foreignDivs: Option[Double],
-                     ukDivsAndInterest: Option[Double],
-                     partnerships: Option[Double],
-                     pensions: Option[Double],
-                     selfEmployment: Option[Double],
-                     trusts: Option[Double],
-                     ukProperty: Option[Double],
-                     foreign: Option[Double],
-                     lifePolicies: Option[Double],
-                     shares: Option[Double],
-                     other: Option[Double]
-                   )
+object PayeEntry {
+  private val taxCodePattern = "^([1-9][0-9]{0,5}[LMNPTY])|(BR)|(0T)|(NT)|(D[0-8])|([K][1-9][0-9]{0,5})$".r
+  private val paidHoursWorkPattern = "^[^ ].{0,34}$".r
+  private val employerPayeRefPattern = "^[^ ].{1,14}$".r
+  private val payeTaxYearPattern = "^[0-9]{2}\\-[0-9]{2}$".r
+  private val monthlyPeriodNumberPattern = "^([1-9]|1[0-2])$".r
+  private val weeklyPeriodNumberPattern = "^([1-9]|[1-4][0-9]|5[0-46])$".r
 
-case class SaReturnType(
-                         utr: Option[String],
-                         caseStartDate: Option[String],
-                         receivedDate: Option[String],
-                         businessDescription: Option[String],
-                         telephoneNumber: Option[String],
-                         busStartDate: Option[String],
-                         busEndDate: Option[String],
-                         totalTaxPaid: Option[Double],
-                         totalNIC: Option[Double],
-                         turnover: Option[Double],
-                         otherBusinessIncome: Option[Double],
-                         tradingIncomeAllowance: Option[Double],
-                         address: Option[Address],
-                         income: Option[SaIncome],
-                         deducts: Option[Deducts]
-                       )
+  private def isInPayFrequency: Reads[String] = {
+    val payFrequencyValues = Seq("W1", "W2", "W4", "M1", "M3", "M6", "MA", "IO", "IR")
 
-case class Deducts(
-                    totalBusExpenses: Option[Double],
-                    totalDisallowBusExp: Option[Double]
-                  )
-
-case class SaTaxYearEntry(taxYear: Option[String], income: Option[Double], returnList: Option[Seq[SaReturnType]])
-
-case class IncomeSaEntry(id: String, incomeSa: IncomeSa, idValue: Option[String])
-
-case class IncomePayeEntry(id: String, incomePaye: IncomePaye, idValue: String)
-
-case class IncomeSa(sa: Option[Seq[SaTaxYearEntry]])
-
-case class IncomePaye(paye: Option[Seq[PayeEntry]])
-
-object IncomeSa {
-
-  val minValue = -99999999999.99
-  val maxValue = 99999999999.99
-  val payeWholeUnitsPaymentTypeMinValue = -99999
-  val payeWholeUnitsPaymentTypeMaxValue = 99999
-  val payeWholeUnitsPositivePaymentTypeMinValue = 0
-  val payeWholeUnitsPositivePaymentTypeMaxValue = 99999
-
-  val utrPattern = "^[0-9]{10}$".r
-  val dateStringPattern = ("^(((19|20)([2468][048]|[13579][26]|0[48])|2000)" +
-    "[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)[-]" +
-    "(0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-]" +
-    "(0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}[-]02[-]" +
-    "(0[1-9]|1[0-9]|2[0-8])))$").r
-
-  val taxYearPattern = "^20[0-9]{2}$".r
-
-  def isMultipleOfPointZeroOne(value: Double): Boolean = (BigDecimal(value) * 100.0) % 1 == 0
-
-  def isInRange(value: Double): Boolean = value >= minValue && value <= maxValue
-
-  def isInRangeWholeUnits(value: Double): Boolean =
-    value >= payeWholeUnitsPaymentTypeMinValue && value <= payeWholeUnitsPaymentTypeMaxValue
-
-  def isInRangePositiveWholeUnits(value: Double): Boolean =
-    value >= payeWholeUnitsPositivePaymentTypeMinValue && value <= payeWholeUnitsPositivePaymentTypeMaxValue
-
-  def paymentAmountValidator(value: Double): Boolean =
-    isInRange(value) && isMultipleOfPointZeroOne(value)
-
-  def payeWholeUnitsPaymentTypeValidator(value: Int): Boolean = isInRangeWholeUnits(value)
-
-  def payeWholeUnitsPositivePaymentTypeValidator(value: Int): Boolean = isInRangePositiveWholeUnits(value)
-
-  implicit val addressFormat: Format[Address] = Format(
-    (
-      (JsPath \ "line1").readNullable[String](minLength[String](0).andKeep(maxLength[String](100))) and
-        (JsPath \ "line2").readNullable[String](minLength[String](0).andKeep(maxLength[String](100))) and
-        (JsPath \ "line3").readNullable[String](minLength[String](0).andKeep(maxLength[String](100))) and
-        (JsPath \ "line4").readNullable[String](minLength[String](0).andKeep(maxLength[String](100))) and
-        (JsPath \ "line5").readNullable[String](minLength[String](0).andKeep(maxLength[String](100))) and
-        (JsPath \ "postcode").readNullable[String](minLength[String](1).andKeep(maxLength[String](10)))
-      ) (Address.apply _),
-    (
-      (JsPath \ "line1").writeNullable[String] and
-        (JsPath \ "line2").writeNullable[String] and
-        (JsPath \ "line3").writeNullable[String] and
-        (JsPath \ "line4").writeNullable[String] and
-        (JsPath \ "line5").writeNullable[String] and
-        (JsPath \ "postcode").writeNullable[String]
-      ) (unlift(Address.unapply))
-  )
-
-  implicit val saIncomeFormat: Format[SaIncome] = Format(
-    (
-      (JsPath \ "selfAssessment").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "allEmployments").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "ukInterest").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "foreignDivs").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "ukDivsAndInterest").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "partnerships").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "pensions").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "selfEmployment").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "trusts").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "ukProperty").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "foreign").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "lifePolicies").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "shares").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "other").readNullable[Double](verifying(paymentAmountValidator))
-      ) (SaIncome.apply _),
-    (
-      (JsPath \ "selfAssessment").writeNullable[Double] and
-        (JsPath \ "allEmployments").writeNullable[Double] and
-        (JsPath \ "ukInterest").writeNullable[Double] and
-        (JsPath \ "foreignDivs").writeNullable[Double] and
-        (JsPath \ "ukDivsAndInterest").writeNullable[Double] and
-        (JsPath \ "partnerships").writeNullable[Double] and
-        (JsPath \ "pensions").writeNullable[Double] and
-        (JsPath \ "selfEmployment").writeNullable[Double] and
-        (JsPath \ "trusts").writeNullable[Double] and
-        (JsPath \ "ukProperty").writeNullable[Double] and
-        (JsPath \ "foreign").writeNullable[Double] and
-        (JsPath \ "lifePolicies").writeNullable[Double] and
-        (JsPath \ "shares").writeNullable[Double] and
-        (JsPath \ "other").writeNullable[Double]
-      ) (unlift(SaIncome.unapply))
-  )
-
-  implicit val saDeductsFormat: Format[Deducts] = Format(
-    (
-      (JsPath \ "totalBusExpenses").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "totalDisallowBusExp").readNullable[Double](verifying(paymentAmountValidator))
-      ) (Deducts.apply _),
-    (
-      (JsPath \ "totalBusExpenses").writeNullable[Double] and
-        (JsPath \ "totalDisallowBusExp").writeNullable[Double]
-      ) (unlift(Deducts.unapply))
-  )
-
-  implicit val saReturnTypeFormat: Format[SaReturnType] = Format(
-    (
-      (JsPath \ "utr").readNullable[String](pattern(utrPattern, "Invalid UTR")) and
-        (JsPath \ "caseStartDate").readNullable[String]
-          (pattern(dateStringPattern, "Invalid Case Start Date")) and
-        (JsPath \ "receivedDate").readNullable[String]
-          (pattern(dateStringPattern, "Invalid Received Date")) and
-        (JsPath \ "businessDescription").readNullable[String]
-          (minLength[String](0).keepAnd(maxLength[String](100))) and
-        (JsPath \ "telephoneNumber").readNullable[String]
-          (minLength[String](0).keepAnd(maxLength[String](100))) and
-        (JsPath \ "busStartDate").readNullable[String]
-          (pattern(dateStringPattern, "Invalid Business Start Date")) and
-        (JsPath \ "busEndDate").readNullable[String]
-          (pattern(dateStringPattern, "Invalid Business End Date")) and
-        (JsPath \ "totalTaxPaid").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "totalNIC").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "turnover").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "otherBusIncome").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "tradingIncomeAllowance").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "address").readNullable[Address] and
-        (JsPath \ "income").readNullable[SaIncome] and
-        (JsPath \ "deducts").readNullable[Deducts]
-      ) (SaReturnType.apply _),
-    (
-      (JsPath \ "utr").writeNullable[String] and
-        (JsPath \ "caseStartDate").writeNullable[String] and
-        (JsPath \ "receivedDate").writeNullable[String] and
-        (JsPath \ "businessDescription").writeNullable[String] and
-        (JsPath \ "telephoneNumber").writeNullable[String] and
-        (JsPath \ "busStartDate").writeNullable[String] and
-        (JsPath \ "busEndDate").writeNullable[String] and
-        (JsPath \ "totalTaxPaid").writeNullable[Double] and
-        (JsPath \ "totalNIC").writeNullable[Double] and
-        (JsPath \ "turnover").writeNullable[Double] and
-        (JsPath \ "otherBusIncome").writeNullable[Double] and
-        (JsPath \ "tradingIncomeAllowance").writeNullable[Double] and
-        (JsPath \ "address").writeNullable[Address] and
-        (JsPath \ "income").writeNullable[SaIncome] and
-        (JsPath \ "deducts").writeNullable[Deducts]
-      ) (unlift(SaReturnType.unapply))
-  )
-
-  implicit val saTaxYearEntryFormat: Format[SaTaxYearEntry] = Format(
-    (
-      (JsPath \ "taxYear").readNullable[String](pattern(taxYearPattern, "Invalid Tax Year")) and
-        (JsPath \ "income").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "returnList").readNullable[Seq[SaReturnType]]
-      ) (SaTaxYearEntry.apply _),
-    (
-      (JsPath \ "taxYear").writeNullable[String] and
-        (JsPath \ "income").writeNullable[Double] and
-        (JsPath \ "returnList").writeNullable[Seq[SaReturnType]]
-      ) (unlift(SaTaxYearEntry.unapply))
-  )
-
-  implicit val incomeSaFormat: Format[IncomeSa] = Format(
-    (JsPath \ "sa").readNullable[Seq[SaTaxYearEntry]].map(value => IncomeSa(value)),
-    (JsPath \ "sa").writeNullable[Seq[SaTaxYearEntry]].contramap(value => value.sa)
-  )
-
-  implicit val incomeSaEntryFormat: Format[IncomeSaEntry] = Format(
-    (
-      (JsPath \ "id").read[String] and
-        (JsPath \ "incomeSaResponse").read[IncomeSa] and
-        (JsPath \ "idValue").readNullable[String]
-      ) (IncomeSaEntry.apply _),
-    (
-      (JsPath \ "id").write[String] and
-        (JsPath \ "incomeSaResponse").write[IncomeSa] and
-        (JsPath \ "idValue").writeNullable[String]
-      ) (unlift(IncomeSaEntry.unapply))
-  )
-}
-
-object IncomePaye {
-  val minValue = -999999999.99
-  val maxValue = 999999999.99
-  val studentLoanPlanTypePattern = "^(01|02)$".r
-  val taxCodePattern = "^([1-9][0-9]{0,5}[LMNPTY])|(BR)|(0T)|(NT)|(D[0-8])|([K][1-9][0-9]{0,5})$".r
-  val paidHoursWorkPattern = "^[^ ].{0,34}$".r
-  val employerPayeRefPattern = "^[^ ].{1,14}$".r
-
-  val payeTaxYearPattern = "^[0-9]{2}\\-[0-9]{2}$".r
-  val monthlyPeriodNumberPattern = "^([1-9]|1[0-2])$".r
-  val weeklyPeriodNumberPattern = "^([1-9]|[1-4][0-9]|5[0-46])$".r
-
-  val payFrequencyValues = Seq("W1", "W2", "W4", "M1", "M3", "M6", "MA", "IO", "IR")
-
-  def isInPayFrequency: Reads[String] = {
     verifying(value => payFrequencyValues.contains(value))
   }
 
-  def isMultipleOfPointZeroOne(value: Double): Boolean = (BigDecimal(value) * 100.0) % 1 == 0
-
-  def isInRange(value: Double): Boolean = value >= minValue && value <= maxValue
-
-  def isInRangeWholeUnits(value: Double): Boolean =
-    value >= payeWholeUnitsPaymentTypeMinValue && value <= payeWholeUnitsPaymentTypeMaxValue
-
-  def isInRangePositiveWholeUnits(value: Double): Boolean =
-    value >= payeWholeUnitsPositivePaymentTypeMinValue && value <= payeWholeUnitsPositivePaymentTypeMaxValue
-
-  def paymentAmountValidator(value: Double): Boolean =
-    isInRange(value) && isMultipleOfPointZeroOne(value)
-
-  def payeWholeUnitsPaymentTypeValidator(value: Int): Boolean = isInRangeWholeUnits(value)
-
-  def payeWholeUnitsPositivePaymentTypeValidator(value: Int): Boolean = isInRangePositiveWholeUnits(value)
-
-  implicit val postGradLoanFormat: Format[PostGradLoan] = Format(
-    (
-      (JsPath \ "repaymentsInPayPeriod").readNullable[Int](verifying(payeWholeUnitsPaymentTypeValidator)) and
-        (JsPath \ "repaymentsYTD").readNullable[Int](verifying(payeWholeUnitsPositivePaymentTypeValidator))
-      ) (PostGradLoan.apply _),
-    (
-      (JsPath \ "repaymentsInPayPeriod").writeNullable[Int] and
-        (JsPath \ "repaymentsYTD").writeNullable[Int]
-      ) (unlift(PostGradLoan.unapply))
-  )
-
-  implicit val statutoryPayYTDFormat: Format[StatutoryPayYTD] = Format(
-    (
-      (JsPath \ "maternity").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "paternity").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "adoption").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "parentalBereavement").readNullable[Double](verifying(paymentAmountValidator))
-      ) (StatutoryPayYTD.apply _),
-    (
-      (JsPath \ "maternity").writeNullable[Double] and
-        (JsPath \ "paternity").writeNullable[Double] and
-        (JsPath \ "adoption").writeNullable[Double] and
-        (JsPath \ "parentalBereavement").writeNullable[Double]
-      ) (unlift(StatutoryPayYTD.unapply))
-  )
-
-  implicit val studentLoanFormat: Format[StudentLoan] = Format(
-    (
-      (JsPath \ "planType").readNullable[String]
-        (pattern(studentLoanPlanTypePattern, "Invalid student loan plan type")) and
-        (JsPath \ "repaymentsInPayPeriod").readNullable[Int](verifying(payeWholeUnitsPaymentTypeValidator)) and
-        (JsPath \ "repaymentsYTD").readNullable[Int](verifying(payeWholeUnitsPositivePaymentTypeValidator))
-      ) (StudentLoan.apply _),
-    (
-      (JsPath \ "planType").writeNullable[String] and
-        (JsPath \ "repaymentsInPayPeriod").writeNullable[Int] and
-        (JsPath \ "repaymentsYTD").writeNullable[Int]
-      ) (unlift(StudentLoan.unapply))
-  )
-
-  implicit val benefitsFormat: Format[Benefits] = Format(
-    (
-      (JsPath \ "taxedViaPayroll").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "taxedViaPayrollYTD").readNullable[Double](verifying(paymentAmountValidator))
-      ) (Benefits.apply _),
-    (
-      (JsPath \ "taxedViaPayroll").writeNullable[Double] and
-        (JsPath \ "taxedViaPayrollYTD").writeNullable[Double]
-      ) (unlift(Benefits.unapply))
-  )
-
-  implicit val employeePensionContribsFormat: Format[EmployeePensionContribs] = Format(
-    (
-      (JsPath \ "paidYTD").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "notPaidYTD").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "paid").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "notPaid").readNullable[Double](verifying(paymentAmountValidator))
-      ) (EmployeePensionContribs.apply _),
-    (
-      (JsPath \ "paidYTD").writeNullable[Double] and
-        (JsPath \ "notPaidYTD").writeNullable[Double] and
-        (JsPath \ "paid").writeNullable[Double] and
-        (JsPath \ "notPaid").writeNullable[Double]
-      ) (unlift(EmployeePensionContribs.unapply))
-  )
-
-  implicit val grossEarningsForNicsFormat: Format[GrossEarningsForNics] = Format(
-    (
-      (JsPath \ "inPayPeriod1").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "inPayPeriod2").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "inPayPeriod3").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "inPayPeriod4").readNullable[Double](verifying(paymentAmountValidator))
-      ) (GrossEarningsForNics.apply _),
-    (
-      (JsPath \ "inPayPeriod1").writeNullable[Double] and
-        (JsPath \ "inPayPeriod2").writeNullable[Double] and
-        (JsPath \ "inPayPeriod3").writeNullable[Double] and
-        (JsPath \ "inPayPeriod4").writeNullable[Double]
-      ) (unlift(GrossEarningsForNics.unapply))
-  )
-
-  implicit val employeeNicsFormat: Format[EmployeeNics] = Format(
-    (
-      (JsPath \ "inPayPeriod1").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "inPayPeriod2").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "inPayPeriod3").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "inPayPeriod4").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "ytd1").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "ytd2").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "ytd3").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "ytd4").readNullable[Double](verifying(paymentAmountValidator))
-      ) (EmployeeNics.apply _),
-    (
-      (JsPath \ "inPayPeriod1").writeNullable[Double] and
-        (JsPath \ "inPayPeriod2").writeNullable[Double] and
-        (JsPath \ "inPayPeriod3").writeNullable[Double] and
-        (JsPath \ "inPayPeriod4").writeNullable[Double] and
-        (JsPath \ "ytd1").writeNullable[Double] and
-        (JsPath \ "ytd2").writeNullable[Double] and
-        (JsPath \ "ytd3").writeNullable[Double] and
-        (JsPath \ "ytd4").writeNullable[Double]
-      ) (unlift(EmployeeNics.unapply))
-  )
-
-  implicit val totalEmployerNicsFormat: Format[TotalEmployerNics] = Format(
-    (
-      (JsPath \ "inPayPeriod1").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "inPayPeriod2").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "inPayPeriod3").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "inPayPeriod4").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "ytd1").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "ytd2").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "ytd3").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "ytd4").readNullable[Double](verifying(paymentAmountValidator))
-      ) (TotalEmployerNics.apply _),
-    (
-      (JsPath \ "inPayPeriod1").writeNullable[Double] and
-        (JsPath \ "inPayPeriod2").writeNullable[Double] and
-        (JsPath \ "inPayPeriod3").writeNullable[Double] and
-        (JsPath \ "inPayPeriod4").writeNullable[Double] and
-        (JsPath \ "ytd1").writeNullable[Double] and
-        (JsPath \ "ytd2").writeNullable[Double] and
-        (JsPath \ "ytd3").writeNullable[Double] and
-        (JsPath \ "ytd4").writeNullable[Double]
-      ) (unlift(TotalEmployerNics.unapply))
-  )
-
-  implicit val additionalFieldsFormat: Format[AdditionalFields] = Format(
-    (
-      (JsPath \ "employee" \ "hasPartner").readNullable[Boolean] and
-        (JsPath \ "payroll" \ "id").readNullable[String]
-      ) (AdditionalFields.apply _),
-    (
-      (JsPath \ "employee" \ "hasPartner").writeNullable[Boolean] and
-        (JsPath \ "payroll" \ "id").writeNullable[String]
-      ) (unlift(AdditionalFields.unapply))
-  )
-
-  implicit val payeEntryFormat: Format[PayeEntry] = Format(
+  implicit val format: Format[PayeEntry] = Format(
     (
       (JsPath \ "taxCode").readNullable[String]
         (minLength[String](2)
@@ -572,13 +347,190 @@ object IncomePaye {
         JsPath.writeNullable[AdditionalFields]
       ) (unlift(PayeEntry.unapply))
   )
+}
 
-  implicit val incomePayeFormat: Format[IncomePaye] = Format(
-    (JsPath \ "paye").readNullable[Seq[PayeEntry]].map(value => IncomePaye(value)),
-    (JsPath \ "paye").writeNullable[Seq[PayeEntry]].contramap(value => value.paye)
+case class SaIncome(
+                     selfAssessment: Option[Double],
+                     allEmployments: Option[Double],
+                     ukInterest: Option[Double],
+                     foreignDivs: Option[Double],
+                     ukDivsAndInterest: Option[Double],
+                     partnerships: Option[Double],
+                     pensions: Option[Double],
+                     selfEmployment: Option[Double],
+                     trusts: Option[Double],
+                     ukProperty: Option[Double],
+                     foreign: Option[Double],
+                     lifePolicies: Option[Double],
+                     shares: Option[Double],
+                     other: Option[Double]
+                   )
+
+object SaIncome {
+  implicit val format: Format[SaIncome] = Format(
+    (
+      (JsPath \ "selfAssessment").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "allEmployments").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "ukInterest").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "foreignDivs").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "ukDivsAndInterest").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "partnerships").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "pensions").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "selfEmployment").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "trusts").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "ukProperty").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "foreign").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "lifePolicies").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "shares").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "other").readNullable[Double](verifying(paymentAmountValidator))
+      ) (SaIncome.apply _),
+    (
+      (JsPath \ "selfAssessment").writeNullable[Double] and
+        (JsPath \ "allEmployments").writeNullable[Double] and
+        (JsPath \ "ukInterest").writeNullable[Double] and
+        (JsPath \ "foreignDivs").writeNullable[Double] and
+        (JsPath \ "ukDivsAndInterest").writeNullable[Double] and
+        (JsPath \ "partnerships").writeNullable[Double] and
+        (JsPath \ "pensions").writeNullable[Double] and
+        (JsPath \ "selfEmployment").writeNullable[Double] and
+        (JsPath \ "trusts").writeNullable[Double] and
+        (JsPath \ "ukProperty").writeNullable[Double] and
+        (JsPath \ "foreign").writeNullable[Double] and
+        (JsPath \ "lifePolicies").writeNullable[Double] and
+        (JsPath \ "shares").writeNullable[Double] and
+        (JsPath \ "other").writeNullable[Double]
+      ) (unlift(SaIncome.unapply))
   )
+}
 
-  implicit val incomePayeEntryFormat: Format[IncomePayeEntry] = Format(
+case class SaReturnType(
+                         utr: Option[String],
+                         caseStartDate: Option[String],
+                         receivedDate: Option[String],
+                         businessDescription: Option[String],
+                         telephoneNumber: Option[String],
+                         busStartDate: Option[String],
+                         busEndDate: Option[String],
+                         totalTaxPaid: Option[Double],
+                         totalNIC: Option[Double],
+                         turnover: Option[Double],
+                         otherBusinessIncome: Option[Double],
+                         tradingIncomeAllowance: Option[Double],
+                         address: Option[Address],
+                         income: Option[SaIncome],
+                         deducts: Option[Deducts]
+                       )
+
+object SaReturnType {
+  private val utrPattern = "^[0-9]{10}$".r
+  private val dateStringPattern = ("^(((19|20)([2468][048]|[13579][26]|0[48])|2000)" +
+    "[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)[-]" +
+    "(0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-]" +
+    "(0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}[-]02[-]" +
+    "(0[1-9]|1[0-9]|2[0-8])))$").r
+
+  implicit val format: Format[SaReturnType] = Format(
+    (
+      (JsPath \ "utr").readNullable[String](pattern(utrPattern, "Invalid UTR")) and
+        (JsPath \ "caseStartDate").readNullable[String]
+          (pattern(dateStringPattern, "Invalid Case Start Date")) and
+        (JsPath \ "receivedDate").readNullable[String]
+          (pattern(dateStringPattern, "Invalid Received Date")) and
+        (JsPath \ "businessDescription").readNullable[String]
+          (minLength[String](0).keepAnd(maxLength[String](100))) and
+        (JsPath \ "telephoneNumber").readNullable[String]
+          (minLength[String](0).keepAnd(maxLength[String](100))) and
+        (JsPath \ "busStartDate").readNullable[String]
+          (pattern(dateStringPattern, "Invalid Business Start Date")) and
+        (JsPath \ "busEndDate").readNullable[String]
+          (pattern(dateStringPattern, "Invalid Business End Date")) and
+        (JsPath \ "totalTaxPaid").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "totalNIC").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "turnover").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "otherBusIncome").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "tradingIncomeAllowance").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "address").readNullable[Address] and
+        (JsPath \ "income").readNullable[SaIncome] and
+        (JsPath \ "deducts").readNullable[Deducts]
+      ) (SaReturnType.apply _),
+    (
+      (JsPath \ "utr").writeNullable[String] and
+        (JsPath \ "caseStartDate").writeNullable[String] and
+        (JsPath \ "receivedDate").writeNullable[String] and
+        (JsPath \ "businessDescription").writeNullable[String] and
+        (JsPath \ "telephoneNumber").writeNullable[String] and
+        (JsPath \ "busStartDate").writeNullable[String] and
+        (JsPath \ "busEndDate").writeNullable[String] and
+        (JsPath \ "totalTaxPaid").writeNullable[Double] and
+        (JsPath \ "totalNIC").writeNullable[Double] and
+        (JsPath \ "turnover").writeNullable[Double] and
+        (JsPath \ "otherBusIncome").writeNullable[Double] and
+        (JsPath \ "tradingIncomeAllowance").writeNullable[Double] and
+        (JsPath \ "address").writeNullable[Address] and
+        (JsPath \ "income").writeNullable[SaIncome] and
+        (JsPath \ "deducts").writeNullable[Deducts]
+      ) (unlift(SaReturnType.unapply))
+  )
+}
+
+case class Deducts(
+                    totalBusExpenses: Option[Double],
+                    totalDisallowBusExp: Option[Double]
+                  )
+
+object Deducts {
+  implicit val format: Format[Deducts] = Format(
+    (
+      (JsPath \ "totalBusExpenses").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "totalDisallowBusExp").readNullable[Double](verifying(paymentAmountValidator))
+      ) (Deducts.apply _),
+    (
+      (JsPath \ "totalBusExpenses").writeNullable[Double] and
+        (JsPath \ "totalDisallowBusExp").writeNullable[Double]
+      ) (unlift(Deducts.unapply))
+  )
+}
+
+case class SaTaxYearEntry(taxYear: Option[String], income: Option[Double], returnList: Option[Seq[SaReturnType]])
+
+object SaTaxYearEntry {
+  private val taxYearPattern = "^20[0-9]{2}$".r
+
+  implicit val format: Format[SaTaxYearEntry] = Format(
+    (
+      (JsPath \ "taxYear").readNullable[String](pattern(taxYearPattern, "Invalid Tax Year")) and
+        (JsPath \ "income").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "returnList").readNullable[Seq[SaReturnType]]
+      ) (SaTaxYearEntry.apply _),
+    (
+      (JsPath \ "taxYear").writeNullable[String] and
+        (JsPath \ "income").writeNullable[Double] and
+        (JsPath \ "returnList").writeNullable[Seq[SaReturnType]]
+      ) (unlift(SaTaxYearEntry.unapply))
+  )
+}
+
+case class IncomeSaEntry(id: String, incomeSa: IncomeSa, idValue: Option[String])
+
+object IncomeSaEntry {
+  implicit val format: Format[IncomeSaEntry] = Format(
+    (
+      (JsPath \ "id").read[String] and
+        (JsPath \ "incomeSaResponse").read[IncomeSa] and
+        (JsPath \ "idValue").readNullable[String]
+      ) (IncomeSaEntry.apply _),
+    (
+      (JsPath \ "id").write[String] and
+        (JsPath \ "incomeSaResponse").write[IncomeSa] and
+        (JsPath \ "idValue").writeNullable[String]
+      ) (unlift(IncomeSaEntry.unapply))
+  )
+}
+
+case class IncomePayeEntry(id: String, incomePaye: IncomePaye, idValue: String)
+
+object IncomePayeEntry {
+  implicit val format: Format[IncomePayeEntry] = Format(
     (
       (JsPath \ "id").read[String] and
         (JsPath \ "incomePaye").read[IncomePaye] and
@@ -589,5 +541,48 @@ object IncomePaye {
         (JsPath \ "incomePaye").write[IncomePaye] and
         (JsPath \ "idValue").write[String]
       ) (unlift(IncomePayeEntry.unapply))
+  )
+}
+
+case class IncomeSa(sa: Option[Seq[SaTaxYearEntry]])
+
+object IncomeSa {
+  private val payeWholeUnitsPaymentTypeMinValue = -99999
+  private val payeWholeUnitsPaymentTypeMaxValue = 99999
+  private val payeWholeUnitsPositivePaymentTypeMinValue = 0
+  private val payeWholeUnitsPositivePaymentTypeMaxValue = 99999
+
+  private def isInRangeWholeUnits(value: Double) =
+    value >= payeWholeUnitsPaymentTypeMinValue && value <= payeWholeUnitsPaymentTypeMaxValue
+
+  private def isInRangePositiveWholeUnits(value: Double) =
+    value >= payeWholeUnitsPositivePaymentTypeMinValue && value <= payeWholeUnitsPositivePaymentTypeMaxValue
+
+  def payeWholeUnitsPaymentTypeValidator(value: Int): Boolean = isInRangeWholeUnits(value)
+
+  def payeWholeUnitsPositivePaymentTypeValidator(value: Int): Boolean = isInRangePositiveWholeUnits(value)
+
+  implicit val format: Format[IncomeSa] = Format(
+    (JsPath \ "sa").readNullable[Seq[SaTaxYearEntry]].map(value => IncomeSa(value)),
+    (JsPath \ "sa").writeNullable[Seq[SaTaxYearEntry]].contramap(value => value.sa)
+  )
+}
+
+case class IncomePaye(paye: Option[Seq[PayeEntry]])
+
+object IncomePaye {
+  private val minValue = -999999999.99
+  private val maxValue = 999999999.99
+
+  private def isMultipleOfPointZeroOne(value: Double) = (BigDecimal(value) * 100.0) % 1 == 0
+
+  private def isInRange(value: Double) = value >= minValue && value <= maxValue
+
+  def paymentAmountValidator(value: Double): Boolean =
+    isInRange(value) && isMultipleOfPointZeroOne(value)
+
+  implicit val format: Format[IncomePaye] = Format(
+    (JsPath \ "paye").readNullable[Seq[PayeEntry]].map(value => IncomePaye(value)),
+    (JsPath \ "paye").writeNullable[Seq[PayeEntry]].contramap(value => value.paye)
   )
 }

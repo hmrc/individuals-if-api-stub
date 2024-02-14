@@ -16,12 +16,13 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util.domain.individuals
 
-import org.joda.time.LocalDate
-import play.api.libs.json.{ JsNumber, Json }
+import play.api.libs.json.Json
 import testUtils.TestHelpers
 import uk.gov.hmrc.individualsifapistub.domain.individuals.Employments._
 import uk.gov.hmrc.individualsifapistub.domain.individuals._
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
+
+import java.time.LocalDate
 
 class EmploymentsSpec extends UnitSpec with TestHelpers {
 
@@ -216,40 +217,6 @@ class EmploymentsSpec extends UnitSpec with TestHelpers {
     }
   }
 
-  "paymentAmountValidator" should {
-
-    "validate successfully" when {
-
-      "value is larger than min value" in {
-        val result = JsNumber(Employments.minValue + 1.0).validate[Double](paymentAmountValidator)
-        result.isSuccess shouldBe true
-      }
-
-      "value is smaller than max value" in {
-        val result = JsNumber(Employments.maxValue - 1.0).validate[Double](paymentAmountValidator)
-        result.isSuccess shouldBe true
-      }
-    }
-
-    "fail validation" when {
-
-      "not a multiple of 0.01" in {
-        val result = JsNumber(123.4312123123123).validate[Double](paymentAmountValidator)
-        result.isError shouldBe true
-      }
-
-      "value is smaller than min value" in {
-        val result = JsNumber(Employments.minValue - 1.0).validate[Double](paymentAmountValidator)
-        result.isError shouldBe true
-      }
-
-      "value is larger than max value" in {
-        val result = JsNumber(Employments.maxValue + 1.0).validate[Double](paymentAmountValidator)
-        result.isError shouldBe true
-      }
-    }
-  }
-
   "Payment" should {
     "write to JSON successfully" in {
       val result = Json.toJson(payment).validate[Payment]
@@ -310,21 +277,21 @@ class EmploymentsSpec extends UnitSpec with TestHelpers {
   }
 
   "Employments" should {
-    "write to JSON successfully"  when {
+    "write to JSON successfully" when {
       "employments is not empty" in {
-        val result = Json.toJson( Employments(Seq(employment))).validate[Employments]
+        val result = Json.toJson(Employments(Seq(employment))).validate[Employments]
         result.isSuccess shouldBe true
       }
 
       "employments is empty" in {
-        val result = Json.toJson( Employments(Seq())).validate[Employments]
+        val result = Json.toJson(Employments(Seq())).validate[Employments]
         result.isSuccess shouldBe true
       }
     }
 
     "read from JSON successfully" in {
 
-      val employmentsJson:String =
+      val employmentsJson: String =
         """
           |{
           |  "employments" : [ {

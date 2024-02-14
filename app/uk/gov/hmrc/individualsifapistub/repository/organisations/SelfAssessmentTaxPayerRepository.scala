@@ -24,38 +24,41 @@ import uk.gov.hmrc.individualsifapistub.domain.DuplicateException
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{SATaxPayerEntry, SelfAssessmentTaxPayer}
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
+import uk.gov.hmrc.play.http.logging.Mdc.preservingMdc
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SelfAssessmentTaxPayerRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
-  extends PlayMongoRepository[SATaxPayerEntry](
-    mongoComponent = mongo,
-    collectionName = "self-assessment-tax-payer",
-    domainFormat = SATaxPayerEntry.saTaxPayerEntryFormat,
-    indexes = Seq(
-      IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
-    )
-  ) {
-
+class SelfAssessmentTaxPayerRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext)
+    extends PlayMongoRepository[SATaxPayerEntry](
+      mongoComponent = mongo,
+      collectionName = "self-assessment-tax-payer",
+      domainFormat = SATaxPayerEntry.format,
+      indexes = Seq(
+        IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
+      )
+    ) {
   def create(request: SelfAssessmentTaxPayer): Future[SelfAssessmentTaxPayer] = {
     val response = SelfAssessmentTaxPayer(request.utr, request.taxPayerType, request.taxPayerDetails)
     val entry = SATaxPayerEntry(request.utr, response)
 
-    collection
-      .insertOne(entry)
-      .map(_ => response)
-      .head()
-      .recover {
-        case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
-      }
+    preservingMdc {
+      collection
+        .insertOne(entry)
+        .map(_ => response)
+        .head()
+        .recover {
+          case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
+        }
+    }
   }
 
   def find(utr: String): Future[Option[SelfAssessmentTaxPayer]] =
-    collection
-      .find(equal("id", utr))
-      .headOption()
-      .map(x => x.map(_.response))
-
+    preservingMdc {
+      collection
+        .find(equal("id", utr))
+        .headOption()
+        .map(x => x.map(_.response))
+    }
 }

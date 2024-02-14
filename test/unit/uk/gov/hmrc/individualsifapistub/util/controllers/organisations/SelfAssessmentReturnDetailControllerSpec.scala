@@ -23,7 +23,6 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.individualsifapistub.controllers.organisations.SelfAssessmentReturnDetailController
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{CreateSelfAssessmentReturnDetailRequest, SelfAssessmentReturnDetailResponse, TaxYear}
-import uk.gov.hmrc.individualsifapistub.domain.organisations.SelfAssessmentReturnDetail._
 import uk.gov.hmrc.individualsifapistub.services.organisations.SelfAssessmentReturnDetailService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
@@ -32,7 +31,8 @@ import scala.concurrent.Future
 class SelfAssessmentReturnDetailControllerSpec extends TestSupport {
 
   val mockService = mock[SelfAssessmentReturnDetailService]
-  val controller = new SelfAssessmentReturnDetailController(loggingAction, bodyParsers, controllerComponents, mockService)
+  val controller =
+    new SelfAssessmentReturnDetailController(loggingAction, bodyParsers, controllerComponents, mockService)
 
   var taxYear = TaxYear("2019", 12343.12)
   val request = CreateSelfAssessmentReturnDetailRequest("1234567890", "2015-04-21", "Individuals", "S", Seq(taxYear))

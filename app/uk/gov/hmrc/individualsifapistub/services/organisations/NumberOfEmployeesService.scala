@@ -25,5 +25,5 @@ import scala.concurrent.Future
 class NumberOfEmployeesService @Inject()(repository: NumberOfEmployeesRepository) {
   def create(request: NumberOfEmployeesResponse): Future[NumberOfEmployeesResponse] = repository.create(request)
 
-  def get(request : NumberOfEmployeesRequest): Future[Option[NumberOfEmployeesResponse]] = repository.find(request)
+  def get(request: NumberOfEmployeesRequest): Future[Option[NumberOfEmployeesResponse]] = repository.find(request)
 }

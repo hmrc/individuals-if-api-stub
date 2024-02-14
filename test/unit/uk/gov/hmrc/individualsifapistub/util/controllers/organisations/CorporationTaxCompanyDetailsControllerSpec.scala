@@ -26,10 +26,9 @@ import uk.gov.hmrc.domain.EmpRef
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.controllers.organisations.CorporationTaxCompanyDetailsController
-import uk.gov.hmrc.individualsifapistub.domain.{TestAddress, TestOrganisation, TestOrganisationDetails}
-import uk.gov.hmrc.individualsifapistub.domain.individuals.JsonFormatters._
 import uk.gov.hmrc.individualsifapistub.domain.organisations.CorporationTaxCompanyDetails._
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{Address, CorporationTaxCompanyDetails, Name, NameAddressDetails}
+import uk.gov.hmrc.individualsifapistub.domain.{TestAddress, TestOrganisation, TestOrganisationDetails}
 import uk.gov.hmrc.individualsifapistub.repository.organisations.CorporationTaxCompanyDetailsRepository
 import uk.gov.hmrc.individualsifapistub.services.organisations.CorporationTaxCompanyDetailsService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
@@ -40,25 +39,31 @@ class CorporationTaxCompanyDetailsControllerSpec extends TestSupport {
 
   val mockService = mock[CorporationTaxCompanyDetailsService]
   val mockConnector = mock[ApiPlatformTestUserConnector]
-  val controller = new CorporationTaxCompanyDetailsController(loggingAction, bodyParsers, controllerComponents, mockService, mockConnector)
+  val controller = new CorporationTaxCompanyDetailsController(
+    loggingAction,
+    bodyParsers,
+    controllerComponents,
+    mockService,
+    mockConnector)
   val repository = fakeApplication.injector.instanceOf[CorporationTaxCompanyDetailsRepository]
-  implicit val hc = HeaderCarrier()
+  implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  val address = Address(
-    Some("Alfie House"),
-    Some("Main Street"),
-    Some("Manchester"),
-    Some("Londonberry"),
-    Some("LN1 1AG"))
+  val address =
+    Address(Some("Alfie House"), Some("Main Street"), Some("Manchester"), Some("Londonberry"), Some("LN1 1AG"))
 
   val name = Name("Waitrose", "And Partners")
 
   val registeredDetails = NameAddressDetails(name, address)
   val communicationDetails = NameAddressDetails(name, address)
 
-  val ctCompanyDetails = CorporationTaxCompanyDetails("1234567890", "12345678", Some(registeredDetails), Some(communicationDetails))
-  val testOrganisation = TestOrganisation(Some(EmpRef("1234567890", "")), Some("12345678"), Some(""),
-    TestOrganisationDetails(name.name1, TestAddress(address.line1.get, address.line2.get, address.postcode.get)))
+  val ctCompanyDetails =
+    CorporationTaxCompanyDetails("1234567890", "12345678", Some(registeredDetails), Some(communicationDetails))
+  val testOrganisation = TestOrganisation(
+    Some(EmpRef("1234567890", "")),
+    Some("12345678"),
+    Some(""),
+    TestOrganisationDetails(name.name1, TestAddress(address.line1.get, address.line2.get, address.postcode.get))
+  )
 
   "create" should {
     "return response with created status when successful" in {
@@ -117,9 +122,8 @@ class CorporationTaxCompanyDetailsControllerSpec extends TestSupport {
         FakeRequest()
           .withMethod("GET")
 
-
       val result = await(controller.retrieve(ctCompanyDetails.crn)(httpRequest))
-       status(result) shouldBe INTERNAL_SERVER_ERROR
+      status(result) shouldBe INTERNAL_SERVER_ERROR
     }
   }
 

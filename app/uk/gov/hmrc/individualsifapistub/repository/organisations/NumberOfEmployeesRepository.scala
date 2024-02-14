@@ -24,45 +24,47 @@ import uk.gov.hmrc.individualsifapistub.domain.DuplicateException
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{NumberOfEmployeesEntry, NumberOfEmployeesRequest, NumberOfEmployeesResponse}
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
+import uk.gov.hmrc.play.http.logging.Mdc.preservingMdc
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class NumberOfEmployeesRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
-  extends PlayMongoRepository[NumberOfEmployeesEntry](
-    mongoComponent = mongo,
-    collectionName = "number-of-employees",
-    domainFormat = NumberOfEmployeesEntry.numberOfEmployeesFormat,
-    indexes = Seq(
-      IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
-    )
-  ) {
-
+class NumberOfEmployeesRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext)
+    extends PlayMongoRepository[NumberOfEmployeesEntry](
+      mongoComponent = mongo,
+      collectionName = "number-of-employees",
+      domainFormat = NumberOfEmployeesEntry.format,
+      indexes = Seq(
+        IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
+      )
+    ) {
   def create(request: NumberOfEmployeesResponse): Future[NumberOfEmployeesResponse] = {
     val id = s"${request.startDate}-${request.endDate}-" +
       request.references.map(e => s"${e.payeReference}-${e.districtNumber}").mkString("-")
 
     val entry = NumberOfEmployeesEntry(id, request)
 
-    collection
-      .insertOne(entry)
-      .map(_ => request)
-      .head()
-      .recover {
-        case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
-      }
+    preservingMdc {
+      collection
+        .insertOne(entry)
+        .map(_ => request)
+        .head()
+        .recover {
+          case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
+        }
+    }
   }
 
   def find(request: NumberOfEmployeesRequest): Future[Option[NumberOfEmployeesResponse]] = {
-
     val id = s"${request.startDate}-${request.endDate}-" +
       request.references.map(e => s"${e.payeReference}-${e.districtNumber}").mkString("-")
 
-    collection
-      .find(equal("id", id))
-      .headOption()
-      .map(x => x.map(_.response))
+    preservingMdc {
+      collection
+        .find(equal("id", id))
+        .headOption()
+        .map(x => x.map(_.response))
+    }
   }
-
 }

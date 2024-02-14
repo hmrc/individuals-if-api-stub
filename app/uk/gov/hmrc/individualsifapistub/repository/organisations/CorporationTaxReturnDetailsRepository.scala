@@ -24,41 +24,48 @@ import uk.gov.hmrc.individualsifapistub.domain.DuplicateException
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{CTReturnDetailsEntry, CorporationTaxReturnDetailsResponse, CreateCorporationTaxReturnDetailsRequest}
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
+import uk.gov.hmrc.play.http.logging.Mdc.preservingMdc
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CorporationTaxReturnDetailsRepository @Inject()(mongo: MongoComponent)(implicit val ec: ExecutionContext)
-  extends PlayMongoRepository[CTReturnDetailsEntry](
-    mongoComponent = mongo,
-    collectionName = "corporation-tax-return-details",
-    domainFormat = CTReturnDetailsEntry.ctReturnDetailsEntryFormat,
-    indexes = Seq(
-      IndexModel(
-        ascending("id"), IndexOptions().name("id").unique(true).background(true)
+class CorporationTaxReturnDetailsRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext)
+    extends PlayMongoRepository[CTReturnDetailsEntry](
+      mongoComponent = mongo,
+      collectionName = "corporation-tax-return-details",
+      domainFormat = CTReturnDetailsEntry.format,
+      indexes = Seq(
+        IndexModel(
+          ascending("id"),
+          IndexOptions().name("id").unique(true).background(true)
+        )
       )
-    )
-  ) {
-
+    ) {
   def create(request: CreateCorporationTaxReturnDetailsRequest): Future[CorporationTaxReturnDetailsResponse] = {
-    val response = CorporationTaxReturnDetailsResponse(request.utr, request.taxpayerStartDate, request.taxSolvencyStatus, request.accountingPeriods)
+    val response = CorporationTaxReturnDetailsResponse(
+      request.utr,
+      request.taxpayerStartDate,
+      request.taxSolvencyStatus,
+      request.accountingPeriods)
     val entry = CTReturnDetailsEntry(request.utr, response)
 
-    collection
-      .insertOne(entry)
-      .map(_ => response)
-      .head()
-      .recover {
-        case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
-      }
+    preservingMdc {
+      collection
+        .insertOne(entry)
+        .map(_ => response)
+        .head()
+        .recover {
+          case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
+        }
+    }
   }
 
-  def find(utr: String): Future[Option[CorporationTaxReturnDetailsResponse]] = {
-    collection
-      .find(equal("id", utr))
-      .headOption()
-      .map(x => x.map(_.response))
-  }
-
+  def find(utr: String): Future[Option[CorporationTaxReturnDetailsResponse]] =
+    preservingMdc {
+      collection
+        .find(equal("id", utr))
+        .headOption()
+        .map(x => x.map(_.response))
+    }
 }

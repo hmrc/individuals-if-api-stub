@@ -16,42 +16,37 @@
 
 package uk.gov.hmrc.individualsifapistub.domain.individuals
 
-import play.api.libs.functional.syntax.{unlift, _}
-import play.api.libs.json.Reads._
-import play.api.libs.json._
+import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
+import play.api.libs.json.Reads.pattern
+import play.api.libs.json.{Format, JsPath}
 
-import scala.util.matching.Regex
-
-case class Identifier(nino: Option[String],
-                      trn: Option[String],
-                      from: Option[String],
-                      to: Option[String],
-                      useCase: Option[String]
-                     )
+case class Identifier(
+  nino: Option[String],
+  trn: Option[String],
+  from: Option[String],
+  to: Option[String],
+  useCase: Option[String])
 
 object Identifier {
-
-  val ninoPattern: Regex =
+  private val ninoPattern =
     "^((?!(BG|GB|KN|NK|NT|TN|ZZ)|(D|F|I|Q|U|V)[A-Z]|[A-Z](D|F|I|O|Q|U|V))[A-Z]{2})[0-9]{6}[A-D\\s]?$".r
 
-  val trnPattern: Regex = "^[0-9]{8}$".r
+  private val trnPattern = "^[0-9]{8}$".r
 
-  implicit val idFormat: Format[Identifier] = Format(
+  implicit val format: Format[Identifier] = Format(
     (
       (JsPath \ "nino").readNullable[String](pattern(ninoPattern, "InvalidNino")) and
-      (JsPath \ "trn").readNullable[String](pattern(trnPattern, "InvalidTrn")) and
-      (JsPath \ "from").readNullable[String] and
-      (JsPath \ "to").readNullable[String] and
-      (JsPath \ "useCase").readNullable[String]
+        (JsPath \ "trn").readNullable[String](pattern(trnPattern, "InvalidTrn")) and
+        (JsPath \ "from").readNullable[String] and
+        (JsPath \ "to").readNullable[String] and
+        (JsPath \ "useCase").readNullable[String]
     )(Identifier.apply _),
     (
       (JsPath \ "nino").writeNullable[String] and
-      (JsPath \ "trn").writeNullable[String] and
-      (JsPath \ "from").writeNullable[String] and
-      (JsPath \ "to").writeNullable[String] and
-      (JsPath \ "useCase").writeNullable[String]
+        (JsPath \ "trn").writeNullable[String] and
+        (JsPath \ "from").writeNullable[String] and
+        (JsPath \ "to").writeNullable[String] and
+        (JsPath \ "useCase").writeNullable[String]
     )(unlift(Identifier.unapply))
   )
 }
-
-

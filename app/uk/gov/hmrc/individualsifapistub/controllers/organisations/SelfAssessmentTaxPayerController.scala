@@ -19,39 +19,38 @@ package uk.gov.hmrc.individualsifapistub.controllers.organisations
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
 import uk.gov.hmrc.individualsifapistub.config.LoggingAction
+import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.controllers.CommonController
-import uk.gov.hmrc.individualsifapistub.domain.organisations.SelfAssessmentTaxPayer._
 import uk.gov.hmrc.individualsifapistub.domain.organisations.SelfAssessmentTaxPayer
+import uk.gov.hmrc.individualsifapistub.domain.organisations.SelfAssessmentTaxPayer._
 import uk.gov.hmrc.individualsifapistub.services.organisations.SelfAssessmentTaxPayerService
 
 import javax.inject.Inject
-import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
-
 import scala.concurrent.ExecutionContext
 
 class SelfAssessmentTaxPayerController @Inject()(
-                                                       loggingAction: LoggingAction,
-                                                       bodyParsers: PlayBodyParsers,
-                                                       cc: ControllerComponents,
-                                                       selfAssessmentTaxPayerService: SelfAssessmentTaxPayerService,
-                                                       testUserConnector: ApiPlatformTestUserConnector)
-                                                     (implicit val ec: ExecutionContext)
-  extends CommonController(cc) {
+  loggingAction: LoggingAction,
+  bodyParsers: PlayBodyParsers,
+  cc: ControllerComponents,
+  selfAssessmentTaxPayerService: SelfAssessmentTaxPayerService,
+  testUserConnector: ApiPlatformTestUserConnector)(implicit val ec: ExecutionContext)
+    extends CommonController(cc) {
 
-  def create(utr: String): Action[JsValue] = {
+  def create(utr: String): Action[JsValue] =
     loggingAction.async(bodyParsers.json) { implicit request =>
       withJsonBody[SelfAssessmentTaxPayer] { body =>
-        selfAssessmentTaxPayerService.create(body).map(
-          x => Created(Json.toJson(x))
-        ) recover recovery
+        selfAssessmentTaxPayerService
+          .create(body)
+          .map(
+            x => Created(Json.toJson(x))
+          ) recover recovery
       }
     }
-  }
 
   def retrieve(utr: String): Action[AnyContent] = loggingAction.async { implicit request =>
     testUserConnector.getOrganisationBySaUtr(utr).map {
       case Some(response) => Ok(Json.toJson(SelfAssessmentTaxPayer.fromApiPlatformTestUser(response)))
-      case None => NotFound
+      case None           => NotFound
     } recover retrievalRecovery
   }
 }

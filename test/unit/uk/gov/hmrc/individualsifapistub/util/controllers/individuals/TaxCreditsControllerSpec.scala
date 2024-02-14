@@ -26,9 +26,8 @@ import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.controllers.individuals.TaxCreditsController
-import uk.gov.hmrc.individualsifapistub.domain.{RecordNotFoundException, TestIndividual}
-import uk.gov.hmrc.individualsifapistub.domain.individuals.TaxCredits._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.{Application, Applications, Identifier}
+import uk.gov.hmrc.individualsifapistub.domain.{RecordNotFoundException, TestIndividual}
 import uk.gov.hmrc.individualsifapistub.repository.individuals.TaxCreditsRepository
 import uk.gov.hmrc.individualsifapistub.services.individuals.TaxCreditsService
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -39,7 +38,7 @@ import scala.concurrent.Future
 class TaxCreditsControllerSpec extends TestSupport {
 
   trait Setup {
-    implicit val hc = HeaderCarrier()
+    implicit val hc: HeaderCarrier = HeaderCarrier()
     val fakeRequest = FakeRequest()
     val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
     val taxCreditsRepo = mock[TaxCreditsRepository]
@@ -47,8 +46,7 @@ class TaxCreditsControllerSpec extends TestSupport {
     val mockTaxCreditsService = new TaxCreditsService(taxCreditsRepo, apiPlatformTestUserConnector, servicesConfig)
     val underTest = new TaxCreditsController(loggingAction, bodyParsers, controllerComponents, mockTaxCreditsService)
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
-      thenReturn(Future.successful(testIndividual))
+    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).thenReturn(Future.successful(testIndividual))
   }
 
   val application: Application = Application(
@@ -82,9 +80,8 @@ class TaxCreditsControllerSpec extends TestSupport {
         Future.successful(request)
       )
 
-      val result = await(underTest.create(idType, idValue, startDate, endDate, useCase)(
-        fakeRequest.withBody(Json.toJson(request)))
-      )
+      val result = await(
+        underTest.create(idType, idValue, startDate, endDate, useCase)(fakeRequest.withBody(Json.toJson(request))))
 
       status(result) shouldBe CREATED
 
@@ -94,16 +91,15 @@ class TaxCreditsControllerSpec extends TestSupport {
 
     "Fail when an invalid nino is provided" in new Setup {
 
-      when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
-        thenReturn(Future.failed(new RecordNotFoundException))
+      when(apiPlatformTestUserConnector.getIndividualByNino(any())(any()))
+        .thenReturn(Future.failed(new RecordNotFoundException))
 
       when(mockTaxCreditsService.create(idType, idValue, startDate, endDate, useCase, request)).thenReturn(
         Future.successful(request)
       )
 
-      val result = await(underTest.create(idType, idValue, startDate, endDate, useCase)(
-        fakeRequest.withBody(Json.toJson("")))
-      )
+      val result =
+        await(underTest.create(idType, idValue, startDate, endDate, useCase)(fakeRequest.withBody(Json.toJson(""))))
 
       status(result) shouldBe BAD_REQUEST
 
@@ -115,9 +111,8 @@ class TaxCreditsControllerSpec extends TestSupport {
         Future.successful(request)
       )
 
-      val response = await(underTest.create(idType, idValue, startDate, endDate, useCase)(
-        fakeRequest.withBody(Json.toJson("")))
-      )
+      val response =
+        await(underTest.create(idType, idValue, startDate, endDate, useCase)(fakeRequest.withBody(Json.toJson(""))))
 
       status(response) shouldBe BAD_REQUEST
 

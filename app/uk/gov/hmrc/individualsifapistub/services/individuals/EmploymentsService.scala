@@ -24,35 +24,34 @@ import uk.gov.hmrc.individualsifapistub.services.ServiceBase
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import javax.inject.Inject
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
-class EmploymentsService @Inject()(employmentsRepository: EmploymentRepository,
-                                   val apiPlatformTestUserConnector: ApiPlatformTestUserConnector,
-                                   servicesConfig: ServicesConfig) extends ServiceBase(apiPlatformTestUserConnector) {
+class EmploymentsService @Inject()(
+  employmentsRepository: EmploymentRepository,
+  val apiPlatformTestUserConnector: ApiPlatformTestUserConnector,
+  servicesConfig: ServicesConfig)
+    extends ServiceBase(apiPlatformTestUserConnector) {
 
-  def create(idType: String,
-             idValue: String,
-             startDate: Option[String],
-             endDate: Option[String],
-             useCase: Option[String],
-             employments: Employments)
-            (implicit ec: ExecutionContext,
-             hc: HeaderCarrier): Future[Employments] = {
-
+  def create(
+    idType: String,
+    idValue: String,
+    startDate: Option[String],
+    endDate: Option[String],
+    useCase: Option[String],
+    employments: Employments)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Employments] =
     if (servicesConfig.getConfBool("verifyNino", true)) {
       verifyNino(idType, idValue) flatMap { _ =>
         employmentsRepository.create(idType, idValue, startDate, endDate, useCase, employments)
       }
     } else
       employmentsRepository.create(idType, idValue, startDate, endDate, useCase, employments)
-  }
 
-  def get(idType: String,
-          idValue: String,
-          startDate: String,
-          endDate: String,
-          fields: Option[String],
-          filter: Option[String]): Future[Option[Employments]] = {
+  def get(
+    idType: String,
+    idValue: String,
+    startDate: String,
+    endDate: String,
+    fields: Option[String],
+    filter: Option[String]): Future[Option[Employments]] =
     employmentsRepository.findByIdAndType(idType, idValue, startDate, endDate, fields, filter)
-  }
 }

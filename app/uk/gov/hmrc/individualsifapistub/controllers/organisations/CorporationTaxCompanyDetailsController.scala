@@ -16,41 +16,41 @@
 
 package uk.gov.hmrc.individualsifapistub.controllers.organisations
 
-import javax.inject.Inject
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
 import uk.gov.hmrc.individualsifapistub.config.LoggingAction
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.controllers.CommonController
-import uk.gov.hmrc.individualsifapistub.domain.organisations.CorporationTaxCompanyDetails._
 import uk.gov.hmrc.individualsifapistub.domain.organisations.CorporationTaxCompanyDetails
+import uk.gov.hmrc.individualsifapistub.domain.organisations.CorporationTaxCompanyDetails._
 import uk.gov.hmrc.individualsifapistub.services.organisations.CorporationTaxCompanyDetailsService
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class CorporationTaxCompanyDetailsController @Inject()(
-                                                       loggingAction: LoggingAction,
-                                                       bodyParsers: PlayBodyParsers,
-                                                       cc: ControllerComponents,
-                                                       corporationTaxCompanyDetailsService: CorporationTaxCompanyDetailsService,
-                                                       testUserConnector: ApiPlatformTestUserConnector)
-                                                      (implicit val ec: ExecutionContext)
-  extends CommonController(cc) {
+  loggingAction: LoggingAction,
+  bodyParsers: PlayBodyParsers,
+  cc: ControllerComponents,
+  corporationTaxCompanyDetailsService: CorporationTaxCompanyDetailsService,
+  testUserConnector: ApiPlatformTestUserConnector)(implicit val ec: ExecutionContext)
+    extends CommonController(cc) {
 
-  def create(crn: String): Action[JsValue] = {
+  def create(crn: String): Action[JsValue] =
     loggingAction.async(bodyParsers.json) { implicit request =>
       withJsonBody[CorporationTaxCompanyDetails] { body =>
-        corporationTaxCompanyDetailsService.create(body).map(
-          x => Created(Json.toJson(x))
-        ) recover recovery
+        corporationTaxCompanyDetailsService
+          .create(body)
+          .map(
+            x => Created(Json.toJson(x))
+          ) recover recovery
       }
     }
-  }
 
   def retrieve(crn: String): Action[AnyContent] = loggingAction.async { implicit request =>
     testUserConnector.getOrganisationByCrn(crn).map {
       case Some(response) => Ok(Json.toJson(CorporationTaxCompanyDetails.fromApiPlatformTestUser(response)))
-      case None => NotFound
+      case None           => NotFound
     } recover retrievalRecovery
   }
 }

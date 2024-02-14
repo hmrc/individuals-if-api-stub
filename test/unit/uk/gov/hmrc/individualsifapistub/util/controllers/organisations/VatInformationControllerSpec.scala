@@ -23,7 +23,7 @@ import play.api.http.Status.{BAD_REQUEST, CREATED, INTERNAL_SERVER_ERROR, OK}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.individualsifapistub.controllers.organisations.VatInformationController
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{ VatAddress, VatApprovedInformation, VatCustomerDetails, VatInformation, VatInformationEntry, VatPPOB }
+import uk.gov.hmrc.individualsifapistub.domain.organisations._
 import uk.gov.hmrc.individualsifapistub.services.organisations.VatInformationService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
@@ -43,10 +43,8 @@ class VatInformationControllerSpec extends TestSupport with BeforeAndAfterEach {
   val request: VatInformation = VatInformation(vatApprovedInformation)
   val serviceResponse: VatInformationEntry = VatInformationEntry("id", request, LocalDateTime.now())
 
-
-  override def afterEach(): Unit = {
+  override def afterEach(): Unit =
     clearInvocations(mockService)
-  }
 
   "create" should {
     "return response with created status when successful" in {

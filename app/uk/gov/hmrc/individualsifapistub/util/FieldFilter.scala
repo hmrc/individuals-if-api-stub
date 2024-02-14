@@ -17,7 +17,7 @@
 package uk.gov.hmrc.individualsifapistub.util
 
 import play.api.libs.json.Json.JsValueWrapper
-import play.api.libs.json.{ JsArray, JsDefined, JsUndefined, JsValue, Json, Writes }
+import play.api.libs.json._
 
 import scala.annotation.tailrec
 
@@ -27,7 +27,7 @@ object FieldFilter {
     filterFieldsInternal(fields, json)
   }
 
-  def toFilteredJson[A : Writes](a: A, fields: Option[String]): JsValue = {
+  def toFilteredJson[A: Writes](a: A, fields: Option[String]): JsValue = {
     val json = Json.toJson(a)
     fields.map(filterFields(json, _)).getOrElse(json)
   }
@@ -37,18 +37,17 @@ object FieldFilter {
   private case class FieldGroup(name: String, fields: List[Field]) extends Field
 
   @tailrec
-  private def getClosingParenthesis(str: String, i: Int = 0, innerScopeCount: Int = 0): Int = {
+  private def getClosingParenthesis(str: String, i: Int = 0, innerScopeCount: Int = 0): Int =
     if (i >= str.length) -1
     else
       str(i) match {
-        case '(' => getClosingParenthesis(str, i + 1, innerScopeCount + 1)
+        case '('                        => getClosingParenthesis(str, i + 1, innerScopeCount + 1)
         case ')' if innerScopeCount > 0 => getClosingParenthesis(str, i + 1, innerScopeCount - 1)
-        case ')' => i
-        case _ => getClosingParenthesis(str, i + 1, innerScopeCount)
+        case ')'                        => i
+        case _                          => getClosingParenthesis(str, i + 1, innerScopeCount)
       }
-  }
 
-  private def extractFields(str: String, fieldNameAcc: String, fieldsAcc: List[Field]): List[Field] = {
+  private def extractFields(str: String, fieldNameAcc: String, fieldsAcc: List[Field]): List[Field] =
     str.headOption match {
       case Some('(') =>
         val closingIndex = getClosingParenthesis(str.tail)
@@ -68,25 +67,23 @@ object FieldFilter {
       case None =>
         fieldsAcc.reverse
     }
-  }
 
-  private def filterFieldsInternal(wantedFields: List[Field], json: JsValue): JsValue = {
+  private def filterFieldsInternal(wantedFields: List[Field], json: JsValue): JsValue =
     json match {
       case JsArray(values) => JsArray(values.map(filterFieldsInternal(wantedFields, _)))
       case _ =>
         val filteredFields = wantedFields.flatMap {
           case SingleField(fieldName) =>
             json \ fieldName match {
-              case _: JsUndefined => None
+              case _: JsUndefined   => None
               case JsDefined(value) => Some(fieldName -> (value: JsValueWrapper))
             }
           case FieldGroup(fieldName, children) =>
             json \ fieldName match {
-              case _: JsUndefined => None
+              case _: JsUndefined   => None
               case JsDefined(value) => Some(fieldName -> (filterFieldsInternal(children, value): JsValueWrapper))
             }
         }
         Json.obj(filteredFields: _*)
     }
-  }
 }

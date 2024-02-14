@@ -25,10 +25,9 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.controllers.organisations.SelfAssessmentTaxPayerController
-import uk.gov.hmrc.individualsifapistub.domain.{TestAddress, TestIndividual, TestOrganisationDetails}
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{Address, SelfAssessmentTaxPayer, TaxPayerDetails}
 import uk.gov.hmrc.individualsifapistub.domain.organisations.SelfAssessmentTaxPayer._
-import uk.gov.hmrc.individualsifapistub.domain.individuals.JsonFormatters._
+import uk.gov.hmrc.individualsifapistub.domain.organisations.{Address, SelfAssessmentTaxPayer, TaxPayerDetails}
+import uk.gov.hmrc.individualsifapistub.domain.{TestAddress, TestIndividual, TestOrganisationDetails}
 import uk.gov.hmrc.individualsifapistub.services.organisations.SelfAssessmentTaxPayerService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
@@ -39,13 +38,11 @@ class SelfAssessmentTaxPayerControllerSpec extends TestSupport {
   val mockService = mock[SelfAssessmentTaxPayerService]
   val mockConnector = mock[ApiPlatformTestUserConnector]
 
-  val controller = new SelfAssessmentTaxPayerController(loggingAction, bodyParsers, controllerComponents, mockService, mockConnector)
+  val controller =
+    new SelfAssessmentTaxPayerController(loggingAction, bodyParsers, controllerComponents, mockService, mockConnector)
 
-  val exampleAddress = Address(Some("Alfie House"),
-    Some("Main Street"),
-    Some("Birmingham"),
-    Some("West midlands"),
-    Some("B14 6JH"))
+  val exampleAddress =
+    Address(Some("Alfie House"), Some("Main Street"), Some("Birmingham"), Some("West midlands"), Some("B14 6JH"))
 
   val utr = SaUtr("2432552635")
 
@@ -54,10 +51,11 @@ class SelfAssessmentTaxPayerControllerSpec extends TestSupport {
   val testIndividual = TestIndividual(
     saUtr = Some(utr),
     taxpayerType = Some("Individual"),
-    organisationDetails = Some(TestOrganisationDetails(
-      name = "Barry Barryson",
-      address = TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")
-    ))
+    organisationDetails = Some(
+      TestOrganisationDetails(
+        name = "Barry Barryson",
+        address = TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")
+      ))
   )
 
   "create" should {

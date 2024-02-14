@@ -28,7 +28,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.controllers.individuals.DetailsController
 import uk.gov.hmrc.individualsifapistub.domain._
-import uk.gov.hmrc.individualsifapistub.domain.individuals.JsonFormatters._
 import uk.gov.hmrc.individualsifapistub.domain.individuals._
 import uk.gov.hmrc.individualsifapistub.repository.individuals.DetailsRepository
 import uk.gov.hmrc.individualsifapistub.services.individuals.DetailsService
@@ -40,14 +39,13 @@ import scala.concurrent.Future
 class DetailsControllerSpec extends TestSupport with TestHelpers {
 
   trait Setup {
-    implicit val hc = HeaderCarrier()
+    implicit val hc: HeaderCarrier = HeaderCarrier()
     val fakeRequest = FakeRequest()
     val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
     val detailsRepo = mock[DetailsRepository]
     val servicesConfig = mock[ServicesConfig]
     val mockDetailsService = new DetailsService(detailsRepo, apiPlatformTestUserConnector, servicesConfig)
     val underTest = new DetailsController(loggingAction, bodyParsers, controllerComponents, mockDetailsService)
-
 
     val idType = "nino"
     val idValue = "XH123456A"
@@ -61,16 +59,16 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
       saUtr = Some(utr)
     )
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
-      thenReturn(Future.successful(testIndividual))
+    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).thenReturn(Future.successful(testIndividual))
   }
 
-
   val request = CreateDetailsRequest(
-    Some(Seq(ContactDetail(9, "MOBILE TELEPHONE", "07123 987654"), ContactDetail(9,"MOBILE TELEPHONE", "07123 987655"))),
-    Some(Seq(
-      Residence(residenceType = Some("BASE"), address = generateAddress(2)),
-      Residence(residenceType = Some("NOMINATED"), address = generateAddress(1))))
+    Some(
+      Seq(ContactDetail(9, "MOBILE TELEPHONE", "07123 987654"), ContactDetail(9, "MOBILE TELEPHONE", "07123 987655"))),
+    Some(
+      Seq(
+        Residence(residenceType = Some("BASE"), address = generateAddress(2)),
+        Residence(residenceType = Some("NOMINATED"), address = generateAddress(1))))
   )
 
   "Create details" should {
@@ -83,9 +81,7 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
         Future.successful(returnVal)
       )
 
-      val result = await(underTest.create(idType, idValue, useCase)(
-        fakeRequest.withBody(Json.toJson(request)))
-      )
+      val result = await(underTest.create(idType, idValue, useCase)(fakeRequest.withBody(Json.toJson(request))))
 
       status(result) shouldBe CREATED
       jsonBodyOf(result) shouldBe Json.toJson(returnVal)
@@ -96,16 +92,14 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
 
       val returnVal = DetailsResponseNoId(request.contactDetails, request.residences)
 
-      when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
-        thenReturn(Future.failed(new RecordNotFoundException))
+      when(apiPlatformTestUserConnector.getIndividualByNino(any())(any()))
+        .thenReturn(Future.failed(new RecordNotFoundException))
 
       when(mockDetailsService.create(idType, idValue, useCase, request)).thenReturn(
         Future.successful(returnVal)
       )
 
-      val result = await(underTest.create(idType, idValue, useCase)(
-        fakeRequest.withBody(Json.toJson("")))
-      )
+      val result = await(underTest.create(idType, idValue, useCase)(fakeRequest.withBody(Json.toJson(""))))
 
       status(result) shouldBe BAD_REQUEST
 
@@ -119,9 +113,7 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
         Future.successful(returnVal)
       )
 
-      val response = await(underTest.create(idType, idValue, useCase)(
-        fakeRequest.withBody(Json.toJson("")))
-      )
+      val response = await(underTest.create(idType, idValue, useCase)(fakeRequest.withBody(Json.toJson(""))))
       status(response) shouldBe BAD_REQUEST
     }
 

@@ -18,9 +18,9 @@ package unit.uk.gov.hmrc.individualsifapistub.util.domain.organisations
 
 import play.api.libs.json.Json
 import uk.gov.hmrc.domain.EmpRef
-import uk.gov.hmrc.individualsifapistub.domain.{TestAddress, TestOrganisation, TestOrganisationDetails}
 import uk.gov.hmrc.individualsifapistub.domain.organisations.CorporationTaxCompanyDetails._
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{Address, CorporationTaxCompanyDetails, Name, NameAddressDetails}
+import uk.gov.hmrc.individualsifapistub.domain.{TestAddress, TestOrganisation, TestOrganisationDetails}
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class CorporationTaxCompanyDetailsSpec extends UnitSpec {
@@ -59,7 +59,6 @@ class CorporationTaxCompanyDetailsSpec extends UnitSpec {
     result.isSuccess shouldBe true
     result.get shouldBe expectedResult
   }
-
 
   "NameAddressDetails reads from JSON unsuccessfully when address field is incorrect" in {
     val json =
@@ -141,23 +140,22 @@ class CorporationTaxCompanyDetailsSpec extends UnitSpec {
       Some(empRef),
       Some("0123456789"),
       Some("123456789"),
-      TestOrganisationDetails(
-        "Disney Inc",
-        TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")))
+      TestOrganisationDetails("Disney Inc", TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")))
 
     val expectedResult = CorporationTaxCompanyDetails(
       "0123456789",
       "123456789",
-      Some(NameAddressDetails(
-        Name("Disney Inc", ""),
-        Address(
-          Some("Capital Tower"),
-          Some("Aberdeen"),
-          None,
-          None,
-          Some("SW1 4DQ")
-        )
-      )),
+      Some(
+        NameAddressDetails(
+          Name("Disney Inc", ""),
+          Address(
+            Some("Capital Tower"),
+            Some("Aberdeen"),
+            None,
+            None,
+            Some("SW1 4DQ")
+          )
+        )),
       None
     )
 

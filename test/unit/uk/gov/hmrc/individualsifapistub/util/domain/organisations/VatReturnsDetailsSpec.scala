@@ -36,8 +36,14 @@ class VatReturnsDetailsSpec extends UnitSpec {
         |}
         |""".stripMargin
 
-
-    val expectedResult = VatPeriod(Some("22AA"), Some("2022-10-01"), Some("2022-10-30"), Some(30), Some(6542.2), Some("RegularReturn"), Some("VMF"))
+    val expectedResult = VatPeriod(
+      Some("22AA"),
+      Some("2022-10-01"),
+      Some("2022-10-30"),
+      Some(30),
+      Some(6542.2),
+      Some("RegularReturn"),
+      Some("VMF"))
     val result = Json.parse(json).validate[VatPeriod]
 
     result.isSuccess shouldBe true
@@ -206,7 +212,6 @@ class VatReturnsDetailsSpec extends UnitSpec {
         |}
         |""".stripMargin
 
-
     val result = Json.parse(json).validate[VatReturnsDetails]
 
     result.isSuccess shouldBe false
@@ -223,7 +228,6 @@ class VatReturnsDetailsSpec extends UnitSpec {
         | "vatPeriods": []
         |}
         |""".stripMargin
-
 
     val result = Json.parse(json).validate[VatReturnsDetails]
 

@@ -24,7 +24,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class LoggingAction @Inject()(parser: BodyParsers.Default)(implicit ec: ExecutionContext, mat: Materializer)
-  extends ActionBuilderImpl(parser) with Logging {
+    extends ActionBuilderImpl(parser) with Logging {
   override def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] = {
     val result = block(request)
 
@@ -47,7 +47,8 @@ class LoggingAction @Inject()(parser: BodyParsers.Default)(implicit ec: Executio
       logger.info(
         s"""$requestLog
            |
-           |Exception: ${t.getMessage}""".stripMargin, t)
+           |Exception: ${t.getMessage}""".stripMargin,
+        t)
     }
 
     result
@@ -59,14 +60,11 @@ class LoggingAction @Inject()(parser: BodyParsers.Default)(implicit ec: Executio
     if (isLoggable) result.body.consumeData.map(_.utf8String) else Future.successful("")
   }
 
-  private def getContentType(result: Result): String = {
-    result
-      .header
-      .headers
+  private def getContentType(result: Result): String =
+    result.header.headers
       .get("Content-Type")
       .orElse(result.body.contentType)
       .map(_.toLowerCase)
       .flatMap(_.split(";").headOption)
       .getOrElse("")
-  }
 }

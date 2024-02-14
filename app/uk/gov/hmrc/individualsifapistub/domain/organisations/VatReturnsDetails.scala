@@ -16,34 +16,36 @@
 
 package uk.gov.hmrc.individualsifapistub.domain.organisations
 
-import play.api.libs.json.{ Format, Json }
-import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
+import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDateTime
 
 case class VatPeriod(
-                      periodKey: Option[String],
-                      billingPeriodFromDate: Option[String],
-                      billingPeriodToDate: Option[String],
-                      numDaysAssessed: Option[Int],
-                      box6Total: Option[Double],
-                      returnType: Option[String],
-                      source: Option[String],
-                    )
+  periodKey: Option[String],
+  billingPeriodFromDate: Option[String],
+  billingPeriodToDate: Option[String],
+  numDaysAssessed: Option[Int],
+  box6Total: Option[Double],
+  returnType: Option[String],
+  source: Option[String],
+)
 
 object VatPeriod {
-  implicit val format = Json.format[VatPeriod]
+  implicit val format: OFormat[VatPeriod] = Json.format[VatPeriod]
 }
 
-case class VatReturnsDetails(vrn: String, appDate: Option[String], extractDate: Option[String], vatPeriods: List[VatPeriod])
+case class VatReturnsDetails(
+  vrn: String,
+  appDate: Option[String],
+  extractDate: Option[String],
+  vatPeriods: List[VatPeriod])
 
 object VatReturnsDetails {
-  implicit val format = Json.format[VatReturnsDetails]
+  implicit val format: OFormat[VatReturnsDetails] = Json.format[VatReturnsDetails]
 }
 
 case class VatReturnsDetailsEntry(id: String, vatReturnsDetails: VatReturnsDetails, createdAt: LocalDateTime)
 
 object VatReturnsDetailsEntry {
-  private implicit val localDateTimeFormat: Format[LocalDateTime] = MongoJavatimeFormats.localDateTimeFormat
-  implicit val format = Json.format[VatReturnsDetailsEntry]
+  implicit val format: OFormat[VatReturnsDetailsEntry] = Json.format[VatReturnsDetailsEntry]
 }

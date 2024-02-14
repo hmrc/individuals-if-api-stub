@@ -17,7 +17,7 @@
 package unit.uk.gov.hmrc.individualsifapistub.util.domain.organisations
 
 import play.api.libs.json.Json
-import uk.gov.hmrc.individualsifapistub.domain.organisations.{VatAddress, VatApprovedInformation, VatCustomerDetails, VatInformation, VatPPOB}
+import uk.gov.hmrc.individualsifapistub.domain.organisations._
 import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class VatInformationSpec extends UnitSpec {
@@ -133,7 +133,9 @@ class VatInformationSpec extends UnitSpec {
         |}
         |""".stripMargin
 
-    val expectedResult = VatApprovedInformation(customerDetails = VatCustomerDetails(organisationName = "Ancient Antiques"), PPOB = VatPPOB(address = VatAddress("VAT ADDR 1", "SW1A 2BQ")))
+    val expectedResult = VatApprovedInformation(
+      customerDetails = VatCustomerDetails(organisationName = "Ancient Antiques"),
+      PPOB = VatPPOB(address = VatAddress("VAT ADDR 1", "SW1A 2BQ")))
 
     val result = Json.parse(json).validate[VatApprovedInformation]
 
@@ -157,7 +159,6 @@ class VatInformationSpec extends UnitSpec {
         |   }
         |}
         |""".stripMargin
-
 
     val result = Json.parse(json).validate[VatApprovedInformation]
 
@@ -184,7 +185,10 @@ class VatInformationSpec extends UnitSpec {
         |}
         |""".stripMargin
 
-    val expectedResult = VatInformation(VatApprovedInformation(customerDetails = VatCustomerDetails(organisationName = "Ancient Antiques"), PPOB = VatPPOB(address = VatAddress("VAT ADDR 1", "SW1A 2BQ"))))
+    val expectedResult = VatInformation(
+      VatApprovedInformation(
+        customerDetails = VatCustomerDetails(organisationName = "Ancient Antiques"),
+        PPOB = VatPPOB(address = VatAddress("VAT ADDR 1", "SW1A 2BQ"))))
 
     val result = Json.parse(json).validate[VatInformation]
 

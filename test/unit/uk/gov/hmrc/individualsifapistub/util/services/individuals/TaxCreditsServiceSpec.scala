@@ -56,7 +56,7 @@ class TaxCreditsServiceSpec extends TestSupport {
       None
     )
 
-    implicit val hc = HeaderCarrier()
+    implicit val hc: HeaderCarrier = HeaderCarrier()
     val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
 
     val request = Applications(Seq(application))
@@ -64,8 +64,7 @@ class TaxCreditsServiceSpec extends TestSupport {
     val servicesConfig = mock[ServicesConfig]
     val underTest = new TaxCreditsService(taxCreditsRepository, apiPlatformTestUserConnector, servicesConfig)
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
-      thenReturn(Future.successful(testIndividual))
+    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).thenReturn(Future.successful(testIndividual))
 
   }
 
@@ -75,7 +74,7 @@ class TaxCreditsServiceSpec extends TestSupport {
 
       "return the created record" in new Setup {
 
-        when(taxCreditsRepository.create(idType, idValue,startDate, endDate, useCase, request)).thenReturn(
+        when(taxCreditsRepository.create(idType, idValue, startDate, endDate, useCase, request)).thenReturn(
           Future.successful(request)
         )
 
@@ -118,7 +117,7 @@ class TaxCreditsServiceSpec extends TestSupport {
           Future.successful(None)
         )
 
-        val response = await(underTest.get(idType,idValue, startDate, endDate, Some(fields)))
+        val response = await(underTest.get(idType, idValue, startDate, endDate, Some(fields)))
 
         response shouldBe None
       }

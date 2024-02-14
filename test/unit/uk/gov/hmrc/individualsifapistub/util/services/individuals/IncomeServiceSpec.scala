@@ -55,18 +55,20 @@ class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePaye
       saUtr = Some(utr)
     )
 
-    implicit val hc = HeaderCarrier()
+    implicit val hc: HeaderCarrier = HeaderCarrier()
     val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
 
     val mockSelfAssessmentRepository = mock[IncomeSaRepository]
     val mockPayeRepository = mock[IncomePayeRepository]
     val servicesConfig = mock[ServicesConfig]
     val underTest = new IncomeService(
-      mockSelfAssessmentRepository, mockPayeRepository, apiPlatformTestUserConnector, servicesConfig
+      mockSelfAssessmentRepository,
+      mockPayeRepository,
+      apiPlatformTestUserConnector,
+      servicesConfig
     )
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).
-      thenReturn(Future.successful(testIndividual))
+    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).thenReturn(Future.successful(testIndividual))
   }
 
   "Income Service" when {
@@ -77,12 +79,14 @@ class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePaye
 
         "Return the created SA when created" in new Setup {
 
-
-          when(mockSelfAssessmentRepository.create(idType, idValue, Some(startYear), Some(endYear), Some(useCase), incomeSaResponse)).thenReturn(
+          when(
+            mockSelfAssessmentRepository
+              .create(idType, idValue, Some(startYear), Some(endYear), Some(useCase), incomeSaResponse)).thenReturn(
             Future.successful(incomeSaResponse)
           )
 
-          val response = await(underTest.createSa(idType, idValue, Some(startYear), Some(endYear), Some(useCase), incomeSaResponse))
+          val response =
+            await(underTest.createSa(idType, idValue, Some(startYear), Some(endYear), Some(useCase), incomeSaResponse))
 
           response shouldBe incomeSaResponse
 
@@ -90,7 +94,9 @@ class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePaye
 
         "Return failure when unable to create SA object" in new Setup {
 
-          when(mockSelfAssessmentRepository.create(idType, idValue, Some(startYear), Some(endYear), Some(useCase), incomeSaResponse)).thenReturn(
+          when(
+            mockSelfAssessmentRepository
+              .create(idType, idValue, Some(startYear), Some(endYear), Some(useCase), incomeSaResponse)).thenReturn(
             Future.failed(new Exception)
           )
 
@@ -104,9 +110,10 @@ class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePaye
       "Get" should {
         "Return SA when successfully retrieved from mongo" in new Setup {
 
-          when(mockSelfAssessmentRepository.findByTypeAndId(idType, idValue, startYear, endYear, Some(fields))).thenReturn(
-            Future.successful(Some(incomeSaResponse))
-          )
+          when(mockSelfAssessmentRepository.findByTypeAndId(idType, idValue, startYear, endYear, Some(fields)))
+            .thenReturn(
+              Future.successful(Some(incomeSaResponse))
+            )
 
           val response = await(underTest.getSa(idType, idValue, startYear, endYear, Some(fields)))
 
@@ -116,9 +123,10 @@ class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePaye
 
         "Return none if cannot be found in mongo" in new Setup {
 
-          when(mockSelfAssessmentRepository.findByTypeAndId(idType, idValue, startYear, endYear, Some(fields))).thenReturn(
-            Future.successful(None)
-          )
+          when(mockSelfAssessmentRepository.findByTypeAndId(idType, idValue, startYear, endYear, Some(fields)))
+            .thenReturn(
+              Future.successful(None)
+            )
 
           val response = await(underTest.getSa(idType, idValue, startYear, endYear, Some(fields)))
 
@@ -134,11 +142,14 @@ class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePaye
 
         "Return the created PAYE when created" in new Setup {
 
-          when(mockPayeRepository.create(idType, idValue, Some(startDate), Some(endDate), Some(useCase), incomePayeResponse)).thenReturn(
+          when(
+            mockPayeRepository
+              .create(idType, idValue, Some(startDate), Some(endDate), Some(useCase), incomePayeResponse)).thenReturn(
             Future.successful(incomePayeResponse)
           )
 
-          val response = await(underTest.createPaye(idType, idValue, Some(startDate), Some(endDate), Some(useCase), incomePayeResponse))
+          val response = await(
+            underTest.createPaye(idType, idValue, Some(startDate), Some(endDate), Some(useCase), incomePayeResponse))
 
           response shouldBe incomePayeResponse
 
@@ -146,12 +157,15 @@ class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePaye
 
         "Return failure when unable to create PAYE object" in new Setup {
 
-          when(mockPayeRepository.create(idType, idValue, Some(startDate), Some(endDate), Some(useCase), incomePayeResponse)).thenReturn(
+          when(
+            mockPayeRepository
+              .create(idType, idValue, Some(startDate), Some(endDate), Some(useCase), incomePayeResponse)).thenReturn(
             Future.failed(new Exception)
           )
 
           assertThrows[Exception] {
-            await(underTest.createPaye(idType, idValue, Some(startDate), Some(endDate), Some(useCase), incomePayeResponse))
+            await(
+              underTest.createPaye(idType, idValue, Some(startDate), Some(endDate), Some(useCase), incomePayeResponse))
           }
 
         }
