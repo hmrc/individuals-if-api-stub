@@ -32,7 +32,17 @@ lazy val microservice = Project(appName, file("."))
     IntegrationTest / testOptions := Seq(Tests.Filter(_ startsWith "it")),
     addTestReportOption(IntegrationTest, "int-test-reports"),
     IntegrationTest / testGrouping := oneForkedJvmPerTest((IntegrationTest / definedTests).value),
-    IntegrationTest / parallelExecution := false
+    IntegrationTest / parallelExecution := false,
+    // Disable default sbt Test options (might change with new versions of bootstrap)
+    IntegrationTest / testOptions -= Tests
+      .Argument("-o", "-u", "target/int-test-reports", "-h", "target/int-test-reports/html-report"),
+    IntegrationTest / testOptions += Tests.Argument(
+      TestFrameworks.ScalaTest,
+      "-oNCHPQR",
+      "-u",
+      "target/int-test-reports",
+      "-h",
+      "target/int-test-reports/html-report")
   )
   .settings(PlayKeys.playDefaultPort := 8443)
   .settings(majorVersion := 0)
