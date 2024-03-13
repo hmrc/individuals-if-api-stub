@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.individualsifapistub.config
 
-import akka.actor.ActorSystem
+import org.apache.pekko.actor.ActorSystem
 import play.api.{Application, Configuration, Mode}
 
 trait ConfigSupport {

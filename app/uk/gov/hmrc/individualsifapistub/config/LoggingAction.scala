@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.individualsifapistub.config
 
-import akka.stream.Materializer
+import org.apache.pekko.stream.Materializer
 import play.api.Logging
 import play.api.mvc.{ActionBuilderImpl, BodyParsers, Request, Result}
 

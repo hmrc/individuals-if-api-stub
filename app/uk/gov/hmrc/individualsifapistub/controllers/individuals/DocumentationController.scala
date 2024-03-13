@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.individualsifapistub.controllers.individuals
 
-import akka.stream.Materializer
+import org.apache.pekko.stream.Materializer
 import controllers.Assets
 import play.api.Configuration
 import play.api.http.HttpErrorHandler
