@@ -23,7 +23,6 @@ object AppDependencies {
     "com.vladsch.flexmark"   % "flexmark-all"                    % "0.64.8"         % scope,
     "org.scalaj"             %% "scalaj-http"                    % "2.4.2"          % scope,
     "org.pegdown"            % "pegdown"                         % "1.6.0"          % scope,
-    "com.github.tomakehurst" % "wiremock-jre8"                   % "2.27.2"         % scope,
     hmrcMongo                %% s"hmrc-mongo-test-$playVersion"  % hmrcMongoVersion % scope,
     hmrc                     %% s"bootstrap-test-$playVersion"   % bootstrapVersion % scope
   )
