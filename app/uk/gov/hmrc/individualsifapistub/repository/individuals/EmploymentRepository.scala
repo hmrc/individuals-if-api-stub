@@ -30,7 +30,7 @@ import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import uk.gov.hmrc.play.http.logging.Mdc.preservingMdc
 
-import java.time.{LocalDate, ZoneId}
+import java.time.LocalDate
 import java.util.UUID
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -161,9 +161,7 @@ class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit ec: Executi
                   val interval = Dates.toInterval(startDate, endDate)
                   val payments = employments
                     .flatMap(_.payments.getOrElse(Seq.empty))
-                    .filter(payment =>
-                      payment.date.exists(date =>
-                        interval.contains(date.atStartOfDay(ZoneId.systemDefault()).toInstant.toEpochMilli)))
+                    .filter(_.date.exists(date => interval.contains(date.atStartOfDay())))
                   if (payments.nonEmpty || employmentDateOverlaps(employmentDetail, startDate, endDate))
                     Some(Employment(employer, employerRef, employmentDetail, payments.headOption.map(_ => payments)))
                   else

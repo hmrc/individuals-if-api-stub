@@ -16,21 +16,21 @@
 
 package uk.gov.hmrc.individualsifapistub.util
 
-import org.joda.time.format.DateTimeFormat
-import org.joda.time.{Interval, LocalDate}
 import uk.gov.hmrc.individualsifapistub.util.Dates.toInterval
 
+import java.time.LocalDate
 import scala.util.Try
 
 class IntervalQueryStringBinder extends AbstractQueryStringBindable[Interval] {
 
-  private val dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd")
+  private val dateFormat = Dates.format
 
   override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, Interval]] =
     (getParam(params, "from"), getParam(params, "to", Some(LocalDate.now()))) match {
-      case (Right(from), Right(to)) => Some(interval(from, to))
-      case (_, Left(msg))           => Some(Left(msg))
-      case (Left(msg), _)           => Some(Left(msg))
+      case (Right(from), Right(to)) if from isBefore to => Some(interval(from, to))
+      case (Right(_), Right(_))                         => Some(Left(errorResponse("Invalid time period requested")))
+      case (_, Left(msg))                               => Some(Left(msg))
+      case (Left(msg), _)                               => Some(Left(msg))
     }
 
   private def interval(from: LocalDate, to: LocalDate): Either[String, Interval] =
@@ -41,7 +41,7 @@ class IntervalQueryStringBinder extends AbstractQueryStringBindable[Interval] {
     paramName: String,
     default: Option[LocalDate] = None): Either[String, LocalDate] =
     Try(params.get(paramName).flatMap(_.headOption) match {
-      case Some(date) => Right(dateTimeFormatter.parseLocalDate(date))
+      case Some(date) => Right(LocalDate.parse(date, dateFormat))
       case None =>
         default
           .map(Right(_))
@@ -49,7 +49,6 @@ class IntervalQueryStringBinder extends AbstractQueryStringBindable[Interval] {
     }) getOrElse Left(errorResponse(s"$paramName: invalid date format"))
 
   override def unbind(key: String, dateRange: Interval): String =
-    s"from=${dateTimeFormatter.print(dateRange.getStart.toLocalDate)}&to=${dateTimeFormatter
-      .print(dateRange.getEnd.toLocalDate)}"
+    s"from=${dateRange.fromDate.format(dateFormat)}&to=${dateRange.toDate.format(dateFormat)}"
 
 }

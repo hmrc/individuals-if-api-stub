@@ -16,29 +16,32 @@
 
 package uk.gov.hmrc.individualsifapistub.util
 
-import org.joda.time.Interval
-
+import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import java.time.{LocalDate, ZoneId}
+import java.time.{LocalDate, LocalDateTime}
+
+case class Interval(fromDate: LocalDateTime, toDate: LocalDateTime) {
+  def contains(date: LocalDateTime): Boolean = !date.isBefore(fromDate) && !date.isAfter(toDate)
+  def overlaps(other: Interval): Boolean =
+    !other.fromDate.isAfter(toDate) & !other.toDate.isBefore(fromDate)
+  override def toString: String = {
+    val format = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    s"${fromDate.format(format)}/${toDate.format(format)}"
+  }
+}
 
 object Dates {
 
-  private def asJodaLocalDate(string: String) = org.joda.time.LocalDate.parse(string)
+  val format: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
   def asLocalDate(string: String): LocalDate = LocalDate.parse(string)
 
   def toInterval(from: String, to: String): Interval =
-    toInterval(asJodaLocalDate(from), asJodaLocalDate(to))
+    toInterval(LocalDate.parse(from, format), LocalDate.parse(to, format))
 
-  def toInterval(from: org.joda.time.LocalDate, to: org.joda.time.LocalDate): Interval =
-    new Interval(from.toDate.getTime, to.toDateTimeAtStartOfDay.plusMillis(1).toDate.getTime)
-
-  def toInterval(from: java.time.LocalDate, to: java.time.LocalDate): Interval =
-    new Interval(
-      from.atStartOfDay(ZoneId.systemDefault()).toInstant.toEpochMilli,
-      to.atStartOfDay(ZoneId.systemDefault()).plus(1, ChronoUnit.MILLIS).toInstant.toEpochMilli
-    )
+  def toInterval(from: LocalDate, to: LocalDate): Interval =
+    Interval(from.atStartOfDay, to.atStartOfDay.plus(1, ChronoUnit.MILLIS))
 
   def toInterval(from: String, to: Option[String]): Interval =
-    toInterval(asJodaLocalDate(from), to.map(asJodaLocalDate).getOrElse(org.joda.time.LocalDate.now))
+    toInterval(LocalDate.parse(from), to.map(LocalDate.parse).getOrElse(LocalDate.now))
 }

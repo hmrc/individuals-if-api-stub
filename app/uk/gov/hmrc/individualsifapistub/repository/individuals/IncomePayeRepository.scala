@@ -30,7 +30,6 @@ import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import uk.gov.hmrc.play.http.logging.Mdc.preservingMdc
 
-import java.time.ZoneId
 import java.util.UUID
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -139,9 +138,7 @@ class IncomePayeRepository @Inject()(mongo: MongoComponent)(implicit ec: Executi
           case nonEmpty =>
             val payeEntries = nonEmpty
               .flatMap(_.incomePaye.paye.getOrElse(Seq.empty))
-              .filter(payeEntry =>
-                payeEntry.paymentDate.forall(pd =>
-                  interval.contains(pd.atStartOfDay(ZoneId.systemDefault()).toInstant.toEpochMilli)))
+              .filter(_.paymentDate.forall(pd => interval.contains(pd.atStartOfDay())))
             Some(IncomePaye(Some(payeEntries)))
         }
     }
