@@ -16,7 +16,7 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util
 
-import akka.stream.Materializer
+import org.apache.pekko.stream.Materializer
 import com.typesafe.config.ConfigFactory
 import org.scalatest.BeforeAndAfterAll
 import play.api.inject.guice.GuiceApplicationBuilder
