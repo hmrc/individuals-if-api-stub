@@ -23,7 +23,7 @@ import uk.gov.hmrc.individualsifapistub.util.DateTimeProvider
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class VatInformationService @Inject()(repository: VatInformationRepository, dateTimeProvider: DateTimeProvider) {
+class VatInformationService @Inject() (repository: VatInformationRepository, dateTimeProvider: DateTimeProvider) {
   def retrieve(vrn: String): Future[Option[VatInformationEntry]] = repository.retrieve(vrn)
 
   def create(vrn: String, vatInformation: VatInformation) =

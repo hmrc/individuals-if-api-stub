@@ -81,7 +81,8 @@ class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePaye
 
           when(
             mockSelfAssessmentRepository
-              .create(idType, idValue, Some(startYear), Some(endYear), Some(useCase), incomeSaResponse)).thenReturn(
+              .create(idType, idValue, Some(startYear), Some(endYear), Some(useCase), incomeSaResponse)
+          ).thenReturn(
             Future.successful(incomeSaResponse)
           )
 
@@ -96,7 +97,8 @@ class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePaye
 
           when(
             mockSelfAssessmentRepository
-              .create(idType, idValue, Some(startYear), Some(endYear), Some(useCase), incomeSaResponse)).thenReturn(
+              .create(idType, idValue, Some(startYear), Some(endYear), Some(useCase), incomeSaResponse)
+          ).thenReturn(
             Future.failed(new Exception)
           )
 
@@ -144,12 +146,14 @@ class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePaye
 
           when(
             mockPayeRepository
-              .create(idType, idValue, Some(startDate), Some(endDate), Some(useCase), incomePayeResponse)).thenReturn(
+              .create(idType, idValue, Some(startDate), Some(endDate), Some(useCase), incomePayeResponse)
+          ).thenReturn(
             Future.successful(incomePayeResponse)
           )
 
           val response = await(
-            underTest.createPaye(idType, idValue, Some(startDate), Some(endDate), Some(useCase), incomePayeResponse))
+            underTest.createPaye(idType, idValue, Some(startDate), Some(endDate), Some(useCase), incomePayeResponse)
+          )
 
           response shouldBe incomePayeResponse
 
@@ -159,13 +163,15 @@ class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePaye
 
           when(
             mockPayeRepository
-              .create(idType, idValue, Some(startDate), Some(endDate), Some(useCase), incomePayeResponse)).thenReturn(
+              .create(idType, idValue, Some(startDate), Some(endDate), Some(useCase), incomePayeResponse)
+          ).thenReturn(
             Future.failed(new Exception)
           )
 
           assertThrows[Exception] {
             await(
-              underTest.createPaye(idType, idValue, Some(startDate), Some(endDate), Some(useCase), incomePayeResponse))
+              underTest.createPaye(idType, idValue, Some(startDate), Some(endDate), Some(useCase), incomePayeResponse)
+            )
           }
 
         }

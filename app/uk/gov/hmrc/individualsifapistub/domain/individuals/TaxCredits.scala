@@ -184,7 +184,8 @@ case class Application(
   ceasedDate: Option[String],
   entStartDate: Option[String],
   entEndDate: Option[String],
-  awards: Option[Seq[Awards]])
+  awards: Option[Seq[Awards]]
+)
 
 object Application {
   private def isMultipleOfOne(value: Double) = value % 1 == 0

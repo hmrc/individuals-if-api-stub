@@ -22,7 +22,7 @@ import uk.gov.hmrc.individualsifapistub.repository.organisations.CorporationTaxC
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class CorporationTaxCompanyDetailsService @Inject()(repository: CorporationTaxCompanyDetailsRepository) {
+class CorporationTaxCompanyDetailsService @Inject() (repository: CorporationTaxCompanyDetailsRepository) {
 
   def create(request: CorporationTaxCompanyDetails): Future[CorporationTaxCompanyDetails] = repository.create(request)
 

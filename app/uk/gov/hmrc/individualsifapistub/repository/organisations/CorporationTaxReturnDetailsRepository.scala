@@ -30,7 +30,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CorporationTaxReturnDetailsRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext)
+class CorporationTaxReturnDetailsRepository @Inject() (mongo: MongoComponent)(implicit ec: ExecutionContext)
     extends PlayMongoRepository[CTReturnDetailsEntry](
       mongoComponent = mongo,
       collectionName = "corporation-tax-return-details",
@@ -47,7 +47,8 @@ class CorporationTaxReturnDetailsRepository @Inject()(mongo: MongoComponent)(imp
       request.utr,
       request.taxpayerStartDate,
       request.taxSolvencyStatus,
-      request.accountingPeriods)
+      request.accountingPeriods
+    )
     val entry = CTReturnDetailsEntry(request.utr, response)
 
     preservingMdc {

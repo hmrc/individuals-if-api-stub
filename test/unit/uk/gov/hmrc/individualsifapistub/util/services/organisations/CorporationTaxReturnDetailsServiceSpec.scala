@@ -44,7 +44,7 @@ class CorporationTaxReturnDetailsServiceSpec extends AsyncWordSpec with Matchers
 
     "throw error when repository fails to create" in {
       when(mockRepository.create(request)).thenReturn(Future.failed(new Exception()))
-      recoverToSucceededIf[Exception] { service.create(request) }
+      recoverToSucceededIf[Exception](service.create(request))
     }
   }
 

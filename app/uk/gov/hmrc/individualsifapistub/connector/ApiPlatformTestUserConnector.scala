@@ -26,8 +26,9 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ApiPlatformTestUserConnector @Inject()(http: HttpClient, servicesConfig: ServicesConfig)(
-  implicit ec: ExecutionContext) {
+class ApiPlatformTestUserConnector @Inject() (http: HttpClient, servicesConfig: ServicesConfig)(implicit
+  ec: ExecutionContext
+) {
 
   val logger: Logger = Logger(getClass)
 
@@ -35,26 +36,23 @@ class ApiPlatformTestUserConnector @Inject()(http: HttpClient, servicesConfig: S
 
   def getOrganisationByEmpRef(empRef: EmpRef)(implicit hc: HeaderCarrier): Future[Option[TestOrganisation]] = {
     http.GET[TestOrganisation](s"$serviceUrl/organisations/empref/${empRef.encodedValue}") map (Some(_))
-  } recover {
-    case e: NotFoundException =>
-      logger.warn(s"unable to retrieve employer with empRef: ${empRef.value}. ${e.getMessage}")
-      None
+  } recover { case e: NotFoundException =>
+    logger.warn(s"unable to retrieve employer with empRef: ${empRef.value}. ${e.getMessage}")
+    None
   }
 
   def getOrganisationByCrn(crn: String)(implicit hc: HeaderCarrier): Future[Option[TestOrganisation]] = {
     http.GET[TestOrganisation](s"$serviceUrl/organisations/crn/$crn") map (Some(_))
-  } recover {
-    case e: NotFoundException =>
-      logger.warn(s"unable to retrieve organisation with crn: $crn. ${e.getMessage}")
-      None
+  } recover { case e: NotFoundException =>
+    logger.warn(s"unable to retrieve organisation with crn: $crn. ${e.getMessage}")
+    None
   }
 
   def getOrganisationBySaUtr(utr: String)(implicit hc: HeaderCarrier): Future[Option[TestIndividual]] = {
     http.GET[TestIndividual](s"$serviceUrl/organisations/sautr/$utr") map (Some(_))
-  } recover {
-    case e: NotFoundException =>
-      logger.warn(s"unable to retrieve organisation with utr: $utr. ${e.getMessage}")
-      None
+  } recover { case e: NotFoundException =>
+    logger.warn(s"unable to retrieve organisation with utr: $utr. ${e.getMessage}")
+    None
   }
 
   def getIndividualByNino(nino: Nino)(implicit hc: HeaderCarrier): Future[TestIndividual] = {

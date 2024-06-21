@@ -28,11 +28,12 @@ import uk.gov.hmrc.individualsifapistub.util.FieldFilter
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class EmploymentsController @Inject()(
+class EmploymentsController @Inject() (
   loggingAction: LoggingAction,
   bodyParser: PlayBodyParsers,
   cc: ControllerComponents,
-  employmentsService: EmploymentsService)(implicit val ec: ExecutionContext)
+  employmentsService: EmploymentsService
+)(implicit val ec: ExecutionContext)
     extends CommonController(cc) {
 
   def create(
@@ -40,7 +41,8 @@ class EmploymentsController @Inject()(
     idValue: String,
     startDate: Option[String],
     endDate: Option[String],
-    useCase: Option[String]): Action[JsValue] =
+    useCase: Option[String]
+  ): Action[JsValue] =
     loggingAction.async(bodyParser.json) { implicit request =>
       withJsonBodyAndValidId[Employments](idType, idValue, startDate, endDate, useCase) { jsonBody =>
         employmentsService.create(
@@ -60,7 +62,8 @@ class EmploymentsController @Inject()(
     startDate: String,
     endDate: String,
     fields: Option[String],
-    filter: Option[String]): Action[AnyContent] = loggingAction.async { _ =>
+    filter: Option[String]
+  ): Action[AnyContent] = loggingAction.async { _ =>
     employmentsService
       .get(idType, idValue, startDate, endDate, fields, filter)
       .map {

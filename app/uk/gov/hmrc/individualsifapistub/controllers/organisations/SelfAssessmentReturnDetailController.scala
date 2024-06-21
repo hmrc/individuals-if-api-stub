@@ -27,11 +27,12 @@ import uk.gov.hmrc.individualsifapistub.util.FieldFilter
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class SelfAssessmentReturnDetailController @Inject()(
+class SelfAssessmentReturnDetailController @Inject() (
   loggingAction: LoggingAction,
   bodyParsers: PlayBodyParsers,
   cc: ControllerComponents,
-  selfAssessmentReturnDetailService: SelfAssessmentReturnDetailService)(implicit val ec: ExecutionContext)
+  selfAssessmentReturnDetailService: SelfAssessmentReturnDetailService
+)(implicit val ec: ExecutionContext)
     extends CommonController(cc) {
 
   def create(utr: String): Action[JsValue] =
@@ -39,9 +40,7 @@ class SelfAssessmentReturnDetailController @Inject()(
       withJsonBody[CreateSelfAssessmentReturnDetailRequest] { body =>
         selfAssessmentReturnDetailService
           .create(body)
-          .map(
-            x => Created(Json.toJson(x))
-          ) recover recovery
+          .map(x => Created(Json.toJson(x))) recover recovery
       }
     }
 

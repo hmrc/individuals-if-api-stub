@@ -39,7 +39,8 @@ class IntervalQueryStringBinder extends AbstractQueryStringBindable[Interval] {
   private def getParam(
     params: Map[String, Seq[String]],
     paramName: String,
-    default: Option[LocalDate] = None): Either[String, LocalDate] =
+    default: Option[LocalDate] = None
+  ): Either[String, LocalDate] =
     Try(params.get(paramName).flatMap(_.headOption) match {
       case Some(date) => Right(LocalDate.parse(date, dateFormat))
       case None =>

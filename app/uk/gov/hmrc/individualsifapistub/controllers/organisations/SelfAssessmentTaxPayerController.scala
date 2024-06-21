@@ -28,12 +28,13 @@ import uk.gov.hmrc.individualsifapistub.services.organisations.SelfAssessmentTax
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class SelfAssessmentTaxPayerController @Inject()(
+class SelfAssessmentTaxPayerController @Inject() (
   loggingAction: LoggingAction,
   bodyParsers: PlayBodyParsers,
   cc: ControllerComponents,
   selfAssessmentTaxPayerService: SelfAssessmentTaxPayerService,
-  testUserConnector: ApiPlatformTestUserConnector)(implicit val ec: ExecutionContext)
+  testUserConnector: ApiPlatformTestUserConnector
+)(implicit val ec: ExecutionContext)
     extends CommonController(cc) {
 
   def create(utr: String): Action[JsValue] =
@@ -41,9 +42,7 @@ class SelfAssessmentTaxPayerController @Inject()(
       withJsonBody[SelfAssessmentTaxPayer] { body =>
         selfAssessmentTaxPayerService
           .create(body)
-          .map(
-            x => Created(Json.toJson(x))
-          ) recover recovery
+          .map(x => Created(Json.toJson(x))) recover recovery
       }
     }
 

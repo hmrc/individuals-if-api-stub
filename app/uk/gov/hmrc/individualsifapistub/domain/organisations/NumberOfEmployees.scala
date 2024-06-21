@@ -43,7 +43,8 @@ object NumberOfEmployeeCounts {
 case class NumberOfEmployeeReferences(
   districtNumber: String,
   payeReference: String,
-  counts: Seq[NumberOfEmployeeCounts])
+  counts: Seq[NumberOfEmployeeCounts]
+)
 
 object NumberOfEmployeeReferences {
   implicit val format: Format[NumberOfEmployeeReferences] = Format(
@@ -78,7 +79,8 @@ object NumberOfEmployeeReferencesRequest {
 case class NumberOfEmployeesRequest(
   startDate: String,
   endDate: String,
-  references: Seq[NumberOfEmployeeReferencesRequest])
+  references: Seq[NumberOfEmployeeReferencesRequest]
+)
 
 object NumberOfEmployeesRequest {
   implicit val format: Format[NumberOfEmployeesRequest] = Format(

@@ -52,10 +52,10 @@ class NumberOfEmployeesControllerSpec extends TestSupport {
 
       val result = controller.create()(httpRequest)
 
-      result.map(x => {
+      result.map { x =>
         x.header.status shouldBe CREATED
         jsonBodyOf(x) shouldBe Json.toJson(response)
-      })
+      }
     }
 
     "fail when invalid request provided" in {
@@ -68,9 +68,7 @@ class NumberOfEmployeesControllerSpec extends TestSupport {
 
       val result = controller.create()(httpRequest)
 
-      result.map(x => {
-        x.header.status shouldBe BAD_REQUEST
-      })
+      result.map(x => x.header.status shouldBe BAD_REQUEST)
     }
   }
 
@@ -85,10 +83,10 @@ class NumberOfEmployeesControllerSpec extends TestSupport {
 
       val result = controller.retrieve()(httpRequest)
 
-      result.map(x => {
+      result.map { x =>
         x.header.status shouldBe OK
         jsonBodyOf(x) shouldBe Json.toJson(response)
-      })
+      }
     }
 
     "fails when an entry cannot be found" in {
@@ -99,7 +97,7 @@ class NumberOfEmployeesControllerSpec extends TestSupport {
           .withMethod("GET")
           .withBody(Json.toJson(getRequest))
 
-      assertThrows[Exception] { await(controller.retrieve()(httpRequest)) }
+      assertThrows[Exception](await(controller.retrieve()(httpRequest)))
     }
   }
 }

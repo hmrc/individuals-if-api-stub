@@ -26,12 +26,12 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeService @Inject()(
+class IncomeService @Inject() (
   incomeSaRepository: IncomeSaRepository,
   incomePayeRepository: IncomePayeRepository,
   apiPlatformTestUserConnector: ApiPlatformTestUserConnector,
-  servicesConfig: ServicesConfig)
-    extends ServiceBase(apiPlatformTestUserConnector) {
+  servicesConfig: ServicesConfig
+) extends ServiceBase(apiPlatformTestUserConnector) {
 
   def createSa(
     idType: String,
@@ -39,7 +39,8 @@ class IncomeService @Inject()(
     startYear: Option[String],
     endYear: Option[String],
     useCase: Option[String],
-    createSelfAssessmentRequest: IncomeSa)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[IncomeSa] =
+    createSelfAssessmentRequest: IncomeSa
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[IncomeSa] =
     if (servicesConfig.getConfBool("verifyNino", true)) {
       verifyNino(idType, idValue) flatMap { _ =>
         incomeSaRepository.create(idType, idValue, startYear, endYear, useCase, createSelfAssessmentRequest)
@@ -52,7 +53,8 @@ class IncomeService @Inject()(
     idValue: String,
     startYear: String,
     endYear: String,
-    fields: Option[String]): Future[Option[IncomeSa]] =
+    fields: Option[String]
+  ): Future[Option[IncomeSa]] =
     incomeSaRepository.findByTypeAndId(idType, idValue, startYear, endYear, fields)
 
   def createPaye(
@@ -61,7 +63,8 @@ class IncomeService @Inject()(
     startDate: Option[String],
     endDate: Option[String],
     useCase: Option[String],
-    createIncomePayeRequest: IncomePaye)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[IncomePaye] =
+    createIncomePayeRequest: IncomePaye
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[IncomePaye] =
     if (servicesConfig.getConfBool("verifyNino", true)) {
       verifyNino(idType, idValue) flatMap { _ =>
         incomePayeRepository.create(idType, idValue, startDate = None, endDate, useCase, createIncomePayeRequest)
@@ -74,6 +77,7 @@ class IncomeService @Inject()(
     idValue: String,
     startDate: String,
     endDate: String,
-    fields: Option[String]): Future[Option[IncomePaye]] =
+    fields: Option[String]
+  ): Future[Option[IncomePaye]] =
     incomePayeRepository.findByTypeAndId(idType, idValue, startDate, endDate, fields)
 }

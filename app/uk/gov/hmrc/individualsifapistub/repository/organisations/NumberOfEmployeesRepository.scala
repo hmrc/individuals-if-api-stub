@@ -30,7 +30,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class NumberOfEmployeesRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext)
+class NumberOfEmployeesRepository @Inject() (mongo: MongoComponent)(implicit ec: ExecutionContext)
     extends PlayMongoRepository[NumberOfEmployeesEntry](
       mongoComponent = mongo,
       collectionName = "number-of-employees",

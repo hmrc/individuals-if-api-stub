@@ -81,7 +81,8 @@ class TaxCreditsControllerSpec extends TestSupport {
       )
 
       val result = await(
-        underTest.create(idType, idValue, startDate, endDate, useCase)(fakeRequest.withBody(Json.toJson(request))))
+        underTest.create(idType, idValue, startDate, endDate, useCase)(fakeRequest.withBody(Json.toJson(request)))
+      )
 
       status(result) shouldBe CREATED
 

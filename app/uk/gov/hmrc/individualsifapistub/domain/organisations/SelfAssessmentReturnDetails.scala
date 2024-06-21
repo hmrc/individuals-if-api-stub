@@ -45,7 +45,8 @@ case class CreateSelfAssessmentReturnDetailRequest(
   startDate: String,
   taxPayerType: String,
   taxSolvencyStatus: String,
-  taxYears: Seq[TaxYear])
+  taxYears: Seq[TaxYear]
+)
 
 object CreateSelfAssessmentReturnDetailRequest {
   implicit val format: Format[CreateSelfAssessmentReturnDetailRequest] = Format(
@@ -71,7 +72,8 @@ case class SelfAssessmentReturnDetailResponse(
   startDate: String,
   taxPayerType: String,
   taxSolvencyStatus: String,
-  taxYears: Seq[TaxYear])
+  taxYears: Seq[TaxYear]
+)
 
 object SelfAssessmentReturnDetailResponse {
   implicit val format: Format[SelfAssessmentReturnDetailResponse] = Format(

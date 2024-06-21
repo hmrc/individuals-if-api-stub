@@ -33,7 +33,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class DetailsRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext)
+class DetailsRepository @Inject() (mongo: MongoComponent)(implicit ec: ExecutionContext)
     extends PlayMongoRepository[DetailsResponse](
       mongoComponent = mongo,
       collectionName = "details",
@@ -46,7 +46,8 @@ class DetailsRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionC
     idType: String,
     idValue: String,
     useCase: String,
-    createDetailsRequest: CreateDetailsRequest): Future[DetailsResponseNoId] = {
+    createDetailsRequest: CreateDetailsRequest
+  ): Future[DetailsResponseNoId] = {
     val useCaseMap = Map(
       "LAA-C3-residences"        -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
       "LAA-C4-residences"        -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
@@ -89,7 +90,7 @@ class DetailsRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionC
   def findByIdAndType(idType: String, idValue: String, fields: Option[String]): Future[Option[DetailsResponse]] = {
     def fieldsMap = Map(
       "residences(address(line1,line2,line3,line4,line5,postcode),noLongerUsed,type)" -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
-      "contactDetails(code,detail,type)"                                              -> "LAA-C4_HMCTS-C4-contact-details"
+      "contactDetails(code,detail,type)" -> "LAA-C4_HMCTS-C4-contact-details"
     )
 
     val ident = IdType.parse(idType) match {

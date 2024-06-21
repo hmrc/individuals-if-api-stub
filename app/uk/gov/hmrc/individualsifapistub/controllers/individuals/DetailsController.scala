@@ -27,11 +27,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class DetailsController @Inject()(
+class DetailsController @Inject() (
   loggingAction: LoggingAction,
   bodyParsers: PlayBodyParsers,
   cc: ControllerComponents,
-  detailsService: DetailsService)(implicit val ec: ExecutionContext)
+  detailsService: DetailsService
+)(implicit val ec: ExecutionContext)
     extends CommonController(cc) {
 
   def create(idType: String, idValue: String, useCase: String): Action[JsValue] =

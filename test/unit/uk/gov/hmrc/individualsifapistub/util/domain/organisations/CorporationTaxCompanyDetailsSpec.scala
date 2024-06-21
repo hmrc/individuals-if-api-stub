@@ -140,7 +140,8 @@ class CorporationTaxCompanyDetailsSpec extends UnitSpec {
       Some(empRef),
       Some("0123456789"),
       Some("123456789"),
-      TestOrganisationDetails("Disney Inc", TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")))
+      TestOrganisationDetails("Disney Inc", TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ"))
+    )
 
     val expectedResult = CorporationTaxCompanyDetails(
       "0123456789",
@@ -155,7 +156,8 @@ class CorporationTaxCompanyDetailsSpec extends UnitSpec {
             None,
             Some("SW1 4DQ")
           )
-        )),
+        )
+      ),
       None
     )
 

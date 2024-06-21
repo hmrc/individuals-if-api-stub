@@ -35,7 +35,8 @@ case class TestOrganisation(
   empRef: Option[EmpRef],
   ctUtr: Option[String],
   crn: Option[String],
-  organisationDetails: TestOrganisationDetails)
+  organisationDetails: TestOrganisationDetails
+)
 
 object TestOrganisation {
   implicit val format: OFormat[TestOrganisation] = Json.format
@@ -44,7 +45,8 @@ object TestOrganisation {
 case class TestIndividual(
   saUtr: Option[SaUtr],
   taxpayerType: Option[String] = None,
-  organisationDetails: Option[TestOrganisationDetails] = None)
+  organisationDetails: Option[TestOrganisationDetails] = None
+)
 
 object TestIndividual {
   implicit val format: OFormat[TestIndividual] = Json.format

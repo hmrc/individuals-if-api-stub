@@ -78,10 +78,12 @@ class EmploymentsControllerSpec extends TestSupport {
               Some("line4"),
               Some("line5"),
               Some("postcode")
-            )),
+            )
+          ),
           districtNumber = Some("ABC"),
           schemeRef = Some("ABC")
-        )),
+        )
+      ),
       employerRef = Some("247/ZT6767895A"),
       employment = Some(
         EmploymentDetail(
@@ -97,17 +99,22 @@ class EmploymentsControllerSpec extends TestSupport {
               Some("line4"),
               Some("line5"),
               Some("postcode")
-            ))
-        )),
+            )
+          )
+        )
+      ),
       payments = Some(
-        Seq(Payment(
-          date = Some(LocalDate.parse("2020-02-28")),
-          ytdTaxablePay = Some(120.02),
-          paidTaxablePay = Some(112.75),
-          paidNonTaxOrNICPayment = Some(123123.32),
-          week = Some(52),
-          month = Some(12)
-        )))
+        Seq(
+          Payment(
+            date = Some(LocalDate.parse("2020-02-28")),
+            ytdTaxablePay = Some(120.02),
+            paidTaxablePay = Some(112.75),
+            paidNonTaxOrNICPayment = Some(123123.32),
+            week = Some(52),
+            month = Some(12)
+          )
+        )
+      )
     )
 
   val employments = Employments(Seq(employment))
@@ -126,7 +133,9 @@ class EmploymentsControllerSpec extends TestSupport {
 
       val result = await(
         underTest.create(idType, idValue, Some(startDate), Some(endDate), Some(useCase))(
-          fakeRequest.withBody(Json.toJson(employments))))
+          fakeRequest.withBody(Json.toJson(employments))
+        )
+      )
 
       status(result) shouldBe CREATED
       jsonBodyOf(result) shouldBe Json.toJson(employments)
@@ -145,7 +154,9 @@ class EmploymentsControllerSpec extends TestSupport {
 
       val result = await(
         underTest.create(idType, idValue, Some(startDate), Some(endDate), Some(useCase))(
-          fakeRequest.withBody(Json.toJson(""))))
+          fakeRequest.withBody(Json.toJson(""))
+        )
+      )
 
       status(result) shouldBe BAD_REQUEST
 
@@ -162,7 +173,9 @@ class EmploymentsControllerSpec extends TestSupport {
 
         val result = await(
           underTest.create(idType, "abc", Some(startDate), Some(endDate), Some(useCase))(
-            fakeRequest.withBody(Json.toJson(employments))))
+            fakeRequest.withBody(Json.toJson(employments))
+          )
+        )
 
         status(result) shouldBe BAD_REQUEST
 
@@ -177,7 +190,9 @@ class EmploymentsControllerSpec extends TestSupport {
 
         val result = await(
           underTest.create(Trn.toString, "abc", Some(startDate), Some(endDate), Some(useCase))(
-            fakeRequest.withBody(Json.toJson(employments))))
+            fakeRequest.withBody(Json.toJson(employments))
+          )
+        )
         status(result) shouldBe BAD_REQUEST
 
       }
@@ -190,7 +205,9 @@ class EmploymentsControllerSpec extends TestSupport {
 
         val result = await(
           underTest.create("idType", idValue, Some(startDate), Some(endDate), Some(useCase))(
-            fakeRequest.withBody(Json.toJson(employments))))
+            fakeRequest.withBody(Json.toJson(employments))
+          )
+        )
 
         status(result) shouldBe BAD_REQUEST
 
@@ -205,7 +222,9 @@ class EmploymentsControllerSpec extends TestSupport {
 
         val result = await(
           underTest.create(idType, idValue, Some(startDate), Some(endDate), Some(useCase))(
-            fakeRequest.withBody(Json.toJson(""))))
+            fakeRequest.withBody(Json.toJson(""))
+          )
+        )
 
         status(result) shouldBe BAD_REQUEST
 

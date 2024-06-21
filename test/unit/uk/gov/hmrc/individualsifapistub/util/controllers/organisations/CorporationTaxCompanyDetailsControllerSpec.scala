@@ -44,7 +44,8 @@ class CorporationTaxCompanyDetailsControllerSpec extends TestSupport {
     bodyParsers,
     controllerComponents,
     mockService,
-    mockConnector)
+    mockConnector
+  )
   val repository = fakeApplication.injector.instanceOf[CorporationTaxCompanyDetailsRepository]
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
@@ -76,10 +77,10 @@ class CorporationTaxCompanyDetailsControllerSpec extends TestSupport {
 
       val result = controller.create(ctCompanyDetails.crn)(httpRequest)
 
-      result.map(x => {
+      result.map { x =>
         x.header.status shouldBe CREATED
         jsonBodyOf(x) shouldBe Json.toJson(ctCompanyDetails)
-      })
+      }
     }
 
     "fail when invalid request provided" in {
@@ -92,9 +93,7 @@ class CorporationTaxCompanyDetailsControllerSpec extends TestSupport {
 
       val result = controller.create(ctCompanyDetails.crn)(httpRequest)
 
-      result.map(x => {
-        x.header.status shouldBe BAD_REQUEST
-      })
+      result.map(x => x.header.status shouldBe BAD_REQUEST)
     }
   }
 
@@ -109,10 +108,10 @@ class CorporationTaxCompanyDetailsControllerSpec extends TestSupport {
 
       val result = controller.retrieve(ctCompanyDetails.crn)(httpRequest)
 
-      result.map(x => {
+      result.map { x =>
         x.header.status shouldBe OK
         jsonBodyOf(x) shouldBe Json.toJson(testOrganisation)
-      })
+      }
     }
 
     "fails when an exception is thrown" in {

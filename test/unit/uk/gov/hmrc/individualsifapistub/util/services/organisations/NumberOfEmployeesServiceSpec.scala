@@ -47,7 +47,7 @@ class NumberOfEmployeesServiceSpec extends AsyncWordSpec with Matchers with Mock
 
     "throw error when repository fails to create" in {
       when(mockRepository.create(postRequest)).thenReturn(Future.failed(new Exception()))
-      recoverToSucceededIf[Exception] { service.create(postRequest) }
+      recoverToSucceededIf[Exception](service.create(postRequest))
     }
   }
 

@@ -27,11 +27,12 @@ import uk.gov.hmrc.individualsifapistub.util.FieldFilter
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class IncomeController @Inject()(
+class IncomeController @Inject() (
   loggingAction: LoggingAction,
   bodyParser: PlayBodyParsers,
   cc: ControllerComponents,
-  incomeService: IncomeService)(implicit val ec: ExecutionContext)
+  incomeService: IncomeService
+)(implicit val ec: ExecutionContext)
     extends CommonController(cc) {
 
   def createSa(
@@ -39,10 +40,11 @@ class IncomeController @Inject()(
     idValue: String,
     startYear: Option[String],
     endYear: Option[String],
-    useCase: Option[String]): Action[JsValue] = loggingAction.async(bodyParser.json) { implicit request =>
+    useCase: Option[String]
+  ): Action[JsValue] = loggingAction.async(bodyParser.json) { implicit request =>
     withJsonBody[IncomeSa] { createRequest =>
-      incomeService.createSa(idType, idValue, startYear, endYear, useCase, createRequest) map (
-        e => Created(Json.toJson(e))
+      incomeService.createSa(idType, idValue, startYear, endYear, useCase, createRequest) map (e =>
+        Created(Json.toJson(e))
       )
     } recover recovery
   }
@@ -52,7 +54,8 @@ class IncomeController @Inject()(
     idValue: String,
     startYear: String,
     endYear: String,
-    fields: Option[String]): Action[AnyContent] = loggingAction.async { _ =>
+    fields: Option[String]
+  ): Action[AnyContent] = loggingAction.async { _ =>
     incomeService
       .getSa(idType, idValue, startYear, endYear, fields)
       .map {
@@ -68,10 +71,11 @@ class IncomeController @Inject()(
     idValue: String,
     startDate: Option[String],
     endDate: Option[String],
-    useCase: Option[String]): Action[JsValue] = loggingAction.async(bodyParser.json) { implicit request =>
+    useCase: Option[String]
+  ): Action[JsValue] = loggingAction.async(bodyParser.json) { implicit request =>
     withJsonBody[IncomePaye] { createRequest =>
-      incomeService.createPaye(idType, idValue, startDate, endDate, useCase, createRequest) map (
-        e => Created(Json.toJson(e))
+      incomeService.createPaye(idType, idValue, startDate, endDate, useCase, createRequest) map (e =>
+        Created(Json.toJson(e))
       )
     } recover recovery
   }
@@ -81,7 +85,8 @@ class IncomeController @Inject()(
     idValue: String,
     startDate: String,
     endDate: String,
-    fields: Option[String]): Action[AnyContent] = loggingAction.async { _ =>
+    fields: Option[String]
+  ): Action[AnyContent] = loggingAction.async { _ =>
     incomeService
       .getPaye(idType, idValue, startDate, endDate, fields)
       .map {

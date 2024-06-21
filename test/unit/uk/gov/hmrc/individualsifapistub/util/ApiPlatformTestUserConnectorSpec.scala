@@ -37,7 +37,8 @@ class ApiPlatformTestUserConnectorSpec extends TestSupport with BeforeAndAfterEa
     Some(empRef),
     None,
     None,
-    TestOrganisationDetails("Disney Inc", TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")))
+    TestOrganisationDetails("Disney Inc", TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ"))
+  )
 
   val nino = Nino("AB123456A")
   val utr = SaUtr("2432552635")
@@ -49,7 +50,8 @@ class ApiPlatformTestUserConnectorSpec extends TestSupport with BeforeAndAfterEa
       TestOrganisationDetails(
         name = "Barry Barryson",
         address = TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")
-      ))
+      )
+    )
   )
 
   val http: HttpClient = fakeApplication.injector.instanceOf[HttpClient]
@@ -96,7 +98,9 @@ class ApiPlatformTestUserConnectorSpec extends TestSupport with BeforeAndAfterEa
                  }
                }
              """
-              )))
+              )
+          )
+      )
 
       val result = await(underTest.getOrganisationByEmpRef(empRef))
 
@@ -106,7 +110,8 @@ class ApiPlatformTestUserConnectorSpec extends TestSupport with BeforeAndAfterEa
     "return nothing if the organisation cannot be found" in new Setup {
       stubFor(
         get(urlEqualTo(s"/organisations/empref/${empRef.encodedValue}"))
-          .willReturn(aResponse().withStatus(NOT_FOUND)))
+          .willReturn(aResponse().withStatus(NOT_FOUND))
+      )
 
       await(underTest.getOrganisationByEmpRef(empRef)) shouldBe None
     }
@@ -114,7 +119,8 @@ class ApiPlatformTestUserConnectorSpec extends TestSupport with BeforeAndAfterEa
     "propagate errors" in new Setup {
       stubFor(
         get(urlEqualTo(s"/organisations/empref/${empRef.encodedValue}"))
-          .willReturn(aResponse().withStatus(BAD_REQUEST)))
+          .willReturn(aResponse().withStatus(BAD_REQUEST))
+      )
 
       intercept[BadRequestException](await(underTest.getOrganisationByEmpRef(empRef)))
     }
@@ -138,7 +144,9 @@ class ApiPlatformTestUserConnectorSpec extends TestSupport with BeforeAndAfterEa
                            |    "line2": "Aberdeen",
                            |    "postcode": "SW1 4DQ"
                            |  }
-                           |}}""".stripMargin)))
+                           |}}""".stripMargin)
+          )
+      )
 
       val result = await(underTest.getIndividualByNino(nino))
 
@@ -148,7 +156,8 @@ class ApiPlatformTestUserConnectorSpec extends TestSupport with BeforeAndAfterEa
     "fail with RecordNotFoundException when there is no individual matching the nino" in new Setup {
       stubFor(
         get(urlEqualTo(s"/individuals/nino/$nino"))
-          .willReturn(aResponse().withStatus(NOT_FOUND)))
+          .willReturn(aResponse().withStatus(NOT_FOUND))
+      )
 
       intercept[NotFoundException] {
         await(underTest.getIndividualByNino(nino))
@@ -158,7 +167,8 @@ class ApiPlatformTestUserConnectorSpec extends TestSupport with BeforeAndAfterEa
     "propagate errors" in new Setup {
       stubFor(
         get(urlEqualTo(s"/individuals/nino/$nino"))
-          .willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR)))
+          .willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR))
+      )
 
       intercept[BadRequestException](await(underTest.getOrganisationByEmpRef(empRef)))
     }

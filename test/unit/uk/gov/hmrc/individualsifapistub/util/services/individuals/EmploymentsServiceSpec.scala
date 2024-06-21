@@ -62,10 +62,12 @@ class EmploymentsServiceSpec extends TestSupport {
                 Some("line4"),
                 Some("line5"),
                 Some("postcode")
-              )),
+              )
+            ),
             districtNumber = Some("ABC"),
             schemeRef = Some("ABC")
-          )),
+          )
+        ),
         employerRef = Some("247/ZT6767895A"),
         employment = Some(
           EmploymentDetail(
@@ -81,17 +83,22 @@ class EmploymentsServiceSpec extends TestSupport {
                 Some("line4"),
                 Some("line5"),
                 Some("postcode")
-              ))
-          )),
+              )
+            )
+          )
+        ),
         payments = Some(
-          Seq(Payment(
-            date = Some(LocalDate.parse("2001-12-31")),
-            ytdTaxablePay = Some(120.02),
-            paidTaxablePay = Some(112.75),
-            paidNonTaxOrNICPayment = Some(123123.32),
-            week = Some(52),
-            month = Some(12)
-          )))
+          Seq(
+            Payment(
+              date = Some(LocalDate.parse("2001-12-31")),
+              ytdTaxablePay = Some(120.02),
+              paidTaxablePay = Some(112.75),
+              paidNonTaxOrNICPayment = Some(123123.32),
+              week = Some(52),
+              month = Some(12)
+            )
+          )
+        )
       )
 
     implicit val hc: HeaderCarrier = HeaderCarrier()
@@ -113,7 +120,8 @@ class EmploymentsServiceSpec extends TestSupport {
       "Return the created employment when created" in new Setup {
 
         when(
-          mockEmploymentRepository.create(idType, idValue, Some(startDate), Some(endDate), Some(useCase), employments))
+          mockEmploymentRepository.create(idType, idValue, Some(startDate), Some(endDate), Some(useCase), employments)
+        )
           .thenReturn(
             Future.successful(employments)
           )
@@ -128,7 +136,8 @@ class EmploymentsServiceSpec extends TestSupport {
       "Return failure when unable to create Employment object" in new Setup {
 
         when(
-          mockEmploymentRepository.create(idType, idValue, Some(startDate), Some(endDate), Some(useCase), employments))
+          mockEmploymentRepository.create(idType, idValue, Some(startDate), Some(endDate), Some(useCase), employments)
+        )
           .thenReturn(
             Future.failed(new Exception)
           )

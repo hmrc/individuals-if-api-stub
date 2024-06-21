@@ -27,11 +27,12 @@ import uk.gov.hmrc.individualsifapistub.util.FieldFilter
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class CorporationTaxReturnDetailsController @Inject()(
+class CorporationTaxReturnDetailsController @Inject() (
   loggingAction: LoggingAction,
   bodyParsers: PlayBodyParsers,
   cc: ControllerComponents,
-  corporationTaxReturnDetailsService: CorporationTaxReturnDetailsService)(implicit val ec: ExecutionContext)
+  corporationTaxReturnDetailsService: CorporationTaxReturnDetailsService
+)(implicit val ec: ExecutionContext)
     extends CommonController(cc) {
 
   val emptyResponse = CorporationTaxReturnDetailsResponse("", "", "", Seq.empty)
@@ -41,9 +42,7 @@ class CorporationTaxReturnDetailsController @Inject()(
       withJsonBody[CreateCorporationTaxReturnDetailsRequest] { body =>
         corporationTaxReturnDetailsService
           .create(body)
-          .map(
-            x => Created(Json.toJson(x))
-          ) recover recovery
+          .map(x => Created(Json.toJson(x))) recover recovery
       }
     }
 

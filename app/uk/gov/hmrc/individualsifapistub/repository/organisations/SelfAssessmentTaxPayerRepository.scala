@@ -30,7 +30,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SelfAssessmentTaxPayerRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext)
+class SelfAssessmentTaxPayerRepository @Inject() (mongo: MongoComponent)(implicit ec: ExecutionContext)
     extends PlayMongoRepository[SATaxPayerEntry](
       mongoComponent = mongo,
       collectionName = "self-assessment-tax-payer",

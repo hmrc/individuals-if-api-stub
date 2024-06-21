@@ -55,7 +55,8 @@ case class CorporationTaxCompanyDetails(
   utr: String,
   crn: String,
   registeredDetails: Option[NameAddressDetails],
-  communicationDetails: Option[NameAddressDetails])
+  communicationDetails: Option[NameAddressDetails]
+)
 
 object CorporationTaxCompanyDetails {
   private val utrPattern = "^[0-9]{10}$".r
@@ -75,7 +76,8 @@ object CorporationTaxCompanyDetails {
       Some(organisationDetails.address.line2),
       None,
       None,
-      Some(organisationDetails.address.postcode))
+      Some(organisationDetails.address.postcode)
+    )
   )
 
   implicit val format: Format[CorporationTaxCompanyDetails] = Format(

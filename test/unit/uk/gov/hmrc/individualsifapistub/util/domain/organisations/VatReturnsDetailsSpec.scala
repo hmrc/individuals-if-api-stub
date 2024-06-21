@@ -43,7 +43,8 @@ class VatReturnsDetailsSpec extends UnitSpec {
       Some(30),
       Some(6542.2),
       Some("RegularReturn"),
-      Some("VMF"))
+      Some("VMF")
+    )
     val result = Json.parse(json).validate[VatPeriod]
 
     result.isSuccess shouldBe true

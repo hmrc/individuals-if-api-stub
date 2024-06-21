@@ -34,7 +34,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomeSaRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext)
+class IncomeSaRepository @Inject() (mongo: MongoComponent)(implicit ec: ExecutionContext)
     extends PlayMongoRepository[IncomeSaEntry](
       mongoComponent = mongo,
       collectionName = "incomeSa",
@@ -50,7 +50,8 @@ class IncomeSaRepository @Inject()(mongo: MongoComponent)(implicit ec: Execution
     startYear: Option[String],
     endYear: Option[String],
     useCase: Option[String],
-    request: IncomeSa): Future[IncomeSa] = {
+    request: IncomeSa
+  ): Future[IncomeSa] = {
     val useCaseMap = Map(
       "HMCTS-C2" -> "HMCTS-C2_HMCTS-C3",
       "HMCTS-C3" -> "HMCTS-C2_HMCTS-C3",
@@ -89,20 +90,21 @@ class IncomeSaRepository @Inject()(mongo: MongoComponent)(implicit ec: Execution
     idValue: String,
     startYear: String,
     endYear: String,
-    fields: Option[String]): Future[Option[IncomeSa]] = {
+    fields: Option[String]
+  ): Future[Option[IncomeSa]] = {
     logger.info(s"IncomeSaRepository - findByTypeAndId: fields: $fields")
 
     val fieldsMap = Map(
       "sa(returnList(address(line1,line2,line3,line4,postcode),busEndDate,busStartDate,caseStartDate,deducts(totalBusExpenses,totalDisallowBusExp),income(allEmployments,foreign,foreignDivs,lifePolicies,other,partnerships,pensions,selfAssessment,shares,trusts,ukDivsAndInterest,ukInterest,ukProperty),otherBusIncome,totalNIC,totalTaxPaid,tradingIncomeAllowance,turnover),taxYear)" -> "LAA-C1",
-      "sa(returnList(busEndDate,busStartDate,caseStartDate,deducts(totalBusExpenses,totalDisallowBusExp),income(allEmployments,foreign,foreignDivs,lifePolicies,other,partnerships,pensions,selfAssessment,shares,trusts,ukDivsAndInterest,ukInterest,ukProperty),otherBusIncome,tradingIncomeAllowance,turnover),taxYear)"                                                                 -> "LAA-C2",
-      "sa(returnList(address(line1,line2,line3,line4,postcode),busEndDate,busStartDate,businessDescription,deducts(totalBusExpenses,totalDisallowBusExp),income(allEmployments,foreign,foreignDivs,lifePolicies,other,partnerships,pensions,selfAssessment,shares,trusts,ukDivsAndInterest,ukInterest,ukProperty),otherBusIncome,tradingIncomeAllowance,turnover),taxYear)"                 -> "LAA-C3",
-      "sa(returnList(address(line1,line2,line3,line4,postcode),businessDescription,telephoneNumber),taxYear)"                                                                                                                                                                                                                                                                               -> "LAA-C4",
-      "sa(returnList(caseStartDate,income(foreign,foreignDivs,selfAssessment,selfEmployment,ukDivsAndInterest,ukInterest,ukProperty)),taxYear)"                                                                                                                                                                                                                                             -> "HMCTS-C2_HMCTS-C3",
-      "sa(returnList(address(line1,line2,line3,line4,postcode),businessDescription,caseStartDate,telephoneNumber),taxYear)"                                                                                                                                                                                                                                                                 -> "HMCTS-C4",
-      "sa(returnList(busEndDate,busStartDate,deducts(totalBusExpenses),income(allEmployments,foreign,foreignDivs,lifePolicies,other,partnerships,pensions,selfAssessment,selfEmployment,shares,trusts,ukDivsAndInterest,ukInterest,ukProperty),receivedDate,totalNIC,totalTaxPaid),taxYear)"                                                                                                -> "LSANI-C1_LSANI-C3",
-      "sa(returnList(address(line1,line2,line3,line4,postcode),businessDescription,caseStartDate,income(allEmployments,foreignDivs,lifePolicies,other,partnerships,pensions,selfAssessment,selfEmployment,shares,trusts,ukDivsAndInterest,ukInterest,ukProperty),receivedDate,telephoneNumber),taxYear)"                                                                                    -> "NICTSEJO-C4",
-      "sa(returnList(income(allEmployments,other,selfAssessment,selfEmployment),receivedDate,utr),taxYear)"                                                                                                                                                                                                                                                                                 -> "HO-ECP",
-      "sa(returnList(address(line1,line2,line3,line4,postcode),businessDescription,caseStartDate,income(allEmployments,foreign,foreignDivs,lifePolicies,other,partnerships,pensions,selfAssessment,selfEmployment,shares,trusts,ukDivsAndInterest,ukInterest,ukProperty),receivedDate,telephoneNumber,utr),taxYear)"                                                                        -> "HO-V2"
+      "sa(returnList(busEndDate,busStartDate,caseStartDate,deducts(totalBusExpenses,totalDisallowBusExp),income(allEmployments,foreign,foreignDivs,lifePolicies,other,partnerships,pensions,selfAssessment,shares,trusts,ukDivsAndInterest,ukInterest,ukProperty),otherBusIncome,tradingIncomeAllowance,turnover),taxYear)" -> "LAA-C2",
+      "sa(returnList(address(line1,line2,line3,line4,postcode),busEndDate,busStartDate,businessDescription,deducts(totalBusExpenses,totalDisallowBusExp),income(allEmployments,foreign,foreignDivs,lifePolicies,other,partnerships,pensions,selfAssessment,shares,trusts,ukDivsAndInterest,ukInterest,ukProperty),otherBusIncome,tradingIncomeAllowance,turnover),taxYear)" -> "LAA-C3",
+      "sa(returnList(address(line1,line2,line3,line4,postcode),businessDescription,telephoneNumber),taxYear)" -> "LAA-C4",
+      "sa(returnList(caseStartDate,income(foreign,foreignDivs,selfAssessment,selfEmployment,ukDivsAndInterest,ukInterest,ukProperty)),taxYear)" -> "HMCTS-C2_HMCTS-C3",
+      "sa(returnList(address(line1,line2,line3,line4,postcode),businessDescription,caseStartDate,telephoneNumber),taxYear)" -> "HMCTS-C4",
+      "sa(returnList(busEndDate,busStartDate,deducts(totalBusExpenses),income(allEmployments,foreign,foreignDivs,lifePolicies,other,partnerships,pensions,selfAssessment,selfEmployment,shares,trusts,ukDivsAndInterest,ukInterest,ukProperty),receivedDate,totalNIC,totalTaxPaid),taxYear)" -> "LSANI-C1_LSANI-C3",
+      "sa(returnList(address(line1,line2,line3,line4,postcode),businessDescription,caseStartDate,income(allEmployments,foreignDivs,lifePolicies,other,partnerships,pensions,selfAssessment,selfEmployment,shares,trusts,ukDivsAndInterest,ukInterest,ukProperty),receivedDate,telephoneNumber),taxYear)" -> "NICTSEJO-C4",
+      "sa(returnList(income(allEmployments,other,selfAssessment,selfEmployment),receivedDate,utr),taxYear)" -> "HO-ECP",
+      "sa(returnList(address(line1,line2,line3,line4,postcode),businessDescription,caseStartDate,income(allEmployments,foreign,foreignDivs,lifePolicies,other,partnerships,pensions,selfAssessment,selfEmployment,shares,trusts,ukDivsAndInterest,ukInterest,ukProperty),receivedDate,telephoneNumber,utr),taxYear)" -> "HO-V2"
     )
 
     val ident = IdType.parse(idType) match {

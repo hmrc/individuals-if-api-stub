@@ -82,7 +82,8 @@ case class Residence(
   otherCountry: Option[String] = None,
   deadLetterOfficeDate: Option[String] = None,
   startDateTime: Option[String] = None,
-  noLongerUsed: Option[String] = None)
+  noLongerUsed: Option[String] = None
+)
 
 object Residence {
   private val statusCodePattern = "^[1-9]$".r
@@ -132,7 +133,8 @@ object Residence {
 case class DetailsResponse(
   details: String,
   contactDetails: Option[Seq[ContactDetail]],
-  residences: Option[Seq[Residence]])
+  residences: Option[Seq[Residence]]
+)
 
 object DetailsResponse {
   implicit val format: Format[DetailsResponse] = Format(

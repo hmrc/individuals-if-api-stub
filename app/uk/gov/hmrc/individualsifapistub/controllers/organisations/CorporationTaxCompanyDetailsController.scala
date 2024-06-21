@@ -28,12 +28,13 @@ import uk.gov.hmrc.individualsifapistub.services.organisations.CorporationTaxCom
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class CorporationTaxCompanyDetailsController @Inject()(
+class CorporationTaxCompanyDetailsController @Inject() (
   loggingAction: LoggingAction,
   bodyParsers: PlayBodyParsers,
   cc: ControllerComponents,
   corporationTaxCompanyDetailsService: CorporationTaxCompanyDetailsService,
-  testUserConnector: ApiPlatformTestUserConnector)(implicit val ec: ExecutionContext)
+  testUserConnector: ApiPlatformTestUserConnector
+)(implicit val ec: ExecutionContext)
     extends CommonController(cc) {
 
   def create(crn: String): Action[JsValue] =
@@ -41,9 +42,7 @@ class CorporationTaxCompanyDetailsController @Inject()(
       withJsonBody[CorporationTaxCompanyDetails] { body =>
         corporationTaxCompanyDetailsService
           .create(body)
-          .map(
-            x => Created(Json.toJson(x))
-          ) recover recovery
+          .map(x => Created(Json.toJson(x))) recover recovery
       }
     }
 

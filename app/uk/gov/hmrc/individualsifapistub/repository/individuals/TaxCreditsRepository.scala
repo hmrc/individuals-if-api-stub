@@ -33,7 +33,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TaxCreditsRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext)
+class TaxCreditsRepository @Inject() (mongo: MongoComponent)(implicit ec: ExecutionContext)
     extends PlayMongoRepository[TaxCreditsEntry](
       mongoComponent = mongo,
       collectionName = "taxCredits",
@@ -48,7 +48,8 @@ class TaxCreditsRepository @Inject()(mongo: MongoComponent)(implicit ec: Executi
     startDate: String,
     endDate: String,
     useCase: String,
-    applications: Applications): Future[Applications] = {
+    applications: Applications
+  ): Future[Applications] = {
     val useCaseMap = Map(
       "LAA-C1-working-tax-credit"   -> "LAA-C1_LAA-C2_LAA-C3_working-tax-credit",
       "LAA-C2-working-tax-credit"   -> "LAA-C1_LAA-C2_LAA-C3_working-tax-credit",
@@ -93,7 +94,8 @@ class TaxCreditsRepository @Inject()(mongo: MongoComponent)(implicit ec: Executi
     idValue: String,
     startDate: String,
     endDate: String,
-    fields: Option[String]): Future[Option[Applications]] = {
+    fields: Option[String]
+  ): Future[Option[Applications]] = {
     def fieldsMap = Map(
       "applications(awards(childTaxCredit(childCareAmount),payProfCalcDate,payments(amount,endDate,frequency,startDate,postedDate,tcType),totalEntitlement,workingTaxCredit(amount,paidYTD)))" ->
         "LAA-C1_LAA-C2_LAA-C3_working-tax-credit",

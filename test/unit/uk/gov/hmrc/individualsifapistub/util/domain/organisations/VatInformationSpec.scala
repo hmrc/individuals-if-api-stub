@@ -135,7 +135,8 @@ class VatInformationSpec extends UnitSpec {
 
     val expectedResult = VatApprovedInformation(
       customerDetails = VatCustomerDetails(organisationName = "Ancient Antiques"),
-      PPOB = VatPPOB(address = VatAddress("VAT ADDR 1", "SW1A 2BQ")))
+      PPOB = VatPPOB(address = VatAddress("VAT ADDR 1", "SW1A 2BQ"))
+    )
 
     val result = Json.parse(json).validate[VatApprovedInformation]
 
@@ -188,7 +189,9 @@ class VatInformationSpec extends UnitSpec {
     val expectedResult = VatInformation(
       VatApprovedInformation(
         customerDetails = VatCustomerDetails(organisationName = "Ancient Antiques"),
-        PPOB = VatPPOB(address = VatAddress("VAT ADDR 1", "SW1A 2BQ"))))
+        PPOB = VatPPOB(address = VatAddress("VAT ADDR 1", "SW1A 2BQ"))
+      )
+    )
 
     val result = Json.parse(json).validate[VatInformation]
 

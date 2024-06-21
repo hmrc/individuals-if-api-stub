@@ -155,7 +155,8 @@ class SelfAssessmentTaxPayerSpec extends UnitSpec {
         TestOrganisationDetails(
           name = "Barry Barryson",
           address = TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")
-        ))
+        )
+      )
     )
 
     val expectedResult = SelfAssessmentTaxPayer(
@@ -171,7 +172,9 @@ class SelfAssessmentTaxPayerSpec extends UnitSpec {
             None,
             None,
             Some("SW1 4DQ")
-          )))
+          )
+        )
+      )
     )
 
     val result = SelfAssessmentTaxPayer.fromApiPlatformTestUser(testIndividual)
