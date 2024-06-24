@@ -38,7 +38,7 @@ class StudentLoanSpec extends UnitSpec {
 
       val result = Json.toJson(validStudentLoan)
 
-      result shouldBe (expectedJson)
+      result shouldBe expectedJson
     }
 
     "Validate successfully when given a valid Student Loan" in {

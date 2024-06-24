@@ -26,15 +26,16 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DetailsService @Inject()(
+class DetailsService @Inject() (
   detailsRepository: DetailsRepository,
   apiPlatformTestUserConnector: ApiPlatformTestUserConnector,
-  servicesConfig: ServicesConfig)
-    extends ServiceBase(apiPlatformTestUserConnector) {
+  servicesConfig: ServicesConfig
+) extends ServiceBase(apiPlatformTestUserConnector) {
 
-  def create(idType: String, idValue: String, useCase: String, createDetailsRequest: CreateDetailsRequest)(
-    implicit ec: ExecutionContext,
-    hc: HeaderCarrier): Future[DetailsResponseNoId] =
+  def create(idType: String, idValue: String, useCase: String, createDetailsRequest: CreateDetailsRequest)(implicit
+    ec: ExecutionContext,
+    hc: HeaderCarrier
+  ): Future[DetailsResponseNoId] =
     if (servicesConfig.getConfBool("verifyNino", true)) {
       verifyNino(idType, idValue) flatMap { _ =>
         detailsRepository.create(idType, idValue, useCase, createDetailsRequest)

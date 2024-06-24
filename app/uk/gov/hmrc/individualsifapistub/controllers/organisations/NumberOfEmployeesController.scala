@@ -27,11 +27,12 @@ import uk.gov.hmrc.individualsifapistub.util.FieldFilter
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class NumberOfEmployeesController @Inject()(
+class NumberOfEmployeesController @Inject() (
   loggingAction: LoggingAction,
   bodyParsers: PlayBodyParsers,
   cc: ControllerComponents,
-  numberOfEmployeesService: NumberOfEmployeesService)(implicit val ec: ExecutionContext)
+  numberOfEmployeesService: NumberOfEmployeesService
+)(implicit val ec: ExecutionContext)
     extends CommonController(cc) {
 
   val emptyResponse = NumberOfEmployeesResponse("", "", Seq.empty)
@@ -41,9 +42,7 @@ class NumberOfEmployeesController @Inject()(
       withJsonBody[NumberOfEmployeesResponse] { body =>
         numberOfEmployeesService
           .create(body)
-          .map(
-            x => Created(Json.toJson(x))
-          ) recover recovery
+          .map(x => Created(Json.toJson(x))) recover recovery
       }
     }
 

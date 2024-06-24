@@ -26,7 +26,8 @@ case class Employer(
   name: Option[String],
   address: Option[Address],
   districtNumber: Option[String],
-  schemeRef: Option[String])
+  schemeRef: Option[String]
+)
 
 object Employer {
   implicit val format: Format[Employer] = Format(
@@ -50,7 +51,8 @@ case class EmploymentDetail(
   endDate: Option[String],
   payFrequency: Option[String],
   payrollId: Option[String],
-  address: Option[Address])
+  address: Option[Address]
+)
 
 object EmploymentDetail {
   private def datePattern =
@@ -66,7 +68,8 @@ object EmploymentDetail {
       (JsPath \ "startDate").readNullable[String](pattern(datePattern, "Date format is incorrect")) and
         (JsPath \ "endDate").readNullable[String](pattern(datePattern, "Date format is incorrect")) and
         (JsPath \ "payFrequency").readNullable[String](
-          pattern(payFrequencyPattern, "Pay frequency must be one of: W1, W2, W4, M1, M3, M6, MA, IO, IR")) and
+          pattern(payFrequencyPattern, "Pay frequency must be one of: W1, W2, W4, M1, M3, M6, MA, IO, IR")
+        ) and
         (JsPath \ "payrollId").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
         (JsPath \ "address").readNullable[Address]
     )(EmploymentDetail.apply _),
@@ -86,7 +89,8 @@ case class Payment(
   paidTaxablePay: Option[Double],
   paidNonTaxOrNICPayment: Option[Double],
   week: Option[Int],
-  month: Option[Int])
+  month: Option[Int]
+)
 
 object Payment {
   private val minValue = -9999999999.99
@@ -123,7 +127,8 @@ case class Employment(
   employer: Option[Employer],
   employerRef: Option[String],
   employment: Option[EmploymentDetail],
-  payments: Option[Seq[Payment]])
+  payments: Option[Seq[Payment]]
+)
 
 object Employment {
   implicit val format: Format[Employment] = Format(

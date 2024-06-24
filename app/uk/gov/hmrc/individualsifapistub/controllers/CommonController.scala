@@ -35,10 +35,11 @@ import scala.collection.Seq
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
-class CustomErrorHandler @Inject()(
+class CustomErrorHandler @Inject() (
   configuration: Configuration,
   auditConnector: AuditConnector,
-  httpAuditEvent: HttpAuditEvent)(implicit ec: ExecutionContext)
+  httpAuditEvent: HttpAuditEvent
+)(implicit ec: ExecutionContext)
     extends JsonErrorHandler(auditConnector, httpAuditEvent, configuration) {
 
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
@@ -53,7 +54,8 @@ class CustomErrorHandler @Inject()(
     statusCode match {
       case NOT_FOUND =>
         Future.successful(
-          NotFound(Json.toJson(ErrorResponse(NOT_FOUND, "URI not found", requested = Some(request.path)))))
+          NotFound(Json.toJson(ErrorResponse(NOT_FOUND, "URI not found", requested = Some(request.path))))
+        )
       case BAD_REQUEST =>
         Future.successful(BadRequest(Json.toJson(ErrorResponse(BAD_REQUEST, newMessage))))
       case _ =>
@@ -68,7 +70,8 @@ abstract class CommonController(controllerComponents: ControllerComponents)
   protected val logger: Logger = play.api.Logger(getClass)
 
   override protected def withJsonBody[T](
-    f: (T) => Future[Result])(implicit request: Request[JsValue], m: Manifest[T], reads: Reads[T]): Future[Result] =
+    f: (T) => Future[Result]
+  )(implicit request: Request[JsValue], m: Manifest[T], reads: Reads[T]): Future[Result] =
     Try(request.body.validate[T]) match {
       case Success(JsSuccess(payload, _)) => f(payload)
       case Success(JsError(errs)) =>
@@ -84,8 +87,8 @@ abstract class CommonController(controllerComponents: ControllerComponents)
     id: String,
     from: Option[String],
     to: Option[String],
-    useCase: Option[String])(
-    f: (T) => Future[Result])(implicit request: Request[JsValue], m: Manifest[T], reads: Reads[T]): Future[Result] =
+    useCase: Option[String]
+  )(f: (T) => Future[Result])(implicit request: Request[JsValue], m: Manifest[T], reads: Reads[T]): Future[Result] =
     Try(IdType.parse(idType)) match {
       case Failure(e) => Future.successful(ErrorInvalidRequest(e.getLocalizedMessage).toHttpResponse)
       case Success(idType) =>

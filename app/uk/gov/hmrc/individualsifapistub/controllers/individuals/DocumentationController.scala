@@ -30,7 +30,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class DocumentationController @Inject()(
+class DocumentationController @Inject() (
   loggingAction: LoggingAction,
   httpErrorHandler: HttpErrorHandler,
   configuration: Configuration,

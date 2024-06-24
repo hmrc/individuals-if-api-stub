@@ -49,10 +49,10 @@ class CorporationTaxReturnDetailsControllerSpec extends TestSupport {
 
       val result = controller.create(response.utr)(httpRequest)
 
-      result.map(x => {
+      result.map { x =>
         x.header.status shouldBe CREATED
         jsonBodyOf(x) shouldBe Json.toJson(response)
-      })
+      }
     }
 
     "fail when invalid request provided" in {
@@ -65,9 +65,7 @@ class CorporationTaxReturnDetailsControllerSpec extends TestSupport {
 
       val result = controller.create(response.utr)(httpRequest)
 
-      result.map(x => {
-        x.header.status shouldBe BAD_REQUEST
-      })
+      result.map(x => x.header.status shouldBe BAD_REQUEST)
     }
   }
 
@@ -81,10 +79,10 @@ class CorporationTaxReturnDetailsControllerSpec extends TestSupport {
 
       val result = controller.retrieve(request.utr)(httpRequest)
 
-      result.map(x => {
+      result.map { x =>
         x.header.status shouldBe OK
         jsonBodyOf(x) shouldBe Json.toJson(response)
-      })
+      }
     }
 
     "fails when an entry cannot be found" in {
@@ -94,7 +92,7 @@ class CorporationTaxReturnDetailsControllerSpec extends TestSupport {
         FakeRequest()
           .withMethod("GET")
 
-      assertThrows[Exception] { await(controller.retrieve(request.utr)(httpRequest)) }
+      assertThrows[Exception](await(controller.retrieve(request.utr)(httpRequest)))
     }
   }
 }

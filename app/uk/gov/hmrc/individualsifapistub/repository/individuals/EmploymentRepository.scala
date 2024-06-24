@@ -36,7 +36,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext)
+class EmploymentRepository @Inject() (mongo: MongoComponent)(implicit ec: ExecutionContext)
     extends PlayMongoRepository[EmploymentEntry](
       collectionName = "employment",
       mongoComponent = mongo,
@@ -51,7 +51,8 @@ class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit ec: Executi
     startDate: Option[String],
     endDate: Option[String],
     useCase: Option[String],
-    employments: Employments): Future[Employments] = {
+    employments: Employments
+  ): Future[Employments] = {
     val useCaseMap = Map(
       "LAA-C1"   -> "LAA-C1_LAA-C2",
       "LAA-C2"   -> "LAA-C1_LAA-C2",
@@ -98,17 +99,18 @@ class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit ec: Executi
     startDateStr: String,
     endDateStr: String,
     fields: Option[String],
-    filter: Option[String]): Future[Option[Employments]] = {
+    filter: Option[String]
+  ): Future[Option[Employments]] = {
     val fieldsMap = Map(
-      "employments(employment(endDate,startDate))"                                                                                                                                -> "LAA-C1_LAA-C2",
-      "employments(employer(name),employment(endDate,startDate))"                                                                                                                 -> "LAA-C3_LSANI-C1_LSANI-C3",
-      "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employment(endDate,startDate))"                                                                 -> "LAA-C4",
-      "employments(employment(endDate))"                                                                                                                                          -> "HMCTS-C2_HMCTS-C3",
-      "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employerRef,employment(endDate,startDate))"                                                     -> "HMCTS-C4",
-      "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employment(startDate))"                                                                         -> "NICTSEJO-C4",
-      "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employerRef,employment(endDate,payFrequency,startDate),payments(date,paidTaxablePay))"          -> "HO-ECP",
+      "employments(employment(endDate,startDate))"                -> "LAA-C1_LAA-C2",
+      "employments(employer(name),employment(endDate,startDate))" -> "LAA-C3_LSANI-C1_LSANI-C3",
+      "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employment(endDate,startDate))" -> "LAA-C4",
+      "employments(employment(endDate))" -> "HMCTS-C2_HMCTS-C3",
+      "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employerRef,employment(endDate,startDate))" -> "HMCTS-C4",
+      "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employment(startDate))" -> "NICTSEJO-C4",
+      "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employerRef,employment(endDate,payFrequency,startDate),payments(date,paidTaxablePay))" -> "HO-ECP",
       "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employerRef,employment(endDate,payFrequency,startDate),payments(date,paidTaxablePay))_filtered" -> "HO-RP2",
-      "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employerRef,employment(endDate,payFrequency,startDate))"                                        -> "HO-V2"
+      "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employerRef,employment(endDate,payFrequency,startDate))" -> "HO-V2"
     )
 
     val useCase: Option[String] =
@@ -155,19 +157,18 @@ class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit ec: Executi
           val employments = employmentEntries
             .flatMap(entry => entry.employments)
             .groupBy(employment => (employment.employer, employment.employerRef, employment.employment))
-            .flatMap {
-              case ((employer, employerRef, employmentDetail), employments) =>
-                if (!filterByEmployerRef || (employerRef.nonEmpty && filter.exists(_.contains(employerRef.mkString)))) {
-                  val interval = Dates.toInterval(startDate, endDate)
-                  val payments = employments
-                    .flatMap(_.payments.getOrElse(Seq.empty))
-                    .filter(_.date.exists(date => interval.contains(date.atStartOfDay())))
-                  if (payments.nonEmpty || employmentDateOverlaps(employmentDetail, startDate, endDate))
-                    Some(Employment(employer, employerRef, employmentDetail, payments.headOption.map(_ => payments)))
-                  else
-                    None
-                } else
+            .flatMap { case ((employer, employerRef, employmentDetail), employments) =>
+              if (!filterByEmployerRef || (employerRef.nonEmpty && filter.exists(_.contains(employerRef.mkString)))) {
+                val interval = Dates.toInterval(startDate, endDate)
+                val payments = employments
+                  .flatMap(_.payments.getOrElse(Seq.empty))
+                  .filter(_.date.exists(date => interval.contains(date.atStartOfDay())))
+                if (payments.nonEmpty || employmentDateOverlaps(employmentDetail, startDate, endDate))
+                  Some(Employment(employer, employerRef, employmentDetail, payments.headOption.map(_ => payments)))
+                else
                   None
+              } else
+                None
             }
             .toSeq
 
@@ -199,7 +200,8 @@ class EmploymentRepository @Inject()(mongo: MongoComponent)(implicit ec: Executi
   private def employmentDateOverlaps(
     employmentDetail: Option[EmploymentDetail],
     startDate: LocalDate,
-    endDate: LocalDate): Boolean =
+    endDate: LocalDate
+  ): Boolean =
     employmentDetail.exists { detail =>
       val employmentInterval = Dates.toInterval(detail.startDate.getOrElse("1900-01-01"), detail.endDate)
       val queryInterval = Dates.toInterval(startDate, endDate)

@@ -55,7 +55,8 @@ class SelfAssessmentTaxPayerControllerSpec extends TestSupport {
       TestOrganisationDetails(
         name = "Barry Barryson",
         address = TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")
-      ))
+      )
+    )
   )
 
   "create" should {
@@ -69,10 +70,10 @@ class SelfAssessmentTaxPayerControllerSpec extends TestSupport {
 
       val result = controller.create(utr.utr)(httpRequest)
 
-      result.map(x => {
+      result.map { x =>
         x.header.status shouldBe CREATED
         jsonBodyOf(x) shouldBe Json.toJson(testIndividual)
-      })
+      }
     }
 
     "fail when invalid request provided" in {
@@ -85,9 +86,7 @@ class SelfAssessmentTaxPayerControllerSpec extends TestSupport {
 
       val result = controller.create(utr.utr)(httpRequest)
 
-      result.map(x => {
-        x.header.status shouldBe BAD_REQUEST
-      })
+      result.map(x => x.header.status shouldBe BAD_REQUEST)
     }
   }
 
@@ -102,10 +101,10 @@ class SelfAssessmentTaxPayerControllerSpec extends TestSupport {
 
       val result = controller.retrieve(selfAssessmentTaxPayer.utr)(httpRequest)
 
-      result.map(x => {
+      result.map { x =>
         x.header.status shouldBe OK
         jsonBodyOf(x) shouldBe Json.toJson(testIndividual)
-      })
+      }
     }
 
     "fails when an exception is thrown" in {

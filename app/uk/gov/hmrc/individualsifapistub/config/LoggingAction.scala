@@ -23,7 +23,7 @@ import play.api.mvc.{ActionBuilderImpl, BodyParsers, Request, Result}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class LoggingAction @Inject()(parser: BodyParsers.Default)(implicit ec: ExecutionContext, mat: Materializer)
+class LoggingAction @Inject() (parser: BodyParsers.Default)(implicit ec: ExecutionContext, mat: Materializer)
     extends ActionBuilderImpl(parser) with Logging {
   override def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] = {
     val result = block(request)
@@ -48,7 +48,8 @@ class LoggingAction @Inject()(parser: BodyParsers.Default)(implicit ec: Executio
         s"""$requestLog
            |
            |Exception: ${t.getMessage}""".stripMargin,
-        t)
+        t
+      )
     }
 
     result

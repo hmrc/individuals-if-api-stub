@@ -47,7 +47,8 @@ case class CreateCorporationTaxReturnDetailsRequest(
   utr: String,
   taxpayerStartDate: String,
   taxSolvencyStatus: String,
-  accountingPeriods: Seq[AccountingPeriod])
+  accountingPeriods: Seq[AccountingPeriod]
+)
 
 object CreateCorporationTaxReturnDetailsRequest {
   implicit val format: Format[CreateCorporationTaxReturnDetailsRequest] =
@@ -72,7 +73,8 @@ case class CorporationTaxReturnDetailsResponse(
   utr: String,
   taxpayerStartDate: String,
   taxSolvencyStatus: String,
-  accountingPeriods: Seq[AccountingPeriod])
+  accountingPeriods: Seq[AccountingPeriod]
+)
 
 object CorporationTaxReturnDetailsResponse {
   implicit val format: Format[CorporationTaxReturnDetailsResponse] = Format[CorporationTaxReturnDetailsResponse](

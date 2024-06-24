@@ -27,7 +27,7 @@ case class VatPeriod(
   numDaysAssessed: Option[Int],
   box6Total: Option[Double],
   returnType: Option[String],
-  source: Option[String],
+  source: Option[String]
 )
 
 object VatPeriod {
@@ -38,7 +38,8 @@ case class VatReturnsDetails(
   vrn: String,
   appDate: Option[String],
   extractDate: Option[String],
-  vatPeriods: List[VatPeriod])
+  vatPeriods: List[VatPeriod]
+)
 
 object VatReturnsDetails {
   implicit val format: OFormat[VatReturnsDetails] = Json.format[VatReturnsDetails]

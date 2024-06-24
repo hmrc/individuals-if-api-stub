@@ -22,7 +22,7 @@ import uk.gov.hmrc.individualsifapistub.repository.organisations.SelfAssessmentT
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class SelfAssessmentTaxPayerService @Inject()(repository: SelfAssessmentTaxPayerRepository) {
+class SelfAssessmentTaxPayerService @Inject() (repository: SelfAssessmentTaxPayerRepository) {
 
   def create(request: SelfAssessmentTaxPayer): Future[SelfAssessmentTaxPayer] = repository.create(request)
 

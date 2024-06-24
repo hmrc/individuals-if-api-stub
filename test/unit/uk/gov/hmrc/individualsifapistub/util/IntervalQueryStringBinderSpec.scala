@@ -38,18 +38,19 @@ class IntervalQueryStringBinderSpec extends AnyFlatSpec with Matchers with Eithe
       (Map("from" -> Seq("20200131")), """{"code":"INVALID_REQUEST","message":"from: invalid date format"}"""),
       (
         Map("from" -> Seq("2020-01-31"), "to" -> Seq("")),
-        """{"code":"INVALID_REQUEST","message":"to: invalid date format"}"""),
+        """{"code":"INVALID_REQUEST","message":"to: invalid date format"}"""
+      ),
       (
         Map("from" -> Seq("2020-01-31"), "to" -> Seq("20201231")),
-        """{"code":"INVALID_REQUEST","message":"to: invalid date format"}""")
+        """{"code":"INVALID_REQUEST","message":"to: invalid date format"}"""
+      )
     )
 
-    fixtures foreach {
-      case (parameters, response) =>
-        val maybeEither = intervalQueryStringBinder.bind("", parameters)
-        maybeEither.isDefined shouldBe true
-        maybeEither.get.isLeft shouldBe true
-        maybeEither.get.left.value shouldBe response
+    fixtures foreach { case (parameters, response) =>
+      val maybeEither = intervalQueryStringBinder.bind("", parameters)
+      maybeEither.isDefined shouldBe true
+      maybeEither.get.isLeft shouldBe true
+      maybeEither.get.left.value shouldBe response
     }
   }
 
@@ -58,7 +59,9 @@ class IntervalQueryStringBinderSpec extends AnyFlatSpec with Matchers with Eithe
     val maybeEither = intervalQueryStringBinder.bind("", parameters)
     maybeEither.isDefined shouldBe true
     maybeEither.get.isRight shouldBe true
-    maybeEither.get shouldBe Right(Interval(LocalDate.parse("2017-01-31").atStartOfDay(), LocalDate.now().atTime(0, 0, 0, 1_000_000)))
+    maybeEither.get shouldBe Right(
+      Interval(LocalDate.parse("2017-01-31").atStartOfDay(), LocalDate.now().atTime(0, 0, 0, 1_000_000))
+    )
   }
 
   it should "succeed in binding an interval from well formed from and to parameters" in {

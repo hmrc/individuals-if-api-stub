@@ -24,10 +24,11 @@ import uk.gov.hmrc.individualsifapistub.util.DateTimeProvider
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class VatReturnsDetailsService @Inject()(
+class VatReturnsDetailsService @Inject() (
   repository: VatReturnsDetailsRepository,
   vatInformationRepository: VatInformationRepository,
-  dateTimeProvider: DateTimeProvider)(implicit ec: ExecutionContext) {
+  dateTimeProvider: DateTimeProvider
+)(implicit ec: ExecutionContext) {
   def retrieve(vrn: String): Future[Option[VatReturnsDetailsEntry]] = repository.retrieve(vrn)
 
   def create(vrn: String, vatReturnDetails: VatReturnsDetails): Future[VatReturnsDetailsEntry] =

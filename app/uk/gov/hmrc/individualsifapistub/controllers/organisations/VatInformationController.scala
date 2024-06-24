@@ -26,7 +26,7 @@ import uk.gov.hmrc.individualsifapistub.services.organisations.VatInformationSer
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class VatInformationController @Inject()(
+class VatInformationController @Inject() (
   loggingAction: LoggingAction,
   bodyParsers: PlayBodyParsers,
   cc: ControllerComponents,

@@ -25,7 +25,8 @@ case class Identifier(
   trn: Option[String],
   from: Option[String],
   to: Option[String],
-  useCase: Option[String])
+  useCase: Option[String]
+)
 
 object Identifier {
   private val ninoPattern =

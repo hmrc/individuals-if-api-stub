@@ -22,7 +22,7 @@ import uk.gov.hmrc.individualsifapistub.repository.organisations.NumberOfEmploye
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class NumberOfEmployeesService @Inject()(repository: NumberOfEmployeesRepository) {
+class NumberOfEmployeesService @Inject() (repository: NumberOfEmployeesRepository) {
   def create(request: NumberOfEmployeesResponse): Future[NumberOfEmployeesResponse] = repository.create(request)
 
   def get(request: NumberOfEmployeesRequest): Future[Option[NumberOfEmployeesResponse]] = repository.find(request)

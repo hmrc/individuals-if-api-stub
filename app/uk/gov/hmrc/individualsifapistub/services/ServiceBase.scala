@@ -23,7 +23,7 @@ import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType
 
 import javax.inject.Inject
 
-class ServiceBase @Inject()(apiPlatformTestUserConnector: ApiPlatformTestUserConnector) {
+class ServiceBase @Inject() (apiPlatformTestUserConnector: ApiPlatformTestUserConnector) {
 
   def verifyNino(idType: String, idValue: String)(implicit hc: HeaderCarrier) =
     IdType.parse(idType) match {

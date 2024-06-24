@@ -26,7 +26,7 @@ import uk.gov.hmrc.individualsifapistub.services.organisations.VatReturnsDetails
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class VatReturnDetailsController @Inject()(
+class VatReturnDetailsController @Inject() (
   loggingAction: LoggingAction,
   bodyParsers: PlayBodyParsers,
   cc: ControllerComponents,
