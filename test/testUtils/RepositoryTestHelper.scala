@@ -45,7 +45,7 @@ trait RepositoryTestHelper extends TestSupport with MongoSupport with BeforeAndA
   override def beforeEach(): Unit =
     allRepos.foreach { r =>
       await(r.collection.drop().headOption())
-      await(r.ensureIndexes)
+      await(r.ensureIndexes())
     }
 
   override def afterEach(): Unit =
