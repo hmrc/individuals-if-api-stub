@@ -1,8 +1,6 @@
 @import play.api.libs.json.Json
 @(whitelistedApplicationIds: Seq[String], endpointsEnabled: Boolean, status: String)
 {
-  "scopes" : [
-  ],
   "api" : {
     "name" : "Integration Framework Test Support",
     "description" : "Allows you to create employments, income, tax credits and contact details test data",
