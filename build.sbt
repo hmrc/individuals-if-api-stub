@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-import uk.gov.hmrc.DefaultBuildSettings
+import uk.gov.hmrc.DefaultBuildSettings.addTestReportOption
 
 ThisBuild / majorVersion := 0
 ThisBuild / scalaVersion := "2.13.12"
+
+lazy val ItTest = config("it") extend Test
 
 lazy val microservice = Project("individuals-if-api-stub", file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .settings(onLoadMessage := "")
-  .settings(CodeCoverageSettings.settings: _*)
+  .settings(CodeCoverageSettings.settings *)
   .settings(scalafmtOnCompile := true)
   .settings(
     routesImport ++= Seq(
@@ -54,16 +56,16 @@ lazy val microservice = Project("individuals-if-api-stub", file("."))
       "target/test-reports/html-report"
     )
   )
-
-lazy val it = project
-  .enablePlugins(PlayScala)
-  .dependsOn(microservice % "test->test") // the "test->test" allows reusing test code and test dependencies
-  .settings(DefaultBuildSettings.itSettings())
+  .configs(ItTest)
+  .settings(inConfig(ItTest)(Defaults.testSettings) *)
   .settings(
+    ItTest / unmanagedSourceDirectories := (ItTest / baseDirectory)(base => Seq(base / "test")).value,
+    ItTest / testOptions := Seq(Tests.Filter((name: String) => name startsWith "it")),
+    addTestReportOption(ItTest, "int-test-reports"),
     // Disable default sbt Test options (might change with new versions of bootstrap)
-    testOptions -= Tests
+    ItTest / testOptions -= Tests
       .Argument("-o", "-u", "target/int-test-reports", "-h", "target/int-test-reports/html-report"),
-    testOptions += Tests.Argument(
+    ItTest / testOptions += Tests.Argument(
       TestFrameworks.ScalaTest,
       "-oNCHPQR",
       "-u",
