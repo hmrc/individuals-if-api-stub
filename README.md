@@ -13,7 +13,12 @@ Usage
  - When the consumer posts the JSON payload they will need to provide the `use case`
  
  - Use cases can vary per API. Please see the API documentation for usage.
-      
+
+### Running tests
+
+Unit, integration and component tests can be run with the following:
+
+    sbt test it:test
                       
 ### License
 
