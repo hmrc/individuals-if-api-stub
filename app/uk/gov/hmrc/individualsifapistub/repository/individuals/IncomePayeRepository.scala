@@ -20,7 +20,7 @@ import org.mongodb.scala.MongoWriteException
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.Indexes.ascending
 import org.mongodb.scala.model.{IndexModel, IndexOptions}
-import play.api.Logging
+import play.api.{Configuration, Logging}
 import play.api.libs.json.Json
 import uk.gov.hmrc.individualsifapistub.domain._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{Nino, Trn}
@@ -31,19 +31,29 @@ import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import uk.gov.hmrc.play.http.logging.Mdc.preservingMdc
 
 import java.util.UUID
+import java.util.concurrent.TimeUnit
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomePayeRepository @Inject() (mongo: MongoComponent)(implicit ec: ExecutionContext)
+class IncomePayeRepository @Inject() (mongo: MongoComponent, config: Configuration)(implicit ec: ExecutionContext)
     extends PlayMongoRepository[IncomePayeEntry](
       mongoComponent = mongo,
       collectionName = "incomePaye",
       domainFormat = IncomePayeEntry.format,
       indexes = Seq(
-        IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true)),
+        IndexModel(
+          ascending("id"),
+          IndexOptions()
+            .name("id")
+            .expireAfter(config.get[FiniteDuration]("mongodb.cache-ttl.expiry-time").toSeconds, TimeUnit.SECONDS)
+            .unique(true)
+            .background(true)
+        ),
         IndexModel(ascending("idValue"), IndexOptions().background(true))
-      )
+      ),
+      replaceIndexes = true
     ) with Logging {
   def create(
     idType: String,

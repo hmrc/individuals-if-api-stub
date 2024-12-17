@@ -20,24 +20,36 @@ import org.mongodb.scala.MongoWriteException
 import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.model.Indexes.ascending
 import org.mongodb.scala.model.{IndexModel, IndexOptions}
+import play.api.Configuration
 import uk.gov.hmrc.individualsifapistub.domain.DuplicateException
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{NumberOfEmployeesEntry, NumberOfEmployeesRequest, NumberOfEmployeesResponse}
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import uk.gov.hmrc.play.http.logging.Mdc.preservingMdc
 
+import java.util.concurrent.TimeUnit
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class NumberOfEmployeesRepository @Inject() (mongo: MongoComponent)(implicit ec: ExecutionContext)
-    extends PlayMongoRepository[NumberOfEmployeesEntry](
+class NumberOfEmployeesRepository @Inject() (mongo: MongoComponent, config: Configuration)(implicit
+  ec: ExecutionContext
+) extends PlayMongoRepository[NumberOfEmployeesEntry](
       mongoComponent = mongo,
       collectionName = "number-of-employees",
       domainFormat = NumberOfEmployeesEntry.format,
       indexes = Seq(
-        IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
-      )
+        IndexModel(
+          ascending("id"),
+          IndexOptions()
+            .name("id")
+            .expireAfter(config.get[FiniteDuration]("mongodb.cache-ttl.expiry-time").toSeconds, TimeUnit.SECONDS)
+            .unique(true)
+            .background(true)
+        )
+      ),
+      replaceIndexes = true
     ) {
   def create(request: NumberOfEmployeesResponse): Future[NumberOfEmployeesResponse] = {
     val id = s"${request.startDate}-${request.endDate}-" +
