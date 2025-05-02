@@ -33,6 +33,7 @@ import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
 import javax.inject.Inject
 import scala.collection.Seq
 import scala.concurrent.{ExecutionContext, Future}
+import scala.reflect.ClassTag
 import scala.util.{Failure, Success, Try}
 
 class CustomErrorHandler @Inject() (
@@ -71,7 +72,7 @@ abstract class CommonController(controllerComponents: ControllerComponents)
 
   override protected def withJsonBody[T](
     f: (T) => Future[Result]
-  )(implicit request: Request[JsValue], m: Manifest[T], reads: Reads[T]): Future[Result] =
+  )(implicit request: Request[JsValue], ct: ClassTag[T], reads: Reads[T]): Future[Result] =
     Try(request.body.validate[T]) match {
       case Success(JsSuccess(payload, _)) => f(payload)
       case Success(JsError(errs)) =>
