@@ -46,7 +46,8 @@ class TaxCreditsControllerSpec extends TestSupport {
     val mockTaxCreditsService = new TaxCreditsService(taxCreditsRepo, apiPlatformTestUserConnector, servicesConfig)
     val underTest = new TaxCreditsController(loggingAction, bodyParsers, controllerComponents, mockTaxCreditsService)
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).thenReturn(Future.successful(testIndividual))
+    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any()))
+      .thenReturn(Future.successful(Some(testIndividual)))
   }
 
   val application: Application = Application(

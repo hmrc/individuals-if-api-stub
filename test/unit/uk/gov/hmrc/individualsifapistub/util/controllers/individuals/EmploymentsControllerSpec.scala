@@ -55,7 +55,8 @@ class EmploymentsControllerSpec extends TestSupport {
 
     val utr = SaUtr("2432552635")
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).thenReturn(Future.successful(testIndividual))
+    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any()))
+      .thenReturn(Future.successful(Some(testIndividual)))
   }
 
   val idType = Nino.toString

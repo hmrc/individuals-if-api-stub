@@ -64,7 +64,8 @@ class TaxCreditsServiceSpec extends TestSupport {
     val servicesConfig = mock[ServicesConfig]
     val underTest = new TaxCreditsService(taxCreditsRepository, apiPlatformTestUserConnector, servicesConfig)
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).thenReturn(Future.successful(testIndividual))
+    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any()))
+      .thenReturn(Future.successful(Some(testIndividual)))
 
   }
 

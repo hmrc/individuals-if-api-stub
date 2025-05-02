@@ -55,12 +55,12 @@ trait TestSupport extends UnitSpec with BeforeAndAfterAll {
 
   lazy val loggingAction = fakeApplication.injector.instanceOf[LoggingAction]
 
-  override def beforeAll(): Unit = {
+  protected override def beforeAll(): Unit = {
     Play.start(fakeApplication)
     super.beforeAll()
   }
 
-  override def afterAll(): Unit = {
+  protected override def afterAll(): Unit = {
     Play.stop(fakeApplication)
     super.afterAll()
   }

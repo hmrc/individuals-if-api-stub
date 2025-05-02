@@ -59,7 +59,8 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
       saUtr = Some(utr)
     )
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).thenReturn(Future.successful(testIndividual))
+    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any()))
+      .thenReturn(Future.successful(Some(testIndividual)))
   }
 
   val request = CreateDetailsRequest(

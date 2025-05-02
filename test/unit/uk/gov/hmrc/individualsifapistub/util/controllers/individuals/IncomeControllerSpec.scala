@@ -54,7 +54,8 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
       saUtr = Some(utr)
     )
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).thenReturn(Future.successful(testIndividual))
+    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any()))
+      .thenReturn(Future.successful(Some(testIndividual)))
   }
 
   val idType = "nino"

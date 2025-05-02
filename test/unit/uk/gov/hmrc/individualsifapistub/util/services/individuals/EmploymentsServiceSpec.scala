@@ -110,7 +110,8 @@ class EmploymentsServiceSpec extends TestSupport {
     val servicesConfig = mock[ServicesConfig]
     val underTest = new EmploymentsService(mockEmploymentRepository, apiPlatformTestUserConnector, servicesConfig)
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).thenReturn(Future.successful(testIndividual))
+    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any()))
+      .thenReturn(Future.successful(Some(testIndividual)))
   }
 
   "Employments Service" when {

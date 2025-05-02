@@ -16,9 +16,11 @@
 
 package uk.gov.hmrc.individualsifapistub.connector
 
-import play.api.Logger
+import play.api.Logging
 import uk.gov.hmrc.domain.{EmpRef, Nino}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, NotFoundException}
+import uk.gov.hmrc.http.HttpReads.Implicits.{readFromJson, readOptionOfNotFound}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 import uk.gov.hmrc.individualsifapistub.domain.{TestIndividual, TestOrganisation}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
@@ -26,43 +28,20 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ApiPlatformTestUserConnector @Inject() (http: HttpClient, servicesConfig: ServicesConfig)(implicit
+class ApiPlatformTestUserConnector @Inject() (http: HttpClientV2, servicesConfig: ServicesConfig)(implicit
   ec: ExecutionContext
-) {
+) extends Logging {
+  private val serviceUrl = servicesConfig.baseUrl("api-platform-test-user")
 
-  val logger: Logger = Logger(getClass)
+  def getOrganisationByEmpRef(empRef: EmpRef)(implicit hc: HeaderCarrier): Future[Option[TestOrganisation]] =
+    http.get(url"$serviceUrl/organisations/empref/${empRef.value}").execute[Option[TestOrganisation]]
 
-  val serviceUrl = servicesConfig.baseUrl("api-platform-test-user")
+  def getOrganisationByCrn(crn: String)(implicit hc: HeaderCarrier): Future[Option[TestOrganisation]] =
+    http.get(url"$serviceUrl/organisations/crn/$crn").execute[Option[TestOrganisation]]
 
-  def getOrganisationByEmpRef(empRef: EmpRef)(implicit hc: HeaderCarrier): Future[Option[TestOrganisation]] = {
-    http.GET[TestOrganisation](s"$serviceUrl/organisations/empref/${empRef.encodedValue}") map (Some(_))
-  } recover { case e: NotFoundException =>
-    logger.warn(s"unable to retrieve employer with empRef: ${empRef.value}. ${e.getMessage}")
-    None
-  }
+  def getOrganisationBySaUtr(utr: String)(implicit hc: HeaderCarrier): Future[Option[TestIndividual]] =
+    http.get(url"$serviceUrl/organisations/sautr/$utr").execute[Option[TestIndividual]]
 
-  def getOrganisationByCrn(crn: String)(implicit hc: HeaderCarrier): Future[Option[TestOrganisation]] = {
-    http.GET[TestOrganisation](s"$serviceUrl/organisations/crn/$crn") map (Some(_))
-  } recover { case e: NotFoundException =>
-    logger.warn(s"unable to retrieve organisation with crn: $crn. ${e.getMessage}")
-    None
-  }
-
-  def getOrganisationBySaUtr(utr: String)(implicit hc: HeaderCarrier): Future[Option[TestIndividual]] = {
-    http.GET[TestIndividual](s"$serviceUrl/organisations/sautr/$utr") map (Some(_))
-  } recover { case e: NotFoundException =>
-    logger.warn(s"unable to retrieve organisation with utr: $utr. ${e.getMessage}")
-    None
-  }
-
-  def getIndividualByNino(nino: Nino)(implicit hc: HeaderCarrier): Future[TestIndividual] = {
-    http.GET[TestIndividual](s"$serviceUrl/individuals/nino/${nino.value}")
-  } recover {
-    case e: NotFoundException =>
-      logger.warn(s"unable to retrieve individual with nino: ${nino.value}. ${e.getMessage}")
-      throw new NotFoundException(e.getMessage)
-    case ex: Exception =>
-      logger.warn(s"getIndividualByNino failed: ${nino.value}. ${ex.getMessage}")
-      throw new Exception(ex.getMessage)
-  }
+  def getIndividualByNino(nino: Nino)(implicit hc: HeaderCarrier): Future[Option[TestIndividual]] =
+    http.get(url"$serviceUrl/individuals/nino/${nino.value}").execute[Option[TestIndividual]]
 }

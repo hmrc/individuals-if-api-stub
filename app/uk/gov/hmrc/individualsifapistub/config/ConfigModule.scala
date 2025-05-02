@@ -18,15 +18,12 @@ package uk.gov.hmrc.individualsifapistub.config
 
 import com.google.inject.AbstractModule
 import play.api.{Configuration, Environment}
-import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.individualsifapistub.util.DateTimeProvider
-import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 
 import java.time.LocalDateTime
 
 class ConfigModule(environment: Environment, configuration: Configuration) extends AbstractModule {
   override def configure(): Unit = {
-    bind(classOf[HttpClient]).to(classOf[DefaultHttpClient])
     bind(classOf[DateTimeProvider]).toInstance(() => LocalDateTime.now())
   }
 }

@@ -67,7 +67,8 @@ class DetailsServiceSpec extends TestSupport with TestHelpers {
     val servicesConfig = mock[ServicesConfig]
     val underTest = new DetailsService(mockDetailsRepository, apiPlatformTestUserConnector, servicesConfig)
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).thenReturn(Future.successful(testIndividual))
+    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any()))
+      .thenReturn(Future.successful(Some(testIndividual)))
 
   }
 

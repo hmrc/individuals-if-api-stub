@@ -68,7 +68,8 @@ class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePaye
       servicesConfig
     )
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).thenReturn(Future.successful(testIndividual))
+    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any()))
+      .thenReturn(Future.successful(Some(testIndividual)))
   }
 
   "Income Service" when {
