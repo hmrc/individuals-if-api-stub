@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.individualsifapistub.domain.individuals
 
-import play.api.libs.functional.syntax.{toApplicativeOps, toFunctionalBuilderOps, unlift}
+import play.api.libs.functional.syntax.{toApplicativeOps, toFunctionalBuilderOps}
 import play.api.libs.json.Reads.{max, min, pattern, verifying}
-import play.api.libs.json.{Format, JsPath}
+import play.api.libs.json.{Format, JsPath, Json}
 import uk.gov.hmrc.individualsifapistub.domain.individuals.TaxCredits._
 
 import scala.util.matching.Regex
@@ -26,16 +26,7 @@ import scala.util.matching.Regex
 case class TaxCreditsEntry(id: String, applications: Seq[Application])
 
 object TaxCreditsEntry {
-  implicit val format: Format[TaxCreditsEntry] = Format(
-    (
-      (JsPath \ "id").read[String] and
-        (JsPath \ "applications").read[Seq[Application]]
-    )(TaxCreditsEntry.apply _),
-    (
-      (JsPath \ "id").write[String] and
-        (JsPath \ "applications").write[Seq[Application]]
-    )(unlift(TaxCreditsEntry.unapply))
-  )
+  implicit val format: Format[TaxCreditsEntry] = Json.format
 }
 
 case class Applications(applications: Seq[Application])
@@ -80,19 +71,7 @@ object Payments {
         (JsPath \ "amount").readNullable[Double](verifying(paymentAmountValidator)) and
         (JsPath \ "method").readNullable[String](pattern(methodPattern, "invalid method"))
     )(Payments.apply _),
-    (
-      (JsPath \ "periodStartDate").writeNullable[String] and
-        (JsPath \ "periodEndDate").writeNullable[String] and
-        (JsPath \ "startDate").writeNullable[String] and
-        (JsPath \ "endDate").writeNullable[String] and
-        (JsPath \ "status").writeNullable[String] and
-        (JsPath \ "postedDate").writeNullable[String] and
-        (JsPath \ "nextDueDate").writeNullable[String] and
-        (JsPath \ "frequency").writeNullable[Int] and
-        (JsPath \ "tcType").writeNullable[String] and
-        (JsPath \ "amount").writeNullable[Double] and
-        (JsPath \ "method").writeNullable[String]
-    )(unlift(Payments.unapply))
+    Json.writes[Payments]
   )
 }
 
@@ -115,14 +94,7 @@ object ChildTaxCredit {
         (JsPath \ "entitlementYTD").readNullable[Double](verifying(paymentAmountValidator)) and
         (JsPath \ "paidYTD").readNullable[Double](verifying(paymentAmountValidator))
     )(ChildTaxCredit.apply _),
-    (
-      (JsPath \ "childCareAmount").writeNullable[Double] and
-        (JsPath \ "ctcChildAmount").writeNullable[Double] and
-        (JsPath \ "familyAmount").writeNullable[Double] and
-        (JsPath \ "babyAmount").writeNullable[Double] and
-        (JsPath \ "entitlementYTD").writeNullable[Double] and
-        (JsPath \ "paidYTD").writeNullable[Double]
-    )(unlift(ChildTaxCredit.unapply))
+    Json.writes[ChildTaxCredit]
   )
 }
 
@@ -135,11 +107,7 @@ object WorkTaxCredit {
         (JsPath \ "entitlementYTD").readNullable[Double](verifying(paymentAmountValidator)) and
         (JsPath \ "paidYTD").readNullable[Double](verifying(paymentAmountValidator))
     )(WorkTaxCredit.apply _),
-    (
-      (JsPath \ "amount").writeNullable[Double] and
-        (JsPath \ "entitlementYTD").writeNullable[Double] and
-        (JsPath \ "paidYTD").writeNullable[Double]
-    )(unlift(WorkTaxCredit.unapply))
+    Json.writes[WorkTaxCredit]
   )
 }
 
@@ -166,16 +134,7 @@ object Awards {
         (JsPath \ "grossYearTaxAmount").readNullable[Double](verifying(paymentAmountValidator)) and
         (JsPath \ "payments").readNullable[Seq[Payments]]
     )(Awards.apply _),
-    (
-      (JsPath \ "payProfCalcDate").writeNullable[String] and
-        (JsPath \ "startDate").writeNullable[String] and
-        (JsPath \ "endDate").writeNullable[String] and
-        (JsPath \ "totalEntitlement").writeNullable[Double] and
-        (JsPath \ "workingTaxCredit").writeNullable[WorkTaxCredit] and
-        (JsPath \ "childTaxCredit").writeNullable[ChildTaxCredit] and
-        (JsPath \ "grossYearTaxAmount").writeNullable[Double] and
-        (JsPath \ "payments").writeNullable[Seq[Payments]]
-    )(unlift(Awards.unapply))
+    Json.writes[Awards]
   )
 }
 
@@ -201,13 +160,7 @@ object Application {
         (JsPath \ "entEndDate").readNullable[String](pattern(datePattern, "invalid date")) and
         (JsPath \ "awards").readNullable[Seq[Awards]]
     )(Application.apply _),
-    (
-      (JsPath \ "id").writeNullable[Double] and
-        (JsPath \ "ceasedDate").writeNullable[String] and
-        (JsPath \ "entStartDate").writeNullable[String] and
-        (JsPath \ "entEndDate").writeNullable[String] and
-        (JsPath \ "awards").writeNullable[Seq[Awards]]
-    )(unlift(Application.unapply))
+    Json.writes[Application]
   )
 }
 

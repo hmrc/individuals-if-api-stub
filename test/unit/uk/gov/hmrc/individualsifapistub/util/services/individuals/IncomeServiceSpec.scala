@@ -31,7 +31,7 @@ import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.testUtils.{IncomePayeHelpers, IncomeSaHelpers}
 
 import scala.concurrent.Future
-import uk.gov.hmrc.individualsifapistub.domain.individuals.{ PayeEntry, SaTaxYearEntry }
+import uk.gov.hmrc.individualsifapistub.domain.individuals.{PayeEntry, SaTaxYearEntry}
 
 class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePayeHelpers {
   trait Setup {

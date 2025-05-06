@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.individualsifapistub.domain.individuals
 
-import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
+import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.Reads.pattern
-import play.api.libs.json.{Format, JsPath}
+import play.api.libs.json.{Format, JsPath, Json}
 
 case class Identifier(
   nino: Option[String],
@@ -42,12 +42,6 @@ object Identifier {
         (JsPath \ "to").readNullable[String] and
         (JsPath \ "useCase").readNullable[String]
     )(Identifier.apply _),
-    (
-      (JsPath \ "nino").writeNullable[String] and
-        (JsPath \ "trn").writeNullable[String] and
-        (JsPath \ "from").writeNullable[String] and
-        (JsPath \ "to").writeNullable[String] and
-        (JsPath \ "useCase").writeNullable[String]
-    )(unlift(Identifier.unapply))
+    Json.writes[Identifier]
   )
 }

@@ -32,8 +32,10 @@ class CorporationTaxReturnDetailsServiceSpec extends AsyncWordSpec with Matchers
   val service = new CorporationTaxReturnDetailsService(mockRepository)
 
   val accountingPeriods: Seq[AccountingPeriod] = Seq(AccountingPeriod("2018-04-06", "2018-10-05", 38390))
-  val request: CreateCorporationTaxReturnDetailsRequest = CreateCorporationTaxReturnDetailsRequest("1234567890", "2015-04-21", "V", accountingPeriods)
-  val response: CorporationTaxReturnDetailsResponse = CorporationTaxReturnDetailsResponse("1234567890", "2015-04-21", "V", accountingPeriods)
+  val request: CreateCorporationTaxReturnDetailsRequest =
+    CreateCorporationTaxReturnDetailsRequest("1234567890", "2015-04-21", "V", accountingPeriods)
+  val response: CorporationTaxReturnDetailsResponse =
+    CorporationTaxReturnDetailsResponse("1234567890", "2015-04-21", "V", accountingPeriods)
 
   "create" should {
     "return response when creating" in {

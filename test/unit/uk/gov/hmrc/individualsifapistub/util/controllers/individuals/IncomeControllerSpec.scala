@@ -36,7 +36,7 @@ import unit.uk.gov.hmrc.individualsifapistub.util.testUtils.{IncomePayeHelpers, 
 
 import scala.concurrent.Future
 import play.api.mvc.AnyContentAsEmpty
-import uk.gov.hmrc.individualsifapistub.domain.individuals.{ PayeEntry, SaTaxYearEntry }
+import uk.gov.hmrc.individualsifapistub.domain.individuals.{PayeEntry, SaTaxYearEntry}
 
 class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomePayeHelpers {
 
@@ -77,7 +77,8 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
   val innerPayeValue: Seq[PayeEntry] = Seq(createValidPayeEntry(), createValidPayeEntry())
   val incomePayeResponse: IncomePaye = IncomePaye(Some(innerPayeValue))
 
-  val innerPayeValueWithFieldFiltered: Seq[PayeEntry] = Seq(createValidPayeHOV2FieldsEntry(), createValidPayeHOV2FieldsEntry())
+  val innerPayeValueWithFieldFiltered: Seq[PayeEntry] =
+    Seq(createValidPayeHOV2FieldsEntry(), createValidPayeHOV2FieldsEntry())
   val incomePayeWithFieldFilteredResponse: IncomePaye = IncomePaye(Some(innerPayeValueWithFieldFiltered))
 
   "Sa" should {

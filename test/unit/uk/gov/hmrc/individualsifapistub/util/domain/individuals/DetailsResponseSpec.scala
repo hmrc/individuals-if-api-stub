@@ -37,8 +37,8 @@ class DetailsResponseSpec extends UnitSpec with TestHelpers {
 
   val contactDetail1: ContactDetail = ContactDetail(9, "MOBILE TELEPHONE", "07123 987654")
   val contactDetail2: ContactDetail = ContactDetail(9, "MOBILE TELEPHONE", "07123 987655")
-  val residence1: Residence = Residence(residenceType = Some("BASE"), address = generateAddress(2))
-  val residence2: Residence = Residence(residenceType = Some("NOMINATED"), address = generateAddress(1))
+  val residence1: Residence = Residence(`type` = Some("BASE"), address = generateAddress(2))
+  val residence2: Residence = Residence(`type` = Some("NOMINATED"), address = generateAddress(1))
 
   val response: DetailsResponse = DetailsResponse(
     idNino,
@@ -46,10 +46,12 @@ class DetailsResponseSpec extends UnitSpec with TestHelpers {
     Some(Seq(residence1, residence2))
   )
 
-  val invalidNinoDetails: Identifier = Identifier(Some("QWERTYUIOP"), None, Some(startDate), Some(endDate), Some(useCase))
-  val invalidTrnDetails: Identifier = Identifier(None, Some("QWERTYUIOP"), Some(startDate), Some(endDate), Some(useCase))
+  val invalidNinoDetails: Identifier =
+    Identifier(Some("QWERTYUIOP"), None, Some(startDate), Some(endDate), Some(useCase))
+  val invalidTrnDetails: Identifier =
+    Identifier(None, Some("QWERTYUIOP"), Some(startDate), Some(endDate), Some(useCase))
   val invalidContactDetail: ContactDetail = ContactDetail(-42, "abcdefghijklmnopqrstuvwxyz0123456789", "a")
-  val invalidResidence: Residence = Residence(residenceType = Some(""), address = generateAddress(2))
+  val invalidResidence: Residence = Residence(`type` = Some(""), address = generateAddress(2))
   val invalidDetailsResponse: DetailsResponse = DetailsResponse(
     idTrn,
     Some(Seq(invalidContactDetail)),

@@ -33,10 +33,7 @@ object TaxYear {
       (JsPath \ "taxyear").read[String](pattern(taxYearPattern, "Tax Year is in the incorrect Format")) and
         (JsPath \ "businessSalesTurnover").read[Double]
     )(TaxYear.apply _),
-    (
-      (JsPath \ "taxyear").write[String] and
-        (JsPath \ "businessSalesTurnover").write[Double]
-    )(unlift(TaxYear.unapply))
+    Json.writes[TaxYear]
   )
 }
 
@@ -57,13 +54,7 @@ object CreateSelfAssessmentReturnDetailRequest {
         (JsPath \ "taxSolvencyStatus").read[String](verifying(taxSolvencyStatusValidator)) and
         (JsPath \ "taxyears").read[Seq[TaxYear]]
     )(CreateSelfAssessmentReturnDetailRequest.apply _),
-    (
-      (JsPath \ "utr").write[String] and
-        (JsPath \ "startDate").write[String] and
-        (JsPath \ "taxpayerType").write[String] and
-        (JsPath \ "taxSolvencyStatus").write[String] and
-        (JsPath \ "taxyears").write[Seq[TaxYear]]
-    )(unlift(CreateSelfAssessmentReturnDetailRequest.unapply))
+    Json.writes[CreateSelfAssessmentReturnDetailRequest]
   )
 }
 
@@ -84,13 +75,7 @@ object SelfAssessmentReturnDetailResponse {
         (JsPath \ "taxSolvencyStatus").read[String](verifying(taxSolvencyStatusValidator)) and
         (JsPath \ "taxyears").read[Seq[TaxYear]]
     )(SelfAssessmentReturnDetailResponse.apply _),
-    (
-      (JsPath \ "utr").write[String] and
-        (JsPath \ "startDate").write[String] and
-        (JsPath \ "taxpayerType").write[String] and
-        (JsPath \ "taxSolvencyStatus").write[String] and
-        (JsPath \ "taxyears").write[Seq[TaxYear]]
-    )(unlift(SelfAssessmentReturnDetailResponse.unapply))
+    Json.writes[SelfAssessmentReturnDetailResponse]
   )
 }
 

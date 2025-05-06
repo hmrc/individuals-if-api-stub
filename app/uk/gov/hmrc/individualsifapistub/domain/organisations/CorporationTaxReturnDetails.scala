@@ -35,11 +35,7 @@ object AccountingPeriod {
         (JsPath \ "apEndDate").read[String](pattern(apDatePattern, "apEndDate not in correct format")) and
         (JsPath \ "turnover").read[Int]
     )(AccountingPeriod.apply _),
-    (
-      (JsPath \ "apStartDate").write[String] and
-        (JsPath \ "apEndDate").write[String] and
-        (JsPath \ "turnover").write[Int]
-    )(unlift(AccountingPeriod.unapply))
+    Json.writes[AccountingPeriod]
   )
 }
 
@@ -60,12 +56,7 @@ object CreateCorporationTaxReturnDetailsRequest {
           (JsPath \ "taxSolvencyStatus").read[String](verifying(validTaxSolvencyStatus)) and
           (JsPath \ "accountingPeriods").read[Seq[AccountingPeriod]]
       )(CreateCorporationTaxReturnDetailsRequest.apply _),
-      (
-        (JsPath \ "utr").write[String] and
-          (JsPath \ "taxpayerStartDate").write[String] and
-          (JsPath \ "taxSolvencyStatus").write[String] and
-          (JsPath \ "accountingPeriods").write[Seq[AccountingPeriod]]
-      )(unlift(CreateCorporationTaxReturnDetailsRequest.unapply))
+      Json.writes[CreateCorporationTaxReturnDetailsRequest]
     )
 }
 
@@ -85,12 +76,7 @@ object CorporationTaxReturnDetailsResponse {
         (JsPath \ "taxSolvencyStatus").read[String](verifying(validTaxSolvencyStatus)) and
         (JsPath \ "accountingPeriods").read[Seq[AccountingPeriod]]
     )(CorporationTaxReturnDetailsResponse.apply _),
-    (
-      (JsPath \ "utr").write[String] and
-        (JsPath \ "taxpayerStartDate").write[String] and
-        (JsPath \ "taxSolvencyStatus").write[String] and
-        (JsPath \ "accountingPeriods").write[Seq[AccountingPeriod]]
-    )(unlift(CorporationTaxReturnDetailsResponse.unapply))
+    Json.writes[CorporationTaxReturnDetailsResponse]
   )
 }
 

@@ -54,8 +54,8 @@ class DetailsServiceSpec extends TestSupport with TestHelpers {
       ),
       Some(
         Seq(
-          Residence(residenceType = Some("BASE"), address = generateAddress(2)),
-          Residence(residenceType = Some("NOMINATED"), address = generateAddress(1))
+          Residence(`type` = Some("BASE"), address = generateAddress(2)),
+          Residence(`type` = Some("NOMINATED"), address = generateAddress(1))
         )
       )
     )

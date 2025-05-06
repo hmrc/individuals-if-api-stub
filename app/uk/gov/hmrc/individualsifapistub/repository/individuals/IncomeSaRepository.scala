@@ -77,7 +77,7 @@ class IncomeSaRepository @Inject() (mongo: MongoComponent)(implicit ec: Executio
     preservingMdc {
       collection
         .insertOne(incomeSaRecord)
-        .map(_ => incomeSaRecord.incomeSa)
+        .map(_ => incomeSaRecord.incomeSaResponse)
         .head()
         .recover {
           case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
@@ -140,7 +140,7 @@ class IncomeSaRepository @Inject() (mongo: MongoComponent)(implicit ec: Executio
             Option(endYear).filter(_.nonEmpty).map(_.toInt).getOrElse(3000)
           )
         )
-        .map(_.incomeSa.sa.getOrElse(Seq.empty))
+        .map(_.incomeSaResponse.sa.getOrElse(Seq.empty))
         .foldLeft(Seq.empty[SaTaxYearEntry])(_ ++ _)
         .toFuture()
         .flatMap {
@@ -151,7 +151,7 @@ class IncomeSaRepository @Inject() (mongo: MongoComponent)(implicit ec: Executio
             collection
               .find(idBasedSearch(id))
               .headOption()
-              .map(_.map(_.incomeSa))
+              .map(_.map(_.incomeSaResponse))
         }
     }
   }

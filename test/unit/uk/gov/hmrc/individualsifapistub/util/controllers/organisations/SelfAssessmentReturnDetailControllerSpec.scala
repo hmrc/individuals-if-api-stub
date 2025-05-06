@@ -35,8 +35,10 @@ class SelfAssessmentReturnDetailControllerSpec extends TestSupport {
     new SelfAssessmentReturnDetailController(loggingAction, bodyParsers, controllerComponents, mockService)
 
   var taxYear: TaxYear = TaxYear("2019", 12343.12)
-  val request: CreateSelfAssessmentReturnDetailRequest = CreateSelfAssessmentReturnDetailRequest("1234567890", "2015-04-21", "Individuals", "S", Seq(taxYear))
-  val response: SelfAssessmentReturnDetailResponse = SelfAssessmentReturnDetailResponse("1234567890", "2015-04-21", "Individuals", "S", Seq(taxYear))
+  val request: CreateSelfAssessmentReturnDetailRequest =
+    CreateSelfAssessmentReturnDetailRequest("1234567890", "2015-04-21", "Individuals", "S", Seq(taxYear))
+  val response: SelfAssessmentReturnDetailResponse =
+    SelfAssessmentReturnDetailResponse("1234567890", "2015-04-21", "Individuals", "S", Seq(taxYear))
 
   "create" should {
     "return response with created status when successful" in {

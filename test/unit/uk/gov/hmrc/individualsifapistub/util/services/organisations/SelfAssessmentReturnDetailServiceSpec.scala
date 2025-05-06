@@ -32,8 +32,10 @@ class SelfAssessmentReturnDetailServiceSpec extends AsyncWordSpec with Matchers 
   val service = new SelfAssessmentReturnDetailService(mockRepository)
 
   var taxYear: TaxYear = TaxYear("2019", 12343.12)
-  val request: CreateSelfAssessmentReturnDetailRequest = CreateSelfAssessmentReturnDetailRequest("1234567890", "2015-04-21", "Individuals", "S", Seq(taxYear))
-  val response: SelfAssessmentReturnDetailResponse = SelfAssessmentReturnDetailResponse("1234567890", "2015-04-21", "Individuals", "S", Seq(taxYear))
+  val request: CreateSelfAssessmentReturnDetailRequest =
+    CreateSelfAssessmentReturnDetailRequest("1234567890", "2015-04-21", "Individuals", "S", Seq(taxYear))
+  val response: SelfAssessmentReturnDetailResponse =
+    SelfAssessmentReturnDetailResponse("1234567890", "2015-04-21", "Individuals", "S", Seq(taxYear))
 
   "create" should {
     "return response when creating" in {

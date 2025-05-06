@@ -46,7 +46,8 @@ class CorporationTaxCompanyDetailsControllerSpec extends TestSupport {
     mockService,
     mockConnector
   )
-  val repository: CorporationTaxCompanyDetailsRepository = fakeApplication.injector.instanceOf[CorporationTaxCompanyDetailsRepository]
+  val repository: CorporationTaxCompanyDetailsRepository =
+    fakeApplication.injector.instanceOf[CorporationTaxCompanyDetailsRepository]
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
   val address: Address =
