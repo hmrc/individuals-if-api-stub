@@ -30,27 +30,27 @@ class DetailsResponseSpec extends UnitSpec with TestHelpers {
   val useCase = "TEST"
   val fields = "some(values)"
 
-  val ninoDetails = Identifier(Some("XH123456A"), None, Some(startDate), Some(endDate), Some(useCase))
-  val idNino = s"${ninoDetails.nino.getOrElse(ninoDetails.trn)}-$startDate-$endDate-$useCase"
-  val trnDetails = Identifier(None, Some("12345678"), Some(startDate), Some(endDate), Some(useCase))
-  val idTrn = s"${trnDetails.nino.getOrElse(trnDetails.trn)}-$startDate-$endDate-$useCase"
+  val ninoDetails: Identifier = Identifier(Some("XH123456A"), None, Some(startDate), Some(endDate), Some(useCase))
+  val idNino: String = s"${ninoDetails.nino.getOrElse(ninoDetails.trn)}-$startDate-$endDate-$useCase"
+  val trnDetails: Identifier = Identifier(None, Some("12345678"), Some(startDate), Some(endDate), Some(useCase))
+  val idTrn: String = s"${trnDetails.nino.getOrElse(trnDetails.trn)}-$startDate-$endDate-$useCase"
 
-  val contactDetail1 = ContactDetail(9, "MOBILE TELEPHONE", "07123 987654")
-  val contactDetail2 = ContactDetail(9, "MOBILE TELEPHONE", "07123 987655")
-  val residence1 = Residence(residenceType = Some("BASE"), address = generateAddress(2))
-  val residence2 = Residence(residenceType = Some("NOMINATED"), address = generateAddress(1))
+  val contactDetail1: ContactDetail = ContactDetail(9, "MOBILE TELEPHONE", "07123 987654")
+  val contactDetail2: ContactDetail = ContactDetail(9, "MOBILE TELEPHONE", "07123 987655")
+  val residence1: Residence = Residence(residenceType = Some("BASE"), address = generateAddress(2))
+  val residence2: Residence = Residence(residenceType = Some("NOMINATED"), address = generateAddress(1))
 
-  val response = DetailsResponse(
+  val response: DetailsResponse = DetailsResponse(
     idNino,
     Some(Seq(contactDetail1, contactDetail1)),
     Some(Seq(residence1, residence2))
   )
 
-  val invalidNinoDetails = Identifier(Some("QWERTYUIOP"), None, Some(startDate), Some(endDate), Some(useCase))
-  val invalidTrnDetails = Identifier(None, Some("QWERTYUIOP"), Some(startDate), Some(endDate), Some(useCase))
-  val invalidContactDetail = ContactDetail(-42, "abcdefghijklmnopqrstuvwxyz0123456789", "a")
-  val invalidResidence = Residence(residenceType = Some(""), address = generateAddress(2))
-  val invalidDetailsResponse = DetailsResponse(
+  val invalidNinoDetails: Identifier = Identifier(Some("QWERTYUIOP"), None, Some(startDate), Some(endDate), Some(useCase))
+  val invalidTrnDetails: Identifier = Identifier(None, Some("QWERTYUIOP"), Some(startDate), Some(endDate), Some(useCase))
+  val invalidContactDetail: ContactDetail = ContactDetail(-42, "abcdefghijklmnopqrstuvwxyz0123456789", "a")
+  val invalidResidence: Residence = Residence(residenceType = Some(""), address = generateAddress(2))
+  val invalidDetailsResponse: DetailsResponse = DetailsResponse(
     idTrn,
     Some(Seq(invalidContactDetail)),
     Some(Seq(invalidResidence))

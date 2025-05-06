@@ -35,7 +35,7 @@ class NumberOfEmployeesController @Inject() (
 )(implicit val ec: ExecutionContext)
     extends CommonController(cc) {
 
-  val emptyResponse = NumberOfEmployeesResponse("", "", Seq.empty)
+  val emptyResponse: NumberOfEmployeesResponse = NumberOfEmployeesResponse("", "", Seq.empty)
 
   def create(): Action[JsValue] =
     loggingAction.async(bodyParsers.json) { implicit request =>

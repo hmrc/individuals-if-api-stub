@@ -35,7 +35,7 @@ class CorporationTaxReturnDetailsController @Inject() (
 )(implicit val ec: ExecutionContext)
     extends CommonController(cc) {
 
-  val emptyResponse = CorporationTaxReturnDetailsResponse("", "", "", Seq.empty)
+  val emptyResponse: CorporationTaxReturnDetailsResponse = CorporationTaxReturnDetailsResponse("", "", "", Seq.empty)
 
   def create(utr: String): Action[JsValue] =
     loggingAction.async(bodyParsers.json) { implicit request =>

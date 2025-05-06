@@ -28,7 +28,7 @@ import scala.concurrent.ExecutionContext
 
 trait TestSupport extends UnitSpec with BeforeAndAfterAll {
 
-  lazy val additionalConfig = Configuration()
+  lazy val additionalConfig: Configuration = Configuration()
 
   def buildFakeApplication(extraConfig: Configuration): Application =
     new GuiceApplicationBuilder()
@@ -53,7 +53,7 @@ trait TestSupport extends UnitSpec with BeforeAndAfterAll {
 
   lazy val bodyParsers: PlayBodyParsers = fakeApplication.injector.instanceOf[PlayBodyParsers]
 
-  lazy val loggingAction = fakeApplication.injector.instanceOf[LoggingAction]
+  lazy val loggingAction: LoggingAction = fakeApplication.injector.instanceOf[LoggingAction]
 
   protected override def beforeAll(): Unit = {
     Play.start(fakeApplication)

@@ -22,10 +22,11 @@ import uk.gov.hmrc.individualsifapistub.repository.individuals._
 import uk.gov.hmrc.individualsifapistub.repository.organisations._
 import uk.gov.hmrc.mongo.test.MongoSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
+import play.api.Application
 
 trait RepositoryTestHelper extends TestSupport with MongoSupport with BeforeAndAfterEach {
 
-  override lazy val fakeApplication = buildFakeApplication(Configuration("mongodb.uri" -> mongoUri))
+  override lazy val fakeApplication: Application = buildFakeApplication(Configuration("mongodb.uri" -> mongoUri))
 
   lazy private val allRepos = Seq(
     fakeApplication.injector.instanceOf[TaxCreditsRepository],

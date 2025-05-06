@@ -22,8 +22,8 @@ import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class AddressSpec extends UnitSpec {
 
-  val validAddress = Address(Some("line1"), Some("line2"), Some("line3"), Some("line4"), None, Some("QW123QW"))
-  val invalidAddress =
+  val validAddress: Address = Address(Some("line1"), Some("line2"), Some("line3"), Some("line4"), None, Some("QW123QW"))
+  val invalidAddress: Address =
     Address(Some("line1"), Some("line2"), Some("line3"), Some("line4"), None, Some("1234567891011121314151617181920"))
 
   "Address" should {

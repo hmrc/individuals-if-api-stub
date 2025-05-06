@@ -35,15 +35,16 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 import scala.concurrent.Future
+import play.api.mvc.AnyContentAsEmpty
 
 class DetailsControllerSpec extends TestSupport with TestHelpers {
 
   trait Setup {
     implicit val hc: HeaderCarrier = HeaderCarrier()
-    val fakeRequest = FakeRequest()
-    val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
-    val detailsRepo = mock[DetailsRepository]
-    val servicesConfig = mock[ServicesConfig]
+    val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+    val apiPlatformTestUserConnector: ApiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
+    val detailsRepo: DetailsRepository = mock[DetailsRepository]
+    val servicesConfig: ServicesConfig = mock[ServicesConfig]
     val mockDetailsService = new DetailsService(detailsRepo, apiPlatformTestUserConnector, servicesConfig)
     val underTest = new DetailsController(loggingAction, bodyParsers, controllerComponents, mockDetailsService)
 
@@ -53,9 +54,9 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
     val endDate = "2020-21-31"
     val useCase = "TEST"
     val fields = "some(values)"
-    val utr = SaUtr("2432552635")
+    val utr: SaUtr = SaUtr("2432552635")
 
-    val testIndividual = TestIndividual(
+    val testIndividual: TestIndividual = TestIndividual(
       saUtr = Some(utr)
     )
 
@@ -63,7 +64,7 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
       .thenReturn(Future.successful(Some(testIndividual)))
   }
 
-  val request = CreateDetailsRequest(
+  val request: CreateDetailsRequest = CreateDetailsRequest(
     Some(
       Seq(ContactDetail(9, "MOBILE TELEPHONE", "07123 987654"), ContactDetail(9, "MOBILE TELEPHONE", "07123 987655"))
     ),

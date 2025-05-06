@@ -28,20 +28,20 @@ import scala.concurrent.Future
 
 class CorporationTaxCompanyDetailsServiceSpec extends AsyncWordSpec with Matchers with MockitoSugar {
 
-  val mockRepository = mock[CorporationTaxCompanyDetailsRepository]
+  val mockRepository: CorporationTaxCompanyDetailsRepository = mock[CorporationTaxCompanyDetailsRepository]
   val service = new CorporationTaxCompanyDetailsService(mockRepository)
 
-  val address =
+  val address: Address =
     Address(Some("Alfie House"), Some("Main Street"), Some("Manchester"), Some("Londonberry"), Some("LN1 1AG"))
 
-  val name = Name("Waitrose", "And Partners")
+  val name: Name = Name("Waitrose", "And Partners")
 
-  val registeredDetails = NameAddressDetails(name, address)
-  val communicationDetails = NameAddressDetails(name, address)
+  val registeredDetails: NameAddressDetails = NameAddressDetails(name, address)
+  val communicationDetails: NameAddressDetails = NameAddressDetails(name, address)
 
-  val request =
+  val request: CorporationTaxCompanyDetails =
     CorporationTaxCompanyDetails("1234567890", "12345678", Some(registeredDetails), Some(communicationDetails))
-  val response =
+  val response: CorporationTaxCompanyDetails =
     CorporationTaxCompanyDetails("1234567890", "12345678", Some(registeredDetails), Some(communicationDetails))
 
   "create" should {

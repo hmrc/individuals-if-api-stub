@@ -26,6 +26,6 @@ import scala.concurrent.Future
 class VatInformationService @Inject() (repository: VatInformationRepository, dateTimeProvider: DateTimeProvider) {
   def retrieve(vrn: String): Future[Option[VatInformationEntry]] = repository.retrieve(vrn)
 
-  def create(vrn: String, vatInformation: VatInformation) =
+  def create(vrn: String, vatInformation: VatInformation): Future[VatInformationEntry] =
     repository.create(VatInformationEntry(vrn, vatInformation, dateTimeProvider.now()))
 }

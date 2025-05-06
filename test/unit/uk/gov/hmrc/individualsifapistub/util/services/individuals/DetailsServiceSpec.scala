@@ -42,13 +42,13 @@ class DetailsServiceSpec extends TestSupport with TestHelpers {
     val endDate = "2020-21-31"
     val useCase = "TEST"
     val fields = "some(values)"
-    val utr = SaUtr("2432552635")
+    val utr: SaUtr = SaUtr("2432552635")
 
-    val testIndividual = TestIndividual(
+    val testIndividual: TestIndividual = TestIndividual(
       saUtr = Some(utr)
     )
 
-    val request = CreateDetailsRequest(
+    val request: CreateDetailsRequest = CreateDetailsRequest(
       Some(
         Seq(ContactDetail(9, "MOBILE TELEPHONE", "07123 987654"), ContactDetail(9, "MOBILE TELEPHONE", "07123 987655"))
       ),
@@ -61,10 +61,10 @@ class DetailsServiceSpec extends TestSupport with TestHelpers {
     )
 
     implicit val hc: HeaderCarrier = HeaderCarrier()
-    val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
+    val apiPlatformTestUserConnector: ApiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
 
-    val mockDetailsRepository = mock[DetailsRepository]
-    val servicesConfig = mock[ServicesConfig]
+    val mockDetailsRepository: DetailsRepository = mock[DetailsRepository]
+    val servicesConfig: ServicesConfig = mock[ServicesConfig]
     val underTest = new DetailsService(mockDetailsRepository, apiPlatformTestUserConnector, servicesConfig)
 
     when(apiPlatformTestUserConnector.getIndividualByNino(any())(any()))

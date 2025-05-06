@@ -25,7 +25,7 @@ class TaxCreditsSpec extends UnitSpec with TestHelpers {
 
   val idValue: Double = 12345
 
-  val validPayments = Payments(
+  val validPayments: Payments = Payments(
     Some("2012-12-12"),
     Some("2012-12-12"),
     Some("2012-12-12"),

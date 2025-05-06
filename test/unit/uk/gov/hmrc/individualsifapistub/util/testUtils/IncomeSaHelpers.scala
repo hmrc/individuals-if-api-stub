@@ -19,7 +19,7 @@ package unit.uk.gov.hmrc.individualsifapistub.util.testUtils
 import uk.gov.hmrc.individualsifapistub.domain.individuals._
 
 trait IncomeSaHelpers {
-  def createValidSaTaxYearEntry() = {
+  def createValidSaTaxYearEntry(): SaTaxYearEntry = {
     val returnTypeList = Seq(createValidSaReturnType())
     SaTaxYearEntry(Some("2020"), Some(100.01), Some(returnTypeList))
   }
@@ -61,7 +61,7 @@ trait IncomeSaHelpers {
     )
   }
 
-  val validDeducts = Deducts(
+  val validDeducts: Deducts = Deducts(
     Some(200.0),
     Some(200.0)
   )

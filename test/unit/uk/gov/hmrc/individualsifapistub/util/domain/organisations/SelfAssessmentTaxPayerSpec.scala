@@ -25,7 +25,7 @@ import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class SelfAssessmentTaxPayerSpec extends UnitSpec {
 
-  val address = Address(
+  val address: Address = Address(
     Some("line1"),
     Some("line2"),
     Some("line3"),

@@ -30,18 +30,18 @@ import uk.gov.hmrc.individualsifapistub.domain._
 
 class ApiPlatformTestUserConnectorSpec
     extends UnitSpec with WireMockSupport with WireMockMethods with BeforeAndAfterEach with GuiceOneAppPerSuite {
-  val empRef = EmpRef("123", "AI45678")
-  val testOrganisation = TestOrganisation(
+  val empRef: EmpRef = EmpRef("123", "AI45678")
+  val testOrganisation: TestOrganisation = TestOrganisation(
     Some(empRef),
     None,
     None,
     TestOrganisationDetails("Disney Inc", TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ"))
   )
 
-  val nino = Nino("AB123456A")
-  val utr = SaUtr("2432552635")
+  val nino: Nino = Nino("AB123456A")
+  val utr: SaUtr = SaUtr("2432552635")
 
-  val testIndividual = TestIndividual(
+  val testIndividual: TestIndividual = TestIndividual(
     saUtr = Some(utr),
     taxpayerType = Some("Individual"),
     organisationDetails = Some(
@@ -72,7 +72,7 @@ class ApiPlatformTestUserConnectorSpec
   trait Setup {
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
-    val underTest = fakeApplication().injector.instanceOf[ApiPlatformTestUserConnector]
+    val underTest: ApiPlatformTestUserConnector = fakeApplication().injector.instanceOf[ApiPlatformTestUserConnector]
   }
 
   "get organisation by empRef" should {

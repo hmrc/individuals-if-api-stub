@@ -22,7 +22,7 @@ import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class SaIncomeSpec extends UnitSpec {
 
-  val validSaIncome = SaIncome(
+  val validSaIncome: SaIncome = SaIncome(
     Some(100.0),
     Some(100.0),
     Some(100.0),
@@ -39,7 +39,7 @@ class SaIncomeSpec extends UnitSpec {
     Some(100.0)
   )
 
-  val invalidSaIncome = SaIncome(
+  val invalidSaIncome: SaIncome = SaIncome(
     Some(100.001),
     Some(100.001),
     Some(100.001),

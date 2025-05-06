@@ -28,12 +28,12 @@ import scala.concurrent.Future
 
 class CorporationTaxReturnDetailsServiceSpec extends AsyncWordSpec with Matchers with MockitoSugar {
 
-  val mockRepository = mock[CorporationTaxReturnDetailsRepository]
+  val mockRepository: CorporationTaxReturnDetailsRepository = mock[CorporationTaxReturnDetailsRepository]
   val service = new CorporationTaxReturnDetailsService(mockRepository)
 
-  val accountingPeriods = Seq(AccountingPeriod("2018-04-06", "2018-10-05", 38390))
-  val request = CreateCorporationTaxReturnDetailsRequest("1234567890", "2015-04-21", "V", accountingPeriods)
-  val response = CorporationTaxReturnDetailsResponse("1234567890", "2015-04-21", "V", accountingPeriods)
+  val accountingPeriods: Seq[AccountingPeriod] = Seq(AccountingPeriod("2018-04-06", "2018-10-05", 38390))
+  val request: CreateCorporationTaxReturnDetailsRequest = CreateCorporationTaxReturnDetailsRequest("1234567890", "2015-04-21", "V", accountingPeriods)
+  val response: CorporationTaxReturnDetailsResponse = CorporationTaxReturnDetailsResponse("1234567890", "2015-04-21", "V", accountingPeriods)
 
   "create" should {
     "return response when creating" in {

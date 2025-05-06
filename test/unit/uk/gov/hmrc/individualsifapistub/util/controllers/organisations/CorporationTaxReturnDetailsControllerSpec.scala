@@ -30,13 +30,13 @@ import scala.concurrent.Future
 
 class CorporationTaxReturnDetailsControllerSpec extends TestSupport {
 
-  val mockService = mock[CorporationTaxReturnDetailsService]
+  val mockService: CorporationTaxReturnDetailsService = mock[CorporationTaxReturnDetailsService]
   val controller =
     new CorporationTaxReturnDetailsController(loggingAction, bodyParsers, controllerComponents, mockService)
 
-  val accountingPeriods = Seq(AccountingPeriod("2018-04-06", "2018-10-05", 38390))
-  val request = CreateCorporationTaxReturnDetailsRequest("1234567890", "2015-04-21", "V", accountingPeriods)
-  val response = CorporationTaxReturnDetailsResponse("1234567890", "2015-04-21", "V", accountingPeriods)
+  val accountingPeriods: Seq[AccountingPeriod] = Seq(AccountingPeriod("2018-04-06", "2018-10-05", 38390))
+  val request: CreateCorporationTaxReturnDetailsRequest = CreateCorporationTaxReturnDetailsRequest("1234567890", "2015-04-21", "V", accountingPeriods)
+  val response: CorporationTaxReturnDetailsResponse = CorporationTaxReturnDetailsResponse("1234567890", "2015-04-21", "V", accountingPeriods)
 
   "create" should {
     "return response with created status when successful" in {

@@ -32,7 +32,7 @@ trait TestHelpers {
     generate("")
   }
 
-  def generateAddress(number: Int) =
+  def generateAddress(number: Int): Some[Address] =
     Some(
       Address(
         Some(s"line1-$number"),

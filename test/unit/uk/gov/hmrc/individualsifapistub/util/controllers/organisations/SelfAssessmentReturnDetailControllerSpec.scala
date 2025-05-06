@@ -30,13 +30,13 @@ import scala.concurrent.Future
 
 class SelfAssessmentReturnDetailControllerSpec extends TestSupport {
 
-  val mockService = mock[SelfAssessmentReturnDetailService]
+  val mockService: SelfAssessmentReturnDetailService = mock[SelfAssessmentReturnDetailService]
   val controller =
     new SelfAssessmentReturnDetailController(loggingAction, bodyParsers, controllerComponents, mockService)
 
-  var taxYear = TaxYear("2019", 12343.12)
-  val request = CreateSelfAssessmentReturnDetailRequest("1234567890", "2015-04-21", "Individuals", "S", Seq(taxYear))
-  val response = SelfAssessmentReturnDetailResponse("1234567890", "2015-04-21", "Individuals", "S", Seq(taxYear))
+  var taxYear: TaxYear = TaxYear("2019", 12343.12)
+  val request: CreateSelfAssessmentReturnDetailRequest = CreateSelfAssessmentReturnDetailRequest("1234567890", "2015-04-21", "Individuals", "S", Seq(taxYear))
+  val response: SelfAssessmentReturnDetailResponse = SelfAssessmentReturnDetailResponse("1234567890", "2015-04-21", "Individuals", "S", Seq(taxYear))
 
   "create" should {
     "return response with created status when successful" in {

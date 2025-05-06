@@ -27,16 +27,16 @@ import uk.gov.hmrc.individualsifapistub.services.organisations.NumberOfEmployees
 import scala.concurrent.Future
 
 class NumberOfEmployeesServiceSpec extends AsyncWordSpec with Matchers with MockitoSugar {
-  val mockRepository = mock[NumberOfEmployeesRepository]
+  val mockRepository: NumberOfEmployeesRepository = mock[NumberOfEmployeesRepository]
   val service = new NumberOfEmployeesService(mockRepository)
 
-  val counts = NumberOfEmployeeCounts("2019-10", 554)
-  val reference = NumberOfEmployeeReferences("456", "RT882d", Seq(counts))
-  val postRequest = NumberOfEmployeesResponse("2019-10-01", "2020-04-05", Seq(reference))
-  val response = NumberOfEmployeesResponse("2019-10-01", "2020-04-05", Seq(reference))
+  val counts: NumberOfEmployeeCounts = NumberOfEmployeeCounts("2019-10", 554)
+  val reference: NumberOfEmployeeReferences = NumberOfEmployeeReferences("456", "RT882d", Seq(counts))
+  val postRequest: NumberOfEmployeesResponse = NumberOfEmployeesResponse("2019-10-01", "2020-04-05", Seq(reference))
+  val response: NumberOfEmployeesResponse = NumberOfEmployeesResponse("2019-10-01", "2020-04-05", Seq(reference))
 
-  val getReference = NumberOfEmployeeReferencesRequest("456", "RT882d")
-  val getRequest = NumberOfEmployeesRequest("2019-10-01", "2020-04-05", Seq(getReference))
+  val getReference: NumberOfEmployeeReferencesRequest = NumberOfEmployeeReferencesRequest("456", "RT882d")
+  val getRequest: NumberOfEmployeesRequest = NumberOfEmployeesRequest("2019-10-01", "2020-04-05", Seq(getReference))
 
   "create" should {
     "return response when creating" in {
