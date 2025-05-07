@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-import sbt.Def
+import sbt.Setting
 import scoverage.ScoverageKeys
 
 object CodeCoverageSettings {
-
   val excludedPackages: Seq[String] = Seq(
     "<empty>",
-    "Reverse.*",
     "app.*",
-    "res.*",
     "prod.*",
-    "config.*",
+    "definition",
+    "testOnlyDoNotUseInAppConf",
+    "uk.gov.hmrc.individualsifapistub.views.txt",
+    "uk.gov.hmrc.individualsifapistub.Binders",
+    "uk.gov.hmrc.individualsifapistub.repository.*" //TODO: Add missing unit tests
   )
 
-  val settings: Seq[Def.Setting[_ >: String with Double with Boolean]] = Seq(
+  val settings: Seq[Setting[?]] = Seq(
     // Semicolon-separated list of regexs matching classes to exclude
     ScoverageKeys.coverageExcludedPackages := excludedPackages.mkString(";"),
     ScoverageKeys.coverageMinimumStmtTotal := 75,
