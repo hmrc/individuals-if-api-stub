@@ -23,7 +23,6 @@ import uk.gov.hmrc.individualsifapistub.util.DateTimeProvider
 import java.time.LocalDateTime
 
 class ConfigModule(environment: Environment, configuration: Configuration) extends AbstractModule {
-  override def configure(): Unit = {
+  override def configure(): Unit =
     bind(classOf[DateTimeProvider]).toInstance(() => LocalDateTime.now())
-  }
 }

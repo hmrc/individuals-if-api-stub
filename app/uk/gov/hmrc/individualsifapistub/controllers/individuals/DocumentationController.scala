@@ -16,10 +16,9 @@
 
 package uk.gov.hmrc.individualsifapistub.controllers.individuals
 
-import org.apache.pekko.stream.Materializer
 import controllers.Assets
+import org.apache.pekko.stream.Materializer
 import play.api.Configuration
-import play.api.http.HttpErrorHandler
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import play.filters.cors.CORSActionBuilder
 import uk.gov.hmrc.individualsifapistub.config.LoggingAction
@@ -32,7 +31,6 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class DocumentationController @Inject() (
   loggingAction: LoggingAction,
-  httpErrorHandler: HttpErrorHandler,
   configuration: Configuration,
   cc: ControllerComponents,
   assets: Assets

@@ -89,7 +89,7 @@ abstract class CommonController(controllerComponents: ControllerComponents)
     from: Option[String],
     to: Option[String],
     useCase: Option[String]
-  )(f: (T) => Future[Result])(implicit request: Request[JsValue], m: Manifest[T], reads: Reads[T]): Future[Result] =
+  )(f: (T) => Future[Result])(implicit request: Request[JsValue], ct: ClassTag[T], reads: Reads[T]): Future[Result] =
     Try(IdType.parse(idType)) match {
       case Failure(e) => Future.successful(ErrorInvalidRequest(e.getLocalizedMessage).toHttpResponse)
       case Success(idType) =>
