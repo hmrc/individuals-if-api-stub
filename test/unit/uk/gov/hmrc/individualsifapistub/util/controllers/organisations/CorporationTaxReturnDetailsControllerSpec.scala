@@ -32,7 +32,7 @@ class CorporationTaxReturnDetailsControllerSpec extends TestSupport {
 
   val mockService: CorporationTaxReturnDetailsService = mock[CorporationTaxReturnDetailsService]
   val controller =
-    new CorporationTaxReturnDetailsController(loggingAction, bodyParsers, controllerComponents, mockService)
+    new CorporationTaxReturnDetailsController(loggingAction, controllerComponents, mockService)
 
   val accountingPeriods: Seq[AccountingPeriod] = Seq(AccountingPeriod("2018-04-06", "2018-10-05", 38390))
   val request: CreateCorporationTaxReturnDetailsRequest =

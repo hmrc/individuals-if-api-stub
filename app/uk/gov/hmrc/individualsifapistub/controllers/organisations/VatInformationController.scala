@@ -16,8 +16,9 @@
 
 package uk.gov.hmrc.individualsifapistub.controllers.organisations
 
-import play.api.libs.json.Json
-import play.api.mvc.{ControllerComponents, PlayBodyParsers}
+import play.api.libs.json.{JsValue, Json}
+import play.api.mvc
+import play.api.mvc.{AnyContent, ControllerComponents}
 import uk.gov.hmrc.individualsifapistub.config.LoggingAction
 import uk.gov.hmrc.individualsifapistub.controllers.CommonController
 import uk.gov.hmrc.individualsifapistub.domain.organisations.VatInformationSimplified
@@ -25,13 +26,9 @@ import uk.gov.hmrc.individualsifapistub.services.organisations.VatInformationSer
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
-import play.api.mvc
-import play.api.libs.json.JsValue
-import play.api.mvc.AnyContent
 
 class VatInformationController @Inject() (
   loggingAction: LoggingAction,
-  bodyParsers: PlayBodyParsers,
   cc: ControllerComponents,
   vatInformationService: VatInformationService
 )(implicit val ec: ExecutionContext)
@@ -44,7 +41,7 @@ class VatInformationController @Inject() (
     } recover retrievalRecovery
   }
 
-  def create(vrn: String): mvc.Action[JsValue] = loggingAction.async(bodyParsers.json) { implicit request =>
+  def create(vrn: String): mvc.Action[JsValue] = loggingAction.async(parse.json) { implicit request =>
     withJsonBody[VatInformationSimplified] { vatInformationSimplified =>
       vatInformationService
         .create(vrn, vatInformationSimplified.toVatInformation)

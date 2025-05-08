@@ -17,7 +17,7 @@
 package uk.gov.hmrc.individualsifapistub.controllers.individuals
 
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.individualsifapistub.config.LoggingAction
 import uk.gov.hmrc.individualsifapistub.controllers.CommonController
 import uk.gov.hmrc.individualsifapistub.domain.individuals.CreateDetailsRequest
@@ -29,14 +29,13 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class DetailsController @Inject() (
   loggingAction: LoggingAction,
-  bodyParsers: PlayBodyParsers,
   cc: ControllerComponents,
   detailsService: DetailsService
 )(implicit val ec: ExecutionContext)
     extends CommonController(cc) {
 
   def create(idType: String, idValue: String, useCase: String): Action[JsValue] =
-    loggingAction.async(bodyParsers.json) { implicit request =>
+    loggingAction.async(parse.json) { implicit request =>
       withJsonBodyAndValidId[CreateDetailsRequest](idType, idValue, None, None, Some(useCase)) { createRequest =>
         detailsService.create(idType, idValue, useCase, createRequest) map (e => Created(Json.toJson(e)))
       } recover recovery

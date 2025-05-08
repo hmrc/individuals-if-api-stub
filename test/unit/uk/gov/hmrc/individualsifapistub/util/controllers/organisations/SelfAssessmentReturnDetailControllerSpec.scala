@@ -32,7 +32,7 @@ class SelfAssessmentReturnDetailControllerSpec extends TestSupport {
 
   val mockService: SelfAssessmentReturnDetailService = mock[SelfAssessmentReturnDetailService]
   val controller =
-    new SelfAssessmentReturnDetailController(loggingAction, bodyParsers, controllerComponents, mockService)
+    new SelfAssessmentReturnDetailController(loggingAction, controllerComponents, mockService)
 
   var taxYear: TaxYear = TaxYear("2019", 12343.12)
   val request: CreateSelfAssessmentReturnDetailRequest =

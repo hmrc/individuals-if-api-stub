@@ -33,7 +33,7 @@ import scala.concurrent.Future
 class VatInformationControllerSpec extends TestSupport with BeforeAndAfterEach {
 
   val mockService: VatInformationService = mock[VatInformationService]
-  val controller = new VatInformationController(loggingAction, bodyParsers, controllerComponents, mockService)
+  val controller = new VatInformationController(loggingAction, controllerComponents, mockService)
 
   val vrn = "12345678"
   val customerDetails: VatCustomerDetails = VatCustomerDetails("Ancient Antiques")

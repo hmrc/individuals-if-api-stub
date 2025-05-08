@@ -17,7 +17,7 @@
 package uk.gov.hmrc.individualsifapistub.controllers.individuals
 
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.individualsifapistub.config.LoggingAction
 import uk.gov.hmrc.individualsifapistub.controllers.CommonController
 import uk.gov.hmrc.individualsifapistub.domain.individuals.Applications
@@ -29,14 +29,13 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class TaxCreditsController @Inject() (
   loggingAction: LoggingAction,
-  bodyParsers: PlayBodyParsers,
   cc: ControllerComponents,
   taxCreditsService: TaxCreditsService
 )(implicit val ec: ExecutionContext)
     extends CommonController(cc) {
 
   def create(idType: String, idValue: String, startDate: String, endDate: String, useCase: String): Action[JsValue] =
-    loggingAction.async(bodyParsers.json) { implicit request =>
+    loggingAction.async(parse.json) { implicit request =>
       withJsonBodyAndValidId[Applications](idType, idValue, Some(startDate), Some(endDate), Some(useCase)) {
         applications =>
           taxCreditsService.create(idType, idValue, startDate, endDate, useCase, applications) map (e =>

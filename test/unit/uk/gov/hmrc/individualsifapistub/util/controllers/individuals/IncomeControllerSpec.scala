@@ -48,7 +48,7 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
     val incomeSaRepo: IncomeSaRepository = mock[IncomeSaRepository]
     val servicesConfig: ServicesConfig = mock[ServicesConfig]
     val incomeService = new IncomeService(incomeSaRepo, incomePayeRepo, apiPlatformTestUserConnector, servicesConfig)
-    val underTest = new IncomeController(loggingAction, bodyParsers, controllerComponents, incomeService)
+    val underTest = new IncomeController(loggingAction, controllerComponents, incomeService)
 
     val utr: SaUtr = SaUtr("2432552635")
 

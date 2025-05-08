@@ -33,7 +33,7 @@ import scala.concurrent.Future
 class VatReturnsDetailsControllerSpec extends TestSupport {
 
   val mockService: VatReturnsDetailsService = mock[VatReturnsDetailsService]
-  val controller = new VatReturnDetailsController(loggingAction, bodyParsers, controllerComponents, mockService)
+  val controller = new VatReturnDetailsController(loggingAction, controllerComponents, mockService)
 
   val vatPeriods: List[VatPeriod] = List(
     VatPeriod(Some("23AG"), Some("2023-12-01"), Some("2023-12-31"), Some(30), Some(102), Some("ret"), Some("s"))

@@ -17,7 +17,7 @@
 package uk.gov.hmrc.individualsifapistub.controllers.organisations
 
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.individualsifapistub.config.LoggingAction
 import uk.gov.hmrc.individualsifapistub.controllers.CommonController
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{CorporationTaxReturnDetailsResponse, CreateCorporationTaxReturnDetailsRequest}
@@ -29,7 +29,6 @@ import scala.concurrent.ExecutionContext
 
 class CorporationTaxReturnDetailsController @Inject() (
   loggingAction: LoggingAction,
-  bodyParsers: PlayBodyParsers,
   cc: ControllerComponents,
   corporationTaxReturnDetailsService: CorporationTaxReturnDetailsService
 )(implicit val ec: ExecutionContext)
@@ -38,7 +37,7 @@ class CorporationTaxReturnDetailsController @Inject() (
   val emptyResponse: CorporationTaxReturnDetailsResponse = CorporationTaxReturnDetailsResponse("", "", "", Seq.empty)
 
   def create(utr: String): Action[JsValue] =
-    loggingAction.async(bodyParsers.json) { implicit request =>
+    loggingAction.async(parse.json) { implicit request =>
       withJsonBody[CreateCorporationTaxReturnDetailsRequest] { body =>
         corporationTaxReturnDetailsService
           .create(body)

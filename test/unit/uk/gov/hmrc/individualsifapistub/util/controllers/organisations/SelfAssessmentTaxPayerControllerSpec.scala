@@ -39,7 +39,7 @@ class SelfAssessmentTaxPayerControllerSpec extends TestSupport {
   val mockConnector: ApiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
 
   val controller =
-    new SelfAssessmentTaxPayerController(loggingAction, bodyParsers, controllerComponents, mockService, mockConnector)
+    new SelfAssessmentTaxPayerController(loggingAction, controllerComponents, mockService, mockConnector)
 
   val exampleAddress: Address =
     Address(Some("Alfie House"), Some("Main Street"), Some("Birmingham"), Some("West midlands"), Some("B14 6JH"))
