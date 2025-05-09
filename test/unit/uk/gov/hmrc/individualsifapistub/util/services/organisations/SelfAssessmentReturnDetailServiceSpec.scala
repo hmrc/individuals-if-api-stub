@@ -28,12 +28,14 @@ import scala.concurrent.Future
 
 class SelfAssessmentReturnDetailServiceSpec extends AsyncWordSpec with Matchers with MockitoSugar {
 
-  val mockRepository = mock[SelfAssessmentReturnDetailRepository]
+  val mockRepository: SelfAssessmentReturnDetailRepository = mock[SelfAssessmentReturnDetailRepository]
   val service = new SelfAssessmentReturnDetailService(mockRepository)
 
-  var taxYear = TaxYear("2019", 12343.12)
-  val request = CreateSelfAssessmentReturnDetailRequest("1234567890", "2015-04-21", "Individuals", "S", Seq(taxYear))
-  val response = SelfAssessmentReturnDetailResponse("1234567890", "2015-04-21", "Individuals", "S", Seq(taxYear))
+  var taxYear: TaxYear = TaxYear("2019", 12343.12)
+  val request: CreateSelfAssessmentReturnDetailRequest =
+    CreateSelfAssessmentReturnDetailRequest("1234567890", "2015-04-21", "Individuals", "S", Seq(taxYear))
+  val response: SelfAssessmentReturnDetailResponse =
+    SelfAssessmentReturnDetailResponse("1234567890", "2015-04-21", "Individuals", "S", Seq(taxYear))
 
   "create" should {
     "return response when creating" in {

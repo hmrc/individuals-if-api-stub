@@ -24,31 +24,13 @@ import uk.gov.hmrc.individualsifapistub.domain.{TestOrganisation, TestOrganisati
 case class Name(name1: String, name2: String)
 
 object Name {
-  implicit val format: Format[Name] = Format[Name](
-    (
-      (JsPath \ "name1").read[String] and
-        (JsPath \ "name2").read[String]
-    )(Name.apply _),
-    (
-      (JsPath \ "name1").write[String] and
-        (JsPath \ "name2").write[String]
-    )(unlift(Name.unapply))
-  )
+  implicit val format: Format[Name] = Json.format
 }
 
 case class NameAddressDetails(name: Name, address: Address)
 
 object NameAddressDetails {
-  implicit val format: Format[NameAddressDetails] = Format(
-    (
-      (JsPath \ "name").read[Name] and
-        (JsPath \ "address").read[Address]
-    )(NameAddressDetails.apply _),
-    (
-      (JsPath \ "name").write[Name] and
-        (JsPath \ "address").write[Address]
-    )(unlift(NameAddressDetails.unapply))
-  )
+  implicit val format: Format[NameAddressDetails] = Json.format
 }
 
 case class CorporationTaxCompanyDetails(
@@ -87,12 +69,7 @@ object CorporationTaxCompanyDetails {
         (JsPath \ "registeredDetails").readNullable[NameAddressDetails] and
         (JsPath \ "communicationDetails").readNullable[NameAddressDetails]
     )(CorporationTaxCompanyDetails.apply _),
-    (
-      (JsPath \ "utr").write[String] and
-        (JsPath \ "crn").write[String] and
-        (JsPath \ "registeredDetails").writeNullable[NameAddressDetails] and
-        (JsPath \ "communicationDetails").writeNullable[NameAddressDetails]
-    )(unlift(CorporationTaxCompanyDetails.unapply))
+    Json.writes[CorporationTaxCompanyDetails]
   )
 }
 

@@ -22,7 +22,7 @@ import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class SaReturnTypeSpec extends UnitSpec {
 
-  val validSaReturnType = SaReturnType(
+  val validSaReturnType: SaReturnType = SaReturnType(
     Some("1234567890"),
     Some("2020-01-01"),
     Some("2020-01-01"),
@@ -40,7 +40,7 @@ class SaReturnTypeSpec extends UnitSpec {
     Some(validDeducts)
   )
 
-  val invalidSaReturnType = SaReturnType(
+  val invalidSaReturnType: SaReturnType = SaReturnType(
     Some(""),
     Some(""),
     Some(""),

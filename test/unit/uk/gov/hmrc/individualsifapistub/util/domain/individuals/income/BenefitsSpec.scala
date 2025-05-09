@@ -22,8 +22,8 @@ import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class BenefitsSpec extends UnitSpec {
 
-  val validBenefits = Benefits(Some(506328.1), Some(246594.83))
-  val invalidBenefits = Benefits(Some(9999999999.99 + 1), Some(9999999999.99 + 1))
+  val validBenefits: Benefits = Benefits(Some(506328.1), Some(246594.83))
+  val invalidBenefits: Benefits = Benefits(Some(9999999999.99 + 1), Some(9999999999.99 + 1))
 
   "Benefits" should {
     "Write to Json" in {

@@ -22,7 +22,7 @@ import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class EmployeeNicsSpec extends UnitSpec {
 
-  val validEmployeeNics = EmployeeNics(
+  val validEmployeeNics: EmployeeNics = EmployeeNics(
     Some(15797.45),
     Some(13170.69),
     Some(16193.76),
@@ -33,7 +33,7 @@ class EmployeeNicsSpec extends UnitSpec {
     Some(162081.23)
   )
 
-  val invalidEmployeeNics = EmployeeNics(
+  val invalidEmployeeNics: EmployeeNics = EmployeeNics(
     Some(9999999999.99 + 1),
     Some(9999999999.99 + 1),
     Some(9999999999.99 + 1),

@@ -28,15 +28,15 @@ import scala.concurrent.Future
 
 class SelfAssessmentTaxPayerServiceSpec extends AsyncWordSpec with Matchers with MockitoSugar {
 
-  val mockRepository = mock[SelfAssessmentTaxPayerRepository]
+  val mockRepository: SelfAssessmentTaxPayerRepository = mock[SelfAssessmentTaxPayerRepository]
   val service = new SelfAssessmentTaxPayerService(mockRepository)
 
-  val exampleAddress =
+  val exampleAddress: Address =
     Address(Some("Alfie House"), Some("Main Street"), Some("Birmingham"), Some("West midlands"), Some("B14 6JH"))
 
-  val taxPayerDetails = Seq(TaxPayerDetails("John Smith II", Some("Registered"), exampleAddress))
-  val request = SelfAssessmentTaxPayer("1234567890", "Individual", taxPayerDetails)
-  val response = SelfAssessmentTaxPayer("1234567890", "Individual", taxPayerDetails)
+  val taxPayerDetails: Seq[TaxPayerDetails] = Seq(TaxPayerDetails("John Smith II", Some("Registered"), exampleAddress))
+  val request: SelfAssessmentTaxPayer = SelfAssessmentTaxPayer("1234567890", "Individual", taxPayerDetails)
+  val response: SelfAssessmentTaxPayer = SelfAssessmentTaxPayer("1234567890", "Individual", taxPayerDetails)
 
   "create" should {
     "return response when creating" in {

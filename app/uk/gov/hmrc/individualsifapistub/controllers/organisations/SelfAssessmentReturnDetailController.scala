@@ -17,7 +17,7 @@
 package uk.gov.hmrc.individualsifapistub.controllers.organisations
 
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.individualsifapistub.config.LoggingAction
 import uk.gov.hmrc.individualsifapistub.controllers.CommonController
 import uk.gov.hmrc.individualsifapistub.domain.organisations.CreateSelfAssessmentReturnDetailRequest
@@ -29,14 +29,13 @@ import scala.concurrent.ExecutionContext
 
 class SelfAssessmentReturnDetailController @Inject() (
   loggingAction: LoggingAction,
-  bodyParsers: PlayBodyParsers,
   cc: ControllerComponents,
   selfAssessmentReturnDetailService: SelfAssessmentReturnDetailService
 )(implicit val ec: ExecutionContext)
     extends CommonController(cc) {
 
   def create(utr: String): Action[JsValue] =
-    loggingAction.async(bodyParsers.json) { implicit request =>
+    loggingAction.async(parse.json) { implicit request =>
       withJsonBody[CreateSelfAssessmentReturnDetailRequest] { body =>
         selfAssessmentReturnDetailService
           .create(body)

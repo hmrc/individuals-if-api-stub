@@ -22,10 +22,12 @@ import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType
 
 import javax.inject.Inject
+import scala.concurrent.Future
+import uk.gov.hmrc.individualsifapistub.domain.TestIndividual
 
 class ServiceBase @Inject() (apiPlatformTestUserConnector: ApiPlatformTestUserConnector) {
 
-  def verifyNino(idType: String, idValue: String)(implicit hc: HeaderCarrier) =
+  def verifyNino(idType: String, idValue: String)(implicit hc: HeaderCarrier): Future[Option[TestIndividual]] =
     IdType.parse(idType) match {
       case IdType.Nino => apiPlatformTestUserConnector.getIndividualByNino(Nino(idValue))
       case _           => throw new BadRequestException("Invalid National Insurance Number")

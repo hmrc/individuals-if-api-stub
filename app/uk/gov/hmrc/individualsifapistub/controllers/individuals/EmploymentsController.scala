@@ -17,7 +17,7 @@
 package uk.gov.hmrc.individualsifapistub.controllers.individuals
 
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.individualsifapistub.config.LoggingAction
 import uk.gov.hmrc.individualsifapistub.controllers.CommonController
 import uk.gov.hmrc.individualsifapistub.domain.individuals.Employments
@@ -30,7 +30,6 @@ import scala.concurrent.ExecutionContext
 
 class EmploymentsController @Inject() (
   loggingAction: LoggingAction,
-  bodyParser: PlayBodyParsers,
   cc: ControllerComponents,
   employmentsService: EmploymentsService
 )(implicit val ec: ExecutionContext)
@@ -43,7 +42,7 @@ class EmploymentsController @Inject() (
     endDate: Option[String],
     useCase: Option[String]
   ): Action[JsValue] =
-    loggingAction.async(bodyParser.json) { implicit request =>
+    loggingAction.async(parse.json) { implicit request =>
       withJsonBodyAndValidId[Employments](idType, idValue, startDate, endDate, useCase) { jsonBody =>
         employmentsService.create(
           idType,

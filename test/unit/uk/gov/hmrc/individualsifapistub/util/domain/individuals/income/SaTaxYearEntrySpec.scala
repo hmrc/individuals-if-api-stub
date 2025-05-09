@@ -22,10 +22,10 @@ import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class SaTaxYearEntrySpec extends UnitSpec {
 
-  val returnTypeList = Seq(createValidSaReturnType())
+  val returnTypeList: Seq[SaReturnType] = Seq(createValidSaReturnType())
 
-  val validSaTaxYearEntry = SaTaxYearEntry(Some("2020"), Some(100.01), Some(returnTypeList))
-  val invalidSaTaxYearEntry = SaTaxYearEntry(Some("-42"), Some(100.001), Some(returnTypeList))
+  val validSaTaxYearEntry: SaTaxYearEntry = SaTaxYearEntry(Some("2020"), Some(100.01), Some(returnTypeList))
+  val invalidSaTaxYearEntry: SaTaxYearEntry = SaTaxYearEntry(Some("-42"), Some(100.001), Some(returnTypeList))
 
   "SaTaxYearEntry" should {
     "WriteToJson" in {

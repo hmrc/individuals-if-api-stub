@@ -21,7 +21,7 @@ import uk.gov.hmrc.individualsifapistub.domain.individuals._
 import java.time.LocalDate
 
 trait IncomePayeHelpers {
-  def createValidPayeEntry() =
+  def createValidPayeEntry(): PayeEntry =
     PayeEntry(
       Some("K971"),
       Some("36"),
@@ -47,7 +47,7 @@ trait IncomePayeHelpers {
       Some(createValidAdditionalFields())
     )
 
-  def createValidPayeHOV2FieldsEntry() =
+  def createValidPayeHOV2FieldsEntry(): PayeEntry =
     PayeEntry(
       None,
       None,
@@ -94,13 +94,13 @@ trait IncomePayeHelpers {
 
   private def createValidPostGradLoan() = PostGradLoan(Some(15636), Some(46849))
 
-  def createValodIFGrossEarningsForNics() =
+  def createValodIFGrossEarningsForNics(): GrossEarningsForNics =
     GrossEarningsForNics(Some(169731.51), Some(173987.07), Some(822317.49), Some(818841.65))
 
   private def createValidAdditionalFields() =
     AdditionalFields(Some(false), Some("yxz8Lt5?/`/>6]5b+7%>o-y4~W5suW"))
 
-  def createValidTotalEmployerNics() =
+  def createValidTotalEmployerNics(): TotalEmployerNics =
     TotalEmployerNics(
       Some(15797.45),
       Some(13170.69),
@@ -112,7 +112,7 @@ trait IncomePayeHelpers {
       Some(162081.23)
     )
 
-  def createValidStatutoryPayToDate() =
+  def createValidStatutoryPayToDate(): StatutoryPayYTD =
     StatutoryPayYTD(
       Some(15797.45),
       Some(13170.69),

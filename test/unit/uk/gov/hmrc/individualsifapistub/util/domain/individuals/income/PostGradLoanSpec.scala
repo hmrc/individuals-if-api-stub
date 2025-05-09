@@ -22,8 +22,8 @@ import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class PostGradLoanSpec extends UnitSpec {
 
-  val validPostGradLoan = PostGradLoan(Some(15884), Some(22177))
-  val invalidPostGradLoan = PostGradLoan(Some(99999 + 1), Some(-1))
+  val validPostGradLoan: PostGradLoan = PostGradLoan(Some(15884), Some(22177))
+  val invalidPostGradLoan: PostGradLoan = PostGradLoan(Some(99999 + 1), Some(-1))
 
   "PostGradLoan" should {
     "Write to json" in {

@@ -24,7 +24,7 @@ import java.time.LocalDate
 
 class PayeEntrySpec extends UnitSpec {
 
-  val validPayeEntry = PayeEntry(
+  val validPayeEntry: PayeEntry = PayeEntry(
     Some("K971"),
     Some("36"),
     Some(19157.5),
@@ -49,7 +49,7 @@ class PayeEntrySpec extends UnitSpec {
     Some(createValidAdditionalFields())
   )
 
-  val invalidPayeEntry = PayeEntry(
+  val invalidPayeEntry: PayeEntry = PayeEntry(
     Some("TEST"),
     Some("TEST"),
     Some(19157.5),
@@ -190,13 +190,13 @@ class PayeEntrySpec extends UnitSpec {
 
   private def createValidPostGradLoan() = PostGradLoan(Some(15636), Some(46849))
 
-  def createValodIFGrossEarningsForNics() =
+  def createValodIFGrossEarningsForNics(): GrossEarningsForNics =
     GrossEarningsForNics(Some(169731.51), Some(173987.07), Some(822317.49), Some(818841.65))
 
   private def createValidAdditionalFields() =
     AdditionalFields(Some(false), Some("yxz8Lt5?/`/>6]5b+7%>o-y4~W5suW"))
 
-  def createValidTotalEmployerNics() =
+  def createValidTotalEmployerNics(): TotalEmployerNics =
     TotalEmployerNics(
       Some(15797.45),
       Some(13170.69),
@@ -208,7 +208,7 @@ class PayeEntrySpec extends UnitSpec {
       Some(162081.23)
     )
 
-  def createValidStatutoryPayToDate() =
+  def createValidStatutoryPayToDate(): StatutoryPayYTD =
     StatutoryPayYTD(
       Some(15797.45),
       Some(13170.69),

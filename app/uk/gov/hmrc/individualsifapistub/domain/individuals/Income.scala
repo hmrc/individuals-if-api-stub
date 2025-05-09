@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.individualsifapistub.domain.individuals
 
-import play.api.libs.functional.syntax.{toApplicativeOps, toFunctionalBuilderOps, unlift}
+import play.api.libs.functional.syntax.{toApplicativeOps, toFunctionalBuilderOps}
 import play.api.libs.json.Reads.{maxLength, minLength, pattern, verifying}
-import play.api.libs.json.{Format, JsPath, Reads}
+import play.api.libs.json._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomePaye.paymentAmountValidator
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomeSa.{payeWholeUnitsPaymentTypeValidator, payeWholeUnitsPositivePaymentTypeValidator}
 
@@ -40,17 +40,13 @@ object StudentLoan {
         (JsPath \ "repaymentsInPayPeriod").readNullable[Int](verifying(payeWholeUnitsPaymentTypeValidator)) and
         (JsPath \ "repaymentsYTD").readNullable[Int](verifying(payeWholeUnitsPositivePaymentTypeValidator))
     )(StudentLoan.apply _),
-    (
-      (JsPath \ "planType").writeNullable[String] and
-        (JsPath \ "repaymentsInPayPeriod").writeNullable[Int] and
-        (JsPath \ "repaymentsYTD").writeNullable[Int]
-    )(unlift(StudentLoan.unapply))
+    Json.writes[StudentLoan]
   )
 }
 
 case class PostGradLoan(
   repaymentsInPayPeriod: Option[Int],
-  repaymentsYtd: Option[Int]
+  repaymentsYTD: Option[Int]
 )
 
 object PostGradLoan {
@@ -59,14 +55,11 @@ object PostGradLoan {
       (JsPath \ "repaymentsInPayPeriod").readNullable[Int](verifying(payeWholeUnitsPaymentTypeValidator)) and
         (JsPath \ "repaymentsYTD").readNullable[Int](verifying(payeWholeUnitsPositivePaymentTypeValidator))
     )(PostGradLoan.apply _),
-    (
-      (JsPath \ "repaymentsInPayPeriod").writeNullable[Int] and
-        (JsPath \ "repaymentsYTD").writeNullable[Int]
-    )(unlift(PostGradLoan.unapply))
+    Json.writes[PostGradLoan]
   )
 }
 
-case class Benefits(taxedViaPayroll: Option[Double], taxedViaPayrollYtd: Option[Double])
+case class Benefits(taxedViaPayroll: Option[Double], taxedViaPayrollYTD: Option[Double])
 
 object Benefits {
   implicit val format: Format[Benefits] = Format(
@@ -74,16 +67,13 @@ object Benefits {
       (JsPath \ "taxedViaPayroll").readNullable[Double](verifying(paymentAmountValidator)) and
         (JsPath \ "taxedViaPayrollYTD").readNullable[Double](verifying(paymentAmountValidator))
     )(Benefits.apply _),
-    (
-      (JsPath \ "taxedViaPayroll").writeNullable[Double] and
-        (JsPath \ "taxedViaPayrollYTD").writeNullable[Double]
-    )(unlift(Benefits.unapply))
+    Json.writes[Benefits]
   )
 }
 
 case class EmployeePensionContribs(
-  paidYtd: Option[Double],
-  notPaidYtd: Option[Double],
+  paidYTD: Option[Double],
+  notPaidYTD: Option[Double],
   paid: Option[Double],
   notPaid: Option[Double]
 )
@@ -96,12 +86,7 @@ object EmployeePensionContribs {
         (JsPath \ "paid").readNullable[Double](verifying(paymentAmountValidator)) and
         (JsPath \ "notPaid").readNullable[Double](verifying(paymentAmountValidator))
     )(EmployeePensionContribs.apply _),
-    (
-      (JsPath \ "paidYTD").writeNullable[Double] and
-        (JsPath \ "notPaidYTD").writeNullable[Double] and
-        (JsPath \ "paid").writeNullable[Double] and
-        (JsPath \ "notPaid").writeNullable[Double]
-    )(unlift(EmployeePensionContribs.unapply))
+    Json.writes[EmployeePensionContribs]
   )
 }
 
@@ -120,12 +105,7 @@ object GrossEarningsForNics {
         (JsPath \ "inPayPeriod3").readNullable[Double](verifying(paymentAmountValidator)) and
         (JsPath \ "inPayPeriod4").readNullable[Double](verifying(paymentAmountValidator))
     )(GrossEarningsForNics.apply _),
-    (
-      (JsPath \ "inPayPeriod1").writeNullable[Double] and
-        (JsPath \ "inPayPeriod2").writeNullable[Double] and
-        (JsPath \ "inPayPeriod3").writeNullable[Double] and
-        (JsPath \ "inPayPeriod4").writeNullable[Double]
-    )(unlift(GrossEarningsForNics.unapply))
+    Json.writes[GrossEarningsForNics]
   )
 }
 
@@ -143,7 +123,7 @@ object AdditionalFields {
     (
       (JsPath \ "employee" \ "hasPartner").writeNullable[Boolean] and
         (JsPath \ "payroll" \ "id").writeNullable[String]
-    )(unlift(AdditionalFields.unapply))
+    )(o => (o.employeeHasPartner, o.payrollId))
   )
 }
 
@@ -170,16 +150,7 @@ object TotalEmployerNics {
         (JsPath \ "ytd3").readNullable[Double](verifying(paymentAmountValidator)) and
         (JsPath \ "ytd4").readNullable[Double](verifying(paymentAmountValidator))
     )(TotalEmployerNics.apply _),
-    (
-      (JsPath \ "inPayPeriod1").writeNullable[Double] and
-        (JsPath \ "inPayPeriod2").writeNullable[Double] and
-        (JsPath \ "inPayPeriod3").writeNullable[Double] and
-        (JsPath \ "inPayPeriod4").writeNullable[Double] and
-        (JsPath \ "ytd1").writeNullable[Double] and
-        (JsPath \ "ytd2").writeNullable[Double] and
-        (JsPath \ "ytd3").writeNullable[Double] and
-        (JsPath \ "ytd4").writeNullable[Double]
-    )(unlift(TotalEmployerNics.unapply))
+    Json.writes[TotalEmployerNics]
   )
 }
 
@@ -206,16 +177,7 @@ object EmployeeNics {
         (JsPath \ "ytd3").readNullable[Double](verifying(paymentAmountValidator)) and
         (JsPath \ "ytd4").readNullable[Double](verifying(paymentAmountValidator))
     )(EmployeeNics.apply _),
-    (
-      (JsPath \ "inPayPeriod1").writeNullable[Double] and
-        (JsPath \ "inPayPeriod2").writeNullable[Double] and
-        (JsPath \ "inPayPeriod3").writeNullable[Double] and
-        (JsPath \ "inPayPeriod4").writeNullable[Double] and
-        (JsPath \ "ytd1").writeNullable[Double] and
-        (JsPath \ "ytd2").writeNullable[Double] and
-        (JsPath \ "ytd3").writeNullable[Double] and
-        (JsPath \ "ytd4").writeNullable[Double]
-    )(unlift(EmployeeNics.unapply))
+    Json.writes[EmployeeNics]
   )
 }
 
@@ -234,12 +196,7 @@ object StatutoryPayYTD {
         (JsPath \ "adoption").readNullable[Double](verifying(paymentAmountValidator)) and
         (JsPath \ "parentalBereavement").readNullable[Double](verifying(paymentAmountValidator))
     )(StatutoryPayYTD.apply _),
-    (
-      (JsPath \ "maternity").writeNullable[Double] and
-        (JsPath \ "paternity").writeNullable[Double] and
-        (JsPath \ "adoption").writeNullable[Double] and
-        (JsPath \ "parentalBereavement").writeNullable[Double]
-    )(unlift(StatutoryPayYTD.unapply))
+    Json.writes[StatutoryPayYTD]
   )
 }
 
@@ -257,14 +214,14 @@ case class PayeEntry(
   weeklyPeriodNumber: Option[String],
   payFrequency: Option[String],
   dednsFromNetPay: Option[Double],
-  employeeNics: Option[EmployeeNics],
+  employeeNICs: Option[EmployeeNics],
   employeePensionContribs: Option[EmployeePensionContribs],
   benefits: Option[Benefits],
   statutoryPayYTD: Option[StatutoryPayYTD],
   studentLoan: Option[StudentLoan],
   postGradLoan: Option[PostGradLoan],
-  grossEarningsForNics: Option[GrossEarningsForNics],
-  totalEmployerNics: Option[TotalEmployerNics],
+  grossEarningsForNICs: Option[GrossEarningsForNics],
+  totalEmployerNICs: Option[TotalEmployerNics],
   additionalFields: Option[AdditionalFields]
 )
 
@@ -326,30 +283,14 @@ object PayeEntry {
         (JsPath \ "totalEmployerNICs").readNullable[TotalEmployerNics] and
         JsPath.readNullable[AdditionalFields]
     )(PayeEntry.apply _),
-    (
-      (JsPath \ "taxCode").writeNullable[String] and
-        (JsPath \ "paidHoursWorked").writeNullable[String] and
-        (JsPath \ "taxablePayToDate").writeNullable[Double] and
-        (JsPath \ "totalTaxToDate").writeNullable[Double] and
-        (JsPath \ "taxDeductedOrRefunded").writeNullable[Double] and
-        (JsPath \ "employerPayeRef").writeNullable[String] and
-        (JsPath \ "paymentDate").writeNullable[LocalDate] and
-        (JsPath \ "taxablePay").writeNullable[Double] and
-        (JsPath \ "taxYear").writeNullable[String] and
-        (JsPath \ "monthlyPeriodNumber").writeNullable[String] and
-        (JsPath \ "weeklyPeriodNumber").writeNullable[String] and
-        (JsPath \ "payFrequency").writeNullable[String] and
-        (JsPath \ "dednsFromNetPay").writeNullable[Double] and
-        (JsPath \ "employeeNICs").writeNullable[EmployeeNics] and
-        (JsPath \ "employeePensionContribs").writeNullable[EmployeePensionContribs] and
-        (JsPath \ "benefits").writeNullable[Benefits] and
-        (JsPath \ "statutoryPayYTD").writeNullable[StatutoryPayYTD] and
-        (JsPath \ "studentLoan").writeNullable[StudentLoan] and
-        (JsPath \ "postGradLoan").writeNullable[PostGradLoan] and
-        (JsPath \ "grossEarningsForNICs").writeNullable[GrossEarningsForNics] and
-        (JsPath \ "totalEmployerNICs").writeNullable[TotalEmployerNics] and
-        JsPath.writeNullable[AdditionalFields]
-    )(unlift(PayeEntry.unapply))
+    Json.writes[PayeEntry].transform { (jsObj: JsObject) =>
+      (jsObj \ "additionalFields").asOpt[JsObject] match {
+        case Some(extraFields) =>
+          jsObj - "additionalFields" ++ extraFields
+        case None =>
+          jsObj - "additionalFields"
+      }
+    }
   )
 }
 
@@ -388,22 +329,7 @@ object SaIncome {
         (JsPath \ "shares").readNullable[Double](verifying(paymentAmountValidator)) and
         (JsPath \ "other").readNullable[Double](verifying(paymentAmountValidator))
     )(SaIncome.apply _),
-    (
-      (JsPath \ "selfAssessment").writeNullable[Double] and
-        (JsPath \ "allEmployments").writeNullable[Double] and
-        (JsPath \ "ukInterest").writeNullable[Double] and
-        (JsPath \ "foreignDivs").writeNullable[Double] and
-        (JsPath \ "ukDivsAndInterest").writeNullable[Double] and
-        (JsPath \ "partnerships").writeNullable[Double] and
-        (JsPath \ "pensions").writeNullable[Double] and
-        (JsPath \ "selfEmployment").writeNullable[Double] and
-        (JsPath \ "trusts").writeNullable[Double] and
-        (JsPath \ "ukProperty").writeNullable[Double] and
-        (JsPath \ "foreign").writeNullable[Double] and
-        (JsPath \ "lifePolicies").writeNullable[Double] and
-        (JsPath \ "shares").writeNullable[Double] and
-        (JsPath \ "other").writeNullable[Double]
-    )(unlift(SaIncome.unapply))
+    Json.writes[SaIncome]
   )
 }
 
@@ -418,7 +344,7 @@ case class SaReturnType(
   totalTaxPaid: Option[Double],
   totalNIC: Option[Double],
   turnover: Option[Double],
-  otherBusinessIncome: Option[Double],
+  otherBusIncome: Option[Double],
   tradingIncomeAllowance: Option[Double],
   address: Option[Address],
   income: Option[SaIncome],
@@ -451,23 +377,7 @@ object SaReturnType {
         (JsPath \ "income").readNullable[SaIncome] and
         (JsPath \ "deducts").readNullable[Deducts]
     )(SaReturnType.apply _),
-    (
-      (JsPath \ "utr").writeNullable[String] and
-        (JsPath \ "caseStartDate").writeNullable[String] and
-        (JsPath \ "receivedDate").writeNullable[String] and
-        (JsPath \ "businessDescription").writeNullable[String] and
-        (JsPath \ "telephoneNumber").writeNullable[String] and
-        (JsPath \ "busStartDate").writeNullable[String] and
-        (JsPath \ "busEndDate").writeNullable[String] and
-        (JsPath \ "totalTaxPaid").writeNullable[Double] and
-        (JsPath \ "totalNIC").writeNullable[Double] and
-        (JsPath \ "turnover").writeNullable[Double] and
-        (JsPath \ "otherBusIncome").writeNullable[Double] and
-        (JsPath \ "tradingIncomeAllowance").writeNullable[Double] and
-        (JsPath \ "address").writeNullable[Address] and
-        (JsPath \ "income").writeNullable[SaIncome] and
-        (JsPath \ "deducts").writeNullable[Deducts]
-    )(unlift(SaReturnType.unapply))
+    Json.writes[SaReturnType]
   )
 }
 
@@ -482,10 +392,7 @@ object Deducts {
       (JsPath \ "totalBusExpenses").readNullable[Double](verifying(paymentAmountValidator)) and
         (JsPath \ "totalDisallowBusExp").readNullable[Double](verifying(paymentAmountValidator))
     )(Deducts.apply _),
-    (
-      (JsPath \ "totalBusExpenses").writeNullable[Double] and
-        (JsPath \ "totalDisallowBusExp").writeNullable[Double]
-    )(unlift(Deducts.unapply))
+    Json.writes[Deducts]
   )
 }
 
@@ -500,46 +407,20 @@ object SaTaxYearEntry {
         (JsPath \ "income").readNullable[Double](verifying(paymentAmountValidator)) and
         (JsPath \ "returnList").readNullable[Seq[SaReturnType]]
     )(SaTaxYearEntry.apply _),
-    (
-      (JsPath \ "taxYear").writeNullable[String] and
-        (JsPath \ "income").writeNullable[Double] and
-        (JsPath \ "returnList").writeNullable[Seq[SaReturnType]]
-    )(unlift(SaTaxYearEntry.unapply))
+    Json.writes[SaTaxYearEntry]
   )
 }
 
-case class IncomeSaEntry(id: String, incomeSa: IncomeSa, idValue: Option[String])
+case class IncomeSaEntry(id: String, incomeSaResponse: IncomeSa, idValue: Option[String])
 
 object IncomeSaEntry {
-  implicit val format: Format[IncomeSaEntry] = Format(
-    (
-      (JsPath \ "id").read[String] and
-        (JsPath \ "incomeSaResponse").read[IncomeSa] and
-        (JsPath \ "idValue").readNullable[String]
-    )(IncomeSaEntry.apply _),
-    (
-      (JsPath \ "id").write[String] and
-        (JsPath \ "incomeSaResponse").write[IncomeSa] and
-        (JsPath \ "idValue").writeNullable[String]
-    )(unlift(IncomeSaEntry.unapply))
-  )
+  implicit val format: Format[IncomeSaEntry] = Json.format
 }
 
 case class IncomePayeEntry(id: String, incomePaye: IncomePaye, idValue: String)
 
 object IncomePayeEntry {
-  implicit val format: Format[IncomePayeEntry] = Format(
-    (
-      (JsPath \ "id").read[String] and
-        (JsPath \ "incomePaye").read[IncomePaye] and
-        (JsPath \ "idValue").read[String]
-    )(IncomePayeEntry.apply _),
-    (
-      (JsPath \ "id").write[String] and
-        (JsPath \ "incomePaye").write[IncomePaye] and
-        (JsPath \ "idValue").write[String]
-    )(unlift(IncomePayeEntry.unapply))
-  )
+  implicit val format: Format[IncomePayeEntry] = Json.format
 }
 
 case class IncomeSa(sa: Option[Seq[SaTaxYearEntry]])

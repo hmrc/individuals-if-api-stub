@@ -37,29 +37,25 @@ import scala.concurrent.Future
 
 class CorporationTaxCompanyDetailsControllerSpec extends TestSupport {
 
-  val mockService = mock[CorporationTaxCompanyDetailsService]
-  val mockConnector = mock[ApiPlatformTestUserConnector]
-  val controller = new CorporationTaxCompanyDetailsController(
-    loggingAction,
-    bodyParsers,
-    controllerComponents,
-    mockService,
-    mockConnector
-  )
-  val repository = fakeApplication.injector.instanceOf[CorporationTaxCompanyDetailsRepository]
+  val mockService: CorporationTaxCompanyDetailsService = mock[CorporationTaxCompanyDetailsService]
+  val mockConnector: ApiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
+  val controller =
+    new CorporationTaxCompanyDetailsController(loggingAction, controllerComponents, mockService, mockConnector)
+  val repository: CorporationTaxCompanyDetailsRepository =
+    fakeApplication.injector.instanceOf[CorporationTaxCompanyDetailsRepository]
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  val address =
+  val address: Address =
     Address(Some("Alfie House"), Some("Main Street"), Some("Manchester"), Some("Londonberry"), Some("LN1 1AG"))
 
-  val name = Name("Waitrose", "And Partners")
+  val name: Name = Name("Waitrose", "And Partners")
 
-  val registeredDetails = NameAddressDetails(name, address)
-  val communicationDetails = NameAddressDetails(name, address)
+  val registeredDetails: NameAddressDetails = NameAddressDetails(name, address)
+  val communicationDetails: NameAddressDetails = NameAddressDetails(name, address)
 
-  val ctCompanyDetails =
+  val ctCompanyDetails: CorporationTaxCompanyDetails =
     CorporationTaxCompanyDetails("1234567890", "12345678", Some(registeredDetails), Some(communicationDetails))
-  val testOrganisation = TestOrganisation(
+  val testOrganisation: TestOrganisation = TestOrganisation(
     Some(EmpRef("1234567890", "")),
     Some("12345678"),
     Some(""),

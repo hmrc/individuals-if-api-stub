@@ -31,10 +31,10 @@ class EmploymentsSpec extends UnitSpec with TestHelpers {
   val useCase = "TEST"
   val fields = "some(values)"
 
-  val ninoDetails = Identifier(Some("XH123456A"), None, Some(startDate), Some(endDate), Some(useCase))
-  val trnDetails = Identifier(None, Some("12345678"), Some(startDate), Some(endDate), Some(useCase))
+  val ninoDetails: Identifier = Identifier(Some("XH123456A"), None, Some(startDate), Some(endDate), Some(useCase))
+  val trnDetails: Identifier = Identifier(None, Some("12345678"), Some(startDate), Some(endDate), Some(useCase))
 
-  val address = Address(
+  val address: Address = Address(
     Some("line1"),
     Some("line2"),
     Some("line3"),
@@ -43,14 +43,14 @@ class EmploymentsSpec extends UnitSpec with TestHelpers {
     Some("postcode")
   )
 
-  val employer = Employer(
+  val employer: Employer = Employer(
     name = Some("Name"),
     address = Some(address),
     districtNumber = Some("ABC"),
     schemeRef = Some("ABC")
   )
 
-  val employmentDetail = EmploymentDetail(
+  val employmentDetail: EmploymentDetail = EmploymentDetail(
     startDate = Some("2001-12-31"),
     endDate = Some("2002-05-12"),
     payFrequency = Some("W2"),
@@ -58,7 +58,7 @@ class EmploymentsSpec extends UnitSpec with TestHelpers {
     address = Some(address)
   )
 
-  val payment = Payment(
+  val payment: Payment = Payment(
     date = Some(LocalDate.parse("2001-12-31")),
     ytdTaxablePay = Some(162081.23),
     paidTaxablePay = Some(112.75),
@@ -67,7 +67,7 @@ class EmploymentsSpec extends UnitSpec with TestHelpers {
     month = Some(12)
   )
 
-  val employment = Employment(
+  val employment: Employment = Employment(
     employer = Some(employer),
     employerRef = Some("247/ZT6767895A"),
     employment = Some(employmentDetail),

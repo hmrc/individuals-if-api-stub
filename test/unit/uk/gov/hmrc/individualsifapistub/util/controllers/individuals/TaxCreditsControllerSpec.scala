@@ -34,19 +34,21 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 import scala.concurrent.Future
+import play.api.mvc.AnyContentAsEmpty
 
 class TaxCreditsControllerSpec extends TestSupport {
 
   trait Setup {
     implicit val hc: HeaderCarrier = HeaderCarrier()
-    val fakeRequest = FakeRequest()
-    val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
-    val taxCreditsRepo = mock[TaxCreditsRepository]
-    val servicesConfig = mock[ServicesConfig]
+    val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+    val apiPlatformTestUserConnector: ApiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
+    val taxCreditsRepo: TaxCreditsRepository = mock[TaxCreditsRepository]
+    val servicesConfig: ServicesConfig = mock[ServicesConfig]
     val mockTaxCreditsService = new TaxCreditsService(taxCreditsRepo, apiPlatformTestUserConnector, servicesConfig)
-    val underTest = new TaxCreditsController(loggingAction, bodyParsers, controllerComponents, mockTaxCreditsService)
+    val underTest = new TaxCreditsController(loggingAction, controllerComponents, mockTaxCreditsService)
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).thenReturn(Future.successful(testIndividual))
+    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any()))
+      .thenReturn(Future.successful(Some(testIndividual)))
   }
 
   val application: Application = Application(
@@ -63,15 +65,15 @@ class TaxCreditsControllerSpec extends TestSupport {
   val endDate = "2020-21-31"
   val useCase = "TEST"
   val fields = "some(values)"
-  val utr = SaUtr("2432552635")
+  val utr: SaUtr = SaUtr("2432552635")
 
-  val testIndividual = TestIndividual(
+  val testIndividual: TestIndividual = TestIndividual(
     saUtr = Some(utr)
   )
 
-  val ident = Identifier(Some(idValue), None, Some(startDate), Some(endDate), Some(useCase))
+  val ident: Identifier = Identifier(Some(idValue), None, Some(startDate), Some(endDate), Some(useCase))
 
-  val request = Applications(Seq(application))
+  val request: Applications = Applications(Seq(application))
 
   "Create TaxCredits" should {
     "Successfully create a record and return created record as response" in new Setup {

@@ -40,11 +40,11 @@ class TaxCreditsServiceSpec extends TestSupport {
     val endDate = "2020-21-31"
     val useCase = "TEST"
     val fields = "some(values)"
-    val ident = Identifier(Some(idValue), None, Some(startDate), Some(endDate), Some(useCase))
-    val id = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$useCase"
-    val utr = SaUtr("2432552635")
+    val ident: Identifier = Identifier(Some(idValue), None, Some(startDate), Some(endDate), Some(useCase))
+    val id: String = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$useCase"
+    val utr: SaUtr = SaUtr("2432552635")
 
-    val testIndividual = TestIndividual(
+    val testIndividual: TestIndividual = TestIndividual(
       saUtr = Some(utr)
     )
 
@@ -57,14 +57,15 @@ class TaxCreditsServiceSpec extends TestSupport {
     )
 
     implicit val hc: HeaderCarrier = HeaderCarrier()
-    val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
+    val apiPlatformTestUserConnector: ApiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
 
-    val request = Applications(Seq(application))
-    val taxCreditsRepository = mock[TaxCreditsRepository]
-    val servicesConfig = mock[ServicesConfig]
+    val request: Applications = Applications(Seq(application))
+    val taxCreditsRepository: TaxCreditsRepository = mock[TaxCreditsRepository]
+    val servicesConfig: ServicesConfig = mock[ServicesConfig]
     val underTest = new TaxCreditsService(taxCreditsRepository, apiPlatformTestUserConnector, servicesConfig)
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).thenReturn(Future.successful(testIndividual))
+    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any()))
+      .thenReturn(Future.successful(Some(testIndividual)))
 
   }
 

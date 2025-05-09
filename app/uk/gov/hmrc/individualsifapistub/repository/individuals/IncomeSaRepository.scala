@@ -16,10 +16,10 @@
 
 package uk.gov.hmrc.individualsifapistub.repository.individuals
 
-import org.mongodb.scala.MongoWriteException
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.Indexes.ascending
 import org.mongodb.scala.model.{IndexModel, IndexOptions}
+import org.mongodb.scala.{MongoWriteException, ObservableFuture}
 import play.api.Logging
 import play.api.libs.json.Json
 import uk.gov.hmrc.individualsifapistub.domain._
@@ -77,7 +77,7 @@ class IncomeSaRepository @Inject() (mongo: MongoComponent)(implicit ec: Executio
     preservingMdc {
       collection
         .insertOne(incomeSaRecord)
-        .map(_ => incomeSaRecord.incomeSa)
+        .map(_ => incomeSaRecord.incomeSaResponse)
         .head()
         .recover {
           case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException
@@ -140,18 +140,18 @@ class IncomeSaRepository @Inject() (mongo: MongoComponent)(implicit ec: Executio
             Option(endYear).filter(_.nonEmpty).map(_.toInt).getOrElse(3000)
           )
         )
-        .map(_.incomeSa.sa.getOrElse(Seq.empty))
+        .map(_.incomeSaResponse.sa.getOrElse(Seq.empty))
         .foldLeft(Seq.empty[SaTaxYearEntry])(_ ++ _)
         .toFuture()
         .flatMap {
           case entries if entries.nonEmpty =>
-            Future.successful(Some(IncomeSa(Some(entries))))
+            Future.successful(Some(IncomeSa(Some(entries.flatten))))
           case _ =>
             // fallback to legacy search
             collection
               .find(idBasedSearch(id))
               .headOption()
-              .map(_.map(_.incomeSa))
+              .map(_.map(_.incomeSaResponse))
         }
     }
   }

@@ -38,13 +38,7 @@ object Address {
         (JsPath \ "line4").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
         (JsPath \ "postcode").readNullable[String](minLength[String](0) keepAnd maxLength[String](10))
     )(Address.apply _),
-    (
-      (JsPath \ "line1").writeNullable[String] and
-        (JsPath \ "line2").writeNullable[String] and
-        (JsPath \ "line3").writeNullable[String] and
-        (JsPath \ "line4").writeNullable[String] and
-        (JsPath \ "postcode").writeNullable[String]
-    )(unlift(Address.unapply))
+    Json.writes[Address]
   )
 }
 
@@ -60,11 +54,7 @@ object TaxPayerDetails {
           .readNullable[String](pattern(addressTypePattern, "Address Type does not fit expected pattern")) and
         (JsPath \ "address").read[Address]
     )(TaxPayerDetails.apply _),
-    (
-      (JsPath \ "name").write[String] and
-        (JsPath \ "addressType").writeNullable[String] and
-        (JsPath \ "address").write[Address]
-    )(unlift(TaxPayerDetails.unapply))
+    Json.writes[TaxPayerDetails]
   )
 }
 
@@ -98,11 +88,7 @@ object SelfAssessmentTaxPayer {
         (JsPath \ "taxpayerType").read[String](pattern(taxPayerTypePattern, "Invalid taxpayer type")) and
         (JsPath \ "taxpayerDetails").read[Seq[TaxPayerDetails]]
     )(SelfAssessmentTaxPayer.apply _),
-    (
-      (JsPath \ "utr").write[String] and
-        (JsPath \ "taxpayerType").write[String] and
-        (JsPath \ "taxpayerDetails").write[Seq[TaxPayerDetails]]
-    )(unlift(SelfAssessmentTaxPayer.unapply))
+    Json.writes[SelfAssessmentTaxPayer]
   )
 }
 

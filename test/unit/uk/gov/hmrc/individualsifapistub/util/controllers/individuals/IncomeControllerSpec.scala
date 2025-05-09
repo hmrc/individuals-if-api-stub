@@ -35,26 +35,29 @@ import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.testUtils.{IncomePayeHelpers, IncomeSaHelpers}
 
 import scala.concurrent.Future
+import play.api.mvc.AnyContentAsEmpty
+import uk.gov.hmrc.individualsifapistub.domain.individuals.{PayeEntry, SaTaxYearEntry}
 
 class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomePayeHelpers {
 
   trait Setup {
     implicit val hc: HeaderCarrier = HeaderCarrier()
-    val fakeRequest = FakeRequest()
-    val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
-    val incomePayeRepo = mock[IncomePayeRepository]
-    val incomeSaRepo = mock[IncomeSaRepository]
-    val servicesConfig = mock[ServicesConfig]
+    val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+    val apiPlatformTestUserConnector: ApiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
+    val incomePayeRepo: IncomePayeRepository = mock[IncomePayeRepository]
+    val incomeSaRepo: IncomeSaRepository = mock[IncomeSaRepository]
+    val servicesConfig: ServicesConfig = mock[ServicesConfig]
     val incomeService = new IncomeService(incomeSaRepo, incomePayeRepo, apiPlatformTestUserConnector, servicesConfig)
-    val underTest = new IncomeController(loggingAction, bodyParsers, controllerComponents, incomeService)
+    val underTest = new IncomeController(loggingAction, controllerComponents, incomeService)
 
-    val utr = SaUtr("2432552635")
+    val utr: SaUtr = SaUtr("2432552635")
 
-    val testIndividual = TestIndividual(
+    val testIndividual: TestIndividual = TestIndividual(
       saUtr = Some(utr)
     )
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).thenReturn(Future.successful(testIndividual))
+    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any()))
+      .thenReturn(Future.successful(Some(testIndividual)))
   }
 
   val idType = "nino"
@@ -68,14 +71,15 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
   val saFields =
     "sa(taxYear,income,returnList(utr,caseStartDate,receivedDate,businessDescription,telephoneNumber,busStartDate,busEndDate,totalTaxPaid,totalNIC,turnover,otherBusIncome,tradingIncomeAllowance,address(line1,line2,line3,line4,postcode),income(selfAssessment,allEmployments,ukInterest,foreignDivs,ukDivsAndInterest,partnerships,pensions,selfEmployment,trusts,ukProperty,foreign,lifePolicies,shares,other),deducts(totalBusExpenses,totalDisallowBusExp)))"
 
-  val innerSaValue = Seq(createValidSaTaxYearEntry(), createValidSaTaxYearEntry())
-  val incomeSaResponse = IncomeSa(Some(innerSaValue))
+  val innerSaValue: Seq[SaTaxYearEntry] = Seq(createValidSaTaxYearEntry(), createValidSaTaxYearEntry())
+  val incomeSaResponse: IncomeSa = IncomeSa(Some(innerSaValue))
 
-  val innerPayeValue = Seq(createValidPayeEntry(), createValidPayeEntry())
-  val incomePayeResponse = IncomePaye(Some(innerPayeValue))
+  val innerPayeValue: Seq[PayeEntry] = Seq(createValidPayeEntry(), createValidPayeEntry())
+  val incomePayeResponse: IncomePaye = IncomePaye(Some(innerPayeValue))
 
-  val innerPayeValueWithFieldFiltered = Seq(createValidPayeHOV2FieldsEntry(), createValidPayeHOV2FieldsEntry())
-  val incomePayeWithFieldFilteredResponse = IncomePaye(Some(innerPayeValueWithFieldFiltered))
+  val innerPayeValueWithFieldFiltered: Seq[PayeEntry] =
+    Seq(createValidPayeHOV2FieldsEntry(), createValidPayeHOV2FieldsEntry())
+  val incomePayeWithFieldFilteredResponse: IncomePaye = IncomePaye(Some(innerPayeValueWithFieldFiltered))
 
   "Sa" should {
 

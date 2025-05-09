@@ -17,7 +17,7 @@
 package uk.gov.hmrc.individualsifapistub.controllers.individuals
 
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Action, AnyContent, ControllerComponents, PlayBodyParsers}
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.individualsifapistub.config.LoggingAction
 import uk.gov.hmrc.individualsifapistub.controllers.CommonController
 import uk.gov.hmrc.individualsifapistub.domain.individuals.{IncomePaye, IncomeSa}
@@ -27,13 +27,9 @@ import uk.gov.hmrc.individualsifapistub.util.FieldFilter
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class IncomeController @Inject() (
-  loggingAction: LoggingAction,
-  bodyParser: PlayBodyParsers,
-  cc: ControllerComponents,
-  incomeService: IncomeService
-)(implicit val ec: ExecutionContext)
-    extends CommonController(cc) {
+class IncomeController @Inject() (loggingAction: LoggingAction, cc: ControllerComponents, incomeService: IncomeService)(
+  implicit val ec: ExecutionContext
+) extends CommonController(cc) {
 
   def createSa(
     idType: String,
@@ -41,7 +37,7 @@ class IncomeController @Inject() (
     startYear: Option[String],
     endYear: Option[String],
     useCase: Option[String]
-  ): Action[JsValue] = loggingAction.async(bodyParser.json) { implicit request =>
+  ): Action[JsValue] = loggingAction.async(parse.json) { implicit request =>
     withJsonBody[IncomeSa] { createRequest =>
       incomeService.createSa(idType, idValue, startYear, endYear, useCase, createRequest) map (e =>
         Created(Json.toJson(e))
@@ -72,7 +68,7 @@ class IncomeController @Inject() (
     startDate: Option[String],
     endDate: Option[String],
     useCase: Option[String]
-  ): Action[JsValue] = loggingAction.async(bodyParser.json) { implicit request =>
+  ): Action[JsValue] = loggingAction.async(parse.json) { implicit request =>
     withJsonBody[IncomePaye] { createRequest =>
       incomeService.createPaye(idType, idValue, startDate, endDate, useCase, createRequest) map (e =>
         Created(Json.toJson(e))

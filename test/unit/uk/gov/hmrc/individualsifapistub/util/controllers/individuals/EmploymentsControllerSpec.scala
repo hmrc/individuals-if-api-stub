@@ -37,25 +37,27 @@ import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 import java.time.LocalDate
 import scala.concurrent.Future
+import play.api.mvc.AnyContentAsEmpty
 
 class EmploymentsControllerSpec extends TestSupport {
 
   trait Setup {
     implicit val hc: HeaderCarrier = HeaderCarrier()
-    val fakeRequest = FakeRequest()
-    val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
-    val employmentsRepo = mock[EmploymentRepository]
-    val servicesConfig = mock[ServicesConfig]
+    val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+    val apiPlatformTestUserConnector: ApiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
+    val employmentsRepo: EmploymentRepository = mock[EmploymentRepository]
+    val servicesConfig: ServicesConfig = mock[ServicesConfig]
     val mockEmploymentsService = new EmploymentsService(employmentsRepo, apiPlatformTestUserConnector, servicesConfig)
-    val underTest = new EmploymentsController(loggingAction, bodyParsers, controllerComponents, mockEmploymentsService)
+    val underTest = new EmploymentsController(loggingAction, controllerComponents, mockEmploymentsService)
 
-    val testIndividual = TestIndividual(
+    val testIndividual: TestIndividual = TestIndividual(
       saUtr = Some(utr)
     )
 
-    val utr = SaUtr("2432552635")
+    val utr: SaUtr = SaUtr("2432552635")
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).thenReturn(Future.successful(testIndividual))
+    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any()))
+      .thenReturn(Future.successful(Some(testIndividual)))
   }
 
   val idType = Nino.toString
@@ -65,7 +67,7 @@ class EmploymentsControllerSpec extends TestSupport {
   val useCase = "TEST"
   val fields = "some(values)"
 
-  val employment =
+  val employment: Employment =
     Employment(
       employer = Some(
         Employer(
@@ -117,10 +119,10 @@ class EmploymentsControllerSpec extends TestSupport {
       )
     )
 
-  val employments = Employments(Seq(employment))
-  val ident = Identifier(Some("XH123456A"), None, Some(startDate), Some(endDate), Some(useCase))
-  val id = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$useCase"
-  val request = EmploymentEntry(id, Seq(employment), None)
+  val employments: Employments = Employments(Seq(employment))
+  val ident: Identifier = Identifier(Some("XH123456A"), None, Some(startDate), Some(endDate), Some(useCase))
+  val id: String = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$useCase"
+  val request: EmploymentEntry = EmploymentEntry(id, Seq(employment), None)
 
   "Create Employment" should {
 

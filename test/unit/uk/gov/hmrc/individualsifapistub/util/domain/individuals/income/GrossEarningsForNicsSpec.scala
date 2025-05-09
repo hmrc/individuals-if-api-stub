@@ -22,14 +22,14 @@ import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class GrossEarningsForNicsSpec extends UnitSpec {
 
-  val validGrossEarningsForNics = GrossEarningsForNics(
+  val validGrossEarningsForNics: GrossEarningsForNics = GrossEarningsForNics(
     Some(995979.04),
     Some(606456.38),
     Some(797877.34),
     Some(166334.69)
   )
 
-  val invalidGrossEarningsForNics = GrossEarningsForNics(
+  val invalidGrossEarningsForNics: GrossEarningsForNics = GrossEarningsForNics(
     Some(9999999999.99 + 1),
     Some(9999999999.99 + 1),
     Some(9999999999.99 + 1),

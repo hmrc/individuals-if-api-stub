@@ -33,10 +33,7 @@ object NumberOfEmployeeCounts {
       (JsPath \ "dateTaken").read[String](pattern(dateTakenPattern, "Invalid dateTaken format")) and
         (JsPath \ "employeeCount").read[Int]
     )(NumberOfEmployeeCounts.apply _),
-    (
-      (JsPath \ "dateTaken").write[String] and
-        (JsPath \ "employeeCount").write[Int]
-    )(unlift(NumberOfEmployeeCounts.unapply))
+    Json.writes[NumberOfEmployeeCounts]
   )
 }
 
@@ -53,11 +50,7 @@ object NumberOfEmployeeReferences {
         (JsPath \ "payeReference").read[String](pattern(payeRefPattern, "payeReference is invalid")) and
         (JsPath \ "counts").read[Seq[NumberOfEmployeeCounts]]
     )(NumberOfEmployeeReferences.apply _),
-    (
-      (JsPath \ "districtNumber").write[String] and
-        (JsPath \ "payeReference").write[String] and
-        (JsPath \ "counts").write[Seq[NumberOfEmployeeCounts]]
-    )(unlift(NumberOfEmployeeReferences.unapply))
+    Json.writes[NumberOfEmployeeReferences]
   )
 }
 
@@ -69,10 +62,7 @@ object NumberOfEmployeeReferencesRequest {
       (JsPath \ "districtNumber").read[String](pattern(districtNumberPattern, "District number is invalid")) and
         (JsPath \ "payeReference").read[String](pattern(payeRefPattern, "payeReference is invalid"))
     )(NumberOfEmployeeReferencesRequest.apply _),
-    (
-      (JsPath \ "districtNumber").write[String] and
-        (JsPath \ "payeReference").write[String]
-    )(unlift(NumberOfEmployeeReferencesRequest.unapply))
+    Json.writes[NumberOfEmployeeReferencesRequest]
   )
 }
 
@@ -89,11 +79,7 @@ object NumberOfEmployeesRequest {
         (JsPath \ "endDate").read[String](pattern(datePattern, "endDate is invalid")) and
         (JsPath \ "references").read[Seq[NumberOfEmployeeReferencesRequest]]
     )(NumberOfEmployeesRequest.apply _),
-    (
-      (JsPath \ "startDate").write[String] and
-        (JsPath \ "endDate").write[String] and
-        (JsPath \ "references").write[Seq[NumberOfEmployeeReferencesRequest]]
-    )(unlift(NumberOfEmployeesRequest.unapply))
+    Json.writes[NumberOfEmployeesRequest]
   )
 }
 
@@ -106,11 +92,7 @@ object NumberOfEmployeesResponse {
         (JsPath \ "endDate").read[String](pattern(datePattern, "endDate is invalid")) and
         (JsPath \ "references").read[Seq[NumberOfEmployeeReferences]]
     )(NumberOfEmployeesResponse.apply _),
-    (
-      (JsPath \ "startDate").write[String] and
-        (JsPath \ "endDate").write[String] and
-        (JsPath \ "references").write[Seq[NumberOfEmployeeReferences]]
-    )(unlift(NumberOfEmployeesResponse.unapply))
+    Json.writes[NumberOfEmployeesResponse]
   )
 }
 

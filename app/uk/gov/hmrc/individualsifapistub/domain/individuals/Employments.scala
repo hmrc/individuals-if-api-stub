@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.individualsifapistub.domain.individuals
 
-import play.api.libs.functional.syntax.{toApplicativeOps, toFunctionalBuilderOps, unlift}
+import play.api.libs.functional.syntax.{toApplicativeOps, toFunctionalBuilderOps}
 import play.api.libs.json.Reads.{max, maxLength, min, minLength, pattern, verifying}
-import play.api.libs.json.{Format, JsPath}
+import play.api.libs.json.{Format, JsPath, Json}
 
 import java.time.LocalDate
 
@@ -37,12 +37,7 @@ object Employer {
         (JsPath \ "districtNumber").readNullable[String](minLength[String](0) keepAnd maxLength[String](3)) and
         (JsPath \ "schemeRef").readNullable[String](minLength[String](0) keepAnd maxLength[String](10))
     )(Employer.apply _),
-    (
-      (JsPath \ "name").writeNullable[String] and
-        (JsPath \ "address").writeNullable[Address] and
-        (JsPath \ "districtNumber").writeNullable[String] and
-        (JsPath \ "schemeRef").writeNullable[String]
-    )(unlift(Employer.unapply))
+    Json.writes[Employer]
   )
 }
 
@@ -73,13 +68,7 @@ object EmploymentDetail {
         (JsPath \ "payrollId").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
         (JsPath \ "address").readNullable[Address]
     )(EmploymentDetail.apply _),
-    (
-      (JsPath \ "startDate").writeNullable[String] and
-        (JsPath \ "endDate").writeNullable[String] and
-        (JsPath \ "payFrequency").writeNullable[String] and
-        (JsPath \ "payrollId").writeNullable[String] and
-        (JsPath \ "address").writeNullable[Address]
-    )(unlift(EmploymentDetail.unapply))
+    Json.writes[EmploymentDetail]
   )
 }
 
@@ -112,14 +101,7 @@ object Payment {
         (JsPath \ "week").readNullable[Int](min(1) keepAnd max(56)) and
         (JsPath \ "month").readNullable[Int](min(1) keepAnd max(12))
     )(Payment.apply _),
-    (
-      (JsPath \ "date").writeNullable[LocalDate] and
-        (JsPath \ "ytdTaxablePay").writeNullable[Double] and
-        (JsPath \ "paidTaxablePay").writeNullable[Double] and
-        (JsPath \ "paidNonTaxOrNICPayment").writeNullable[Double] and
-        (JsPath \ "week").writeNullable[Int] and
-        (JsPath \ "month").writeNullable[Int]
-    )(unlift(Payment.unapply))
+    Json.writes[Payment]
   )
 }
 
@@ -138,37 +120,18 @@ object Employment {
         (JsPath \ "employment").readNullable[EmploymentDetail] and
         (JsPath \ "payments").readNullable[Seq[Payment]]
     )(Employment.apply _),
-    (
-      (JsPath \ "employer").writeNullable[Employer] and
-        (JsPath \ "employerRef").writeNullable[String] and
-        (JsPath \ "employment").writeNullable[EmploymentDetail] and
-        (JsPath \ "payments").writeNullable[Seq[Payment]]
-    )(unlift(Employment.unapply))
+    Json.writes[Employment]
   )
 }
 
 case class EmploymentEntry(id: String, employments: Seq[Employment], idValue: Option[String])
 
 object EmploymentEntry {
-  val format: Format[EmploymentEntry] = Format(
-    (
-      (JsPath \ "id").read[String] and
-        (JsPath \ "employments").read[Seq[Employment]] and
-        (JsPath \ "idValue").readNullable[String]
-    )(EmploymentEntry.apply _),
-    (
-      (JsPath \ "id").write[String] and
-        (JsPath \ "employments").write[Seq[Employment]] and
-        (JsPath \ "idValue").writeNullable[String]
-    )(unlift(EmploymentEntry.unapply))
-  )
+  val format: Format[EmploymentEntry] = Json.format
 }
 
 case class Employments(employments: Seq[Employment])
 
 object Employments {
-  implicit val format: Format[Employments] = Format(
-    (JsPath \ "employments").read[Seq[Employment]].map(x => Employments(x)),
-    (JsPath \ "employments").write[Seq[Employment]].contramap(x => x.employments)
-  )
+  implicit val format: Format[Employments] = Json.format
 }

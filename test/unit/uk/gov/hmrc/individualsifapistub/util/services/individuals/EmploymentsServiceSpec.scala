@@ -41,15 +41,15 @@ class EmploymentsServiceSpec extends TestSupport {
     val endDate = "2020-21-31"
     val useCase = "TEST"
     val fields = "some(values)"
-    val ident = Identifier(Some("XH123456A"), None, Some(startDate), Some(endDate), Some(useCase))
-    val id = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$useCase"
-    val utr = SaUtr("2432552635")
+    val ident: Identifier = Identifier(Some("XH123456A"), None, Some(startDate), Some(endDate), Some(useCase))
+    val id: String = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$useCase"
+    val utr: SaUtr = SaUtr("2432552635")
 
-    val testIndividual = TestIndividual(
+    val testIndividual: TestIndividual = TestIndividual(
       saUtr = Some(utr)
     )
 
-    val employment =
+    val employment: Employment =
       Employment(
         employer = Some(
           Employer(
@@ -102,15 +102,16 @@ class EmploymentsServiceSpec extends TestSupport {
       )
 
     implicit val hc: HeaderCarrier = HeaderCarrier()
-    val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
+    val apiPlatformTestUserConnector: ApiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
 
-    val employments = Employments(Seq(employment))
-    val request = EmploymentEntry(id, Seq(employment), None)
-    val mockEmploymentRepository = mock[EmploymentRepository]
-    val servicesConfig = mock[ServicesConfig]
+    val employments: Employments = Employments(Seq(employment))
+    val request: EmploymentEntry = EmploymentEntry(id, Seq(employment), None)
+    val mockEmploymentRepository: EmploymentRepository = mock[EmploymentRepository]
+    val servicesConfig: ServicesConfig = mock[ServicesConfig]
     val underTest = new EmploymentsService(mockEmploymentRepository, apiPlatformTestUserConnector, servicesConfig)
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).thenReturn(Future.successful(testIndividual))
+    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any()))
+      .thenReturn(Future.successful(Some(testIndividual)))
   }
 
   "Employments Service" when {

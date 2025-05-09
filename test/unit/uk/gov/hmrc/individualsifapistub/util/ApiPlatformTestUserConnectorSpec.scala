@@ -16,34 +16,32 @@
 
 package unit.uk.gov.hmrc.individualsifapistub.util
 
-import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock._
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
+import com.typesafe.config.ConfigFactory
 import org.scalatest.BeforeAndAfterEach
-import play.api.Configuration
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
+import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.{Application, Configuration}
 import uk.gov.hmrc.domain.{EmpRef, Nino, SaUtr}
-import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpClient, NotFoundException}
+import uk.gov.hmrc.http.test.WireMockSupport
+import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.domain._
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-class ApiPlatformTestUserConnectorSpec extends TestSupport with BeforeAndAfterEach {
-  val stubPort = sys.env.getOrElse("WIREMOCK", "11121").toInt
-  val stubHost = "localhost"
-  val wireMockServer = new WireMockServer(wireMockConfig().port(stubPort))
-  val empRef = EmpRef("123", "AI45678")
-  val testOrganisation = TestOrganisation(
+class ApiPlatformTestUserConnectorSpec
+    extends UnitSpec with WireMockSupport with WireMockMethods with BeforeAndAfterEach with GuiceOneAppPerSuite {
+  val empRef: EmpRef = EmpRef("123", "AI45678")
+  val testOrganisation: TestOrganisation = TestOrganisation(
     Some(empRef),
     None,
     None,
     TestOrganisationDetails("Disney Inc", TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ"))
   )
 
-  val nino = Nino("AB123456A")
-  val utr = SaUtr("2432552635")
+  val nino: Nino = Nino("AB123456A")
+  val utr: SaUtr = SaUtr("2432552635")
 
-  val testIndividual = TestIndividual(
+  val testIndividual: TestIndividual = TestIndividual(
     saUtr = Some(utr),
     taxpayerType = Some("Individual"),
     organisationDetails = Some(
@@ -54,38 +52,35 @@ class ApiPlatformTestUserConnectorSpec extends TestSupport with BeforeAndAfterEa
     )
   )
 
-  val http: HttpClient = fakeApplication.injector.instanceOf[HttpClient]
-  val config: Configuration = fakeApplication.injector.instanceOf[Configuration]
-  val serviceConfig: ServicesConfig =
-    fakeApplication.injector.instanceOf[ServicesConfig]
+  private val config = Configuration(
+    ConfigFactory.parseString(
+      s"""
+         |microservice {
+         |  services {
+         |      api-platform-test-user {
+         |        host     = $wireMockHost
+         |        port     = $wireMockPort
+         |    }
+         |  }
+         |}
+         |""".stripMargin
+    )
+  )
+
+  override def fakeApplication(): Application = new GuiceApplicationBuilder().configure(config).build()
 
   trait Setup {
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
-    val underTest =
-      new ApiPlatformTestUserConnector(http, serviceConfig) {
-        override val serviceUrl = s"http://$stubHost:$stubPort"
-      }
+    val underTest: ApiPlatformTestUserConnector = fakeApplication().injector.instanceOf[ApiPlatformTestUserConnector]
   }
-
-  override def beforeEach(): Unit = {
-    wireMockServer.start()
-    configureFor(stubHost, stubPort)
-  }
-
-  override def afterEach(): Unit =
-    wireMockServer.stop()
 
   "get organisation by empRef" should {
-
     "retrieve a test organisation by empRef" in new Setup {
-      stubFor(
-        get(urlEqualTo(s"/organisations/empref/${empRef.encodedValue}"))
-          .willReturn(
-            aResponse()
-              .withStatus(OK)
-              .withBody(
-                s"""
+      when(GET, s"/organisations/empref/${empRef.encodedValue}")
+        .thenReturn(
+          OK,
+          s"""
                {
                  "empRef": "${empRef.value}",
                  "organisationDetails": {
@@ -98,9 +93,7 @@ class ApiPlatformTestUserConnectorSpec extends TestSupport with BeforeAndAfterEa
                  }
                }
              """
-              )
-          )
-      )
+        )
 
       val result = await(underTest.getOrganisationByEmpRef(empRef))
 
@@ -108,70 +101,64 @@ class ApiPlatformTestUserConnectorSpec extends TestSupport with BeforeAndAfterEa
     }
 
     "return nothing if the organisation cannot be found" in new Setup {
-      stubFor(
-        get(urlEqualTo(s"/organisations/empref/${empRef.encodedValue}"))
-          .willReturn(aResponse().withStatus(NOT_FOUND))
-      )
+      when(GET, s"/organisations/empref/${empRef.encodedValue}")
+        .thenReturn(
+          NOT_FOUND
+        )
 
       await(underTest.getOrganisationByEmpRef(empRef)) shouldBe None
     }
 
     "propagate errors" in new Setup {
-      stubFor(
-        get(urlEqualTo(s"/organisations/empref/${empRef.encodedValue}"))
-          .willReturn(aResponse().withStatus(BAD_REQUEST))
-      )
+      when(GET, s"/organisations/empref/${empRef.encodedValue}")
+        .thenReturn(
+          BAD_REQUEST
+        )
 
-      intercept[BadRequestException](await(underTest.getOrganisationByEmpRef(empRef)))
+      intercept[UpstreamErrorResponse](await(underTest.getOrganisationByEmpRef(empRef)))
     }
   }
 
   "getIndividualByNino" should {
-
     "retrieve the individual" in new Setup {
-      stubFor(
-        get(urlEqualTo(s"/individuals/nino/$nino"))
-          .willReturn(
-            aResponse()
-              .withStatus(OK)
-              .withBody(s"""{
-                           |"saUtr": "${utr.value}",
-                           |"taxpayerType": "Individual",
-                           |"organisationDetails": {
-                           |  "name": "Barry Barryson",
-                           |  "address": {
-                           |    "line1": "Capital Tower",
-                           |    "line2": "Aberdeen",
-                           |    "postcode": "SW1 4DQ"
-                           |  }
-                           |}}""".stripMargin)
-          )
-      )
+      when(GET, s"/individuals/nino/$nino")
+        .thenReturn(
+          OK,
+          s"""{
+            "saUtr": "${utr.value}",
+            "taxpayerType": "Individual",
+            "organisationDetails": {
+              "name": "Barry Barryson",
+              "address": {
+                "line1": "Capital Tower",
+                "line2": "Aberdeen",
+                "postcode": "SW1 4DQ"
+              }
+            }
+            }"""
+        )
 
       val result = await(underTest.getIndividualByNino(nino))
 
-      result shouldBe testIndividual
+      result shouldBe Some(testIndividual)
     }
 
-    "fail with RecordNotFoundException when there is no individual matching the nino" in new Setup {
-      stubFor(
-        get(urlEqualTo(s"/individuals/nino/$nino"))
-          .willReturn(aResponse().withStatus(NOT_FOUND))
-      )
+    "return nothing if the individual cannot be found" in new Setup {
+      when(GET, s"/individuals/nino/$nino")
+        .thenReturn(
+          NOT_FOUND
+        )
 
-      intercept[NotFoundException] {
-        await(underTest.getIndividualByNino(nino))
-      }
+      await(underTest.getIndividualByNino(nino)) shouldBe None
     }
 
     "propagate errors" in new Setup {
-      stubFor(
-        get(urlEqualTo(s"/individuals/nino/$nino"))
-          .willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR))
-      )
+      when(GET, s"/individuals/nino/$nino")
+        .thenReturn(
+          INTERNAL_SERVER_ERROR
+        )
 
-      intercept[BadRequestException](await(underTest.getOrganisationByEmpRef(empRef)))
+      intercept[UpstreamErrorResponse](await(underTest.getIndividualByNino(nino)))
     }
-
   }
 }

@@ -22,14 +22,14 @@ import unit.uk.gov.hmrc.individualsifapistub.util.UnitSpec
 
 class EmployeePensionContribsSpec extends UnitSpec {
 
-  val validEmployeePensionContribs = EmployeePensionContribs(
+  val validEmployeePensionContribs: EmployeePensionContribs = EmployeePensionContribs(
     Some(169731.51),
     Some(173987.07),
     Some(822317.49),
     Some(818841.65)
   )
 
-  val invalidEmployeePensionContribs = EmployeePensionContribs(
+  val invalidEmployeePensionContribs: EmployeePensionContribs = EmployeePensionContribs(
     Some(9999999999.99 + 1),
     Some(9999999999.99 + 1),
     Some(9999999999.99 + 1),

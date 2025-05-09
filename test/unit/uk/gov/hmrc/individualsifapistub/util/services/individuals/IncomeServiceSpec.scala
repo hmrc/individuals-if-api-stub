@@ -31,6 +31,7 @@ import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.testUtils.{IncomePayeHelpers, IncomeSaHelpers}
 
 import scala.concurrent.Future
+import uk.gov.hmrc.individualsifapistub.domain.individuals.{PayeEntry, SaTaxYearEntry}
 
 class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePayeHelpers {
   trait Setup {
@@ -43,24 +44,24 @@ class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePaye
     val endDate = "2020-21-31"
     val useCase = "TEST"
     val fields = "some(values)"
-    val utr = SaUtr("2432552635")
+    val utr: SaUtr = SaUtr("2432552635")
 
-    val innerSaValue = Seq(createValidSaTaxYearEntry(), createValidSaTaxYearEntry())
-    val incomeSaResponse = IncomeSa(Some(innerSaValue))
+    val innerSaValue: Seq[SaTaxYearEntry] = Seq(createValidSaTaxYearEntry(), createValidSaTaxYearEntry())
+    val incomeSaResponse: IncomeSa = IncomeSa(Some(innerSaValue))
 
-    val innerPayeValue = Seq(createValidPayeEntry(), createValidPayeEntry())
-    val incomePayeResponse = IncomePaye(Some(innerPayeValue))
+    val innerPayeValue: Seq[PayeEntry] = Seq(createValidPayeEntry(), createValidPayeEntry())
+    val incomePayeResponse: IncomePaye = IncomePaye(Some(innerPayeValue))
 
-    val testIndividual = TestIndividual(
+    val testIndividual: TestIndividual = TestIndividual(
       saUtr = Some(utr)
     )
 
     implicit val hc: HeaderCarrier = HeaderCarrier()
-    val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
+    val apiPlatformTestUserConnector: ApiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
 
-    val mockSelfAssessmentRepository = mock[IncomeSaRepository]
-    val mockPayeRepository = mock[IncomePayeRepository]
-    val servicesConfig = mock[ServicesConfig]
+    val mockSelfAssessmentRepository: IncomeSaRepository = mock[IncomeSaRepository]
+    val mockPayeRepository: IncomePayeRepository = mock[IncomePayeRepository]
+    val servicesConfig: ServicesConfig = mock[ServicesConfig]
     val underTest = new IncomeService(
       mockSelfAssessmentRepository,
       mockPayeRepository,
@@ -68,7 +69,8 @@ class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePaye
       servicesConfig
     )
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any())).thenReturn(Future.successful(testIndividual))
+    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any()))
+      .thenReturn(Future.successful(Some(testIndividual)))
   }
 
   "Income Service" when {

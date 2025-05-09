@@ -35,20 +35,20 @@ import scala.concurrent.Future
 
 class SelfAssessmentTaxPayerControllerSpec extends TestSupport {
 
-  val mockService = mock[SelfAssessmentTaxPayerService]
-  val mockConnector = mock[ApiPlatformTestUserConnector]
+  val mockService: SelfAssessmentTaxPayerService = mock[SelfAssessmentTaxPayerService]
+  val mockConnector: ApiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
 
   val controller =
-    new SelfAssessmentTaxPayerController(loggingAction, bodyParsers, controllerComponents, mockService, mockConnector)
+    new SelfAssessmentTaxPayerController(loggingAction, controllerComponents, mockService, mockConnector)
 
-  val exampleAddress =
+  val exampleAddress: Address =
     Address(Some("Alfie House"), Some("Main Street"), Some("Birmingham"), Some("West midlands"), Some("B14 6JH"))
 
-  val utr = SaUtr("2432552635")
+  val utr: SaUtr = SaUtr("2432552635")
 
-  val taxPayerDetails = Seq(TaxPayerDetails("John Smith II", Some("Registered"), exampleAddress))
-  val selfAssessmentTaxPayer = SelfAssessmentTaxPayer(utr.utr, "Individual", taxPayerDetails)
-  val testIndividual = TestIndividual(
+  val taxPayerDetails: Seq[TaxPayerDetails] = Seq(TaxPayerDetails("John Smith II", Some("Registered"), exampleAddress))
+  val selfAssessmentTaxPayer: SelfAssessmentTaxPayer = SelfAssessmentTaxPayer(utr.utr, "Individual", taxPayerDetails)
+  val testIndividual: TestIndividual = TestIndividual(
     saUtr = Some(utr),
     taxpayerType = Some("Individual"),
     organisationDetails = Some(

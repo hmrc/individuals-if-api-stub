@@ -16,7 +16,7 @@ Usage
 
 ### Running tests
 
-Unit, integration and component tests can be run with the following:
+Unit and integration tests can be run with the following:
 
     sbt test it:test
                       

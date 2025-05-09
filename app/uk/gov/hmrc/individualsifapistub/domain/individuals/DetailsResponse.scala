@@ -16,11 +16,11 @@
 
 package uk.gov.hmrc.individualsifapistub.domain.individuals
 
-import play.api.libs.functional.syntax.{toApplicativeOps, toFunctionalBuilderOps, unlift}
+import play.api.libs.functional.syntax.{toApplicativeOps, toFunctionalBuilderOps}
 import play.api.libs.json.Reads.{max, maxLength, min, minLength, pattern}
 import play.api.libs.json.{Format, JsPath, Json, OFormat}
 
-case class ContactDetail(code: Int, detailType: String, detail: String)
+case class ContactDetail(code: Int, `type`: String, detail: String)
 
 object ContactDetail {
   implicit val format: Format[ContactDetail] = Format(
@@ -29,11 +29,7 @@ object ContactDetail {
         (JsPath \ "type").read[String](minLength[String](1).keepAnd(maxLength[String](35))) and
         (JsPath \ "detail").read[String](minLength[String](3).keepAnd(maxLength[String](72)))
     )(ContactDetail.apply _),
-    (
-      (JsPath \ "code").write[Int] and
-        (JsPath \ "type").write[String] and
-        (JsPath \ "detail").write[String]
-    )(unlift(ContactDetail.unapply))
+    Json.writes[ContactDetail]
   )
 }
 
@@ -56,14 +52,7 @@ object Address {
         (JsPath \ "line5").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
         (JsPath \ "postcode").readNullable[String](minLength[String](0) keepAnd maxLength[String](10))
     )(Address.apply _),
-    (
-      (JsPath \ "line1").writeNullable[String] and
-        (JsPath \ "line2").writeNullable[String] and
-        (JsPath \ "line3").writeNullable[String] and
-        (JsPath \ "line4").writeNullable[String] and
-        (JsPath \ "line5").writeNullable[String] and
-        (JsPath \ "postcode").writeNullable[String]
-    )(unlift(Address.unapply))
+    Json.writes[Address]
   )
 }
 
@@ -71,7 +60,7 @@ case class Residence(
   statusCode: Option[String] = None,
   status: Option[String] = None,
   typeCode: Option[Int] = None,
-  residenceType: Option[String] = None,
+  `type`: Option[String] = None,
   deliveryInfo: Option[String] = None,
   retLetterServ: Option[String] = None,
   addressCode: Option[String] = None,
@@ -110,45 +99,18 @@ object Residence {
         (JsPath \ "startDateTime").readNullable[String] and
         (JsPath \ "noLongerUsed").readNullable[String](minLength[String](1) andKeep maxLength[String](1))
     )(Residence.apply _),
-    (
-      (JsPath \ "statusCode").writeNullable[String] and
-        (JsPath \ "status").writeNullable[String] and
-        (JsPath \ "typeCode").writeNullable[Int] and
-        (JsPath \ "type").writeNullable[String] and
-        (JsPath \ "deliveryInfo").writeNullable[String] and
-        (JsPath \ "retLetterServ").writeNullable[String] and
-        (JsPath \ "addressCode").writeNullable[String] and
-        (JsPath \ "addressType").writeNullable[String] and
-        (JsPath \ "address").writeNullable[Address] and
-        (JsPath \ "houseId").writeNullable[String] and
-        (JsPath \ "homeCountry").writeNullable[String] and
-        (JsPath \ "otherCountry").writeNullable[String] and
-        (JsPath \ "deadLetterOfficeDate").writeNullable[String] and
-        (JsPath \ "startDateTime").writeNullable[String] and
-        (JsPath \ "noLongerUsed").writeNullable[String]
-    )(unlift(Residence.unapply))
+    Json.writes[Residence]
   )
 }
 
 case class DetailsResponse(
   details: String,
   contactDetails: Option[Seq[ContactDetail]],
-  residences: Option[Seq[Residence]]
+  residence: Option[Seq[Residence]]
 )
 
 object DetailsResponse {
-  implicit val format: Format[DetailsResponse] = Format(
-    (
-      (JsPath \ "details").read[String] and
-        (JsPath \ "contactDetails").readNullable[Seq[ContactDetail]] and
-        (JsPath \ "residence").readNullable[Seq[Residence]]
-    )(DetailsResponse.apply _),
-    (
-      (JsPath \ "details").write[String] and
-        (JsPath \ "contactDetails").writeNullable[Seq[ContactDetail]] and
-        (JsPath \ "residence").writeNullable[Seq[Residence]]
-    )(unlift(DetailsResponse.unapply))
-  )
+  implicit val format: Format[DetailsResponse] = Json.format
 }
 
 case class DetailsResponseNoId(contactDetails: Option[Seq[ContactDetail]], residences: Option[Seq[Residence]])
