@@ -23,7 +23,7 @@ import uk.gov.hmrc.individualsifapistub.domain.organisations.SelfAssessmentRetur
 
 import scala.util.matching.Regex
 
-case class TaxYear(taxYear: String, businessSalesTurnover: Double)
+case class TaxYear(taxyear: String, businessSalesTurnover: Double)
 
 object TaxYear {
   private val taxYearPattern = "^20[0-9]{2}$".r
@@ -40,9 +40,9 @@ object TaxYear {
 case class CreateSelfAssessmentReturnDetailRequest(
   utr: String,
   startDate: String,
-  taxPayerType: String,
+  taxpayerType: String,
   taxSolvencyStatus: String,
-  taxYears: Seq[TaxYear]
+  taxyears: Seq[TaxYear]
 )
 
 object CreateSelfAssessmentReturnDetailRequest {
@@ -61,9 +61,9 @@ object CreateSelfAssessmentReturnDetailRequest {
 case class SelfAssessmentReturnDetailResponse(
   utr: String,
   startDate: String,
-  taxPayerType: String,
+  taxpayerType: String,
   taxSolvencyStatus: String,
-  taxYears: Seq[TaxYear]
+  taxyears: Seq[TaxYear]
 )
 
 object SelfAssessmentReturnDetailResponse {

@@ -36,6 +36,7 @@ lazy val microservice = Project("individuals-if-api-stub", file("."))
   )
   .settings(scalacOptions += "-Wconf:src=routes/.*:s")
   .settings(scalacOptions += "-Wconf:src=txt/.*:s") //silences warnings from txt files
+  .settings(scalacOptions += "-Wconf:msg=Flag.*repeatedly:s")
   .settings(
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test(),
     Test / testOptions := Seq(Tests.Filter(_ startsWith "unit"))

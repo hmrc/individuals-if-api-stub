@@ -43,9 +43,9 @@ class SelfAssessmentReturnDetailRepository @Inject() (mongo: MongoComponent)(imp
     val response = SelfAssessmentReturnDetailResponse(
       request.utr,
       request.startDate,
-      request.taxPayerType,
+      request.taxpayerType,
       request.taxSolvencyStatus,
-      request.taxYears
+      request.taxyears
     )
     val entry = SelfAssessmentReturnDetailEntry(request.utr, response)
 
