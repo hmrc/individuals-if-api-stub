@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-import uk.gov.hmrc.DefaultBuildSettings.addTestReportOption
+import uk.gov.hmrc.DefaultBuildSettings
 
 ThisBuild / majorVersion := 0
 ThisBuild / scalaVersion := "3.3.5"
-
-lazy val ItTest = config("it") extend Test
 
 lazy val microservice = Project("individuals-if-api-stub", file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
@@ -57,20 +55,14 @@ lazy val microservice = Project("individuals-if-api-stub", file("."))
       "target/test-reports/html-report"
     )
   )
-  .configs(ItTest)
-  .settings(inConfig(ItTest)(Defaults.testSettings) *)
+
+lazy val it = project
+  .enablePlugins(PlayScala)
+  .dependsOn(microservice % "test->test") // the "test->test" allows reusing test code and test dependencies
+  .settings(DefaultBuildSettings.itSettings())
   .settings(
-    ItTest / unmanagedSourceDirectories := (ItTest / baseDirectory)(base => Seq(base / "test")).value,
-    ItTest / testOptions := Seq(Tests.Filter((name: String) => name startsWith "it")),
-    addTestReportOption(ItTest, "int-test-reports"),
-    // Disable default sbt Test options (might change with new versions of bootstrap)
-    ItTest / testOptions -= Tests
-      .Argument("-o", "-u", "target/int-test-reports", "-h", "target/int-test-reports/html-report"),
-    ItTest / testOptions += Tests.Argument(
-      TestFrameworks.ScalaTest,
-      "-oNCHPQR",
-      "-u",
-      "target/int-test-reports",
-      "-h",
-      "target/int-test-reports/html-report")
+    libraryDependencies ++= AppDependencies.test()
   )
+  .settings(CodeCoverageSettings.settings *)
+  .settings(scalacOptions += "-Wconf:msg=Flag.*repeatedly:s")
+
