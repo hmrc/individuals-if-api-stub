@@ -40,7 +40,7 @@ class SelfAssessmentTaxPayerRepository @Inject() (mongo: MongoComponent)(implici
       )
     ) {
   def create(request: SelfAssessmentTaxPayer): Future[SelfAssessmentTaxPayer] = {
-    val response = SelfAssessmentTaxPayer(request.utr, request.taxPayerType, request.taxPayerDetails)
+    val response = SelfAssessmentTaxPayer(request.utr, request.taxpayerType, request.taxpayerDetails)
     val entry = SATaxPayerEntry(request.utr, response)
 
     preservingMdc {

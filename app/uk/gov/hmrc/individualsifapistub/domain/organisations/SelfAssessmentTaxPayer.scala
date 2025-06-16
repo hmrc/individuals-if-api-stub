@@ -58,13 +58,13 @@ object TaxPayerDetails {
   )
 }
 
-case class SelfAssessmentTaxPayer(utr: String, taxPayerType: String, taxPayerDetails: Seq[TaxPayerDetails])
+case class SelfAssessmentTaxPayer(utr: String, taxpayerType: String, taxpayerDetails: Seq[TaxPayerDetails])
 
 object SelfAssessmentTaxPayer {
   def fromApiPlatformTestUser(testUser: TestIndividual): SelfAssessmentTaxPayer = SelfAssessmentTaxPayer(
     testUser.saUtr.map(_.utr).mkString,
     testUser.taxpayerType.mkString,
-    taxPayerDetails = Seq(fromOrganisationDetails(testUser.organisationDetails))
+    taxpayerDetails = Seq(fromOrganisationDetails(testUser.organisationDetails))
   )
 
   private def fromOrganisationDetails(taxpayerDetails: Option[TestOrganisationDetails]) =

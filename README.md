@@ -18,7 +18,7 @@ Usage
 
 Unit and integration tests can be run with the following:
 
-    sbt test it:test
+    sbt test it/test
                       
 ### License
 

@@ -25,14 +25,13 @@ object CodeCoverageSettings {
     "definition",
     "testOnlyDoNotUseInAppConf",
     "uk.gov.hmrc.individualsifapistub.views.txt",
-    "uk.gov.hmrc.individualsifapistub.Binders",
-    "uk.gov.hmrc.individualsifapistub.repository.*" //TODO: Add missing unit tests
+    "uk.gov.hmrc.individualsifapistub.Binders"
   )
 
   val settings: Seq[Setting[?]] = Seq(
     // Semicolon-separated list of regexs matching classes to exclude
     ScoverageKeys.coverageExcludedPackages := excludedPackages.mkString(";"),
-    ScoverageKeys.coverageMinimumStmtTotal := 75,
+    ScoverageKeys.coverageMinimumStmtTotal := 90,
     ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true
   )

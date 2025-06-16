@@ -31,7 +31,8 @@ class DetailsRepositorySpec extends RepositoryTestHelper with TestHelpers {
 
   val request = CreateDetailsRequest(
     Some(
-      Seq(ContactDetail(9, "MOBILE TELEPHONE", "07123 987654"), ContactDetail(9, "MOBILE TELEPHONE", "07123 987655"))),
+      Seq(ContactDetail(9, "MOBILE TELEPHONE", "07123 987654"), ContactDetail(9, "MOBILE TELEPHONE", "07123 987655"))
+    ),
     None
   )
 

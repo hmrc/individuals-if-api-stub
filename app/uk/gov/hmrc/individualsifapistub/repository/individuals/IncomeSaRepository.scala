@@ -136,15 +136,15 @@ class IncomeSaRepository @Inject() (mongo: MongoComponent)(implicit ec: Executio
         .find(
           deepSearch(
             idValue,
-            Option(startYear).filter(_.nonEmpty).map(_.toInt).getOrElse(1000),
-            Option(endYear).filter(_.nonEmpty).map(_.toInt).getOrElse(3000)
+            Option(startYear).filter(_.nonEmpty).getOrElse("1000"),
+            Option(endYear).filter(_.nonEmpty).getOrElse("3000")
           )
         )
         .map(_.incomeSaResponse.sa.getOrElse(Seq.empty))
         .foldLeft(Seq.empty[SaTaxYearEntry])(_ ++ _)
         .toFuture()
         .flatMap {
-          case entries if entries.nonEmpty =>
+          case entries if entries.forall(_.nonEmpty) =>
             Future.successful(Some(IncomeSa(Some(entries.flatten))))
           case _ =>
             // fallback to legacy search
@@ -159,9 +159,9 @@ class IncomeSaRepository @Inject() (mongo: MongoComponent)(implicit ec: Executio
   private def idBasedSearch(id: String) = regex("id", s"^$id")
 
   // deep search with nino and paymentDate range
-  private def deepSearch(idValue: String, startYear: Int, endYear: Int) =
+  private def deepSearch(idValue: String, startYear: String, endYear: String) =
     and(
-      equal(s"idValue", idValue),
+      equal("idValue", idValue),
       elemMatch(
         "incomeSaResponse.sa",
         and(

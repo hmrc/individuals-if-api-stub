@@ -45,10 +45,12 @@ class EmploymentRepositorySpec extends RepositoryTestHelper {
               Some("line4"),
               Some("line5"),
               Some("postcode")
-            )),
+            )
+          ),
           districtNumber = Some("ABC"),
           schemeRef = Some("ABC")
-        )),
+        )
+      ),
       employerRef = Some("247/ZT6767895A"),
       employment = Some(
         EmploymentDetail(
@@ -64,17 +66,22 @@ class EmploymentRepositorySpec extends RepositoryTestHelper {
               Some("line4"),
               Some("line5"),
               Some("postcode")
-            ))
-        )),
+            )
+          )
+        )
+      ),
       payments = Some(
-        Seq(Payment(
-          date = Some(LocalDate.parse("2020-02-28")),
-          ytdTaxablePay = Some(120.02),
-          paidTaxablePay = Some(112.75),
-          paidNonTaxOrNICPayment = Some(123123.32),
-          week = Some(52),
-          month = Some(12)
-        )))
+        Seq(
+          Payment(
+            date = Some(LocalDate.parse("2020-02-28")),
+            ytdTaxablePay = Some(120.02),
+            paidTaxablePay = Some(112.75),
+            paidNonTaxOrNICPayment = Some(123123.32),
+            week = Some(52),
+            month = Some(12)
+          )
+        )
+      )
     )
 
   val employments = Employments(Seq(employment))
@@ -92,10 +99,12 @@ class EmploymentRepositorySpec extends RepositoryTestHelper {
               Some("line4"),
               Some("line5"),
               Some("postcode")
-            )),
+            )
+          ),
           districtNumber = Some("ABC"),
           schemeRef = Some("ABC")
-        )),
+        )
+      ),
       employerRef = Some("123/ZT6767895A"),
       employment = Some(
         EmploymentDetail(
@@ -111,17 +120,22 @@ class EmploymentRepositorySpec extends RepositoryTestHelper {
               Some("line4"),
               Some("line5"),
               Some("postcode")
-            ))
-        )),
+            )
+          )
+        )
+      ),
       payments = Some(
-        Seq(Payment(
-          date = Some(LocalDate.parse("2020-03-31")),
-          ytdTaxablePay = Some(120.02),
-          paidTaxablePay = Some(112.75),
-          paidNonTaxOrNICPayment = Some(123123.32),
-          week = Some(52),
-          month = Some(12)
-        )))
+        Seq(
+          Payment(
+            date = Some(LocalDate.parse("2020-03-31")),
+            ytdTaxablePay = Some(120.02),
+            paidTaxablePay = Some(112.75),
+            paidNonTaxOrNICPayment = Some(123123.32),
+            week = Some(52),
+            month = Some(12)
+          )
+        )
+      )
     )
 
   val employments2 = Employments(Seq(employment2))
