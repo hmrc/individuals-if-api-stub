@@ -59,18 +59,18 @@ object Payments {
 
   implicit val format: Format[Payments] = Format(
     (
-      (JsPath \ "periodStartDate").readNullable[String](pattern(datePattern, "invalid date")) and
-        (JsPath \ "periodEndDate").readNullable[String](pattern(datePattern, "invalid date")) and
-        (JsPath \ "startDate").readNullable[String](pattern(datePattern, "invalid date")) and
-        (JsPath \ "endDate").readNullable[String](pattern(datePattern, "invalid date")) and
-        (JsPath \ "status").readNullable[String](pattern(statusPattern, "invalid status")) and
-        (JsPath \ "postedDate").readNullable[String](pattern(datePattern, "invalid date")) and
-        (JsPath \ "nextDueDate").readNullable[String](pattern(datePattern, "invalid date")) and
-        (JsPath \ "frequency").readNullable[Int](min[Int](1).keepAnd(max[Int](999))) and
-        (JsPath \ "tcType").readNullable[String](pattern(tcTypePattern, "invalid tc type")) and
-        (JsPath \ "amount").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "method").readNullable[String](pattern(methodPattern, "invalid method"))
-    )(Payments.apply _),
+      (JsPath \ "periodStartDate").readNullable[String](using pattern(datePattern, "invalid date")) and
+        (JsPath \ "periodEndDate").readNullable[String](using pattern(datePattern, "invalid date")) and
+        (JsPath \ "startDate").readNullable[String](using pattern(datePattern, "invalid date")) and
+        (JsPath \ "endDate").readNullable[String](using pattern(datePattern, "invalid date")) and
+        (JsPath \ "status").readNullable[String](using pattern(statusPattern, "invalid status")) and
+        (JsPath \ "postedDate").readNullable[String](using pattern(datePattern, "invalid date")) and
+        (JsPath \ "nextDueDate").readNullable[String](using pattern(datePattern, "invalid date")) and
+        (JsPath \ "frequency").readNullable[Int](using min[Int](1).keepAnd(max[Int](999))) and
+        (JsPath \ "tcType").readNullable[String](using pattern(tcTypePattern, "invalid tc type")) and
+        (JsPath \ "amount").readNullable[Double](using verifying(paymentAmountValidator)) and
+        (JsPath \ "method").readNullable[String](using pattern(methodPattern, "invalid method"))
+    )(Payments.apply),
     Json.writes[Payments]
   )
 }
@@ -87,13 +87,13 @@ case class ChildTaxCredit(
 object ChildTaxCredit {
   implicit val format: Format[ChildTaxCredit] = Format(
     (
-      (JsPath \ "childCareAmount").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "ctcChildAmount").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "familyAmount").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "babyAmount").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "entitlementYTD").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "paidYTD").readNullable[Double](verifying(paymentAmountValidator))
-    )(ChildTaxCredit.apply _),
+      (JsPath \ "childCareAmount").readNullable[Double](using verifying(paymentAmountValidator)) and
+        (JsPath \ "ctcChildAmount").readNullable[Double](using verifying(paymentAmountValidator)) and
+        (JsPath \ "familyAmount").readNullable[Double](using verifying(paymentAmountValidator)) and
+        (JsPath \ "babyAmount").readNullable[Double](using verifying(paymentAmountValidator)) and
+        (JsPath \ "entitlementYTD").readNullable[Double](using verifying(paymentAmountValidator)) and
+        (JsPath \ "paidYTD").readNullable[Double](using verifying(paymentAmountValidator))
+    )(ChildTaxCredit.apply),
     Json.writes[ChildTaxCredit]
   )
 }
@@ -103,10 +103,10 @@ case class WorkTaxCredit(amount: Option[Double], entitlementYTD: Option[Double],
 object WorkTaxCredit {
   implicit val format: Format[WorkTaxCredit] = Format(
     (
-      (JsPath \ "amount").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "entitlementYTD").readNullable[Double](verifying(paymentAmountValidator)) and
-        (JsPath \ "paidYTD").readNullable[Double](verifying(paymentAmountValidator))
-    )(WorkTaxCredit.apply _),
+      (JsPath \ "amount").readNullable[Double](using verifying(paymentAmountValidator)) and
+        (JsPath \ "entitlementYTD").readNullable[Double](using verifying(paymentAmountValidator)) and
+        (JsPath \ "paidYTD").readNullable[Double](using verifying(paymentAmountValidator))
+    )(WorkTaxCredit.apply),
     Json.writes[WorkTaxCredit]
   )
 }
@@ -125,15 +125,15 @@ case class Awards(
 object Awards {
   implicit val format: Format[Awards] = Format(
     (
-      (JsPath \ "payProfCalcDate").readNullable[String](pattern(datePattern, "invalid date")) and
-        (JsPath \ "startDate").readNullable[String](pattern(datePattern, "invalid date")) and
-        (JsPath \ "endDate").readNullable[String](pattern(datePattern, "invalid date")) and
-        (JsPath \ "totalEntitlement").readNullable[Double](verifying(paymentAmountValidator)) and
+      (JsPath \ "payProfCalcDate").readNullable[String](using pattern(datePattern, "invalid date")) and
+        (JsPath \ "startDate").readNullable[String](using pattern(datePattern, "invalid date")) and
+        (JsPath \ "endDate").readNullable[String](using pattern(datePattern, "invalid date")) and
+        (JsPath \ "totalEntitlement").readNullable[Double](using verifying(paymentAmountValidator)) and
         (JsPath \ "workingTaxCredit").readNullable[WorkTaxCredit] and
         (JsPath \ "childTaxCredit").readNullable[ChildTaxCredit] and
-        (JsPath \ "grossYearTaxAmount").readNullable[Double](verifying(paymentAmountValidator)) and
+        (JsPath \ "grossYearTaxAmount").readNullable[Double](using verifying(paymentAmountValidator)) and
         (JsPath \ "payments").readNullable[Seq[Payments]]
-    )(Awards.apply _),
+    )(Awards.apply),
     Json.writes[Awards]
   )
 }
@@ -154,12 +154,12 @@ object Application {
 
   implicit val format: Format[Application] = Format(
     (
-      (JsPath \ "id").readNullable[Double](applicationIdValidator) and
-        (JsPath \ "ceasedDate").readNullable[String](pattern(datePattern, "invalid date")) and
-        (JsPath \ "entStartDate").readNullable[String](pattern(datePattern, "invalid date")) and
-        (JsPath \ "entEndDate").readNullable[String](pattern(datePattern, "invalid date")) and
+      (JsPath \ "id").readNullable[Double](using applicationIdValidator) and
+        (JsPath \ "ceasedDate").readNullable[String](using pattern(datePattern, "invalid date")) and
+        (JsPath \ "entStartDate").readNullable[String](using pattern(datePattern, "invalid date")) and
+        (JsPath \ "entEndDate").readNullable[String](using pattern(datePattern, "invalid date")) and
         (JsPath \ "awards").readNullable[Seq[Awards]]
-    )(Application.apply _),
+    )(Application.apply),
     Json.writes[Application]
   )
 }

@@ -64,11 +64,11 @@ object CorporationTaxCompanyDetails {
 
   implicit val format: Format[CorporationTaxCompanyDetails] = Format(
     (
-      (JsPath \ "utr").read[String](pattern(utrPattern, "Invalid UTR format")) and
-        (JsPath \ "crn").read[String](pattern(crnPattern, "Inavlid CRN format")) and
+      (JsPath \ "utr").read[String](using pattern(utrPattern, "Invalid UTR format")) and
+        (JsPath \ "crn").read[String](using pattern(crnPattern, "Inavlid CRN format")) and
         (JsPath \ "registeredDetails").readNullable[NameAddressDetails] and
         (JsPath \ "communicationDetails").readNullable[NameAddressDetails]
-    )(CorporationTaxCompanyDetails.apply _),
+    )(CorporationTaxCompanyDetails.apply),
     Json.writes[CorporationTaxCompanyDetails]
   )
 }

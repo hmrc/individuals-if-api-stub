@@ -17,7 +17,7 @@
 import uk.gov.hmrc.DefaultBuildSettings
 
 ThisBuild / majorVersion := 0
-ThisBuild / scalaVersion := "3.3.5"
+ThisBuild / scalaVersion := "3.7.1"
 
 lazy val microservice = Project("individuals-if-api-stub", file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
@@ -41,14 +41,9 @@ lazy val microservice = Project("individuals-if-api-stub", file("."))
   )
   .settings(Compile / unmanagedResourceDirectories += baseDirectory.value / "resources")
   .settings(PlayKeys.playDefaultPort := 8443)
-  // Suppress logging of successful tests
-  .settings(
-    Test / testOptions -= Tests.Argument("-o", "-u", "target/test-reports", "-h", "target/test-reports/html-report")
-  )
   .settings(
     Test / testOptions += Tests.Argument(
       TestFrameworks.ScalaTest,
-      "-oNCHPQR",
       "-u",
       "target/test-reports",
       "-h",

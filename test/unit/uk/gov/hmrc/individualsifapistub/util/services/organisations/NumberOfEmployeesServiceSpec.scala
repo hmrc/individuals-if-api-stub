@@ -54,13 +54,13 @@ class NumberOfEmployeesServiceSpec extends AsyncWordSpec with Matchers with Mock
   "get" should {
     "return found item if it exists" in {
       when(mockRepository.find(getRequest)).thenReturn(Future.successful(Some(response)))
-      val result = service.get(getRequest);
+      val result = service.get(getRequest)
       result.map(x => x shouldBe Some(response))
     }
 
     "return None if item does not exists" in {
       when(mockRepository.find(getRequest)).thenReturn(Future.successful(None))
-      val result = service.get(getRequest);
+      val result = service.get(getRequest)
       result.map(x => x shouldBe None)
     }
   }

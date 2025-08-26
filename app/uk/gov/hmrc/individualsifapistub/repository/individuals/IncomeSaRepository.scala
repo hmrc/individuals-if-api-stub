@@ -19,7 +19,7 @@ package uk.gov.hmrc.individualsifapistub.repository.individuals
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.Indexes.ascending
 import org.mongodb.scala.model.{IndexModel, IndexOptions}
-import org.mongodb.scala.{MongoWriteException, ObservableFuture}
+import org.mongodb.scala.MongoWriteException
 import play.api.Logging
 import play.api.libs.json.Json
 import uk.gov.hmrc.individualsifapistub.domain._
@@ -27,7 +27,7 @@ import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{Nino, Trn}
 import uk.gov.hmrc.individualsifapistub.domain.individuals._
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
-import uk.gov.hmrc.play.http.logging.Mdc.preservingMdc
+import uk.gov.hmrc.mdc.Mdc.preservingMdc
 
 import java.util.UUID
 import javax.inject.{Inject, Singleton}
@@ -144,8 +144,8 @@ class IncomeSaRepository @Inject() (mongo: MongoComponent)(implicit ec: Executio
         .foldLeft(Seq.empty[SaTaxYearEntry])(_ ++ _)
         .toFuture()
         .flatMap {
-          case entries if entries.forall(_.nonEmpty) =>
-            Future.successful(Some(IncomeSa(Some(entries.flatten))))
+          case entries if entries.nonEmpty =>
+            Future.successful(Some(IncomeSa(Some(entries))))
           case _ =>
             // fallback to legacy search
             collection

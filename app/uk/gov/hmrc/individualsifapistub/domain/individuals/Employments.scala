@@ -32,11 +32,11 @@ case class Employer(
 object Employer {
   implicit val format: Format[Employer] = Format(
     (
-      (JsPath \ "name").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
+      (JsPath \ "name").readNullable[String](using minLength[String](0) keepAnd maxLength[String](100)) and
         (JsPath \ "address").readNullable[Address] and
-        (JsPath \ "districtNumber").readNullable[String](minLength[String](0) keepAnd maxLength[String](3)) and
-        (JsPath \ "schemeRef").readNullable[String](minLength[String](0) keepAnd maxLength[String](10))
-    )(Employer.apply _),
+        (JsPath \ "districtNumber").readNullable[String](using minLength[String](0) keepAnd maxLength[String](3)) and
+        (JsPath \ "schemeRef").readNullable[String](using minLength[String](0) keepAnd maxLength[String](10))
+    )(Employer.apply),
     Json.writes[Employer]
   )
 }
@@ -60,14 +60,14 @@ object EmploymentDetail {
 
   implicit val format: Format[EmploymentDetail] = Format(
     (
-      (JsPath \ "startDate").readNullable[String](pattern(datePattern, "Date format is incorrect")) and
-        (JsPath \ "endDate").readNullable[String](pattern(datePattern, "Date format is incorrect")) and
-        (JsPath \ "payFrequency").readNullable[String](
+      (JsPath \ "startDate").readNullable[String](using pattern(datePattern, "Date format is incorrect")) and
+        (JsPath \ "endDate").readNullable[String](using pattern(datePattern, "Date format is incorrect")) and
+        (JsPath \ "payFrequency").readNullable[String](using
           pattern(payFrequencyPattern, "Pay frequency must be one of: W1, W2, W4, M1, M3, M6, MA, IO, IR")
         ) and
-        (JsPath \ "payrollId").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
+        (JsPath \ "payrollId").readNullable[String](using minLength[String](0) keepAnd maxLength[String](100)) and
         (JsPath \ "address").readNullable[Address]
-    )(EmploymentDetail.apply _),
+    )(EmploymentDetail.apply),
     Json.writes[EmploymentDetail]
   )
 }
@@ -95,12 +95,12 @@ object Payment {
   implicit val format: Format[Payment] = Format(
     (
       (JsPath \ "date").readNullable[LocalDate] and
-        (JsPath \ "ytdTaxablePay").readNullable[Double](paymentAmountValidator) and
-        (JsPath \ "paidTaxablePay").readNullable[Double](paymentAmountValidator) and
-        (JsPath \ "paidNonTaxOrNICPayment").readNullable[Double](paymentAmountValidator) and
-        (JsPath \ "week").readNullable[Int](min(1) keepAnd max(56)) and
-        (JsPath \ "month").readNullable[Int](min(1) keepAnd max(12))
-    )(Payment.apply _),
+        (JsPath \ "ytdTaxablePay").readNullable[Double](using paymentAmountValidator) and
+        (JsPath \ "paidTaxablePay").readNullable[Double](using paymentAmountValidator) and
+        (JsPath \ "paidNonTaxOrNICPayment").readNullable[Double](using paymentAmountValidator) and
+        (JsPath \ "week").readNullable[Int](using min(1) keepAnd max(56)) and
+        (JsPath \ "month").readNullable[Int](using min(1) keepAnd max(12))
+    )(Payment.apply),
     Json.writes[Payment]
   )
 }
@@ -116,10 +116,10 @@ object Employment {
   implicit val format: Format[Employment] = Format(
     (
       (JsPath \ "employer").readNullable[Employer] and
-        (JsPath \ "employerRef").readNullable[String](minLength[String](1) keepAnd maxLength[String](14)) and
+        (JsPath \ "employerRef").readNullable[String](using minLength[String](1) keepAnd maxLength[String](14)) and
         (JsPath \ "employment").readNullable[EmploymentDetail] and
         (JsPath \ "payments").readNullable[Seq[Payment]]
-    )(Employment.apply _),
+    )(Employment.apply),
     Json.writes[Employment]
   )
 }

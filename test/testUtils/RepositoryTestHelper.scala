@@ -35,9 +35,7 @@ trait RepositoryTestHelper extends TestSupport with MongoSupport with BeforeAndA
     fakeApplication.injector.instanceOf[IncomePayeRepository],
     fakeApplication.injector.instanceOf[IncomeSaRepository],
     fakeApplication.injector.instanceOf[CorporationTaxReturnDetailsRepository],
-    fakeApplication.injector.instanceOf[CorporationTaxCompanyDetailsRepository],
     fakeApplication.injector.instanceOf[SelfAssessmentReturnDetailRepository],
-    fakeApplication.injector.instanceOf[SelfAssessmentTaxPayerRepository],
     fakeApplication.injector.instanceOf[VatReturnsDetailsRepository],
     fakeApplication.injector.instanceOf[VatInformationRepository],
     fakeApplication.injector.instanceOf[NumberOfEmployeesRepository]

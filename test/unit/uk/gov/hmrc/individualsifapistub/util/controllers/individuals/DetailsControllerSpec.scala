@@ -19,7 +19,7 @@ package unit.uk.gov.hmrc.individualsifapistub.util.controllers.individuals
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import testUtils.TestHelpers
@@ -27,15 +27,15 @@ import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.controllers.individuals.DetailsController
-import uk.gov.hmrc.individualsifapistub.domain._
-import uk.gov.hmrc.individualsifapistub.domain.individuals._
+import uk.gov.hmrc.individualsifapistub.domain.*
+import uk.gov.hmrc.individualsifapistub.domain.individuals.*
 import uk.gov.hmrc.individualsifapistub.repository.individuals.DetailsRepository
 import uk.gov.hmrc.individualsifapistub.services.individuals.DetailsService
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 import scala.concurrent.Future
-import play.api.mvc.AnyContentAsEmpty
+import play.api.mvc.{AnyContentAsEmpty, Result}
 
 class DetailsControllerSpec extends TestSupport with TestHelpers {
 
@@ -60,7 +60,7 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
       saUtr = Some(utr)
     )
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any()))
+    when(apiPlatformTestUserConnector.getIndividualByNino(any())(using any()))
       .thenReturn(Future.successful(Some(testIndividual)))
   }
 
@@ -80,13 +80,13 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
 
     "Successfully create a details record and return created record as response" in new Setup {
 
-      val returnVal = DetailsResponseNoId(request.contactDetails, request.residences)
+      val returnVal: DetailsResponseNoId = DetailsResponseNoId(request.contactDetails, request.residences)
 
       when(mockDetailsService.create(idType, idValue, useCase, request)).thenReturn(
         Future.successful(returnVal)
       )
 
-      val result = await(underTest.create(idType, idValue, useCase)(fakeRequest.withBody(Json.toJson(request))))
+      val result: Result = await(underTest.create(idType, idValue, useCase)(fakeRequest.withBody(Json.toJson(request))))
 
       status(result) shouldBe CREATED
       jsonBodyOf(result) shouldBe Json.toJson(returnVal)
@@ -95,16 +95,16 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
 
     "Fail when an invalid nino is provided" in new Setup {
 
-      val returnVal = DetailsResponseNoId(request.contactDetails, request.residences)
+      val returnVal: DetailsResponseNoId = DetailsResponseNoId(request.contactDetails, request.residences)
 
-      when(apiPlatformTestUserConnector.getIndividualByNino(any())(any()))
+      when(apiPlatformTestUserConnector.getIndividualByNino(any())(using any()))
         .thenReturn(Future.failed(new RecordNotFoundException))
 
       when(mockDetailsService.create(idType, idValue, useCase, request)).thenReturn(
         Future.successful(returnVal)
       )
 
-      val result = await(underTest.create(idType, idValue, useCase)(fakeRequest.withBody(Json.toJson(""))))
+      val result: Result = await(underTest.create(idType, idValue, useCase)(fakeRequest.withBody(Json.toJson(""))))
 
       status(result) shouldBe BAD_REQUEST
 
@@ -112,13 +112,13 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
 
     "Fail when a request is not provided" in new Setup {
 
-      val returnVal = DetailsResponseNoId(None, None)
+      val returnVal: DetailsResponseNoId = DetailsResponseNoId(None, None)
 
       when(mockDetailsService.create(idType, idValue, useCase, request)).thenReturn(
         Future.successful(returnVal)
       )
 
-      val response = await(underTest.create(idType, idValue, useCase)(fakeRequest.withBody(Json.toJson(""))))
+      val response: Result = await(underTest.create(idType, idValue, useCase)(fakeRequest.withBody(Json.toJson(""))))
       status(response) shouldBe BAD_REQUEST
     }
 
@@ -128,15 +128,15 @@ class DetailsControllerSpec extends TestSupport with TestHelpers {
 
     "Return details when successfully retrieved from service" in new Setup {
 
-      val details = Identifier(Some(idValue), None, None, None, Some(useCase))
+      val details: Identifier = Identifier(Some(idValue), None, None, None, Some(useCase))
       val id = s"${details.nino.getOrElse(details.trn)}-$useCase"
 
-      val detailsResponse = DetailsResponse(id, request.contactDetails, request.residences)
+      val detailsResponse: DetailsResponse = DetailsResponse(id, request.contactDetails, request.residences)
       when(mockDetailsService.get(idType, idValue, Some(fields))).thenReturn(
         Future.successful(Some(detailsResponse))
       )
 
-      val result = await(underTest.retrieve(idType, idValue, Some(fields))(fakeRequest))
+      val result: Result = await(underTest.retrieve(idType, idValue, Some(fields))(fakeRequest))
 
       status(result) shouldBe OK
       jsonBodyOf(result) shouldBe Json.toJson(Some(detailsResponse))

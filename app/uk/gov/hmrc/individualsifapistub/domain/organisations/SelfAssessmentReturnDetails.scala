@@ -30,9 +30,9 @@ object TaxYear {
 
   implicit val format: Format[TaxYear] = Format(
     (
-      (JsPath \ "taxyear").read[String](pattern(taxYearPattern, "Tax Year is in the incorrect Format")) and
+      (JsPath \ "taxyear").read[String](using pattern(taxYearPattern, "Tax Year is in the incorrect Format")) and
         (JsPath \ "businessSalesTurnover").read[Double]
-    )(TaxYear.apply _),
+    )(TaxYear.apply),
     Json.writes[TaxYear]
   )
 }
@@ -48,12 +48,12 @@ case class CreateSelfAssessmentReturnDetailRequest(
 object CreateSelfAssessmentReturnDetailRequest {
   implicit val format: Format[CreateSelfAssessmentReturnDetailRequest] = Format(
     (
-      (JsPath \ "utr").read[String](pattern(utrPattern, "UTR pattern is incorrect")) and
-        (JsPath \ "startDate").read[String](pattern(datePattern, "Date pattern is incorrect")) and
-        (JsPath \ "taxpayerType").read[String](pattern(taxPayerTypePattern, "Invalid taxpayer type")) and
-        (JsPath \ "taxSolvencyStatus").read[String](verifying(taxSolvencyStatusValidator)) and
+      (JsPath \ "utr").read[String](using pattern(utrPattern, "UTR pattern is incorrect")) and
+        (JsPath \ "startDate").read[String](using pattern(datePattern, "Date pattern is incorrect")) and
+        (JsPath \ "taxpayerType").read[String](using pattern(taxPayerTypePattern, "Invalid taxpayer type")) and
+        (JsPath \ "taxSolvencyStatus").read[String](using verifying(taxSolvencyStatusValidator)) and
         (JsPath \ "taxyears").read[Seq[TaxYear]]
-    )(CreateSelfAssessmentReturnDetailRequest.apply _),
+    )(CreateSelfAssessmentReturnDetailRequest.apply),
     Json.writes[CreateSelfAssessmentReturnDetailRequest]
   )
 }
@@ -69,12 +69,12 @@ case class SelfAssessmentReturnDetailResponse(
 object SelfAssessmentReturnDetailResponse {
   implicit val format: Format[SelfAssessmentReturnDetailResponse] = Format(
     (
-      (JsPath \ "utr").read[String](pattern(utrPattern, "UTR pattern is incorrect")) and
-        (JsPath \ "startDate").read[String](pattern(datePattern, "Date pattern is incorrect")) and
-        (JsPath \ "taxpayerType").read[String](pattern(taxPayerTypePattern, "Invalid taxpayer type")) and
-        (JsPath \ "taxSolvencyStatus").read[String](verifying(taxSolvencyStatusValidator)) and
+      (JsPath \ "utr").read[String](using pattern(utrPattern, "UTR pattern is incorrect")) and
+        (JsPath \ "startDate").read[String](using pattern(datePattern, "Date pattern is incorrect")) and
+        (JsPath \ "taxpayerType").read[String](using pattern(taxPayerTypePattern, "Invalid taxpayer type")) and
+        (JsPath \ "taxSolvencyStatus").read[String](using verifying(taxSolvencyStatusValidator)) and
         (JsPath \ "taxyears").read[Seq[TaxYear]]
-    )(SelfAssessmentReturnDetailResponse.apply _),
+    )(SelfAssessmentReturnDetailResponse.apply),
     Json.writes[SelfAssessmentReturnDetailResponse]
   )
 }

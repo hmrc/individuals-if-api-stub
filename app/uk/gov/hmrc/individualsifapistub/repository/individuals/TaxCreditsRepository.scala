@@ -27,7 +27,7 @@ import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{Nino, Trn}
 import uk.gov.hmrc.individualsifapistub.domain.individuals._
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
-import uk.gov.hmrc.play.http.logging.Mdc.preservingMdc
+import uk.gov.hmrc.mdc.Mdc.preservingMdc
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

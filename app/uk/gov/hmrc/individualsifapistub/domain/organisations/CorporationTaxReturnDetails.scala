@@ -31,10 +31,10 @@ object AccountingPeriod {
 
   implicit val format: Format[AccountingPeriod] = Format[AccountingPeriod](
     (
-      (JsPath \ "apStartDate").read[String](pattern(apDatePattern, "apStartDate not in correct format")) and
-        (JsPath \ "apEndDate").read[String](pattern(apDatePattern, "apEndDate not in correct format")) and
+      (JsPath \ "apStartDate").read[String](using pattern(apDatePattern, "apStartDate not in correct format")) and
+        (JsPath \ "apEndDate").read[String](using pattern(apDatePattern, "apEndDate not in correct format")) and
         (JsPath \ "turnover").read[Int]
-    )(AccountingPeriod.apply _),
+    )(AccountingPeriod.apply),
     Json.writes[AccountingPeriod]
   )
 }
@@ -50,12 +50,12 @@ object CreateCorporationTaxReturnDetailsRequest {
   implicit val format: Format[CreateCorporationTaxReturnDetailsRequest] =
     Format[CreateCorporationTaxReturnDetailsRequest](
       (
-        (JsPath \ "utr").read[String](pattern(utrPattern, "Invalid UTR format")) and
+        (JsPath \ "utr").read[String](using pattern(utrPattern, "Invalid UTR format")) and
           (JsPath \ "taxpayerStartDate")
-            .read[String](pattern(taxpayerStartDatePattern, "Invalid taxpayer start date")) and
-          (JsPath \ "taxSolvencyStatus").read[String](verifying(validTaxSolvencyStatus)) and
+            .read[String](using pattern(taxpayerStartDatePattern, "Invalid taxpayer start date")) and
+          (JsPath \ "taxSolvencyStatus").read[String](using verifying(validTaxSolvencyStatus)) and
           (JsPath \ "accountingPeriods").read[Seq[AccountingPeriod]]
-      )(CreateCorporationTaxReturnDetailsRequest.apply _),
+      )(CreateCorporationTaxReturnDetailsRequest.apply),
       Json.writes[CreateCorporationTaxReturnDetailsRequest]
     )
 }
@@ -70,12 +70,12 @@ case class CorporationTaxReturnDetailsResponse(
 object CorporationTaxReturnDetailsResponse {
   implicit val format: Format[CorporationTaxReturnDetailsResponse] = Format[CorporationTaxReturnDetailsResponse](
     (
-      (JsPath \ "utr").read[String](pattern(utrPattern, "Invalid UTR format")) and
+      (JsPath \ "utr").read[String](using pattern(utrPattern, "Invalid UTR format")) and
         (JsPath \ "taxpayerStartDate")
-          .read[String](pattern(taxpayerStartDatePattern, "Invalid taxpayer start date")) and
-        (JsPath \ "taxSolvencyStatus").read[String](verifying(validTaxSolvencyStatus)) and
+          .read[String](using pattern(taxpayerStartDatePattern, "Invalid taxpayer start date")) and
+        (JsPath \ "taxSolvencyStatus").read[String](using verifying(validTaxSolvencyStatus)) and
         (JsPath \ "accountingPeriods").read[Seq[AccountingPeriod]]
-    )(CorporationTaxReturnDetailsResponse.apply _),
+    )(CorporationTaxReturnDetailsResponse.apply),
     Json.writes[CorporationTaxReturnDetailsResponse]
   )
 }

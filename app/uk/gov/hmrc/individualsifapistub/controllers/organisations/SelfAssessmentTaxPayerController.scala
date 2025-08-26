@@ -16,14 +16,13 @@
 
 package uk.gov.hmrc.individualsifapistub.controllers.organisations
 
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.individualsifapistub.config.LoggingAction
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.controllers.CommonController
 import uk.gov.hmrc.individualsifapistub.domain.organisations.SelfAssessmentTaxPayer
-import uk.gov.hmrc.individualsifapistub.domain.organisations.SelfAssessmentTaxPayer._
-import uk.gov.hmrc.individualsifapistub.services.organisations.SelfAssessmentTaxPayerService
+import uk.gov.hmrc.individualsifapistub.domain.organisations.SelfAssessmentTaxPayer.*
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -31,19 +30,9 @@ import scala.concurrent.ExecutionContext
 class SelfAssessmentTaxPayerController @Inject() (
   loggingAction: LoggingAction,
   cc: ControllerComponents,
-  selfAssessmentTaxPayerService: SelfAssessmentTaxPayerService,
   testUserConnector: ApiPlatformTestUserConnector
 )(implicit val ec: ExecutionContext)
     extends CommonController(cc) {
-
-  def create(utr: String): Action[JsValue] =
-    loggingAction.async(parse.json) { implicit request =>
-      withJsonBody[SelfAssessmentTaxPayer] { body =>
-        selfAssessmentTaxPayerService
-          .create(body)
-          .map(x => Created(Json.toJson(x))) recover recovery
-      }
-    }
 
   def retrieve(utr: String): Action[AnyContent] = loggingAction.async { implicit request =>
     testUserConnector.getOrganisationBySaUtr(utr).map {

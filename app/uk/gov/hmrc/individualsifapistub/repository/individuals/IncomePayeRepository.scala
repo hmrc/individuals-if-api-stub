@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.individualsifapistub.repository.individuals
 
-import org.mongodb.scala.{MongoWriteException, ObservableFuture}
+import org.mongodb.scala.MongoWriteException
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.Indexes.ascending
 import org.mongodb.scala.model.{IndexModel, IndexOptions}
@@ -28,7 +28,7 @@ import uk.gov.hmrc.individualsifapistub.domain.individuals.{IdType, Identifier, 
 import uk.gov.hmrc.individualsifapistub.util.Dates
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
-import uk.gov.hmrc.play.http.logging.Mdc.preservingMdc
+import uk.gov.hmrc.mdc.Mdc.preservingMdc
 
 import java.util.UUID
 import javax.inject.{Inject, Singleton}

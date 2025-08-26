@@ -22,7 +22,7 @@ import uk.gov.hmrc.individualsifapistub.repository.individuals.TaxCreditsReposit
 
 class TaxCreditsRepositorySpec extends RepositoryTestHelper {
 
-  val repository = fakeApplication.injector.instanceOf[TaxCreditsRepository]
+  val repository: TaxCreditsRepository = fakeApplication.injector.instanceOf[TaxCreditsRepository]
 
   val application: Application = Application(
     id = Some(12345),
@@ -39,7 +39,7 @@ class TaxCreditsRepositorySpec extends RepositoryTestHelper {
   val useCase = "TEST"
   val fields = "some(values)"
 
-  val applications = Applications(Seq(application))
+  val applications: Applications = Applications(Seq(application))
 
   "collection" should {
 

@@ -25,6 +25,7 @@ import uk.gov.hmrc.individualsifapistub.services.organisations.SelfAssessmentRet
 import uk.gov.hmrc.individualsifapistub.util.FieldFilter
 
 import javax.inject.Inject
+import scala.annotation.nowarn
 import scala.concurrent.ExecutionContext
 
 class SelfAssessmentReturnDetailController @Inject() (
@@ -34,7 +35,7 @@ class SelfAssessmentReturnDetailController @Inject() (
 )(implicit val ec: ExecutionContext)
     extends CommonController(cc) {
 
-  def create(utr: String): Action[JsValue] =
+  def create(@nowarn utr: String): Action[JsValue] =
     loggingAction.async(parse.json) { implicit request =>
       withJsonBody[CreateSelfAssessmentReturnDetailRequest] { body =>
         selfAssessmentReturnDetailService

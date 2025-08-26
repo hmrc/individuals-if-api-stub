@@ -84,7 +84,7 @@ class EmploymentRepositorySpec extends RepositoryTestHelper {
       )
     )
 
-  val employments = Employments(Seq(employment))
+  val employments: Employments = Employments(Seq(employment))
 
   val employment2: Employment =
     Employment(
@@ -138,9 +138,9 @@ class EmploymentRepositorySpec extends RepositoryTestHelper {
       )
     )
 
-  val employments2 = Employments(Seq(employment2))
+  val employments2: Employments = Employments(Seq(employment2))
 
-  val repository =
+  val repository: EmploymentRepository =
     fakeApplication.injector.instanceOf[EmploymentRepository]
 
   "collection" should {

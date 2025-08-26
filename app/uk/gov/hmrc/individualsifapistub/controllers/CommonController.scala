@@ -27,7 +27,8 @@ import uk.gov.hmrc.individualsifapistub.domain.individuals.Identifier._
 import uk.gov.hmrc.individualsifapistub.domain.individuals.{IdType, Identifier}
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
-import uk.gov.hmrc.play.bootstrap.backend.http.{ErrorResponse, JsonErrorHandler}
+import uk.gov.hmrc.play.bootstrap.backend.http.JsonErrorHandler
+import uk.gov.hmrc.play.bootstrap.http.ErrorResponse
 import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
 
 import javax.inject.Inject
@@ -71,7 +72,7 @@ abstract class CommonController(controllerComponents: ControllerComponents)
   protected val logger: Logger = play.api.Logger(getClass)
 
   override protected def withJsonBody[T](
-    f: (T) => Future[Result]
+    f: T => Future[Result]
   )(implicit request: Request[JsValue], ct: ClassTag[T], reads: Reads[T]): Future[Result] =
     Try(request.body.validate[T]) match {
       case Success(JsSuccess(payload, _)) => f(payload)
@@ -89,7 +90,7 @@ abstract class CommonController(controllerComponents: ControllerComponents)
     from: Option[String],
     to: Option[String],
     useCase: Option[String]
-  )(f: (T) => Future[Result])(implicit request: Request[JsValue], ct: ClassTag[T], reads: Reads[T]): Future[Result] =
+  )(f: T => Future[Result])(implicit request: Request[JsValue], ct: ClassTag[T], reads: Reads[T]): Future[Result] =
     Try(IdType.parse(idType)) match {
       case Failure(e) => Future.successful(ErrorInvalidRequest(e.getLocalizedMessage).toHttpResponse)
       case Success(idType) =>
@@ -105,7 +106,7 @@ abstract class CommonController(controllerComponents: ControllerComponents)
 
   private def fieldName[T](errs: Seq[(JsPath, Seq[JsonValidationError])]) = {
     val e = errs.head._1.toString()
-    if (!e.isEmpty)
+    if (e.nonEmpty)
       e.substring(1)
     else
       e

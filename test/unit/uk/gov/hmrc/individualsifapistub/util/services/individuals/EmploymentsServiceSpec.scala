@@ -110,7 +110,7 @@ class EmploymentsServiceSpec extends TestSupport {
     val servicesConfig: ServicesConfig = mock[ServicesConfig]
     val underTest = new EmploymentsService(mockEmploymentRepository, apiPlatformTestUserConnector, servicesConfig)
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any()))
+    when(apiPlatformTestUserConnector.getIndividualByNino(any())(using any()))
       .thenReturn(Future.successful(Some(testIndividual)))
   }
 
@@ -127,7 +127,7 @@ class EmploymentsServiceSpec extends TestSupport {
             Future.successful(employments)
           )
 
-        val response =
+        val response: Employments =
           await(underTest.create(idType, idValue, Some(startDate), Some(endDate), Some(useCase), employments))
 
         response shouldBe employments
@@ -159,7 +159,8 @@ class EmploymentsServiceSpec extends TestSupport {
             Future.successful(Some(employments))
           )
 
-        val response = await(underTest.get(idType, idValue, startDate, endDate, Some(fields), None))
+        val response: Option[Employments] =
+          await(underTest.get(idType, idValue, startDate, endDate, Some(fields), None))
 
         response shouldBe Some(employments)
 
@@ -171,7 +172,8 @@ class EmploymentsServiceSpec extends TestSupport {
             Future.successful(None)
           )
 
-        val response = await(underTest.get(idType, idValue, startDate, endDate, Some(fields), None))
+        val response: Option[Employments] =
+          await(underTest.get(idType, idValue, startDate, endDate, Some(fields), None))
 
         response shouldBe None
 
