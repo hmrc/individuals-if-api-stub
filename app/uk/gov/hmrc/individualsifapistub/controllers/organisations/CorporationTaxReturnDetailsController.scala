@@ -25,6 +25,7 @@ import uk.gov.hmrc.individualsifapistub.services.organisations.CorporationTaxRet
 import uk.gov.hmrc.individualsifapistub.util.FieldFilter
 
 import javax.inject.Inject
+import scala.annotation.nowarn
 import scala.concurrent.ExecutionContext
 
 class CorporationTaxReturnDetailsController @Inject() (
@@ -36,7 +37,7 @@ class CorporationTaxReturnDetailsController @Inject() (
 
   val emptyResponse: CorporationTaxReturnDetailsResponse = CorporationTaxReturnDetailsResponse("", "", "", Seq.empty)
 
-  def create(utr: String): Action[JsValue] =
+  def create(@nowarn utr: String): Action[JsValue] =
     loggingAction.async(parse.json) { implicit request =>
       withJsonBody[CreateCorporationTaxReturnDetailsRequest] { body =>
         corporationTaxReturnDetailsService

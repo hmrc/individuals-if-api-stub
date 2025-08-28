@@ -26,7 +26,7 @@ import java.time.temporal.ChronoUnit
 
 class VatReturnsDetailsRepositorySpec extends RepositoryTestHelper {
 
-  val repository = fakeApplication.injector.instanceOf[VatReturnsDetailsRepository]
+  val repository: VatReturnsDetailsRepository = fakeApplication.injector.instanceOf[VatReturnsDetailsRepository]
   val vatPeriods: List[VatPeriod] = List(
     VatPeriod(Some("23AG"), Some("2023-01-01"), Some("2023-01-01"), Some(5), Some(6243), Some("rt"), Some("s"))
   )

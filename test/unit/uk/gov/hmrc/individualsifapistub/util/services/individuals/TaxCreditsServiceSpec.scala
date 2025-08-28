@@ -64,7 +64,7 @@ class TaxCreditsServiceSpec extends TestSupport {
     val servicesConfig: ServicesConfig = mock[ServicesConfig]
     val underTest = new TaxCreditsService(taxCreditsRepository, apiPlatformTestUserConnector, servicesConfig)
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any()))
+    when(apiPlatformTestUserConnector.getIndividualByNino(any())(using any()))
       .thenReturn(Future.successful(Some(testIndividual)))
 
   }
@@ -79,7 +79,7 @@ class TaxCreditsServiceSpec extends TestSupport {
           Future.successful(request)
         )
 
-        val response = await(underTest.create(idType, idValue, startDate, endDate, useCase, request))
+        val response: Applications = await(underTest.create(idType, idValue, startDate, endDate, useCase, request))
 
         response shouldBe request
 
@@ -106,7 +106,7 @@ class TaxCreditsServiceSpec extends TestSupport {
           Future.successful(Some(request))
         )
 
-        val response = await(underTest.get(idType, idValue, startDate, endDate, Some(fields)))
+        val response: Option[Applications] = await(underTest.get(idType, idValue, startDate, endDate, Some(fields)))
 
         response shouldBe Some(request)
 
@@ -118,7 +118,7 @@ class TaxCreditsServiceSpec extends TestSupport {
           Future.successful(None)
         )
 
-        val response = await(underTest.get(idType, idValue, startDate, endDate, Some(fields)))
+        val response: Option[Applications] = await(underTest.get(idType, idValue, startDate, endDate, Some(fields)))
 
         response shouldBe None
       }

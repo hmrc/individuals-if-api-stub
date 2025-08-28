@@ -18,12 +18,14 @@ package testUtils
 
 import uk.gov.hmrc.individualsifapistub.domain.individuals.Address
 
+import scala.annotation.tailrec
 import scala.util.Random
 
 trait TestHelpers {
 
   def generateString(length: Int): String = {
     val chars = "abcdefghijklmnopqrstuvwxyz123456789"
+    @tailrec
     def generate(string: String): String =
       if (string.length < length)
         generate(string.concat(chars.charAt(Random.nextInt(chars.length - 1)).toString))

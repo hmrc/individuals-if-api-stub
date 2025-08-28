@@ -32,12 +32,12 @@ case class Address(
 object Address {
   implicit val format: Format[Address] = Format(
     (
-      (JsPath \ "line1").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
-        (JsPath \ "line2").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
-        (JsPath \ "line3").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
-        (JsPath \ "line4").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
-        (JsPath \ "postcode").readNullable[String](minLength[String](0) keepAnd maxLength[String](10))
-    )(Address.apply _),
+      (JsPath \ "line1").readNullable[String](using minLength[String](0) keepAnd maxLength[String](100)) and
+        (JsPath \ "line2").readNullable[String](using minLength[String](0) keepAnd maxLength[String](100)) and
+        (JsPath \ "line3").readNullable[String](using minLength[String](0) keepAnd maxLength[String](100)) and
+        (JsPath \ "line4").readNullable[String](using minLength[String](0) keepAnd maxLength[String](100)) and
+        (JsPath \ "postcode").readNullable[String](using minLength[String](0) keepAnd maxLength[String](10))
+    )(Address.apply),
     Json.writes[Address]
   )
 }
@@ -51,9 +51,9 @@ object TaxPayerDetails {
     (
       (JsPath \ "name").read[String] and
         (JsPath \ "addressType")
-          .readNullable[String](pattern(addressTypePattern, "Address Type does not fit expected pattern")) and
+          .readNullable[String](using pattern(addressTypePattern, "Address Type does not fit expected pattern")) and
         (JsPath \ "address").read[Address]
-    )(TaxPayerDetails.apply _),
+    )(TaxPayerDetails.apply),
     Json.writes[TaxPayerDetails]
   )
 }
@@ -84,10 +84,10 @@ object SelfAssessmentTaxPayer {
 
   implicit val format: Format[SelfAssessmentTaxPayer] = Format(
     (
-      (JsPath \ "utr").read[String](pattern(utrPattern, "UTR pattern is incorrect")) and
-        (JsPath \ "taxpayerType").read[String](pattern(taxPayerTypePattern, "Invalid taxpayer type")) and
+      (JsPath \ "utr").read[String](using pattern(utrPattern, "UTR pattern is incorrect")) and
+        (JsPath \ "taxpayerType").read[String](using pattern(taxPayerTypePattern, "Invalid taxpayer type")) and
         (JsPath \ "taxpayerDetails").read[Seq[TaxPayerDetails]]
-    )(SelfAssessmentTaxPayer.apply _),
+    )(SelfAssessmentTaxPayer.apply),
     Json.writes[SelfAssessmentTaxPayer]
   )
 }

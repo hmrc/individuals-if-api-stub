@@ -84,6 +84,6 @@ object FieldFilter {
               case JsDefined(value) => Some(fieldName -> (filterFieldsInternal(children, value): JsValueWrapper))
             }
         }
-        Json.obj(filteredFields: _*)
+        Json.obj(filteredFields*)
     }
 }

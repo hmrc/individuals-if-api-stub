@@ -16,19 +16,19 @@
 
 package it.uk.gov.hmrc.individualsifapistub.individuals
 
-import play.api.Configuration
+import play.api.{Application, Configuration}
 import testUtils.RepositoryTestHelper
-import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomeSa
+import uk.gov.hmrc.individualsifapistub.domain.individuals.{IncomeSa, SaTaxYearEntry}
 import uk.gov.hmrc.individualsifapistub.repository.individuals.IncomeSaRepository
 import unit.uk.gov.hmrc.individualsifapistub.util.testUtils.IncomeSaHelpers
 
 class IncomeSaRepositorySpec extends RepositoryTestHelper with IncomeSaHelpers {
 
-  override lazy val fakeApplication = buildFakeApplication(
+  override lazy val fakeApplication: Application = buildFakeApplication(
     Configuration("mongodb.uri" -> mongoUri)
   )
 
-  val repository = fakeApplication.injector.instanceOf[IncomeSaRepository]
+  val repository: IncomeSaRepository = fakeApplication.injector.instanceOf[IncomeSaRepository]
 
   val nino = "XH123456A"
   val trn = "12345678"
@@ -37,8 +37,8 @@ class IncomeSaRepositorySpec extends RepositoryTestHelper with IncomeSaHelpers {
   val useCase = "TEST"
   val fields = "some(values)"
 
-  val innerValue = Seq(createValidSaTaxYearEntry(), createValidSaTaxYearEntry())
-  val request = IncomeSa(Some(innerValue))
+  val innerValue: Seq[SaTaxYearEntry] = Seq(createValidSaTaxYearEntry(), createValidSaTaxYearEntry())
+  val request: IncomeSa = IncomeSa(Some(innerValue))
 
   "collection" should {
 

@@ -67,7 +67,7 @@ class DetailsServiceSpec extends TestSupport with TestHelpers {
     val servicesConfig: ServicesConfig = mock[ServicesConfig]
     val underTest = new DetailsService(mockDetailsRepository, apiPlatformTestUserConnector, servicesConfig)
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any()))
+    when(apiPlatformTestUserConnector.getIndividualByNino(any())(using any()))
       .thenReturn(Future.successful(Some(testIndividual)))
 
   }
@@ -78,13 +78,13 @@ class DetailsServiceSpec extends TestSupport with TestHelpers {
 
       "Return the created details when created with a NINO" in new Setup {
 
-        val returnVal = DetailsResponseNoId(request.contactDetails, request.residences)
+        val returnVal: DetailsResponseNoId = DetailsResponseNoId(request.contactDetails, request.residences)
 
         when(mockDetailsRepository.create("NINO", idValue, useCase, request)).thenReturn(
           Future.successful(returnVal)
         )
 
-        val response = await(underTest.create(idType, idValue, useCase, request))
+        val response: DetailsResponseNoId = await(underTest.create(idType, idValue, useCase, request))
 
         response shouldBe returnVal
 
@@ -105,16 +105,16 @@ class DetailsServiceSpec extends TestSupport with TestHelpers {
     "Get" should {
       "Return details when successfully retrieved from mongo" in new Setup {
 
-        val ident = Identifier(Some(idValue), None, None, None, Some(useCase))
+        val ident: Identifier = Identifier(Some(idValue), None, None, None, Some(useCase))
         val id = s"${ident.nino.getOrElse(ident.trn.get)}-$useCase"
 
-        val detailsResponse = DetailsResponse(id, request.contactDetails, request.residences)
+        val detailsResponse: DetailsResponse = DetailsResponse(id, request.contactDetails, request.residences)
 
         when(mockDetailsRepository.findByIdAndType(idType, idValue, Some(fields))).thenReturn(
           Future.successful(Some(detailsResponse))
         )
 
-        val response = await(underTest.get(idType, idValue, Some(fields)))
+        val response: Option[DetailsResponse] = await(underTest.get(idType, idValue, Some(fields)))
 
         response shouldBe Some(detailsResponse)
 
@@ -124,7 +124,7 @@ class DetailsServiceSpec extends TestSupport with TestHelpers {
 
         when(mockDetailsRepository.findByIdAndType(idType, idValue, Some(fields))).thenReturn(Future.successful(None))
 
-        val response = await(underTest.get(idType, idValue, Some(fields)))
+        val response: Option[DetailsResponse] = await(underTest.get(idType, idValue, Some(fields)))
 
         response shouldBe None
 

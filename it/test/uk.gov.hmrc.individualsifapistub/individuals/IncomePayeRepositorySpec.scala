@@ -16,17 +16,17 @@
 
 package it.uk.gov.hmrc.individualsifapistub.individuals
 
-import play.api.Configuration
+import play.api.{Application, Configuration}
 import testUtils.RepositoryTestHelper
-import uk.gov.hmrc.individualsifapistub.domain.individuals.IncomePaye
+import uk.gov.hmrc.individualsifapistub.domain.individuals.{IncomePaye, PayeEntry}
 import uk.gov.hmrc.individualsifapistub.repository.individuals.IncomePayeRepository
 import unit.uk.gov.hmrc.individualsifapistub.util.testUtils.IncomePayeHelpers
 
 class IncomePayeRepositorySpec extends RepositoryTestHelper with IncomePayeHelpers {
 
-  override lazy val fakeApplication = buildFakeApplication(Configuration("mongodb.uri" -> mongoUri))
+  override lazy val fakeApplication: Application = buildFakeApplication(Configuration("mongodb.uri" -> mongoUri))
 
-  val repository = fakeApplication.injector.instanceOf[IncomePayeRepository]
+  val repository: IncomePayeRepository = fakeApplication.injector.instanceOf[IncomePayeRepository]
 
   val nino = "XH123456A"
   val trn = "12345678"
@@ -35,8 +35,8 @@ class IncomePayeRepositorySpec extends RepositoryTestHelper with IncomePayeHelpe
   val useCase = "TEST"
   val fields = "some(values)"
 
-  val innerValue = Seq(createValidPayeEntry(), createValidPayeEntry())
-  val request = IncomePaye(Some(innerValue))
+  val innerValue: Seq[PayeEntry] = Seq(createValidPayeEntry(), createValidPayeEntry())
+  val request: IncomePaye = IncomePaye(Some(innerValue))
 
   "collection" should {
 

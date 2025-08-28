@@ -19,27 +19,24 @@ package unit.uk.gov.hmrc.individualsifapistub.util.controllers.organisations
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
-import play.api.http.Status.{BAD_REQUEST, CREATED, INTERNAL_SERVER_ERROR, OK}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.controllers.organisations.SelfAssessmentTaxPayerController
-import uk.gov.hmrc.individualsifapistub.domain.organisations.SelfAssessmentTaxPayer._
 import uk.gov.hmrc.individualsifapistub.domain.organisations.{Address, SelfAssessmentTaxPayer, TaxPayerDetails}
 import uk.gov.hmrc.individualsifapistub.domain.{TestAddress, TestIndividual, TestOrganisationDetails}
-import uk.gov.hmrc.individualsifapistub.services.organisations.SelfAssessmentTaxPayerService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 import scala.concurrent.Future
 
 class SelfAssessmentTaxPayerControllerSpec extends TestSupport {
 
-  val mockService: SelfAssessmentTaxPayerService = mock[SelfAssessmentTaxPayerService]
   val mockConnector: ApiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
 
   val controller =
-    new SelfAssessmentTaxPayerController(loggingAction, controllerComponents, mockService, mockConnector)
+    new SelfAssessmentTaxPayerController(loggingAction, controllerComponents, mockConnector)
 
   val exampleAddress: Address =
     Address(Some("Alfie House"), Some("Main Street"), Some("Birmingham"), Some("West midlands"), Some("B14 6JH"))
@@ -59,41 +56,10 @@ class SelfAssessmentTaxPayerControllerSpec extends TestSupport {
     )
   )
 
-  "create" should {
-    "return response with created status when successful" in {
-      when(mockService.create(selfAssessmentTaxPayer)).thenReturn(Future.successful(selfAssessmentTaxPayer))
-
-      val httpRequest =
-        FakeRequest()
-          .withMethod("Post")
-          .withBody(Json.toJson(selfAssessmentTaxPayer))
-
-      val result = controller.create(utr.utr)(httpRequest)
-
-      result.map { x =>
-        x.header.status shouldBe CREATED
-        jsonBodyOf(x) shouldBe Json.toJson(testIndividual)
-      }
-    }
-
-    "fail when invalid request provided" in {
-      when(mockService.create(selfAssessmentTaxPayer)).thenReturn(Future.successful(selfAssessmentTaxPayer))
-
-      val httpRequest =
-        FakeRequest()
-          .withMethod("POST")
-          .withBody(Json.parse("{}"))
-
-      val result = controller.create(utr.utr)(httpRequest)
-
-      result.map(x => x.header.status shouldBe BAD_REQUEST)
-    }
-  }
-
   "retrieve" should {
     "return response when entry found by service" in {
 
-      when(mockConnector.getOrganisationBySaUtr(any())(any())).thenReturn(Future.successful(Some(testIndividual)))
+      when(mockConnector.getOrganisationBySaUtr(any())(using any())).thenReturn(Future.successful(Some(testIndividual)))
 
       val httpRequest =
         FakeRequest()
@@ -109,7 +75,7 @@ class SelfAssessmentTaxPayerControllerSpec extends TestSupport {
 
     "fails when an exception is thrown" in {
 
-      when(mockConnector.getOrganisationBySaUtr(any())(any())).thenReturn(Future.failed(new Exception))
+      when(mockConnector.getOrganisationBySaUtr(any())(using any())).thenReturn(Future.failed(new Exception))
 
       val httpRequest =
         FakeRequest()

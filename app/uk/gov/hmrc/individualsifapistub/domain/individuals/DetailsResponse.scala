@@ -25,10 +25,10 @@ case class ContactDetail(code: Int, `type`: String, detail: String)
 object ContactDetail {
   implicit val format: Format[ContactDetail] = Format(
     (
-      (JsPath \ "code").read[Int](min[Int](1).keepAnd(max[Int](9999))) and
-        (JsPath \ "type").read[String](minLength[String](1).keepAnd(maxLength[String](35))) and
-        (JsPath \ "detail").read[String](minLength[String](3).keepAnd(maxLength[String](72)))
-    )(ContactDetail.apply _),
+      (JsPath \ "code").read[Int](using min[Int](1).keepAnd(max[Int](9999))) and
+        (JsPath \ "type").read[String](using minLength[String](1).keepAnd(maxLength[String](35))) and
+        (JsPath \ "detail").read[String](using minLength[String](3).keepAnd(maxLength[String](72)))
+    )(ContactDetail.apply),
     Json.writes[ContactDetail]
   )
 }
@@ -45,13 +45,13 @@ case class Address(
 object Address {
   implicit val format: Format[Address] = Format(
     (
-      (JsPath \ "line1").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
-        (JsPath \ "line2").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
-        (JsPath \ "line3").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
-        (JsPath \ "line4").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
-        (JsPath \ "line5").readNullable[String](minLength[String](0) keepAnd maxLength[String](100)) and
-        (JsPath \ "postcode").readNullable[String](minLength[String](0) keepAnd maxLength[String](10))
-    )(Address.apply _),
+      (JsPath \ "line1").readNullable[String](using minLength[String](0) keepAnd maxLength[String](100)) and
+        (JsPath \ "line2").readNullable[String](using minLength[String](0) keepAnd maxLength[String](100)) and
+        (JsPath \ "line3").readNullable[String](using minLength[String](0) keepAnd maxLength[String](100)) and
+        (JsPath \ "line4").readNullable[String](using minLength[String](0) keepAnd maxLength[String](100)) and
+        (JsPath \ "line5").readNullable[String](using minLength[String](0) keepAnd maxLength[String](100)) and
+        (JsPath \ "postcode").readNullable[String](using minLength[String](0) keepAnd maxLength[String](10))
+    )(Address.apply),
     Json.writes[Address]
   )
 }
@@ -83,22 +83,22 @@ object Residence {
 
   implicit val format: Format[Residence] = Format(
     (
-      (JsPath \ "statusCode").readNullable[String](pattern(statusCodePattern, "Status code is invalid")) and
-        (JsPath \ "status").readNullable[String](minLength[String](1) andKeep maxLength[String](8)) and
-        (JsPath \ "typeCode").readNullable[Int](min[Int](1) andKeep max[Int](9999)) and
-        (JsPath \ "type").readNullable[String](minLength[String](1) andKeep maxLength[String](35)) and
-        (JsPath \ "deliveryInfo").readNullable[String](minLength[String](1) andKeep maxLength[String](35)) and
-        (JsPath \ "retLetterServ").readNullable[String](minLength[String](1) andKeep maxLength[String](1)) and
-        (JsPath \ "addressCode").readNullable[String](pattern(statusCodePattern, "Address code is invalid")) and
-        (JsPath \ "addressType").readNullable[String](minLength[String](1) andKeep maxLength[String](6)) and
+      (JsPath \ "statusCode").readNullable[String](using pattern(statusCodePattern, "Status code is invalid")) and
+        (JsPath \ "status").readNullable[String](using minLength[String](1) andKeep maxLength[String](8)) and
+        (JsPath \ "typeCode").readNullable[Int](using min[Int](1) andKeep max[Int](9999)) and
+        (JsPath \ "type").readNullable[String](using minLength[String](1) andKeep maxLength[String](35)) and
+        (JsPath \ "deliveryInfo").readNullable[String](using minLength[String](1) andKeep maxLength[String](35)) and
+        (JsPath \ "retLetterServ").readNullable[String](using minLength[String](1) andKeep maxLength[String](1)) and
+        (JsPath \ "addressCode").readNullable[String](using pattern(statusCodePattern, "Address code is invalid")) and
+        (JsPath \ "addressType").readNullable[String](using minLength[String](1) andKeep maxLength[String](6)) and
         (JsPath \ "address").readNullable[Address] and
-        (JsPath \ "houseId").readNullable[String](maxLength[String](35)) and
-        (JsPath \ "homeCountry").readNullable[String](maxLength[String](16)) and
-        (JsPath \ "otherCountry").readNullable[String](maxLength[String](35)) and
-        (JsPath \ "deadLetterOfficeDate").readNullable[String](pattern(datePattern, "Date is invalid")) and
+        (JsPath \ "houseId").readNullable[String](using maxLength[String](35)) and
+        (JsPath \ "homeCountry").readNullable[String](using maxLength[String](16)) and
+        (JsPath \ "otherCountry").readNullable[String](using maxLength[String](35)) and
+        (JsPath \ "deadLetterOfficeDate").readNullable[String](using pattern(datePattern, "Date is invalid")) and
         (JsPath \ "startDateTime").readNullable[String] and
-        (JsPath \ "noLongerUsed").readNullable[String](minLength[String](1) andKeep maxLength[String](1))
-    )(Residence.apply _),
+        (JsPath \ "noLongerUsed").readNullable[String](using minLength[String](1) andKeep maxLength[String](1))
+    )(Residence.apply),
     Json.writes[Residence]
   )
 }

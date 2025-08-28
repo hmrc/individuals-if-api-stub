@@ -95,7 +95,7 @@ class ApiPlatformTestUserConnectorSpec
              """
         )
 
-      val result = await(underTest.getOrganisationByEmpRef(empRef))
+      val result: Option[TestOrganisation] = await(underTest.getOrganisationByEmpRef(empRef))
 
       result shouldBe Some(testOrganisation)
     }
@@ -138,7 +138,7 @@ class ApiPlatformTestUserConnectorSpec
             }"""
         )
 
-      val result = await(underTest.getIndividualByNino(nino))
+      val result: Option[TestIndividual] = await(underTest.getIndividualByNino(nino))
 
       result shouldBe Some(testIndividual)
     }

@@ -22,10 +22,10 @@ import uk.gov.hmrc.individualsifapistub.domain.organisations.{CreateSelfAssessme
 import uk.gov.hmrc.individualsifapistub.repository.organisations.SelfAssessmentReturnDetailRepository
 
 class SelfAssessmentReturnDetailRepositorySpec extends RepositoryTestHelper {
-  val repository = fakeApplication.injector.instanceOf[SelfAssessmentReturnDetailRepository]
-  var taxYear = TaxYear("2019", 12343.12)
-  val request = CreateSelfAssessmentReturnDetailRequest("1234567890", "2015-04-21", "Individuals", "S", Seq(taxYear))
-  val response = SelfAssessmentReturnDetailResponse("1234567890", "2015-04-21", "Individuals", "S", Seq(taxYear))
+  val repository: SelfAssessmentReturnDetailRepository = fakeApplication.injector.instanceOf[SelfAssessmentReturnDetailRepository]
+  var taxYear: TaxYear = TaxYear("2019", 12343.12)
+  val request: CreateSelfAssessmentReturnDetailRequest = CreateSelfAssessmentReturnDetailRequest("1234567890", "2015-04-21", "Individuals", "S", Seq(taxYear))
+  val response: SelfAssessmentReturnDetailResponse = SelfAssessmentReturnDetailResponse("1234567890", "2015-04-21", "Individuals", "S", Seq(taxYear))
 
   "collection" should {
     "have a unique index on a requests utr" in {

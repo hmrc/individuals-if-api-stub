@@ -22,15 +22,15 @@ import uk.gov.hmrc.individualsifapistub.domain.organisations._
 import uk.gov.hmrc.individualsifapistub.repository.organisations.NumberOfEmployeesRepository
 
 class NumberOfEmployeesRepositorySpec extends RepositoryTestHelper {
-  val repository = fakeApplication.injector.instanceOf[NumberOfEmployeesRepository]
+  val repository: NumberOfEmployeesRepository = fakeApplication.injector.instanceOf[NumberOfEmployeesRepository]
 
-  val counts = NumberOfEmployeeCounts("2019-10", 554)
-  val reference = NumberOfEmployeeReferences("456", "RT882d", Seq(counts))
-  val postRequest = NumberOfEmployeesResponse("2019-10-01", "2020-04-05", Seq(reference))
-  val response = NumberOfEmployeesResponse("2019-10-01", "2020-04-05", Seq(reference))
+  val counts: NumberOfEmployeeCounts = NumberOfEmployeeCounts("2019-10", 554)
+  val reference: NumberOfEmployeeReferences = NumberOfEmployeeReferences("456", "RT882d", Seq(counts))
+  val postRequest: NumberOfEmployeesResponse = NumberOfEmployeesResponse("2019-10-01", "2020-04-05", Seq(reference))
+  val response: NumberOfEmployeesResponse = NumberOfEmployeesResponse("2019-10-01", "2020-04-05", Seq(reference))
 
-  val getReference = NumberOfEmployeeReferencesRequest("456", "RT882d")
-  val getRequest = NumberOfEmployeesRequest("2019-10-01", "2020-04-05", Seq(getReference))
+  val getReference: NumberOfEmployeeReferencesRequest = NumberOfEmployeeReferencesRequest("456", "RT882d")
+  val getRequest: NumberOfEmployeesRequest = NumberOfEmployeesRequest("2019-10-01", "2020-04-05", Seq(getReference))
 
   "collection" should {
     "have a unique index on a requests utr" in {

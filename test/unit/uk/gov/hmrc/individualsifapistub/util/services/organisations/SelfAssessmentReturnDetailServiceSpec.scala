@@ -53,13 +53,13 @@ class SelfAssessmentReturnDetailServiceSpec extends AsyncWordSpec with Matchers 
   "get" should {
     "return found item if it exists" in {
       when(mockRepository.find(request.utr)).thenReturn(Future.successful(Some(response)))
-      val result = service.get(request.utr);
+      val result = service.get(request.utr)
       result.map(x => x shouldBe Some(response))
     }
 
     "return None if item does not exists" in {
       when(mockRepository.find(request.utr)).thenReturn(Future.successful(None))
-      val result = service.get(request.utr);
+      val result = service.get(request.utr)
       result.map(x => x shouldBe None)
     }
   }

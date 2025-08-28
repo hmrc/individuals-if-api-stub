@@ -30,9 +30,9 @@ object NumberOfEmployeeCounts {
 
   implicit val format: Format[NumberOfEmployeeCounts] = Format[NumberOfEmployeeCounts](
     (
-      (JsPath \ "dateTaken").read[String](pattern(dateTakenPattern, "Invalid dateTaken format")) and
+      (JsPath \ "dateTaken").read[String](using pattern(dateTakenPattern, "Invalid dateTaken format")) and
         (JsPath \ "employeeCount").read[Int]
-    )(NumberOfEmployeeCounts.apply _),
+    )(NumberOfEmployeeCounts.apply),
     Json.writes[NumberOfEmployeeCounts]
   )
 }
@@ -46,10 +46,10 @@ case class NumberOfEmployeeReferences(
 object NumberOfEmployeeReferences {
   implicit val format: Format[NumberOfEmployeeReferences] = Format(
     (
-      (JsPath \ "districtNumber").read[String](pattern(districtNumberPattern, "District number is invalid")) and
-        (JsPath \ "payeReference").read[String](pattern(payeRefPattern, "payeReference is invalid")) and
+      (JsPath \ "districtNumber").read[String](using pattern(districtNumberPattern, "District number is invalid")) and
+        (JsPath \ "payeReference").read[String](using pattern(payeRefPattern, "payeReference is invalid")) and
         (JsPath \ "counts").read[Seq[NumberOfEmployeeCounts]]
-    )(NumberOfEmployeeReferences.apply _),
+    )(NumberOfEmployeeReferences.apply),
     Json.writes[NumberOfEmployeeReferences]
   )
 }
@@ -59,9 +59,9 @@ case class NumberOfEmployeeReferencesRequest(districtNumber: String, payeReferen
 object NumberOfEmployeeReferencesRequest {
   implicit val format: Format[NumberOfEmployeeReferencesRequest] = Format(
     (
-      (JsPath \ "districtNumber").read[String](pattern(districtNumberPattern, "District number is invalid")) and
-        (JsPath \ "payeReference").read[String](pattern(payeRefPattern, "payeReference is invalid"))
-    )(NumberOfEmployeeReferencesRequest.apply _),
+      (JsPath \ "districtNumber").read[String](using pattern(districtNumberPattern, "District number is invalid")) and
+        (JsPath \ "payeReference").read[String](using pattern(payeRefPattern, "payeReference is invalid"))
+    )(NumberOfEmployeeReferencesRequest.apply),
     Json.writes[NumberOfEmployeeReferencesRequest]
   )
 }
@@ -75,10 +75,10 @@ case class NumberOfEmployeesRequest(
 object NumberOfEmployeesRequest {
   implicit val format: Format[NumberOfEmployeesRequest] = Format(
     (
-      (JsPath \ "startDate").read[String](pattern(datePattern, "startDate is invalid")) and
-        (JsPath \ "endDate").read[String](pattern(datePattern, "endDate is invalid")) and
+      (JsPath \ "startDate").read[String](using pattern(datePattern, "startDate is invalid")) and
+        (JsPath \ "endDate").read[String](using pattern(datePattern, "endDate is invalid")) and
         (JsPath \ "references").read[Seq[NumberOfEmployeeReferencesRequest]]
-    )(NumberOfEmployeesRequest.apply _),
+    )(NumberOfEmployeesRequest.apply),
     Json.writes[NumberOfEmployeesRequest]
   )
 }
@@ -88,10 +88,10 @@ case class NumberOfEmployeesResponse(startDate: String, endDate: String, referen
 object NumberOfEmployeesResponse {
   implicit val format: Format[NumberOfEmployeesResponse] = Format(
     (
-      (JsPath \ "startDate").read[String](pattern(datePattern, "startDate is invalid")) and
-        (JsPath \ "endDate").read[String](pattern(datePattern, "endDate is invalid")) and
+      (JsPath \ "startDate").read[String](using pattern(datePattern, "startDate is invalid")) and
+        (JsPath \ "endDate").read[String](using pattern(datePattern, "endDate is invalid")) and
         (JsPath \ "references").read[Seq[NumberOfEmployeeReferences]]
-    )(NumberOfEmployeesResponse.apply _),
+    )(NumberOfEmployeesResponse.apply),
     Json.writes[NumberOfEmployeesResponse]
   )
 }

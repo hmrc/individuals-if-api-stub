@@ -35,7 +35,7 @@ import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 import unit.uk.gov.hmrc.individualsifapistub.util.testUtils.{IncomePayeHelpers, IncomeSaHelpers}
 
 import scala.concurrent.Future
-import play.api.mvc.AnyContentAsEmpty
+import play.api.mvc.{AnyContentAsEmpty, Result}
 import uk.gov.hmrc.individualsifapistub.domain.individuals.{PayeEntry, SaTaxYearEntry}
 
 class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomePayeHelpers {
@@ -56,7 +56,7 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
       saUtr = Some(utr)
     )
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any()))
+    when(apiPlatformTestUserConnector.getIndividualByNino(any())(using any()))
       .thenReturn(Future.successful(Some(testIndividual)))
   }
 
@@ -92,7 +92,7 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
             Future.successful(incomeSaResponse)
           )
 
-        val result = await(
+        val result: Result = await(
           underTest.createSa(idType, idValue, Some(startYear), Some(endYear), Some(useCase))(
             fakeRequest.withBody(Json.toJson(incomeSaResponse))
           )
@@ -105,7 +105,7 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
 
       "Fail when an invalid nino is provided" in new Setup {
 
-        when(apiPlatformTestUserConnector.getIndividualByNino(any())(any()))
+        when(apiPlatformTestUserConnector.getIndividualByNino(any())(using any()))
           .thenReturn(Future.failed(new RecordNotFoundException))
 
         when(incomeService.createSa(idType, idValue, Some(startYear), Some(endYear), Some(useCase), incomeSaResponse))
@@ -149,7 +149,7 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
           Future.successful(Some(incomeSaResponse))
         )
 
-        val result = await {
+        val result: Result = await {
           underTest.retrieveSa(idType, idValue, startYear, endYear, Some(saFields))(fakeRequest)
         }
 
@@ -185,7 +185,7 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
             Future.successful(incomePayeResponse)
           )
 
-        val result = await(
+        val result: Result = await(
           underTest.createPaye(idType, idValue, Some(startDate), Some(endDate), Some(useCase))(
             fakeRequest.withBody(Json.toJson(incomePayeResponse))
           )
@@ -225,7 +225,8 @@ class IncomeControllerSpec extends TestSupport with IncomeSaHelpers with IncomeP
           Future.successful(Some(incomePayeWithFieldFilteredResponse))
         )
 
-        val result = await(underTest.retrievePaye(idType, idValue, startDate, endDate, Some(fields))(fakeRequest))
+        val result: Result =
+          await(underTest.retrievePaye(idType, idValue, startDate, endDate, Some(fields))(fakeRequest))
 
         status(result) shouldBe OK
 

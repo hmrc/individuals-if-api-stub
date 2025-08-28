@@ -22,14 +22,14 @@ import uk.gov.hmrc.individualsifapistub.repository.individuals.DetailsRepository
 
 class DetailsRepositorySpec extends RepositoryTestHelper with TestHelpers {
 
-  val repository = fakeApplication.injector.instanceOf[DetailsRepository]
+  val repository: DetailsRepository = fakeApplication.injector.instanceOf[DetailsRepository]
 
   val ninoValue = "XH123456A"
   val trnValue = "2432552635"
   val useCase = "TEST"
   val fields = "some(values)"
 
-  val request = CreateDetailsRequest(
+  val request: CreateDetailsRequest = CreateDetailsRequest(
     Some(
       Seq(ContactDetail(9, "MOBILE TELEPHONE", "07123 987654"), ContactDetail(9, "MOBILE TELEPHONE", "07123 987655"))
     ),

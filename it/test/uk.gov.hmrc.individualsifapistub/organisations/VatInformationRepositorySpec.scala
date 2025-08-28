@@ -25,7 +25,7 @@ import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
 class VatInformationRepositorySpec extends RepositoryTestHelper {
-  val repository = fakeApplication.injector.instanceOf[VatInformationRepository]
+  val repository: VatInformationRepository = fakeApplication.injector.instanceOf[VatInformationRepository]
 
   val vrn = "12345678"
   val customerDetails: VatCustomerDetails = VatCustomerDetails("Ancient Antiques")

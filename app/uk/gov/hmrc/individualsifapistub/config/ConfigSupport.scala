@@ -23,7 +23,7 @@ trait ConfigSupport {
 
   val current: Application
 
-  def config: Configuration = current.configuration
+  private def config: Configuration = current.configuration
   def mode: Mode = current.mode
 
   def runModeConfiguration: Configuration = config

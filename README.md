@@ -16,9 +16,9 @@ Usage
 
 ### Running tests
 
-Unit and integration tests can be run with the following:
+All the  tests with coverage report can be run with the following:
 
-    sbt test it/test
+     sbt clean compile coverage test it/test coverageReport
                       
 ### License
 

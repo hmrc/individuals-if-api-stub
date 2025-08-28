@@ -26,9 +26,8 @@ sealed abstract class ErrorResponse(val httpStatusCode: Int, val errorCode: Stri
 }
 
 object ErrorResponse {
-  implicit val writes: Writes[ErrorResponse] = new Writes[ErrorResponse] {
-    def writes(e: ErrorResponse): JsValue = Json.obj("code" -> e.errorCode, "message" -> e.message)
-  }
+  implicit val writes: Writes[ErrorResponse] = (e: ErrorResponse) =>
+    Json.obj("code" -> e.errorCode, "message" -> e.message)
 }
 
 case class ErrorInvalidRequest(errorMessage: String) extends ErrorResponse(BAD_REQUEST, "INVALID_REQUEST", errorMessage)

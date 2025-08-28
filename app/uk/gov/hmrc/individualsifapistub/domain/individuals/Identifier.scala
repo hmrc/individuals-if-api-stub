@@ -36,12 +36,12 @@ object Identifier {
 
   implicit val format: Format[Identifier] = Format(
     (
-      (JsPath \ "nino").readNullable[String](pattern(ninoPattern, "InvalidNino")) and
-        (JsPath \ "trn").readNullable[String](pattern(trnPattern, "InvalidTrn")) and
+      (JsPath \ "nino").readNullable[String](using pattern(ninoPattern, "InvalidNino")) and
+        (JsPath \ "trn").readNullable[String](using pattern(trnPattern, "InvalidTrn")) and
         (JsPath \ "from").readNullable[String] and
         (JsPath \ "to").readNullable[String] and
         (JsPath \ "useCase").readNullable[String]
-    )(Identifier.apply _),
+    )(Identifier.apply),
     Json.writes[Identifier]
   )
 }

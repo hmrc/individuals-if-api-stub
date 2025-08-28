@@ -27,10 +27,10 @@ class IntervalQueryStringBinder extends AbstractQueryStringBindable[Interval] {
 
   override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, Interval]] =
     (getParam(params, "from"), getParam(params, "to", Some(LocalDate.now()))) match {
-      case (Right(from), Right(to)) if from isBefore to => Some(interval(from, to))
-      case (Right(_), Right(_))                         => Some(Left(errorResponse("Invalid time period requested")))
-      case (_, Left(msg))                               => Some(Left(msg))
-      case (Left(msg), _)                               => Some(Left(msg))
+      case (Right(from), Right(to)) if from `isBefore` to => Some(interval(from, to))
+      case (Right(_), Right(_))                           => Some(Left(errorResponse("Invalid time period requested")))
+      case (_, Left(msg))                                 => Some(Left(msg))
+      case (Left(msg), _)                                 => Some(Left(msg))
     }
 
   private def interval(from: LocalDate, to: LocalDate): Either[String, Interval] =

@@ -34,7 +34,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 import scala.concurrent.Future
-import play.api.mvc.AnyContentAsEmpty
+import play.api.mvc.{AnyContentAsEmpty, Result}
 
 class TaxCreditsControllerSpec extends TestSupport {
 
@@ -47,7 +47,7 @@ class TaxCreditsControllerSpec extends TestSupport {
     val mockTaxCreditsService = new TaxCreditsService(taxCreditsRepo, apiPlatformTestUserConnector, servicesConfig)
     val underTest = new TaxCreditsController(loggingAction, controllerComponents, mockTaxCreditsService)
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any()))
+    when(apiPlatformTestUserConnector.getIndividualByNino(any())(using any()))
       .thenReturn(Future.successful(Some(testIndividual)))
   }
 
@@ -82,7 +82,7 @@ class TaxCreditsControllerSpec extends TestSupport {
         Future.successful(request)
       )
 
-      val result = await(
+      val result: Result = await(
         underTest.create(idType, idValue, startDate, endDate, useCase)(fakeRequest.withBody(Json.toJson(request)))
       )
 
@@ -94,14 +94,14 @@ class TaxCreditsControllerSpec extends TestSupport {
 
     "Fail when an invalid nino is provided" in new Setup {
 
-      when(apiPlatformTestUserConnector.getIndividualByNino(any())(any()))
+      when(apiPlatformTestUserConnector.getIndividualByNino(any())(using any()))
         .thenReturn(Future.failed(new RecordNotFoundException))
 
       when(mockTaxCreditsService.create(idType, idValue, startDate, endDate, useCase, request)).thenReturn(
         Future.successful(request)
       )
 
-      val result =
+      val result: Result =
         await(underTest.create(idType, idValue, startDate, endDate, useCase)(fakeRequest.withBody(Json.toJson(""))))
 
       status(result) shouldBe BAD_REQUEST
@@ -114,7 +114,7 @@ class TaxCreditsControllerSpec extends TestSupport {
         Future.successful(request)
       )
 
-      val response =
+      val response: Result =
         await(underTest.create(idType, idValue, startDate, endDate, useCase)(fakeRequest.withBody(Json.toJson(""))))
 
       status(response) shouldBe BAD_REQUEST
@@ -130,7 +130,7 @@ class TaxCreditsControllerSpec extends TestSupport {
         Future.successful(Some(request))
       )
 
-      val result = await(underTest.retrieve(idType, idValue, startDate, endDate, Some(fields))(fakeRequest))
+      val result: Result = await(underTest.retrieve(idType, idValue, startDate, endDate, Some(fields))(fakeRequest))
 
       status(result) shouldBe OK
 

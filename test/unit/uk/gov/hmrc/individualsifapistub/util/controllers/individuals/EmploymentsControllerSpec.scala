@@ -26,10 +26,10 @@ import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualsifapistub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualsifapistub.controllers.individuals.EmploymentsController
-import uk.gov.hmrc.individualsifapistub.domain._
-import uk.gov.hmrc.individualsifapistub.domain.individuals.Employments._
+import uk.gov.hmrc.individualsifapistub.domain.*
+import uk.gov.hmrc.individualsifapistub.domain.individuals.Employments.*
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{Nino, Trn}
-import uk.gov.hmrc.individualsifapistub.domain.individuals._
+import uk.gov.hmrc.individualsifapistub.domain.individuals.*
 import uk.gov.hmrc.individualsifapistub.repository.individuals.EmploymentRepository
 import uk.gov.hmrc.individualsifapistub.services.individuals.EmploymentsService
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -37,7 +37,7 @@ import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 import java.time.LocalDate
 import scala.concurrent.Future
-import play.api.mvc.AnyContentAsEmpty
+import play.api.mvc.{AnyContentAsEmpty, Result}
 
 class EmploymentsControllerSpec extends TestSupport {
 
@@ -56,11 +56,11 @@ class EmploymentsControllerSpec extends TestSupport {
 
     val utr: SaUtr = SaUtr("2432552635")
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any()))
+    when(apiPlatformTestUserConnector.getIndividualByNino(any())(using any()))
       .thenReturn(Future.successful(Some(testIndividual)))
   }
 
-  val idType = Nino.toString
+  val idType: String = Nino.toString
   val idValue = "XH123456A"
   val startDate = "2020-01-01"
   val endDate = "2020-12-31"
@@ -133,7 +133,7 @@ class EmploymentsControllerSpec extends TestSupport {
           Future.successful(employments)
         )
 
-      val result = await(
+      val result: Result = await(
         underTest.create(idType, idValue, Some(startDate), Some(endDate), Some(useCase))(
           fakeRequest.withBody(Json.toJson(employments))
         )
@@ -146,7 +146,7 @@ class EmploymentsControllerSpec extends TestSupport {
 
     "Fail with an invalid nino" in new Setup {
 
-      when(apiPlatformTestUserConnector.getIndividualByNino(any())(any()))
+      when(apiPlatformTestUserConnector.getIndividualByNino(any())(using any()))
         .thenReturn(Future.failed(new RecordNotFoundException))
 
       when(mockEmploymentsService.create(idType, idValue, Some(startDate), Some(endDate), Some(useCase), employments))
@@ -154,7 +154,7 @@ class EmploymentsControllerSpec extends TestSupport {
           Future.successful(employments)
         )
 
-      val result = await(
+      val result: Result = await(
         underTest.create(idType, idValue, Some(startDate), Some(endDate), Some(useCase))(
           fakeRequest.withBody(Json.toJson(""))
         )
@@ -173,7 +173,7 @@ class EmploymentsControllerSpec extends TestSupport {
             Future.successful(employments)
           )
 
-        val result = await(
+        val result: Result = await(
           underTest.create(idType, "abc", Some(startDate), Some(endDate), Some(useCase))(
             fakeRequest.withBody(Json.toJson(employments))
           )
@@ -190,7 +190,7 @@ class EmploymentsControllerSpec extends TestSupport {
             Future.successful(employments)
           )
 
-        val result = await(
+        val result: Result = await(
           underTest.create(Trn.toString, "abc", Some(startDate), Some(endDate), Some(useCase))(
             fakeRequest.withBody(Json.toJson(employments))
           )
@@ -205,7 +205,7 @@ class EmploymentsControllerSpec extends TestSupport {
             Future.successful(employments)
           )
 
-        val result = await(
+        val result: Result = await(
           underTest.create("idType", idValue, Some(startDate), Some(endDate), Some(useCase))(
             fakeRequest.withBody(Json.toJson(employments))
           )
@@ -222,7 +222,7 @@ class EmploymentsControllerSpec extends TestSupport {
             Future.successful(employments)
           )
 
-        val result = await(
+        val result: Result = await(
           underTest.create(idType, idValue, Some(startDate), Some(endDate), Some(useCase))(
             fakeRequest.withBody(Json.toJson(""))
           )
@@ -242,7 +242,7 @@ class EmploymentsControllerSpec extends TestSupport {
         Future.successful(Some(employments))
       )
 
-      val result = await(underTest.retrieve(idType, idValue, startDate, endDate, None, None)(fakeRequest))
+      val result: Result = await(underTest.retrieve(idType, idValue, startDate, endDate, None, None)(fakeRequest))
 
       status(result) shouldBe OK
 

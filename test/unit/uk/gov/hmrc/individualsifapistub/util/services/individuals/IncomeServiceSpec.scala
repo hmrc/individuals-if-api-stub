@@ -69,7 +69,7 @@ class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePaye
       servicesConfig
     )
 
-    when(apiPlatformTestUserConnector.getIndividualByNino(any())(any()))
+    when(apiPlatformTestUserConnector.getIndividualByNino(any())(using any()))
       .thenReturn(Future.successful(Some(testIndividual)))
   }
 
@@ -88,7 +88,7 @@ class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePaye
             Future.successful(incomeSaResponse)
           )
 
-          val response =
+          val response: IncomeSa =
             await(underTest.createSa(idType, idValue, Some(startYear), Some(endYear), Some(useCase), incomeSaResponse))
 
           response shouldBe incomeSaResponse
@@ -119,7 +119,7 @@ class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePaye
               Future.successful(Some(incomeSaResponse))
             )
 
-          val response = await(underTest.getSa(idType, idValue, startYear, endYear, Some(fields)))
+          val response: Option[IncomeSa] = await(underTest.getSa(idType, idValue, startYear, endYear, Some(fields)))
 
           response shouldBe Some(incomeSaResponse)
 
@@ -132,7 +132,7 @@ class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePaye
               Future.successful(None)
             )
 
-          val response = await(underTest.getSa(idType, idValue, startYear, endYear, Some(fields)))
+          val response: Option[IncomeSa] = await(underTest.getSa(idType, idValue, startYear, endYear, Some(fields)))
 
           response shouldBe None
 
@@ -153,7 +153,7 @@ class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePaye
             Future.successful(incomePayeResponse)
           )
 
-          val response = await(
+          val response: IncomePaye = await(
             underTest.createPaye(idType, idValue, Some(startDate), Some(endDate), Some(useCase), incomePayeResponse)
           )
 
@@ -187,7 +187,7 @@ class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePaye
             Future.successful(Some(incomePayeResponse))
           )
 
-          val response = await(underTest.getPaye(idType, idValue, startDate, endDate, Some(fields)))
+          val response: Option[IncomePaye] = await(underTest.getPaye(idType, idValue, startDate, endDate, Some(fields)))
 
           response shouldBe Some(incomePayeResponse)
 
@@ -199,7 +199,7 @@ class IncomeServiceSpec extends TestSupport with IncomeSaHelpers with IncomePaye
             Future.successful(None)
           )
 
-          val response = await(underTest.getPaye(idType, idValue, startDate, endDate, Some(fields)))
+          val response: Option[IncomePaye] = await(underTest.getPaye(idType, idValue, startDate, endDate, Some(fields)))
 
           response shouldBe None
 
