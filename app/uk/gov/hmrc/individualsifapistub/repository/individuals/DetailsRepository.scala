@@ -49,15 +49,17 @@ class DetailsRepository @Inject() (mongo: MongoComponent)(implicit ec: Execution
     createDetailsRequest: CreateDetailsRequest
   ): Future[DetailsResponseNoId] = {
     val useCaseMap = Map(
-      "LAA-C3-residences"        -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
-      "LAA-C4-residences"        -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
-      "HMCTS-C3-residences"      -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
-      "HMCTS-C4-residences"      -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
-      "LSANI-C1-residences"      -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
-      "LSANI-C3-residences"      -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
-      "NICTSEJO-C4-residences"   -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
-      "LAA-C4-contact-details"   -> "LAA-C4_HMCTS-C4-contact-details",
-      "HMCTS-C4-contact-details" -> "LAA-C4_HMCTS-C4-contact-details"
+      "LAA-C3-residences"        -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4_SCTS-residences",
+      "LAA-C4-residences"        -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4_SCTS-residences",
+      "HMCTS-C3-residences"      -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4_SCTS-residences",
+      "HMCTS-C4-residences"      -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4_SCTS-residences",
+      "LSANI-C1-residences"      -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4_SCTS-residences",
+      "LSANI-C3-residences"      -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4_SCTS-residences",
+      "NICTSEJO-C4-residences"   -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4_SCTS-residences",
+      "SCTS-residences"          -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4_SCTS-residences",
+      "LAA-C4-contact-details"   -> "LAA-C4_HMCTS-C4_SCTS-contact-details",
+      "HMCTS-C4-contact-details" -> "LAA-C4_HMCTS-C4_SCTS-contact-details",
+      "SCTS-contact-details"     -> "LAA-C4_HMCTS-C4_SCTS-contact-details"
     )
 
     val ident = IdType.parse(idType) match {
@@ -89,8 +91,8 @@ class DetailsRepository @Inject() (mongo: MongoComponent)(implicit ec: Execution
 
   def findByIdAndType(idType: String, idValue: String, fields: Option[String]): Future[Option[DetailsResponse]] = {
     def fieldsMap = Map(
-      "residences(address(line1,line2,line3,line4,line5,postcode),noLongerUsed,type)" -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4-residences",
-      "contactDetails(code,detail,type)" -> "LAA-C4_HMCTS-C4-contact-details"
+      "residences(address(line1,line2,line3,line4,line5,postcode),noLongerUsed,type)" -> "LAA-C3_LAA-C4_HMCTS-C3_HMCTS-C4_LSANI-C1_LSANI-C3_NICTSEJO-C4_SCTS-residences",
+      "contactDetails(code,detail,type)" -> "LAA-C4_HMCTS-C4_SCTS-contact-details"
     )
 
     val ident = IdType.parse(idType) match {
