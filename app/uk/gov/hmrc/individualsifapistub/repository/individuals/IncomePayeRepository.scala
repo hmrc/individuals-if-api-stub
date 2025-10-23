@@ -59,7 +59,8 @@ class IncomePayeRepository @Inject() (mongo: MongoComponent)(implicit ec: Execut
       "LSANI-C1" -> "LSANI-C1_LSANI-C3",
       "LSANI-C3" -> "LSANI-C1_LSANI-C3",
       "HO-V2"    -> "HO-V2",
-      "SCTS"     -> "SCTS"
+      "SCTS"     -> "SCTS",
+      "LAD4"     -> "LAD4"
     )
 
     val ident = IdType.parse(idType) match {
@@ -103,7 +104,8 @@ class IncomePayeRepository @Inject() (mongo: MongoComponent)(implicit ec: Execut
       "paye(dednsFromNetPay,employee(hasPartner),employeeNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4,ytd1,ytd2,ytd3,ytd4),employeePensionContribs(notPaid,notPaidYTD,paid,paidYTD),grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),monthlyPeriodNumber,payFrequency,paymentDate,statutoryPayYTD(adoption,maternity,parentalBereavement,paternity),taxCode,taxDeductedOrRefunded,taxYear,taxablePay,taxablePayToDate,totalEmployerNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4,ytd1,ytd2,ytd3,ytd4),totalTaxToDate,weeklyPeriodNumber)" -> "LSANI-C1_LSANI-C3",
       "paye(employeeNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4,ytd1,ytd2,ytd3,ytd4),employeePensionContribs(notPaid,notPaidYTD,paid,paidYTD),grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),paymentDate,payroll(id),statutoryPayYTD(adoption,maternity,paternity),taxDeductedOrRefunded,taxablePay,totalEmployerNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4,ytd1,ytd2,ytd3,ytd4))" -> "NICTSEJO-C4",
       "paye(employerPayeRef,monthlyPeriodNumber,paymentDate,taxablePay,weeklyPeriodNumber)" -> "HO-V2",
-      "paye(taxYear,taxablePayToDate,totalTaxToDate)"                                       -> "SCTS"
+      "paye(taxYear,taxablePayToDate,totalTaxToDate)" -> "SCTS",
+      "paye(employeeNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4,ytd1,ytd2,ytd3,ytd4),employeePensionContribs(notPaid,notPaidYTD,paid,paidYTD),grossEarningsForNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4),monthlyPeriodNumber,paidHoursWorked,payFrequency,paymentDate,statutoryPayYTD(adoption,maternity,parentalBereavement,paternity),taxDeductedOrRefunded,taxYear,taxablePay,taxablePayToDate,totalEmployerNICs(inPayPeriod1,inPayPeriod2,inPayPeriod3,inPayPeriod4,ytd1,ytd2,ytd3,ytd4),totalTaxToDate,weeklyPeriodNumber)" -> "LAD4"
     )
 
     val ident = IdType.parse(idType) match {
