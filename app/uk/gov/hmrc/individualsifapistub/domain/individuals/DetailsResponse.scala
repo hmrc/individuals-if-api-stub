@@ -18,7 +18,7 @@ package uk.gov.hmrc.individualsifapistub.domain.individuals
 
 import play.api.libs.functional.syntax.{toApplicativeOps, toFunctionalBuilderOps}
 import play.api.libs.json.Reads.{max, maxLength, min, minLength, pattern}
-import play.api.libs.json.{Format, JsPath, Json, OFormat}
+import play.api.libs.json.{Format, JsError, JsPath, JsSuccess, Json, OFormat, Reads}
 
 case class ContactDetail(code: Int, `type`: String, detail: String)
 
@@ -106,11 +106,23 @@ object Residence {
 case class DetailsResponse(
   details: String,
   contactDetails: Option[Seq[ContactDetail]],
-  residence: Option[Seq[Residence]]
+  residences: Option[Seq[Residence]]
 )
 
 object DetailsResponse {
-  implicit val format: Format[DetailsResponse] = Json.format
+  private val reads: Reads[DetailsResponse] = (
+    (JsPath \ "details").read[String] and
+      (JsPath \ "contactDetails").readNullable[Seq[ContactDetail]] and
+      Reads { json =>
+        (json \ "residences").validateOpt[Seq[Residence]] match {
+          case JsSuccess(Some(residences), _) => JsSuccess(Some(residences))
+          case JsSuccess(None, _)             => (json \ "residence").validateOpt[Seq[Residence]]
+          case err: JsError                   => err
+        }
+      }
+  )(DetailsResponse.apply)
+
+  implicit val format: OFormat[DetailsResponse] = OFormat(reads, Json.writes[DetailsResponse])
 }
 
 case class DetailsResponseNoId(contactDetails: Option[Seq[ContactDetail]], residences: Option[Seq[Residence]])

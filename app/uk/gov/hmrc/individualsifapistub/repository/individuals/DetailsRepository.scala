@@ -81,7 +81,7 @@ class DetailsRepository @Inject() (mongo: MongoComponent)(implicit ec: Execution
     preservingMdc {
       collection
         .insertOne(detailsResponse)
-        .map(_ => DetailsResponseNoId(detailsResponse.contactDetails, detailsResponse.residence))
+        .map(_ => DetailsResponseNoId(detailsResponse.contactDetails, detailsResponse.residences))
         .head()
         .recover {
           case ex: MongoWriteException if ex.getError.getCode == 11000 => throw new DuplicateException

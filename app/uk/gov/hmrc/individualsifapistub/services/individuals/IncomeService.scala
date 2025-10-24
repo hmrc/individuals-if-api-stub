@@ -67,7 +67,7 @@ class IncomeService @Inject() (
   )(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[IncomePaye] =
     if (servicesConfig.getConfBool("verifyNino", true)) {
       verifyNino(idType, idValue) flatMap { _ =>
-        incomePayeRepository.create(idType, idValue, startDate , endDate, useCase, createIncomePayeRequest)
+        incomePayeRepository.create(idType, idValue, startDate, endDate, useCase, createIncomePayeRequest)
       }
     } else
       incomePayeRepository.create(idType, idValue, startDate, endDate, useCase, createIncomePayeRequest)
