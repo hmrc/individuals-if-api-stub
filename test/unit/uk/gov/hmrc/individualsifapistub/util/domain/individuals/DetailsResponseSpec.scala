@@ -182,7 +182,7 @@ class DetailsResponseSpec extends UnitSpec with TestHelpers {
                                       |         "detail" : "07123 987654"
                                       |       }
                                       |     ],
-                                      |     "residence" : [
+                                      |     "residences" : [
                                       |       {
                                       |         "type" : "BASE",
                                       |         "address" : {
@@ -213,6 +213,52 @@ class DetailsResponseSpec extends UnitSpec with TestHelpers {
     "Validates successfully when reading valid Details Response" in {
       val result = Json.toJson(response).validate[DetailsResponse]
       result.isSuccess shouldBe true
+    }
+
+    "Validates successfully when reading legacy residence field" in {
+      val legacyJson = Json.parse("""
+                                    |  {
+                                    |    "details" : "XH123456A-2020-01-01-2020-21-31-TEST",
+                                    |     "contactDetails" : [
+                                    |       {
+                                    |         "code" : 9,
+                                    |         "type" : "MOBILE TELEPHONE",
+                                    |         "detail" : "07123 987654"
+                                    |       },
+                                    |       {
+                                    |         "code" : 9,
+                                    |         "type" : "MOBILE TELEPHONE",
+                                    |         "detail" : "07123 987654"
+                                    |       }
+                                    |     ],
+                                    |     "residence" : [
+                                    |       {
+                                    |         "type" : "BASE",
+                                    |         "address" : {
+                                    |           "line1" : "line1-2",
+                                    |           "line2" : "line2-2",
+                                    |           "line3" : "line3-2",
+                                    |           "line4" : "line4-2",
+                                    |           "line5" : "line5-2",
+                                    |           "postcode" : "QW122QW"
+                                    |          }
+                                    |        },
+                                    |        {
+                                    |          "type" : "NOMINATED",
+                                    |          "address" : {
+                                    |            "line1" : "line1-1",
+                                    |            "line2" : "line2-1",
+                                    |            "line3" : "line3-1",
+                                    |            "line4" : "line4-1",
+                                    |            "line5" : "line5-1",
+                                    |            "postcode" : "QW121QW"
+                                    |          }
+                                    |        } ]
+                                    |      }""".stripMargin)
+
+      val result = legacyJson.validate[DetailsResponse]
+      result.isSuccess shouldBe true
+      result.get shouldBe response
     }
 
     "Validates unsuccessfully when reading invalid Details Response" in {
