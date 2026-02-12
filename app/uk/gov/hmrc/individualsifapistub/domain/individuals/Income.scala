@@ -417,7 +417,7 @@ object SaTaxYearEntry {
   )
 }
 
-case class IncomeSaEntry(id: String, incomeSaResponse: IncomeSa, idValue: Option[String])
+case class IncomeSaEntry(id: String, incomeSaResponse: IncomeSa, idValue: String)
 
 object IncomeSaEntry {
   implicit val format: Format[IncomeSaEntry] = Json.format
