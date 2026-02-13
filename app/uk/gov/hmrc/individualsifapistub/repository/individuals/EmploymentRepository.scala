@@ -22,9 +22,9 @@ import org.mongodb.scala.model.Indexes.ascending
 import org.mongodb.scala.model.{IndexModel, IndexOptions}
 import play.api.Logging
 import play.api.libs.json.Json
-import uk.gov.hmrc.individualsifapistub.domain._
+import uk.gov.hmrc.individualsifapistub.domain.*
 import uk.gov.hmrc.individualsifapistub.domain.individuals.IdType.{Nino, Trn}
-import uk.gov.hmrc.individualsifapistub.domain.individuals._
+import uk.gov.hmrc.individualsifapistub.domain.individuals.*
 import uk.gov.hmrc.individualsifapistub.util.Dates
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
@@ -42,7 +42,14 @@ class EmploymentRepository @Inject() (mongo: MongoComponent)(implicit ec: Execut
       mongoComponent = mongo,
       domainFormat = EmploymentEntry.format,
       indexes = Seq(
-        IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true))
+        IndexModel(ascending("id"), IndexOptions().name("id").unique(true).background(true)),
+        IndexModel(
+          ascending("idValue"),
+          IndexOptions()
+            .name("idValue")
+            .background(true)
+            .unique(true)
+        )
       )
     ) with Logging {
   def create(
@@ -85,7 +92,7 @@ class EmploymentRepository @Inject() (mongo: MongoComponent)(implicit ec: Execut
 
     preservingMdc {
       collection
-        .insertOne(EmploymentEntry(id, employments.employments, Some(idValue)))
+        .insertOne(EmploymentEntry(id, employments.employments, idValue))
         .map(_ => employments)
         .head()
         .recover {

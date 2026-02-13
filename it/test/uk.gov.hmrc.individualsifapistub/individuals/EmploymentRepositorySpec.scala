@@ -149,7 +149,8 @@ class EmploymentRepositorySpec extends RepositoryTestHelper {
 
       repository.indexes.find { i =>
         i.getOptions.getName.contains("id") &&
-        i.getKeys.toBsonDocument.getFirstKey == "id" &&
+        i.getOptions.getName.contains("idValue") &&
+        i.getKeys.toBsonDocument.getFirstKey == "idValue" &&
         i.getOptions.isBackground &&
         i.getOptions.isUnique
       } should not be None

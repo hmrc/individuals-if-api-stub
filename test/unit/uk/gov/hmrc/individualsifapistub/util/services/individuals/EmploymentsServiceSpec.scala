@@ -105,7 +105,7 @@ class EmploymentsServiceSpec extends TestSupport {
     val apiPlatformTestUserConnector: ApiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
 
     val employments: Employments = Employments(Seq(employment))
-    val request: EmploymentEntry = EmploymentEntry(id, Seq(employment), None)
+    val request: EmploymentEntry = EmploymentEntry(id, Seq(employment), idValue)
     val mockEmploymentRepository: EmploymentRepository = mock[EmploymentRepository]
     val servicesConfig: ServicesConfig = mock[ServicesConfig]
     val underTest = new EmploymentsService(mockEmploymentRepository, apiPlatformTestUserConnector, servicesConfig)

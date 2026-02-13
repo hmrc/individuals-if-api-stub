@@ -72,7 +72,7 @@ class IncomeSaRepository @Inject() (mongo: MongoComponent)(implicit ec: Executio
     val id =
       s"${ident.nino.getOrElse(ident.trn.get)}-${startYear.mkString}-${endYear.mkString}-$tag-${UUID.randomUUID()}"
 
-    val incomeSaRecord = IncomeSaEntry(id, request, Some(idValue))
+    val incomeSaRecord = IncomeSaEntry(id, request, idValue)
 
     logger.info(s"Insert for cache key: $id - Income sa: ${Json.toJson(incomeSaRecord)}")
 

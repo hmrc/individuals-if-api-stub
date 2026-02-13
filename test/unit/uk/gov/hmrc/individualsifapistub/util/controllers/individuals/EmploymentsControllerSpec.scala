@@ -122,7 +122,7 @@ class EmploymentsControllerSpec extends TestSupport {
   val employments: Employments = Employments(Seq(employment))
   val ident: Identifier = Identifier(Some("XH123456A"), None, Some(startDate), Some(endDate), Some(useCase))
   val id: String = s"${ident.nino.getOrElse(ident.trn.get)}-$startDate-$endDate-$useCase"
-  val request: EmploymentEntry = EmploymentEntry(id, Seq(employment), None)
+  val request: EmploymentEntry = EmploymentEntry(id, Seq(employment), idValue)
 
   "Create Employment" should {
 

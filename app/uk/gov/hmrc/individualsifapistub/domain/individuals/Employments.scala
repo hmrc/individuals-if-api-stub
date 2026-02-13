@@ -124,7 +124,7 @@ object Employment {
   )
 }
 
-case class EmploymentEntry(id: String, employments: Seq[Employment], idValue: Option[String])
+case class EmploymentEntry(id: String, employments: Seq[Employment], idValue: String)
 
 object EmploymentEntry {
   val format: Format[EmploymentEntry] = Json.format
