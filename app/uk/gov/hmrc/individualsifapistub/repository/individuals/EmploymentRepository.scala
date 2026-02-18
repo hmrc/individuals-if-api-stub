@@ -48,7 +48,6 @@ class EmploymentRepository @Inject() (mongo: MongoComponent)(implicit ec: Execut
           IndexOptions()
             .name("idValue")
             .background(true)
-            .unique(true)
         )
       )
     ) with Logging {

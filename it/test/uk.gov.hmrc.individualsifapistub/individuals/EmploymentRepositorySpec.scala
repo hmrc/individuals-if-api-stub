@@ -151,8 +151,7 @@ class EmploymentRepositorySpec extends RepositoryTestHelper {
         i.getOptions.getName.contains("id") &&
         i.getOptions.getName.contains("idValue") &&
         i.getKeys.toBsonDocument.getFirstKey == "idValue" &&
-        i.getOptions.isBackground &&
-        i.getOptions.isUnique
+        i.getOptions.isBackground
       } should not be None
     }
   }
