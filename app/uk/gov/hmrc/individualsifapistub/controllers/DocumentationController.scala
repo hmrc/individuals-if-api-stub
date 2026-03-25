@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.individualsifapistub.controllers.individuals
+package uk.gov.hmrc.individualsifapistub.controllers
 
 import controllers.Assets
 import org.apache.pekko.stream.Materializer
