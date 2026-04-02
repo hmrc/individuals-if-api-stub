@@ -46,7 +46,8 @@ class PayeEntrySpec extends UnitSpec {
     Some(createValidPostGradLoan()),
     Some(createValodIFGrossEarningsForNics()),
     Some(createValidTotalEmployerNics()),
-    Some(createValidAdditionalFields())
+    Some(createValidAdditionalFields()),
+    Some("345")
   )
 
   val invalidPayeEntry: PayeEntry = PayeEntry(
@@ -71,7 +72,8 @@ class PayeEntrySpec extends UnitSpec {
     Some(createValidPostGradLoan()),
     Some(createValodIFGrossEarningsForNics()),
     Some(createValidTotalEmployerNics()),
-    Some(createValidAdditionalFields())
+    Some(createValidAdditionalFields()),
+    Some("345")
   )
 
   "PayeEntry" should {
@@ -84,6 +86,7 @@ class PayeEntrySpec extends UnitSpec {
           |  "taxablePayToDate": 19157.5,
           |  "totalTaxToDate": 3095.89,
           |  "taxDeductedOrRefunded": 159228.49,
+          |  "hmrcOfficeNumber": "345",
           |  "employerPayeRef": "345/34678",
           |  "paymentDate": "2020-02-27",
           |  "taxablePay": 16533.95,

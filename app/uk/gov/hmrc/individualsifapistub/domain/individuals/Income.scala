@@ -222,12 +222,14 @@ case class PayeEntry(
   postGradLoan: Option[PostGradLoan],
   grossEarningsForNICs: Option[GrossEarningsForNics],
   totalEmployerNICs: Option[TotalEmployerNics],
-  additionalFields: Option[AdditionalFields]
+  additionalFields: Option[AdditionalFields],
+  hmrcOfficeNumber: Option[String]
 )
 
 object PayeEntry {
   private val taxCodePattern = "^([1-9][0-9]{0,5}[LMNPTY])|(BR)|(0T)|(NT)|(D[0-8])|([K][1-9][0-9]{0,5})$".r
   private val paidHoursWorkPattern = "^[^ ].{0,34}$".r
+  private val hmrcOfficeNumberPattern = "^[0-9]{3}$".r
   private val employerPayeRefPattern = "^[^ ].{1,14}$".r
   private val payeTaxYearPattern = "^[0-9]{2}\\-[0-9]{2}$".r
   private val monthlyPeriodNumberPattern = "^([1-9]|1[0-2])$".r
@@ -239,59 +241,121 @@ object PayeEntry {
     verifying(value => payFrequencyValues.contains(value))
   }
 
-  implicit val format: Format[PayeEntry] = Format(
-    (
-      (JsPath \ "taxCode").readNullable[String](using
-        minLength[String](2)
-          .keepAnd(
-            maxLength[String](7)
-              .keepAnd(pattern(taxCodePattern, "Invalid Tax Code"))
-          )
+  private val baseReads: Reads[PayeEntry] = (
+    (JsPath \ "taxCode").readNullable[String](using
+      minLength[String](2)
+        .keepAnd(
+          maxLength[String](7)
+            .keepAnd(pattern(taxCodePattern, "Invalid Tax Code"))
+        )
+    ) and
+      (JsPath \ "paidHoursWorked").readNullable[String](using
+        maxLength[String](35)
+          .keepAnd(pattern(paidHoursWorkPattern, "Invalid Paid Hours Work"))
       ) and
-        (JsPath \ "paidHoursWorked").readNullable[String](using
-          maxLength[String](35)
-            .keepAnd(pattern(paidHoursWorkPattern, "Invalid Paid Hours Work"))
-        ) and
-        (JsPath \ "taxablePayToDate").readNullable[Double](using verifying(paymentAmountValidator)) and
-        (JsPath \ "totalTaxToDate").readNullable[Double](using verifying(paymentAmountValidator)) and
-        (JsPath \ "taxDeductedOrRefunded").readNullable[Double](using verifying(paymentAmountValidator)) and
-        (JsPath \ "employerPayeRef").readNullable[String](using
-          maxLength[String](14).keepAnd(pattern(employerPayeRefPattern, "Invalid employer PAYE reference"))
-        ) and
-        (JsPath \ "paymentDate").readNullable[LocalDate] and
-        (JsPath \ "taxablePay").readNullable[Double](using verifying(paymentAmountValidator)) and
-        (JsPath \ "taxYear").readNullable[String](using pattern(payeTaxYearPattern, "Invalid Tax Year")) and
-        (JsPath \ "monthlyPeriodNumber").readNullable[String](using
-          pattern(monthlyPeriodNumberPattern, "Invalid Monthly Period Number")
-            .keepAnd(minLength[String](1))
-            .keepAnd(maxLength[String](2))
-        ) and
-        (JsPath \ "weeklyPeriodNumber").readNullable[String](using
-          pattern(weeklyPeriodNumberPattern, "Invalid Weekly Period Number")
-            .keepAnd(minLength[String](1))
-            .keepAnd(maxLength[String](2))
-        ) and
-        (JsPath \ "payFrequency").readNullable[String](using isInPayFrequency) and
-        (JsPath \ "dednsFromNetPay").readNullable[Double](using verifying(paymentAmountValidator)) and
-        (JsPath \ "employeeNICs").readNullable[EmployeeNics] and
-        (JsPath \ "employeePensionContribs").readNullable[EmployeePensionContribs] and
-        (JsPath \ "benefits").readNullable[Benefits] and
-        (JsPath \ "statutoryPayYTD").readNullable[StatutoryPayYTD] and
-        (JsPath \ "studentLoan").readNullable[StudentLoan] and
-        (JsPath \ "postGradLoan").readNullable[PostGradLoan] and
-        (JsPath \ "grossEarningsForNICs").readNullable[GrossEarningsForNics] and
-        (JsPath \ "totalEmployerNICs").readNullable[TotalEmployerNics] and
-        JsPath.readNullable[AdditionalFields]
-    )(PayeEntry.apply),
-    Json.writes[PayeEntry].transform { (jsObj: JsObject) =>
-      (jsObj \ "additionalFields").asOpt[JsObject] match {
-        case Some(extraFields) =>
-          jsObj - "additionalFields" ++ extraFields
-        case None =>
-          jsObj - "additionalFields"
-      }
-    }
+      (JsPath \ "taxablePayToDate").readNullable[Double](using verifying(paymentAmountValidator)) and
+      (JsPath \ "totalTaxToDate").readNullable[Double](using verifying(paymentAmountValidator)) and
+      (JsPath \ "taxDeductedOrRefunded").readNullable[Double](using verifying(paymentAmountValidator)) and
+      (JsPath \ "employerPayeRef").readNullable[String](using
+        maxLength[String](14).keepAnd(pattern(employerPayeRefPattern, "Invalid employer PAYE reference"))
+      ) and
+      (JsPath \ "paymentDate").readNullable[LocalDate] and
+      (JsPath \ "taxablePay").readNullable[Double](using verifying(paymentAmountValidator)) and
+      (JsPath \ "taxYear").readNullable[String](using pattern(payeTaxYearPattern, "Invalid Tax Year")) and
+      (JsPath \ "monthlyPeriodNumber").readNullable[String](using
+        pattern(monthlyPeriodNumberPattern, "Invalid Monthly Period Number")
+          .keepAnd(minLength[String](1))
+          .keepAnd(maxLength[String](2))
+      ) and
+      (JsPath \ "weeklyPeriodNumber").readNullable[String](using
+        pattern(weeklyPeriodNumberPattern, "Invalid Weekly Period Number")
+          .keepAnd(minLength[String](1))
+          .keepAnd(maxLength[String](2))
+      ) and
+      (JsPath \ "payFrequency").readNullable[String](using isInPayFrequency) and
+      (JsPath \ "dednsFromNetPay").readNullable[Double](using verifying(paymentAmountValidator)) and
+      (JsPath \ "employeeNICs").readNullable[EmployeeNics] and
+      (JsPath \ "employeePensionContribs").readNullable[EmployeePensionContribs] and
+      (JsPath \ "benefits").readNullable[Benefits] and
+      (JsPath \ "statutoryPayYTD").readNullable[StatutoryPayYTD] and
+      (JsPath \ "studentLoan").readNullable[StudentLoan] and
+      (JsPath \ "postGradLoan").readNullable[PostGradLoan] and
+      (JsPath \ "grossEarningsForNICs").readNullable[GrossEarningsForNics] and
+      (JsPath \ "totalEmployerNICs").readNullable[TotalEmployerNics] and
+      JsPath.readNullable[AdditionalFields]
+  )(
+    (
+      taxCode,
+      paidHoursWorked,
+      taxablePayToDate,
+      totalTaxToDate,
+      taxDeductedOrRefunded,
+      employerPayeRef,
+      paymentDate,
+      taxablePay,
+      taxYear,
+      monthlyPeriodNumber,
+      weeklyPeriodNumber,
+      payFrequency,
+      dednsFromNetPay,
+      employeeNICs,
+      employeePensionContribs,
+      benefits,
+      statutoryPayYTD,
+      studentLoan,
+      postGradLoan,
+      grossEarningsForNICs,
+      totalEmployerNICs,
+      additionalFields
+    ) =>
+      PayeEntry(
+        taxCode,
+        paidHoursWorked,
+        taxablePayToDate,
+        totalTaxToDate,
+        taxDeductedOrRefunded,
+        employerPayeRef,
+        paymentDate,
+        taxablePay,
+        taxYear,
+        monthlyPeriodNumber,
+        weeklyPeriodNumber,
+        payFrequency,
+        dednsFromNetPay,
+        employeeNICs,
+        employeePensionContribs,
+        benefits,
+        statutoryPayYTD,
+        studentLoan,
+        postGradLoan,
+        grossEarningsForNICs,
+        totalEmployerNICs,
+        additionalFields,
+        hmrcOfficeNumber = None
+      )
   )
+
+  private val payeEntryReads: Reads[PayeEntry] = baseReads.flatMap { entry =>
+    (JsPath \ "hmrcOfficeNumber")
+      .readNullable[String](using pattern(hmrcOfficeNumberPattern, "Invalid HMRC office number"))
+      .map(v => entry.copy(hmrcOfficeNumber = v))
+  }
+
+  private val baseWrites: OWrites[PayeEntry] = Json.writes[PayeEntry]
+
+  private val payeEntryWrites: OWrites[PayeEntry] = OWrites[PayeEntry] { o =>
+    val jsObj = baseWrites.writes(o)
+    val withoutInternal = (jsObj \ "additionalFields").asOpt[JsObject] match {
+      case Some(extraFields) => (jsObj - "additionalFields" - "hmrcOfficeNumber") ++ extraFields
+      case None              => jsObj - "additionalFields" - "hmrcOfficeNumber"
+    }
+    o.hmrcOfficeNumber match {
+      case Some(v) => withoutInternal + ("hmrcOfficeNumber" -> JsString(v))
+      case None    => withoutInternal
+    }
+  }
+
+  implicit val format: Format[PayeEntry] = Format(payeEntryReads, payeEntryWrites)
 }
 
 case class SaIncome(
