@@ -118,7 +118,7 @@ class EmploymentRepository @Inject() (mongo: MongoComponent)(implicit ec: Execut
       "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employerRef,employment(endDate,payFrequency,startDate),payments(date,paidTaxablePay))" -> "HO-ECP",
       "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employerRef,employment(endDate,payFrequency,startDate),payments(date,paidTaxablePay))_filtered" -> "HO-RP2",
       "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employerRef,employment(endDate,payFrequency,startDate))" -> "HO-V2",
-      "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),payments(date,paidTaxablePay))" -> "SCTS"
+      "employments(employer(address(line1,line2,line3,line4,line5,postcode),name),employerRef,payments(date,paidTaxablePay))" -> "SCTS"
     )
 
     val useCase: Option[String] =
