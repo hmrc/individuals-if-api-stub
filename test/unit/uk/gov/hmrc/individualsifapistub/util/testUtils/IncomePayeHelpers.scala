@@ -44,7 +44,8 @@ trait IncomePayeHelpers {
       Some(createValidPostGradLoan()),
       Some(createValodIFGrossEarningsForNics()),
       Some(createValidTotalEmployerNics()),
-      Some(createValidAdditionalFields())
+      Some(createValidAdditionalFields()),
+      Some("345")
     )
 
   def createValidPayeHOV2FieldsEntry(): PayeEntry =
@@ -60,6 +61,7 @@ trait IncomePayeHelpers {
       None,
       Some("3"),
       Some("2"),
+      None,
       None,
       None,
       None,
