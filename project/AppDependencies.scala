@@ -19,7 +19,7 @@ import sbt.*
 object AppDependencies {
   val hmrc             = "uk.gov.hmrc"
   val hmrcMongo        = "uk.gov.hmrc.mongo"
-  val hmrcMongoVersion = "2.12.0"
+  val hmrcMongoVersion = "2.13.0"
   val bootstrapVersion = "10.7.0"
   val playVersion      = "play-30"
 
