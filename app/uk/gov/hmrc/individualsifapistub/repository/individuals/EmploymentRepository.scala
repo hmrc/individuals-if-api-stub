@@ -71,7 +71,7 @@ class EmploymentRepository @Inject() (mongo: MongoComponent)(implicit ec: Execut
       "HO-ECP"   -> "HO-ECP",
       "HO-V2"    -> "HO-V2",
       "SCTS"     -> "SCTS",
-      "DEF"      -> "DFE"
+      "DFE"      -> "DFE"
     )
 
     val ident = IdType.parse(idType) match {
