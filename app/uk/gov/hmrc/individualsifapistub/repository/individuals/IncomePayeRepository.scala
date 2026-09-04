@@ -61,7 +61,7 @@ class IncomePayeRepository @Inject() (mongo: MongoComponent)(implicit ec: Execut
       "HO-V2"    -> "HO-V2",
       "SCTS"     -> "SCTS",
       "LAD4"     -> "LAD4",
-      "DFE"      -> "DEF"
+      "DFE"      -> "DFE"
     )
 
     val ident = IdType.parse(idType) match {
