@@ -11,9 +11,7 @@
         "version" : "1.0",
         "status":@Json.toJson(status),
         "endpointsEnabled":@Json.toJson(endpointsEnabled),
-        "access" : {
-          "type" : "PRIVATE"
-        }
+        "access" :  "PRIVATE"
       }
     ]
   }
