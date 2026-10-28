@@ -22,18 +22,18 @@ import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.http.Status.{BAD_REQUEST, CREATED, INTERNAL_SERVER_ERROR, OK}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import uk.gov.hmrc.individualsifapistub.controllers.organisations.VatInformationController
-import uk.gov.hmrc.individualsifapistub.domain.organisations._
+import uk.gov.hmrc.individualsifapistub.controllers.organisations.IfVatInformationController
+import uk.gov.hmrc.individualsifapistub.domain.organisations.*
 import uk.gov.hmrc.individualsifapistub.services.organisations.VatInformationService
 import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
 
 import java.time.LocalDateTime
 import scala.concurrent.Future
 
-class VatInformationControllerSpec extends TestSupport with BeforeAndAfterEach {
+class IfVatInformationControllerSpec extends TestSupport with BeforeAndAfterEach {
 
   val mockService: VatInformationService = mock[VatInformationService]
-  val controller = new VatInformationController(loggingAction, controllerComponents, mockService)
+  val controller = new IfVatInformationController(loggingAction, controllerComponents, mockService)
 
   val vrn = "12345678"
   val customerDetails: VatCustomerDetails = VatCustomerDetails("Ancient Antiques")

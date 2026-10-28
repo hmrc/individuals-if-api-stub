@@ -27,7 +27,7 @@ import uk.gov.hmrc.individualsifapistub.services.organisations.VatInformationSer
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class VatInformationController @Inject() (
+class HipVatInformationController @Inject() (
   loggingAction: LoggingAction,
   cc: ControllerComponents,
   vatInformationService: VatInformationService
@@ -36,8 +36,19 @@ class VatInformationController @Inject() (
   def retrieve(vrn: String, fields: Option[String]): mvc.Action[AnyContent] = loggingAction.async { _ =>
     logger.info(s"Retrieving VAT information for VRN: $vrn and fields: $fields")
     vatInformationService.retrieve(vrn).map {
-      case Some(entry) => Ok(Json.toJson(entry.vatInformation))
-      case None        => NotFound("NO_DATA_FOUND")
+      case Some(entry) => Ok(Json.obj("success" -> Json.toJson(entry.vatInformation)))
+      case None =>
+        val err =
+          """
+            |{
+            |  "error": {
+            |    "code": "002",
+            |    "processingDate": "2026-03-09T12:34:46Z",
+            |    "text": "ID not found"
+            |  }
+            |}
+            |""".stripMargin
+        UnprocessableEntity(err)
     } recover retrievalRecovery
   }
 
