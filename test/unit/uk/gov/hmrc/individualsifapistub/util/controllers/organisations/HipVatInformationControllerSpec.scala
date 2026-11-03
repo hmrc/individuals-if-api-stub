@@ -50,26 +50,25 @@ class HipVatInformationControllerSpec extends TestSupport with BeforeAndAfterEac
     "return response with created status when successful" in {
       when(mockService.create(vrn, request)).thenReturn(Future.successful(serviceResponse))
 
-      val httpRequest = FakeRequest().withMethod("Post").withBody(Json.toJson(request))
+      val simplifiedRequest = VatInformationSimplified.fromVatInformation(request)
+      val httpRequest = FakeRequest().withMethod("Post").withBody(Json.toJson(simplifiedRequest))
 
-      val result = controller.create(vrn)(httpRequest)
+      val result = await(controller.create(vrn)(httpRequest))
 
-      result.map { x =>
-        x.header.status shouldBe CREATED
-        jsonBodyOf(x) shouldBe Json.toJson(serviceResponse)
-      }
-
+      result.header.status shouldBe CREATED
+      jsonBodyOf(result) shouldBe Json.toJson(
+        VatInformationSimplified.fromVatInformation(serviceResponse.vatInformation)
+      )
     }
 
     "fail with invalid request provided" in {
-
       when(mockService.create(vrn, request)).thenReturn(Future.successful(serviceResponse))
 
       val httpRequest = FakeRequest().withMethod("POST").withBody(Json.obj())
 
-      val result = controller.create(vrn)(httpRequest)
+      val result = await(controller.create(vrn)(httpRequest))
 
-      result.map(_.header.status shouldBe BAD_REQUEST)
+      result.header.status shouldBe BAD_REQUEST
     }
   }
 
@@ -79,31 +78,28 @@ class HipVatInformationControllerSpec extends TestSupport with BeforeAndAfterEac
 
       val httpRequest = FakeRequest().withMethod("GET")
 
-      val result = controller.retrieve(vrn, None)(httpRequest)
-      result.map { x =>
-        x.header.status shouldBe OK
-        jsonBodyOf(x) shouldBe Json.obj("success" -> Json.toJson(serviceResponse))
-      }
+      val result = await(controller.retrieve(vrn, None)(httpRequest))
+
+      result.header.status shouldBe OK
+      jsonBodyOf(result) shouldBe Json.obj("success" -> Json.toJson(serviceResponse.vatInformation))
     }
 
     "fails when an entry cannot be found" in {
       when(mockService.retrieve(vrn)).thenReturn(Future.successful(None))
 
-      val httpRequest =
-        FakeRequest().withMethod("GET")
+      val httpRequest = FakeRequest().withMethod("GET")
 
       val result = await(controller.retrieve(vrn, None)(httpRequest))
-      status(result) shouldBe UNPROCESSABLE_ENTITY
+      result.header.status shouldBe UNPROCESSABLE_ENTITY
     }
 
     "fails when an error occurs" in {
       when(mockService.retrieve(vrn)).thenReturn(Future.failed(new Exception))
 
-      val httpRequest =
-        FakeRequest().withMethod("GET")
+      val httpRequest = FakeRequest().withMethod("GET")
 
       val result = await(controller.retrieve(vrn, None)(httpRequest))
-      status(result) shouldBe INTERNAL_SERVER_ERROR
+      result.header.status shouldBe INTERNAL_SERVER_ERROR
     }
   }
 }
