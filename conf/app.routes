@@ -34,8 +34,12 @@ POST    /organisations/employers/employee/counts                        uk.gov.h
 POST    /organisations/employers/employee/counts/createpayload          uk.gov.hmrc.individualsifapistub.controllers.organisations.NumberOfEmployeesController.create()
 
 # Organisations VAT Information (API#1363)
-GET     /vat/customer/vrn/:vrn/information           uk.gov.hmrc.individualsifapistub.controllers.organisations.VatInformationController.retrieve(vrn, fields: Option[String] ?= None)
-POST    /vat/customer/:vrn/matching-data             uk.gov.hmrc.individualsifapistub.controllers.organisations.VatInformationController.create(vrn)
+GET     /vat/customer/vrn/:vrn/information           uk.gov.hmrc.individualsifapistub.controllers.organisations.IfVatInformationController.retrieve(vrn, fields: Option[String] ?= None)
+POST    /vat/customer/:vrn/matching-data             uk.gov.hmrc.individualsifapistub.controllers.organisations.IfVatInformationController.create(vrn)
+
+# Hip Migration of Organisations VAT Information (API#1363)
+GET     /etmp/RESTAdapter/vat/subscription/vrn/:vrn                     uk.gov.hmrc.individualsifapistub.controllers.organisations.HipVatInformationController.retrieve(vrn, fields: Option[String] ?= None)
+POST    /etmp/RESTAdapter/vat/subscription/:vrn/matching-data           uk.gov.hmrc.individualsifapistub.controllers.organisations.HipVatInformationController.create(vrn)
 
 # Organisations VAT Return Details (API#1987)
 GET     /organisations/vat/:vrn/returns-details    uk.gov.hmrc.individualsifapistub.controllers.organisations.VatReturnDetailsController.retrieve(vrn, fields: Option[String] ?= None)

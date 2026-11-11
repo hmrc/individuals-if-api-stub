@@ -1,0 +1,97 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package unit.uk.gov.hmrc.individualsifapistub.util.controllers.organisations
+
+import org.mockito.Mockito.{clearInvocations, when}
+import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar.mock
+import play.api.http.Status.{BAD_REQUEST, CREATED, INTERNAL_SERVER_ERROR, OK}
+import play.api.libs.json.Json
+import play.api.test.FakeRequest
+import uk.gov.hmrc.individualsifapistub.controllers.organisations.IfVatInformationController
+import uk.gov.hmrc.individualsifapistub.domain.organisations.*
+import uk.gov.hmrc.individualsifapistub.services.organisations.VatInformationService
+import unit.uk.gov.hmrc.individualsifapistub.util.TestSupport
+
+import java.time.LocalDateTime
+import scala.concurrent.Future
+
+class IfVatInformationControllerSpec extends TestSupport with BeforeAndAfterEach {
+
+  val mockService: VatInformationService = mock[VatInformationService]
+  val controller = new IfVatInformationController(loggingAction, controllerComponents, mockService)
+
+  val vrn = "12345678"
+  val customerDetails: VatCustomerDetails = VatCustomerDetails("Ancient Antiques")
+  val vatAddress: VatAddress = VatAddress("VAT ADDR 1", "SW1A 2BQ")
+  val vatPPOB: VatPPOB = VatPPOB(vatAddress)
+  val vatApprovedInformation: VatApprovedInformation = VatApprovedInformation(customerDetails, vatPPOB)
+  val request: VatInformation = VatInformation(vatApprovedInformation)
+  val serviceResponse: VatInformationEntry = VatInformationEntry("id", request, LocalDateTime.now())
+
+  override def afterEach(): Unit =
+    clearInvocations(mockService)
+
+  "create" should {
+    "return response with created status when successful" in {
+      when(mockService.create(vrn, request)).thenReturn(Future.successful(serviceResponse))
+
+      val simplifiedRequest = VatInformationSimplified.fromVatInformation(request)
+      val httpRequest = FakeRequest().withMethod("Post").withBody(Json.toJson(simplifiedRequest))
+
+      val result = await(controller.create(vrn)(httpRequest))
+
+      result.header.status shouldBe CREATED
+      jsonBodyOf(result) shouldBe Json.toJson(
+        VatInformationSimplified.fromVatInformation(serviceResponse.vatInformation)
+      )
+    }
+
+    "fail with invalid request provided" in {
+      when(mockService.create(vrn, request)).thenReturn(Future.successful(serviceResponse))
+
+      val httpRequest = FakeRequest().withMethod("POST").withBody(Json.obj())
+
+      val result = await(controller.create(vrn)(httpRequest))
+
+      result.header.status shouldBe BAD_REQUEST
+    }
+  }
+
+  "retrieve" should {
+    "return response when entry found by service" in {
+      when(mockService.retrieve(vrn)).thenReturn(Future.successful(Some(serviceResponse)))
+
+      val httpRequest = FakeRequest().withMethod("GET")
+
+      val result = await(controller.retrieve(vrn, None)(httpRequest))
+
+      result.header.status shouldBe OK
+      jsonBodyOf(result) shouldBe Json.toJson(serviceResponse.vatInformation)
+    }
+
+    "fails when an error occurs" in {
+      when(mockService.retrieve(vrn)).thenReturn(Future.failed(new Exception))
+
+      val httpRequest = FakeRequest().withMethod("GET")
+
+      val result = await(controller.retrieve(vrn, None)(httpRequest))
+
+      result.header.status shouldBe INTERNAL_SERVER_ERROR
+    }
+  }
+}
